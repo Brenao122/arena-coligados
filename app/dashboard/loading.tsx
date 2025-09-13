@@ -1,0 +1,26 @@
+﻿export default function DashboardLoading() {
+  return (
+    <div className="space-y-6">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="animate-pulse">
+            <div className="h-32 bg-gray-200 rounded"></div>
+          </div>
+        ))}
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <div className="col-span-4 animate-pulse">
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+        <div className="col-span-3 animate-pulse">
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
