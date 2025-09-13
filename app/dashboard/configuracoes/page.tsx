@@ -161,7 +161,7 @@ export default function ConfiguracoesPage() {
                       {whatsappConnected ? "Conectado" : "Desconectado"}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      {whatsappConnected ? "Número: +55 11 99999-9999" : "Não configurado"}
+                      {whatsappConnected ? "Número: +55 62 9355-0635" : "Não configurado"}
                     </span>
                   </div>
                   <Button

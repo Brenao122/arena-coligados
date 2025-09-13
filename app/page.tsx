@@ -147,7 +147,7 @@ export default function HomePage() {
 
             <div className="flex flex-wrap justify-center gap-8 mb-20">
               <a
-                href="https://wa.me/5562982935151?text=Olá! Gostaria de reservar uma quadra na Arena Coligados. Podem me ajudar com horários e disponibilidade?"
+                href="https://wa.me/556293550635?text=Olá! Gostaria de reservar uma quadra na Arena Coligados. Podem me ajudar com horários e disponibilidade?"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -157,7 +157,7 @@ export default function HomePage() {
                 </Button>
               </a>
               <a
-                href="https://wa.me/5562982935151?text=Olá! Quero minha primeira aula experimental gratuita na Arena Coligados. Podem me informar sobre as modalidades disponíveis e horários?"
+                href="https://wa.me/556293550635?text=Olá! Quero minha primeira aula experimental gratuita na Arena Coligados. Podem me informar sobre as modalidades disponíveis e horários?"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -648,7 +648,7 @@ export default function HomePage() {
 
             <div className="mb-8">
               <a
-                href="https://wa.me/5562982935151?text=Olá! Quero reservar minha quadra na Arena Coligados agora mesmo!"
+                href="https://wa.me/556293550635?text=Olá! Quero reservar minha quadra na Arena Coligados agora mesmo!"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -668,7 +668,7 @@ export default function HomePage() {
       </footer>
 
       <a
-        href="https://wa.me/5562982935151?text=Olá! Quero reservar minha quadra na Arena Coligados agora mesmo!"
+        href="https://wa.me/556293550635?text=Olá! Quero reservar minha quadra na Arena Coligados agora mesmo!"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-8 right-8 z-50"

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSheetsClient, getSpreadsheetId } from '@/lib/google/sheets';
+import { formatSheetRange } from '@/lib/google/sheets-utils';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
     const sheets = getSheetsClient();
     const spreadsheetId = getSpreadsheetId();
 
-    const range = `${sheet}!A1`;
+    const range = formatSheetRange(sheet, 'A1');
     const valueInputOption = body.userEntered !== false ? 'USER_ENTERED' : 'RAW';
 
     const { data } = await sheets.spreadsheets.values.append({

@@ -38,18 +38,18 @@ export default function AlunoDashboardPage() {
 
   const fetchProximasAulas = async () => {
     try {
-      const response = await fetch('/api/sheets/read?sheet=Página1')
+      const response = await fetch('/api/sheets/read?sheet=reservas')
       const result = await response.json()
       
-      if (result.ok) {
-        const reservas = result.rows.filter((r: any) => r.tipo === 'reserva' || r.Data)
-        setProximasAulas(reservas.slice(0, 3).map((r: any) => ({
-          id: r.id || Math.random().toString(),
-          professor: r.professor_nome || r.Professor || 'Professor',
-          horario: r.data_inicio || r.Data || '16:00',
-          quadra: r.quadra_nome || r.Quadra || 'Quadra 1',
-          tipo: r.tipo_aula || 'Aula',
-          modalidade: r.modalidade || 'Futebol'
+      if (result.ok && result.values) {
+        const reservas = result.values.slice(1) // Pular cabeçalho
+        setProximasAulas(reservas.slice(0, 3).map((r: any, index: number) => ({
+          id: r[0] || index.toString(), // id está na coluna 0
+          professor: r[3] || 'Professor', // professor_id está na coluna 3
+          horario: r[4] || '16:00', // data_inicio está na coluna 4
+          quadra: r[2] || 'Quadra 1', // quadra_id está na coluna 2
+          tipo: r[6] || 'Aula', // tipo está na coluna 6
+          modalidade: r[11] || 'Futebol' // tipo_aula está na coluna 11
         })))
       }
     } catch (error) {

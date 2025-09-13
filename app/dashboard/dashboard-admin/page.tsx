@@ -68,10 +68,10 @@ export default function DashboardPage() {
 
       // Buscar dados do Google Sheets
       const [reservasResponse, clientesResponse, quadrasResponse, professoresResponse] = await Promise.all([
-        fetch('/api/sheets/read?sheet=Página1'),
-        fetch('/api/sheets/read?sheet=Página1'),
-        fetch('/api/sheets/read?sheet=Página1'),
-        fetch('/api/sheets/read?sheet=Página1')
+        fetch('/api/sheets/read?sheet=reservas'),
+        fetch('/api/sheets/read?sheet=clientes'),
+        fetch('/api/sheets/read?sheet=quadras'),
+        fetch('/api/sheets/read?sheet=usuarios')
       ])
 
       const [reservasResult, clientesResult, quadrasResult, professoresResult] = await Promise.all([
@@ -82,20 +82,22 @@ export default function DashboardPage() {
       ])
 
       // Processar dados das reservas
-      const reservas = reservasResult.ok ? reservasResult.rows.filter((r: any) => r.tipo === 'reserva' || r.Data) : []
-      const clientes = clientesResult.ok ? clientesResult.rows.filter((r: any) => r.tipo === 'cliente' || r.Nome) : []
-      const quadras = quadrasResult.ok ? quadrasResult.rows.filter((r: any) => r.tipo === 'quadra' || r.nome) : []
-      const professores = professoresResult.ok ? professoresResult.rows.filter((r: any) => r.tipo === 'professor' || r.nome) : []
+      const reservas = reservasResult.ok ? reservasResult.values?.slice(1) || [] : []
+      const clientes = clientesResult.ok ? clientesResult.values?.slice(1) || [] : []
+      const quadras = quadrasResult.ok ? quadrasResult.values?.slice(1) || [] : []
+      const professores = professoresResult.ok ? professoresResult.values?.slice(1) || [] : []
 
       // Calcular estatísticas
       const hoje = new Date().toISOString().split('T')[0]
       const reservasHoje = reservas.filter((r: any) => {
-        const dataReserva = r.data_inicio || r.Data || r.created_at
+        // data_inicio está na coluna 4 (índice 4)
+        const dataReserva = r[4]
         return dataReserva && dataReserva.includes(hoje)
       }).length
 
       const receitaMes = reservas.reduce((total: number, r: any) => {
-        const valor = parseFloat(r.valor || r.Valor || r.preco || 0)
+        // valor_total está na coluna 8 (índice 8)
+        const valor = parseFloat(r[8] || 0)
         return total + (isNaN(valor) ? 0 : valor)
       }, 0)
 

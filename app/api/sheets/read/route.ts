@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSheetsClient, getSpreadsheetId } from "@/lib/google/sheets";
+import { formatSheetRange } from "@/lib/google/sheets-utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,7 +10,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const sheet = searchParams.get("sheet") ?? "clientes";
     const rangeParam = searchParams.get("range") ?? "A1:Z100";
-    const range = `${sheet}!${rangeParam}`;
+    const range = formatSheetRange(sheet, rangeParam);
 
     const sheets = getSheetsClient();
     const spreadsheetId = getSpreadsheetId();
