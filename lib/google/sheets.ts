@@ -1,3 +1,5 @@
+// lib/google/sheets.ts
+import "server-only";
 import { google } from "googleapis";
 
 export function getSheetsClient() {

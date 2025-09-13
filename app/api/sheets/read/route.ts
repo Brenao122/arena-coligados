@@ -13,11 +13,7 @@ export async function GET(req: Request) {
     const sheets = getSheetsClient();
     const spreadsheetId = getSpreadsheetId();
 
-    const { data } = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range,
-    });
-
+    const { data } = await sheets.spreadsheets.values.get({ spreadsheetId, range });
     return NextResponse.json({ ok: true, values: data.values ?? [] });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: String(e?.message ?? e) }, { status: 500 });
