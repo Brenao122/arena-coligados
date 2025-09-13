@@ -139,8 +139,13 @@ export default function HomePage() {
             <h1 className="text-7xl md:text-9xl font-black mb-12 leading-tight">
               <span className="bg-gradient-to-r from-orange-300 via-orange-200 to-white bg-clip-text text-transparent">
                 ONDE{" "}
-                <span className="text-orange-400 drop-shadow-[0_0_20px_rgba(251,146,60,0.8)] animate-pulse">
-                  CAMPEÕES
+                <span className="relative inline-block">
+                  <span className="champion-text font-black text-8xl md:text-[10rem] leading-none relative z-10">
+                    CAMPEÕES
+                  </span>
+                  <div className="absolute -inset-6 bg-gradient-to-r from-orange-500/30 via-yellow-400/30 to-orange-500/30 rounded-3xl blur-2xl champion-glow"></div>
+                  <div className="absolute -inset-4 bg-gradient-to-r from-orange-400/40 via-yellow-300/40 to-orange-400/40 rounded-2xl blur-xl champion-glow delay-150"></div>
+                  <div className="absolute -inset-2 bg-gradient-to-r from-orange-300/50 via-yellow-200/50 to-orange-300/50 rounded-xl blur-lg champion-glow delay-300"></div>
                 </span>
               </span>
               <br />
