@@ -75,10 +75,10 @@ export default function HomePage() {
   ]
 
   const stats = [
-    { number: "7", label: "Quadras Profissionais", icon: Trophy },
-    { number: "2", label: "Unidades em Goiânia", icon: MapPin },
-    { number: "4", label: "Modalidades Esportivas", icon: Target },
-    { number: "100%", label: "Satisfação dos Clientes", icon: Star },
+    { number: "7", label: "Quadras Profissionais", icon: Trophy, urgency: "Últimas 3 vagas!" },
+    { number: "2", label: "Unidades Premium", icon: MapPin, urgency: "Exclusivo!" },
+    { number: "4", label: "Modalidades de Elite", icon: Target, urgency: "Limitado!" },
+    { number: "500+", label: "Campeões Treinaram Aqui", icon: Star, urgency: "Junte-se!" },
   ]
 
   return (
@@ -155,26 +155,36 @@ export default function HomePage() {
 
             <div className="flex flex-wrap justify-center gap-8 mb-20">
               <a
-                href="https://wa.me/5562982935151?text=Olá! Gostaria de agendar uma quadra na Arena Coligados. Podem me ajudar com horários e disponibilidade?"
+                href="https://wa.me/5562982935151?text=URGENTE! Quero garantir minha quadra na Arena Coligados AGORA! Apenas 3 vagas restantes para hoje!"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-orange-500/25 transition-all duration-300 transform hover:scale-105 group border-0">
-                  <Play className="h-10 w-10 mr-4 group-hover:scale-110 transition-transform" />
-                  AGENDE AGORA
+                <Button className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 group border-0 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-red-600/20 animate-pulse"></div>
+                  <Play className="h-10 w-10 mr-4 group-hover:scale-110 transition-transform relative z-10" />
+                  <span className="relative z-10">
+                    🔥 GARANTA SUA QUADRA AGORA!
+                    <br />
+                    <span className="text-lg opacity-90">Apenas 3 vagas restantes!</span>
+                  </span>
                 </Button>
               </a>
               <a
-                href="https://wa.me/5562982935151?text=Olá! Tenho interesse em uma aula experimental na Arena Coligados. Podem me informar sobre as modalidades disponíveis e horários?"
+                href="https://wa.me/5562982935151?text=Quero minha AULA EXPERIMENTAL GRATUITA na Arena Coligados! Mais de 500 campeões já treinaram aqui!"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button
                   variant="outline"
-                  className="text-2xl px-16 py-8 rounded-2xl border-2 border-white/40 text-white hover:bg-white/10 backdrop-blur-sm bg-white/5 shadow-2xl hover:shadow-white/10 transition-all duration-300 transform hover:scale-105"
+                  className="text-2xl px-16 py-8 rounded-2xl border-3 border-yellow-400 text-yellow-300 hover:bg-yellow-400/10 backdrop-blur-sm bg-yellow-400/5 shadow-2xl hover:shadow-yellow-400/20 transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
                 >
-                  <Award className="h-10 w-10 mr-4" />
-                  AULA EXPERIMENTAL
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-yellow-300/10 animate-pulse"></div>
+                  <Award className="h-10 w-10 mr-4 relative z-10" />
+                  <span className="relative z-10">
+                    ⚡ AULA EXPERIMENTAL GRATUITA!
+                    <br />
+                    <span className="text-lg opacity-90">500+ campeões já treinaram aqui!</span>
+                  </span>
                 </Button>
               </a>
             </div>
@@ -183,8 +193,11 @@ export default function HomePage() {
               {stats.map((stat, index) => (
                 <div
                   key={index}
-                  className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl border border-white/20 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 transform hover:scale-105 group"
+                  className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl border border-white/20 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 transform hover:scale-105 group relative overflow-hidden"
                 >
+                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                    {stat.urgency}
+                  </div>
                   <stat.icon className="h-16 w-16 text-orange-300 mx-auto mb-6 group-hover:scale-110 transition-transform drop-shadow-lg" />
                   <div className="text-5xl font-black text-white mb-3 drop-shadow-lg">{stat.number}</div>
                   <div className="text-gray-200 font-semibold text-lg">{stat.label}</div>
