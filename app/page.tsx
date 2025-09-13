@@ -69,16 +69,16 @@ export default function HomePage() {
   ]
 
   const horarios = [
-    { periodo: "Segunda a Sexta", horario: "09:00 às 17:00", preco: "R$ 50,00", tipo: "promocional" },
-    { periodo: "Segunda a Sexta", horario: "22:00 às 23:00", preco: "R$ 50,00", tipo: "promocional" },
-    { periodo: "Demais horários", horario: "Outros", preco: "R$ 80,00", tipo: "normal" },
+    { periodo: "Segunda a Sexta", horario: "09:00 às 17:00", preco: "R$ 50,00", tipo: "promocional", cta: "💰 Promoção especial: jogue mais pagando menos" },
+    { periodo: "Segunda a Sexta", horario: "22:00 às 23:00", preco: "R$ 50,00", tipo: "promocional", cta: "💰 Promoção especial: jogue mais pagando menos" },
+    { periodo: "Demais horários", horario: "Outros", preco: "R$ 80,00", tipo: "normal", cta: "Valor padrão" },
   ]
 
   const stats = [
-    { number: "7", label: "Quadras Profissionais", icon: Trophy, urgency: "Últimas 3 vagas!" },
-    { number: "2", label: "Unidades Premium", icon: MapPin, urgency: "Exclusivo!" },
-    { number: "4", label: "Modalidades de Elite", icon: Target, urgency: "Limitado!" },
-    { number: "500+", label: "Campeões Treinaram Aqui", icon: Star, urgency: "Junte-se!" },
+    { number: "7", label: "Quadras Profissionais", icon: Trophy },
+    { number: "2", label: "Unidades em Goiânia", icon: MapPin },
+    { number: "4", label: "Modalidades Esportivas", icon: Target },
+    { number: "100%", label: "Satisfação dos Clientes", icon: Star },
   ]
 
   return (
@@ -155,36 +155,26 @@ export default function HomePage() {
 
             <div className="flex flex-wrap justify-center gap-8 mb-20">
               <a
-                href="https://wa.me/5562982935151?text=URGENTE! Quero garantir minha quadra na Arena Coligados AGORA! Apenas 3 vagas restantes para hoje!"
+                href="https://wa.me/5562982935151?text=Olá! Gostaria de reservar uma quadra na Arena Coligados. Podem me ajudar com horários e disponibilidade?"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 group border-0 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-red-600/20 animate-pulse"></div>
-                  <Play className="h-10 w-10 mr-4 group-hover:scale-110 transition-transform relative z-10" />
-                  <span className="relative z-10">
-                    🔥 GARANTA SUA QUADRA AGORA!
-                    <br />
-                    <span className="text-lg opacity-90">Apenas 3 vagas restantes!</span>
-                  </span>
+                <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-orange-500/25 transition-all duration-300 transform hover:scale-105 group border-0">
+                  <Play className="h-10 w-10 mr-4 group-hover:scale-110 transition-transform" />
+                  🔥 Reserve já sua quadra — últimas vagas promocionais!
                 </Button>
               </a>
               <a
-                href="https://wa.me/5562982935151?text=Quero minha AULA EXPERIMENTAL GRATUITA na Arena Coligados! Mais de 500 campeões já treinaram aqui!"
+                href="https://wa.me/5562982935151?text=Olá! Quero minha primeira aula experimental gratuita na Arena Coligados. Podem me informar sobre as modalidades disponíveis e horários?"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button
                   variant="outline"
-                  className="text-2xl px-16 py-8 rounded-2xl border-3 border-yellow-400 text-yellow-300 hover:bg-yellow-400/10 backdrop-blur-sm bg-yellow-400/5 shadow-2xl hover:shadow-yellow-400/20 transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
+                  className="text-2xl px-16 py-8 rounded-2xl border-2 border-white/40 text-white hover:bg-white/10 backdrop-blur-sm bg-white/5 shadow-2xl hover:shadow-white/10 transition-all duration-300 transform hover:scale-105"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-yellow-300/10 animate-pulse"></div>
-                  <Award className="h-10 w-10 mr-4 relative z-10" />
-                  <span className="relative z-10">
-                    ⚡ AULA EXPERIMENTAL GRATUITA!
-                    <br />
-                    <span className="text-lg opacity-90">500+ campeões já treinaram aqui!</span>
-                  </span>
+                  <Award className="h-10 w-10 mr-4" />
+                  🎾 Experimente grátis sua 1ª aula — vagas limitadas por turma!
                 </Button>
               </a>
             </div>
@@ -286,7 +276,7 @@ export default function HomePage() {
                     : "text-gray-200 hover:text-white hover:bg-white/10"
                 }`}
               >
-                Matriz Premium
+                🏆 Unidade Matriz Premium — Estrutura completa
               </button>
               <button
                 onClick={() => setActiveUnit("vila-rosa")}
@@ -296,7 +286,7 @@ export default function HomePage() {
                     : "text-gray-200 hover:text-white hover:bg-white/10"
                 }`}
               >
-                Vila Rosa Elite
+                ✨ Unidade Vila Rosa Elite — Exclusividade pra você
               </button>
             </div>
           </div>
