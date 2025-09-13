@@ -34,8 +34,8 @@ export default function HomePage() {
     {
       name: "Beach Tennis",
       icon: "ðŸ",
-      description: "A modalidade que mais cresce no Brasil",
-      subtitle: "Quadras profissionais com areia importada",
+      description: "🎾 Aprenda e evolua — grupos reduzidos de até 6 alunos",
+      subtitle: "Quadras 1, 2, 3, 4, 5 - Quadras 3 e 5 (pequenas): apenas Beach Tennis e Vôlei",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/b8529c78-39c5-4aa4-bdac-94e318b5cf98-cgajBFxQprEq8DDQ2fAAZvwgptQxyM.png",
       features: ["Raquetes profissionais", "Bolas oficiais", "Areia premium"],
@@ -43,8 +43,8 @@ export default function HomePage() {
     {
       name: "Vôlei",
       icon: "ðŸ",
-      description: "Tradição e paixão em cada jogada",
-      subtitle: "Quadras com padrão olímpico",
+      description: "🏐 Energia em equipe — aulas completas para até 10 alunos",
+      subtitle: "Quadras 1, 2, 3, 4, 5 - Quadras 3 e 5 (pequenas): apenas Vôlei e Beach Tennis",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/9263210e-51f6-4f5e-aa03-8acec0076252-dtDWKxHsAMXArMoEhIxPacbwmxssar.png",
       features: ["Rede oficial", "Piso profissional", "Iluminação LED"],
@@ -52,19 +52,11 @@ export default function HomePage() {
     {
       name: "Futevôlei",
       icon: "âš½",
-      description: "Arte brasileira em movimento",
-      subtitle: "Quadras grandes para máxima performance",
+      description: "⚡ Intensidade na areia — treine em grupos de até 10 pessoas",
+      subtitle: "Quadras 1, 2, 4 (grandes) - Suportam todas as modalidades",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/946a596c-d20e-45cc-9950-9852afc1d697-e7q1ArrposcV5deu9cKjKZORZTDCPe.png",
       features: ["Areia especial", "Rede regulamentada", "Espaço amplo"],
-    },
-    {
-      name: "Futebol Society",
-      icon: "âš½",
-      description: "Quadras 1, 2 e 4 (Grandes)",
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/9ea7f297-f7a0-4bff-93ca-3ff9329f50e6-NZh6Js68duFIT3FwT6u0lecZhuE97x.png",
-      features: ["Grama sintética", "Iluminação profissional", "Vestiários completos"],
     },
   ]
 
@@ -77,7 +69,7 @@ export default function HomePage() {
   const stats = [
     { number: "7", label: "Quadras Profissionais", icon: Trophy },
     { number: "2", label: "Unidades em Goiânia", icon: MapPin },
-    { number: "4", label: "Modalidades Esportivas", icon: Target },
+    { number: "3", label: "Modalidades Esportivas", icon: Target },
     { number: "100%", label: "Satisfação dos Clientes", icon: Star },
   ]
 
@@ -514,10 +506,10 @@ export default function HomePage() {
 
             <div className="space-y-8">
               <div className="bg-white/10 backdrop-blur-xl p-10 rounded-3xl border border-white/20 shadow-2xl">
-                <h3 className="text-4xl font-black text-white mb-6">Experimente Gratuitamente</h3>
+                <h3 className="text-4xl font-black text-white mb-6">🎓 Sua primeira aula é por nossa conta — aprenda com professores qualificados agora mesmo!</h3>
                 <p className="text-gray-200 text-xl mb-8 leading-relaxed">
                   Professores qualificados e turmas niveladas para todos os níveis: Aprendiz, Iniciante, Intermediário e
-                  Avançado.
+                  Avançado. Alunos sem experiência devem ser sempre direcionados ao nível Aprendiz.
                 </p>
 
                 <div className="grid md:grid-cols-3 gap-6">
@@ -547,9 +539,54 @@ export default function HomePage() {
                 </div>
 
                 <div className="mt-8 text-center">
-                  <Badge className="bg-blue-500/20 text-blue-400 px-6 py-3 text-lg">Turmas KIDS até 13-15 anos</Badge>
+                  <Badge className="bg-blue-500/20 text-blue-400 px-6 py-3 text-lg">👦👧 Turmas Kids até 13 anos (até 15 com autorização) — aprendizado seguro e divertido</Badge>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Regras de Agendamento */}
+      <section className="py-16 px-4 bg-gray-800/30">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h3 className="text-4xl font-bold text-white mb-6">📋 Regras de Agendamento</h3>
+            <p className="text-gray-300 text-xl">Informações importantes para sua melhor experiência</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 shadow-2xl text-center">
+              <div className="text-4xl mb-4">⏰</div>
+              <h4 className="text-xl font-bold text-white mb-4">Horários da Semana</h4>
+              <p className="text-gray-300 mb-4">Evitar horários quebrados entre 19h–21h</p>
+              <Badge className="bg-orange-500/20 text-orange-400">Durante a semana</Badge>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 shadow-2xl text-center">
+              <div className="text-4xl mb-4">📅</div>
+              <h4 className="text-xl font-bold text-white mb-4">Fins de Semana</h4>
+              <p className="text-gray-300 mb-4">Horários quebrados permitidos sem restrição</p>
+              <Badge className="bg-green-500/20 text-green-400">Sábados e domingos</Badge>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 shadow-2xl text-center">
+              <div className="text-4xl mb-4">✅</div>
+              <h4 className="text-xl font-bold text-white mb-4">Cancelamentos</h4>
+              <p className="text-gray-300 mb-4">Crédito garantido apenas se feitos com mínimo de 8h de antecedência</p>
+              <Badge className="bg-blue-500/20 text-blue-400">8h de antecedência</Badge>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 backdrop-blur-xl p-8 rounded-3xl border border-orange-500/30 shadow-2xl max-w-4xl mx-auto">
+              <h4 className="text-2xl font-bold text-white mb-4">💰 Promoção Especial</h4>
+              <p className="text-gray-200 text-lg mb-4">
+                Horários promocionais exclusivos em períodos de baixa demanda
+              </p>
+              <p className="text-orange-300 font-bold text-xl">
+                R$ 50,00/h (seg–sex 09h–17h e 22h–23h)
+              </p>
             </div>
           </div>
         </div>
@@ -609,7 +646,20 @@ export default function HomePage() {
               </a>
             </div>
 
-            <p className="text-gray-400 text-xl">Â© 2024 Arena Coligados. Todos os direitos reservados.</p>
+            <div className="mb-8">
+              <a
+                href="https://wa.me/5562982935151?text=Olá! Quero reservar minha quadra na Arena Coligados agora mesmo!"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-12 py-6 rounded-2xl shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 group border-0">
+                  <MessageCircle className="h-8 w-8 mr-4 group-hover:scale-110 transition-transform" />
+                  📲 Reserve agora mesmo pelo WhatsApp em segundos
+                </Button>
+              </a>
+            </div>
+            
+            <p className="text-gray-400 text-xl">© 2024 Arena Coligados. Todos os direitos reservados.</p>
             <p className="text-gray-500 mt-3 text-lg">
               Marque <span className="text-orange-400 font-bold">@arenacoligados</span> em suas postagens!
             </p>
@@ -618,7 +668,7 @@ export default function HomePage() {
       </footer>
 
       <a
-        href="https://wa.me/5562982935151?text=Olá! Gostaria de saber mais sobre a Arena Coligados"
+        href="https://wa.me/5562982935151?text=Olá! Quero reservar minha quadra na Arena Coligados agora mesmo!"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-8 right-8 z-50"
