@@ -2,77 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Animações elegantes para CAMPEÕES - Tendências 2025 */
-@keyframes elegant-fade-in {
+/* Animações elegantes e sutis para CAMPEÕES */
+@keyframes gentle-fade-in {
   0% {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(10px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
-@keyframes subtle-glow {
+@keyframes very-subtle-glow {
   0%, 100% {
     text-shadow: 
-      0 0 10px rgba(251, 146, 60, 0.3),
-      0 0 20px rgba(251, 146, 60, 0.2),
-      0 0 30px rgba(251, 146, 60, 0.1);
+      0 0 5px rgba(251, 146, 60, 0.2),
+      0 0 10px rgba(251, 146, 60, 0.1);
   }
   50% {
     text-shadow: 
-      0 0 15px rgba(251, 146, 60, 0.4),
-      0 0 25px rgba(251, 146, 60, 0.3),
-      0 0 35px rgba(251, 146, 60, 0.2);
-  }
-}
-
-@keyframes elegant-gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes refined-pulse {
-  0%, 100% {
-    opacity: 0.9;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.01);
+      0 0 8px rgba(251, 146, 60, 0.3),
+      0 0 15px rgba(251, 146, 60, 0.2);
   }
 }
 
 .champion-text {
-  animation: elegant-fade-in 2s ease-out, subtle-glow 4s ease-in-out infinite 2s;
+  animation: gentle-fade-in 1.5s ease-out, very-subtle-glow 5s ease-in-out infinite 1.5s;
   background: linear-gradient(
     135deg,
     #f97316 0%,
-    #fbbf24 25%,
-    #f97316 50%,
-    #fbbf24 75%,
+    #fbbf24 50%,
     #f97316 100%
   );
-  background-size: 200% 200%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: elegant-fade-in 2s ease-out, subtle-glow 4s ease-in-out infinite 2s, elegant-gradient 6s ease-in-out infinite 2s;
   font-weight: 900;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .champion-glow {
-  animation: refined-pulse 3s ease-in-out infinite;
+  opacity: 0.6;
 }
 
 :root {

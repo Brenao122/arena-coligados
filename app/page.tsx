@@ -139,12 +139,8 @@ export default function HomePage() {
             <h1 className="text-7xl md:text-9xl font-black mb-12 leading-tight">
               <span className="bg-gradient-to-r from-orange-300 via-orange-200 to-white bg-clip-text text-transparent">
                 ONDE{" "}
-                <span className="relative inline-block">
-                  <span className="champion-text text-8xl md:text-[10rem] leading-none relative z-10">
-                    CAMPEÕES
-                  </span>
-                  <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 via-yellow-400/20 to-orange-500/20 rounded-2xl blur-xl champion-glow"></div>
-                  <div className="absolute -inset-2 bg-gradient-to-r from-orange-400/25 via-yellow-300/25 to-orange-400/25 rounded-xl blur-lg champion-glow"></div>
+                <span className="champion-text text-8xl md:text-[10rem] leading-none">
+                  CAMPEÕES
                 </span>
               </span>
               <br />
