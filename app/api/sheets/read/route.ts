@@ -7,36 +7,21 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const sheet = searchParams.get("sheet") ?? "leads";
-    const range = searchParams.get("range") ?? `${sheet}!A1:Z1000`;
-
-    console.log(`📖 Lendo planilha: ${sheet}, range: ${range}`);
+    const sheet = searchParams.get("sheet") ?? "clientes";
+    const rangeParam = searchParams.get("range") ?? "A1:Z100";
+    const range = `${sheet}!${rangeParam}`;
 
     const sheets = getSheetsClient();
     const spreadsheetId = getSpreadsheetId();
 
-    const { data } = await sheets.spreadsheets.values.get({ 
-      spreadsheetId, 
-      range 
-    });
-    
-    const values = data.values ?? [];
-    console.log(`✅ Dados lidos: ${values.length} linhas`);
-    
-    return NextResponse.json({ 
-      ok: true, 
-      values,
-      count: values.length,
-      sheet,
-      range 
-    });
-    
+    const { data } = await sheets.spreadsheets.values.get({ spreadsheetId, range });
+    return NextResponse.json({ ok: true, sheet, range, values: data.values ?? [] });
   } catch (e: any) {
-    console.error("❌ Erro ao ler planilha:", e);
-    return NextResponse.json({ 
-      ok: false, 
-      error: String(e?.message ?? e),
-      details: "Verifique se a aba existe e se as credenciais estão corretas"
+    console.error("READ ERROR:", e?.response?.data || e);
+    return NextResponse.json({
+      ok: false,
+      message: e?.response?.data?.error?.message || e?.message || String(e),
+      status: e?.response?.status || 500,
     }, { status: 500 });
   }
 }
