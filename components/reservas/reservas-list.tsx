@@ -53,7 +53,7 @@ export function ReservasList({ onEdit, refresh }: ReservasListProps) {
       
       // Buscar dados reais das planilhas
       const [reservasRes, clientesRes, quadrasRes, professoresRes] = await Promise.all([
-        fetch('/api/sheets/read?sheet=Página1'),
+        fetch('/api/sheets/read?sheet=reservas'),
         fetch('/api/sheets/read?sheet=clientes'),
         fetch('/api/sheets/read?sheet=quadras'),
         fetch('/api/sheets/read?sheet=professores')

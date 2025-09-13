@@ -43,15 +43,15 @@ export function ClienteForm({ onClose, onSuccess, clienteId }: ClienteFormProps)
 
       // Criar dados do cliente para Google Sheets
       const clienteData = {
-        Nome: formData.full_name,
-        Email: formData.email,
-        Telefone: formData.phone,
-        Data: new Date().toISOString().split('T')[0],
-        Hora: new Date().toTimeString().split(' ')[0],
-        Serviço: "Cadastro",
-        Status: "Ativo",
-        Observações: "Cliente cadastrado via formulário",
-        Tipo: "Cliente"
+        id: `cliente-${Date.now()}`,
+        nome: formData.full_name,
+        email: formData.email,
+        telefone: formData.phone,
+        data_nascimento: '',
+        endereco: '',
+        status: 'ativo',
+        data_cadastro: new Date().toISOString(),
+        observacoes: 'Cliente cadastrado via formulário'
       }
 
       // Enviar para Google Sheets via API
@@ -61,7 +61,7 @@ export function ClienteForm({ onClose, onSuccess, clienteId }: ClienteFormProps)
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          sheet: 'Página1',
+          sheet: 'clientes',
           rows: [clienteData]
         })
       })
