@@ -69,7 +69,7 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
     } catch (error) {
       toast({
         title: "Erro",
-        description: "NÃ£o foi possÃ­vel carregar os pagamentos",
+        description: "Não foi possível carregar os pagamentos",
         variant: "destructive",
       })
     } finally {
@@ -102,7 +102,7 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
     } catch (error) {
       toast({
         title: "Erro",
-        description: "NÃ£o foi possÃ­vel atualizar o status",
+        description: "Não foi possível atualizar o status",
         variant: "destructive",
       })
     }
@@ -172,7 +172,7 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
   return (
     <Card className="bg-gray-900 border-gray-800">
       <CardHeader>
-        <CardTitle className="text-white">GestÃ£o de Pagamentos</CardTitle>
+        <CardTitle className="text-white">Gestão de Pagamentos</CardTitle>
         <CardDescription className="text-gray-400">Acompanhe todos os pagamentos da arena</CardDescription>
       </CardHeader>
       <CardContent>
@@ -205,7 +205,7 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
               <div className="flex items-center gap-2">
                 <div className="h-5 w-5 bg-orange-500 rounded-full" />
                 <div>
-                  <p className="text-sm text-gray-400">Total de TransaÃ§Ãµes</p>
+                  <p className="text-sm text-gray-400">Total de TransaçÃµes</p>
                   <p className="text-2xl font-bold text-white">{pagamentos.length}</p>
                 </div>
               </div>
@@ -219,7 +219,7 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Buscar por cliente, quadra ou ID da transaÃ§Ã£o..."
+                placeholder="Buscar por cliente, quadra ou ID da transação..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-gray-800 border-gray-700 text-white"
@@ -239,12 +239,12 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
           </Select>
           <Select value={metodoFilter} onValueChange={setMetodoFilter}>
             <SelectTrigger className="w-[150px] bg-gray-800 border-gray-700 text-white">
-              <SelectValue placeholder="MÃ©todo" />
+              <SelectValue placeholder="Método" />
             </SelectTrigger>
             <SelectContent className="bg-gray-800 border-gray-700">
-              <SelectItem value="all">Todos MÃ©todos</SelectItem>
+              <SelectItem value="all">Todos Métodos</SelectItem>
               <SelectItem value="pix">PIX</SelectItem>
-              <SelectItem value="cartao">CartÃ£o</SelectItem>
+              <SelectItem value="cartao">Cartão</SelectItem>
               <SelectItem value="dinheiro">Dinheiro</SelectItem>
             </SelectContent>
           </Select>
@@ -257,12 +257,12 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
               <TableRow className="border-gray-700">
                 <TableHead className="text-gray-300">Cliente</TableHead>
                 <TableHead className="text-gray-300">Reserva</TableHead>
-                <TableHead className="text-gray-300">MÃ©todo</TableHead>
+                <TableHead className="text-gray-300">Método</TableHead>
                 <TableHead className="text-gray-300">Valor</TableHead>
                 <TableHead className="text-gray-300">Status</TableHead>
                 <TableHead className="text-gray-300">Data</TableHead>
-                <TableHead className="text-gray-300">ID TransaÃ§Ã£o</TableHead>
-                <TableHead className="text-gray-300">AÃ§Ãµes</TableHead>
+                <TableHead className="text-gray-300">ID Transação</TableHead>
+                <TableHead className="text-gray-300">AçÃµes</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -291,9 +291,9 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
                                     const startDate = new Date(match[1])
                                     return format(startDate, "dd/MM/yyyy HH:mm", { locale: ptBR })
                                   }
-                                  return "Data invÃ¡lida"
+                                  return "Data inválida"
                                 } catch {
-                                  return "Data invÃ¡lida"
+                                  return "Data inválida"
                                 }
                               })()
                             : "N/A"}

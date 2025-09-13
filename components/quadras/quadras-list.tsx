@@ -36,61 +36,29 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
     try {
       setLoading(true)
       
-      // Buscar dados da planilha N8N via API
-      const response = await fetch('/api/sheets/read?sheet=Página1')
+      // Buscar dados reais da planilha
+      const response = await fetch('/api/sheets/read?sheet=quadras')
       const result = await response.json()
       
       if (!result.ok) {
         throw new Error(result.error || 'Erro ao buscar dados')
       }
 
-      const dados = result.rows || []
+      const quadrasData = result.rows || []
       
-      // Criar quadras fictícias baseadas nos dados da planilha
-      const quadrasFicticias = [
-        {
-          id: "quadra1",
-          nome: "Quadra N8N",
-          tipo: "Tênis",
-          preco_hora: 50,
-          ativa: true,
-          descricao: "Quadra de tênis profissional",
-          image_url: "/tennis-court-professional.png",
-          created_at: new Date().toISOString()
-        },
-        {
-          id: "quadra2",
-          nome: "Quadra Arena",
-          tipo: "Beach Tennis",
-          preco_hora: 60,
-          ativa: true,
-          descricao: "Quadra de beach tennis com areia",
-          image_url: "/beach-tennis-court-sand.png",
-          created_at: new Date().toISOString()
-        },
-        {
-          id: "quadra3",
-          nome: "Quadra Futsal",
-          tipo: "Futsal",
-          preco_hora: 45,
-          ativa: true,
-          descricao: "Quadra coberta de futsal",
-          image_url: "/futsal-indoor-court.png",
-          created_at: new Date().toISOString()
-        },
-        {
-          id: "quadra4",
-          nome: "Quadra Society",
-          tipo: "Futebol Society",
-          preco_hora: 80,
-          ativa: true,
-          descricao: "Campo de futebol society com grama sintética",
-          image_url: "/futebol-society-grama-sintetica.png",
-          created_at: new Date().toISOString()
-        }
-      ]
+      // Converter dados da planilha para o formato esperado
+      const quadrasFormatadas = quadrasData.map((quadra: any) => ({
+        id: quadra.id || `quadra-${Math.random().toString(36).substr(2, 9)}`,
+        nome: quadra.nome || 'Quadra sem nome',
+        tipo: quadra.tipo || 'Não especificado',
+        preco_hora: parseFloat(quadra.preco_hora) || 0,
+        ativa: quadra.ativa === 'true' || quadra.ativa === true,
+        descricao: quadra.descricao || '',
+        image_url: quadra.imagem_url || '/default-court.png',
+        created_at: quadra.created_at || new Date().toISOString()
+      }))
 
-      setQuadras(quadrasFicticias)
+      setQuadras(quadrasFormatadas)
     } catch (error) {
       console.error('Erro ao buscar quadras:', error)
       setQuadras([])

@@ -11,7 +11,10 @@
     "test": "echo 'No tests configured yet'",
     "check-all": "npm run lint && npm run type-check && npm run build",
     "verify": "npm run lint && npm run type-check && npm run build && echo '✅ All checks passed!'",
-    "sheets:create": "node scripts/create-sheets.js"
+    "sheets:create": "node scripts/create-sheets.js",
+    "qa:init": "node tools/ensureQaArtifacts.mjs",
+    "qa:test": "playwright test",
+    "qa:run": "npm run qa:init && npm run qa:test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -50,6 +53,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
     "date-fns": "latest",
+    "dotenv": "^17.2.2",
     "embla-carousel-react": "8.5.1",
     "geist": "^1.3.1",
     "google-auth-library": "^10.3.0",
@@ -74,6 +78,7 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

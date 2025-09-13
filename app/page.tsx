@@ -41,22 +41,22 @@ export default function HomePage() {
       features: ["Raquetes profissionais", "Bolas oficiais", "Areia premium"],
     },
     {
-      name: "VÃ´lei",
+      name: "Vôlei",
       icon: "ðŸ",
-      description: "TradiÃ§Ã£o e paixÃ£o em cada jogada",
-      subtitle: "Quadras com padrÃ£o olÃ­mpico",
+      description: "Tradição e paixão em cada jogada",
+      subtitle: "Quadras com padrão olímpico",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/9263210e-51f6-4f5e-aa03-8acec0076252-dtDWKxHsAMXArMoEhIxPacbwmxssar.png",
-      features: ["Rede oficial", "Piso profissional", "IluminaÃ§Ã£o LED"],
+      features: ["Rede oficial", "Piso profissional", "Iluminação LED"],
     },
     {
-      name: "FutevÃ´lei",
+      name: "Futevôlei",
       icon: "âš½",
       description: "Arte brasileira em movimento",
-      subtitle: "Quadras grandes para mÃ¡xima performance",
+      subtitle: "Quadras grandes para máxima performance",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/946a596c-d20e-45cc-9950-9852afc1d697-e7q1ArrposcV5deu9cKjKZORZTDCPe.png",
-      features: ["Areia especial", "Rede regulamentada", "EspaÃ§o amplo"],
+      features: ["Areia especial", "Rede regulamentada", "Espaço amplo"],
     },
     {
       name: "Futebol Society",
@@ -64,21 +64,21 @@ export default function HomePage() {
       description: "Quadras 1, 2 e 4 (Grandes)",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/9ea7f297-f7a0-4bff-93ca-3ff9329f50e6-NZh6Js68duFIT3FwT6u0lecZhuE97x.png",
-      features: ["Grama sintÃ©tica", "IluminaÃ§Ã£o profissional", "VestiÃ¡rios completos"],
+      features: ["Grama sintética", "Iluminação profissional", "Vestiários completos"],
     },
   ]
 
   const horarios = [
-    { periodo: "Segunda a Sexta", horario: "09:00 Ã s 17:00", preco: "R$ 50,00", tipo: "promocional" },
-    { periodo: "Segunda a Sexta", horario: "22:00 Ã s 23:00", preco: "R$ 50,00", tipo: "promocional" },
-    { periodo: "Demais horÃ¡rios", horario: "Outros", preco: "R$ 80,00", tipo: "normal" },
+    { periodo: "Segunda a Sexta", horario: "09:00 às 17:00", preco: "R$ 50,00", tipo: "promocional" },
+    { periodo: "Segunda a Sexta", horario: "22:00 às 23:00", preco: "R$ 50,00", tipo: "promocional" },
+    { periodo: "Demais horários", horario: "Outros", preco: "R$ 80,00", tipo: "normal" },
   ]
 
   const stats = [
     { number: "7", label: "Quadras Profissionais", icon: Trophy },
-    { number: "2", label: "Unidades em GoiÃ¢nia", icon: MapPin },
+    { number: "2", label: "Unidades em Goiânia", icon: MapPin },
     { number: "4", label: "Modalidades Esportivas", icon: Target },
-    { number: "100%", label: "SatisfaÃ§Ã£o dos Clientes", icon: Star },
+    { number: "100%", label: "Satisfação dos Clientes", icon: Star },
   ]
 
   return (
@@ -108,7 +108,7 @@ export default function HomePage() {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-300 to-orange-500 bg-clip-text text-transparent">
                 Arena Coligados
               </h1>
-              <p className="text-sm text-gray-300 font-medium">ExcelÃªncia Esportiva</p>
+              <p className="text-sm text-gray-300 font-medium">Excelência Esportiva</p>
             </div>
           </div>
 
@@ -140,7 +140,7 @@ export default function HomePage() {
               <span className="bg-gradient-to-r from-orange-300 via-orange-200 to-white bg-clip-text text-transparent">
                 ONDE{" "}
                 <span className="text-orange-400 drop-shadow-[0_0_20px_rgba(251,146,60,0.8)] animate-pulse">
-                  CAMPEÃ•ES
+                  CAMPEÕES
                 </span>
               </span>
               <br />
@@ -148,14 +148,14 @@ export default function HomePage() {
             </h1>
 
             <p className="text-2xl md:text-4xl text-gray-200 mb-16 leading-relaxed font-light max-w-5xl mx-auto drop-shadow-lg">
-              Duas unidades premium em GoiÃ¢nia com{" "}
+              Duas unidades premium em Goiânia com{" "}
               <span className="text-orange-300 font-bold">7 quadras profissionais</span> e tecnologia de ponta para sua
               melhor performance
             </p>
 
             <div className="flex flex-wrap justify-center gap-8 mb-20">
               <a
-                href="https://wa.me/5562982935151?text=OlÃ¡! Gostaria de agendar uma quadra na Arena Coligados. Podem me ajudar com horÃ¡rios e disponibilidade?"
+                href="https://wa.me/5562982935151?text=Olá! Gostaria de agendar uma quadra na Arena Coligados. Podem me ajudar com horários e disponibilidade?"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -165,7 +165,7 @@ export default function HomePage() {
                 </Button>
               </a>
               <a
-                href="https://wa.me/5562982935151?text=OlÃ¡! Tenho interesse em uma aula experimental na Arena Coligados. Podem me informar sobre as modalidades disponÃ­veis e horÃ¡rios?"
+                href="https://wa.me/5562982935151?text=Olá! Tenho interesse em uma aula experimental na Arena Coligados. Podem me informar sobre as modalidades disponíveis e horários?"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -211,7 +211,7 @@ export default function HomePage() {
             </h2>
             <p className="text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
               Equipamentos profissionais, estrutura de primeira linha e ambiente inspirador para atletas de todos os
-              nÃ­veis
+              níveis
             </p>
           </div>
 
@@ -340,7 +340,7 @@ export default function HomePage() {
                     Arena Coligados Vila Rosa
                   </h3>
                   <p className="text-gray-200 text-xl mb-8 leading-relaxed">
-                    Unidade moderna com 4 quadras padrÃ£o e excelente localizaÃ§Ã£o
+                    Unidade moderna com 4 quadras padrão e excelente localização
                   </p>
 
                   <div className="space-y-6">
@@ -368,10 +368,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* HorÃ¡rios e PreÃ§os */}
+      {/* Horários e Preços */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
-          <h3 className="text-3xl font-bold text-white text-center mb-12">HorÃ¡rios e PreÃ§os</h3>
+          <h3 className="text-3xl font-bold text-white text-center mb-12">Horários e Preços</h3>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {horarios.map((horario, index) => (
@@ -405,7 +405,7 @@ export default function HomePage() {
           <div className="text-center mt-8">
             <p className="text-gray-400 mb-4">Finais de semana: Bola profissional gratuita!</p>
             <p className="text-sm text-gray-500">
-              Bola profissional oficial de campeonato por apenas R$ 10,00 nos dias Ãºteis
+              Bola profissional oficial de campeonato por apenas R$ 10,00 nos dias úteis
             </p>
           </div>
         </div>
@@ -417,7 +417,7 @@ export default function HomePage() {
           <div className="max-w-3xl mx-auto">
             <h3 className="text-3xl font-bold text-white mb-6">Sistema Grava Lance</h3>
             <p className="text-gray-300 mb-8 text-lg">
-              Todas as nossas quadras tÃªm o sistema Grava Lance! Ã‰ super fÃ¡cil e totalmente grÃ¡tis!
+              Todas as nossas quadras têm o sistema Grava Lance! Ã‰ super fácil e totalmente grátis!
             </p>
 
             <div className="grid md:grid-cols-4 gap-6">
@@ -425,7 +425,7 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-white font-bold">1</span>
                 </div>
-                <p className="text-gray-300 text-sm">Encontre o botÃ£o no poste da rede</p>
+                <p className="text-gray-300 text-sm">Encontre o botão no poste da rede</p>
               </div>
 
               <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
@@ -456,7 +456,7 @@ export default function HomePage() {
       {/* Modalidades */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
-          <h3 className="text-3xl font-bold text-white text-center mb-12">Modalidades DisponÃ­veis</h3>
+          <h3 className="text-3xl font-bold text-white text-center mb-12">Modalidades Disponíveis</h3>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {modalidades.map((modalidade, index) => (
@@ -513,8 +513,8 @@ export default function HomePage() {
               <div className="bg-white/10 backdrop-blur-xl p-10 rounded-3xl border border-white/20 shadow-2xl">
                 <h3 className="text-4xl font-black text-white mb-6">Experimente Gratuitamente</h3>
                 <p className="text-gray-200 text-xl mb-8 leading-relaxed">
-                  Professores qualificados e turmas niveladas para todos os nÃ­veis: Aprendiz, Iniciante, IntermediÃ¡rio e
-                  AvanÃ§ado.
+                  Professores qualificados e turmas niveladas para todos os níveis: Aprendiz, Iniciante, Intermediário e
+                  Avançado.
                 </p>
 
                 <div className="grid md:grid-cols-3 gap-6">
@@ -523,28 +523,28 @@ export default function HomePage() {
                       <Users className="h-12 w-12 text-orange-400 mx-auto" />
                     </div>
                     <h4 className="text-lg font-bold text-white mb-2">Beach Tennis</h4>
-                    <p className="text-gray-400 text-sm">AtÃ© 6 alunos por quadra</p>
+                    <p className="text-gray-400 text-sm">Até 6 alunos por quadra</p>
                   </div>
 
                   <div className="text-center">
                     <div className="bg-blue-500/20 p-6 rounded-2xl mb-4">
                       <Users className="h-12 w-12 text-blue-400 mx-auto" />
                     </div>
-                    <h4 className="text-lg font-bold text-white mb-2">VÃ´lei</h4>
-                    <p className="text-gray-400 text-sm">AtÃ© 10 alunos por quadra</p>
+                    <h4 className="text-lg font-bold text-white mb-2">Vôlei</h4>
+                    <p className="text-gray-400 text-sm">Até 10 alunos por quadra</p>
                   </div>
 
                   <div className="text-center">
                     <div className="bg-green-500/20 p-6 rounded-2xl mb-4">
                       <Users className="h-12 w-12 text-green-400 mx-auto" />
                     </div>
-                    <h4 className="text-lg font-bold text-white mb-2">FutevÃ´lei</h4>
-                    <p className="text-gray-400 text-sm">AtÃ© 10 alunos por quadra</p>
+                    <h4 className="text-lg font-bold text-white mb-2">Futevôlei</h4>
+                    <p className="text-gray-400 text-sm">Até 10 alunos por quadra</p>
                   </div>
                 </div>
 
                 <div className="mt-8 text-center">
-                  <Badge className="bg-blue-500/20 text-blue-400 px-6 py-3 text-lg">Turmas KIDS atÃ© 13-15 anos</Badge>
+                  <Badge className="bg-blue-500/20 text-blue-400 px-6 py-3 text-lg">Turmas KIDS até 13-15 anos</Badge>
                 </div>
               </div>
             </div>
@@ -567,7 +567,7 @@ export default function HomePage() {
                 <h4 className="text-4xl font-black bg-gradient-to-r from-orange-300 to-orange-500 bg-clip-text text-transparent">
                   Arena Coligados
                 </h4>
-                <p className="text-gray-300 font-semibold text-lg">ExcelÃªncia Esportiva</p>
+                <p className="text-gray-300 font-semibold text-lg">Excelência Esportiva</p>
               </div>
             </div>
 
@@ -615,7 +615,7 @@ export default function HomePage() {
       </footer>
 
       <a
-        href="https://wa.me/5562982935151?text=OlÃ¡! Gostaria de saber mais sobre a Arena Coligados"
+        href="https://wa.me/5562982935151?text=Olá! Gostaria de saber mais sobre a Arena Coligados"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-8 right-8 z-50"

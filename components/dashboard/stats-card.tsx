@@ -28,7 +28,7 @@ export function StatsCard({ title, value, description, icon: Icon, trend }: Stat
               {trend.isPositive ? "+" : ""}
               {trend.value}%
             </span>
-            <span className="text-xs text-muted-foreground ml-1">vs mÃªs anterior</span>
+            <span className="text-xs text-muted-foreground ml-1">vs mês anterior</span>
           </div>
         )}
       </CardContent>

@@ -37,16 +37,16 @@ export default function ConfiguracoesPage() {
     phone: "(11) 99999-9999",
     email: "contato@arenacoligados.com",
     cnpj: "12.345.678/0001-90",
-    address: "Rua dos Esportes, 123 - Centro, SÃ£o Paulo - SP",
+    address: "Rua dos Esportes, 123 - Centro, São Paulo - SP",
   })
 
   const [horarios, setHorarios] = useState([
     { dia: "Segunda-feira", inicio: "06:00", fim: "23:00" },
-    { dia: "TerÃ§a-feira", inicio: "06:00", fim: "23:00" },
+    { dia: "Terça-feira", inicio: "06:00", fim: "23:00" },
     { dia: "Quarta-feira", inicio: "06:00", fim: "23:00" },
     { dia: "Quinta-feira", inicio: "06:00", fim: "23:00" },
     { dia: "Sexta-feira", inicio: "06:00", fim: "23:00" },
-    { dia: "SÃ¡bado", inicio: "07:00", fim: "22:00" },
+    { dia: "Sábado", inicio: "07:00", fim: "22:00" },
     { dia: "Domingo", inicio: "08:00", fim: "20:00" },
   ])
 
@@ -56,21 +56,21 @@ export default function ConfiguracoesPage() {
         setWhatsappConnected(!whatsappConnected)
         toast({
           title: whatsappConnected ? "WhatsApp Desconectado" : "WhatsApp Conectado",
-          description: whatsappConnected ? "IntegraÃ§Ã£o removida com sucesso" : "IntegraÃ§Ã£o configurada com sucesso",
+          description: whatsappConnected ? "Integração removida com sucesso" : "Integração configurada com sucesso",
         })
         break
       case "instagram":
         setInstagramConnected(!instagramConnected)
         toast({
           title: instagramConnected ? "Instagram Desconectado" : "Instagram Conectado",
-          description: instagramConnected ? "IntegraÃ§Ã£o removida com sucesso" : "IntegraÃ§Ã£o configurada com sucesso",
+          description: instagramConnected ? "Integração removida com sucesso" : "Integração configurada com sucesso",
         })
         break
       case "mercadopago":
         setMercadoPagoConnected(!mercadoPagoConnected)
         toast({
           title: mercadoPagoConnected ? "Mercado Pago Desconectado" : "Mercado Pago Conectado",
-          description: mercadoPagoConnected ? "IntegraÃ§Ã£o removida com sucesso" : "IntegraÃ§Ã£o configurada com sucesso",
+          description: mercadoPagoConnected ? "Integração removida com sucesso" : "Integração configurada com sucesso",
         })
         break
     }
@@ -79,16 +79,16 @@ export default function ConfiguracoesPage() {
   const handleSaveArenaInfo = () => {
     localStorage.setItem("arena-info", JSON.stringify(arenaInfo))
     toast({
-      title: "InformaÃ§Ãµes Salvas",
-      description: "As informaÃ§Ãµes da arena foram atualizadas com sucesso",
+      title: "InformaçÃµes Salvas",
+      description: "As informaçÃµes da arena foram atualizadas com sucesso",
     })
   }
 
   const handleSaveHorarios = () => {
     localStorage.setItem("arena-horarios", JSON.stringify(horarios))
     toast({
-      title: "HorÃ¡rios Salvos",
-      description: "Os horÃ¡rios de funcionamento foram atualizados com sucesso",
+      title: "Horários Salvos",
+      description: "Os horários de funcionamento foram atualizados com sucesso",
     })
   }
 
@@ -100,15 +100,15 @@ export default function ConfiguracoesPage() {
     }
 
     toast({
-      title: "PreferÃªncias Atualizadas",
-      description: `NotificaÃ§Ãµes por ${type === "email" ? "email" : "SMS"} ${value ? "ativadas" : "desativadas"}`,
+      title: "Preferências Atualizadas",
+      description: `NotificaçÃµes por ${type === "email" ? "email" : "SMS"} ${value ? "ativadas" : "desativadas"}`,
     })
   }
 
   const handleAddUser = () => {
     toast({
       title: "Funcionalidade em Desenvolvimento",
-      description: "O gerenciamento de usuÃ¡rios serÃ¡ implementado em breve",
+      description: "O gerenciamento de usuários será implementado em breve",
     })
   }
 
@@ -116,16 +116,16 @@ export default function ConfiguracoesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-orange-500 to-green-500 bg-clip-text text-transparent">
-          ConfiguraÃ§Ãµes
+          ConfiguraçÃµes
         </h1>
-        <p className="text-muted-foreground">Configure integraÃ§Ãµes e preferÃªncias do sistema</p>
+        <p className="text-muted-foreground">Configure integraçÃµes e preferências do sistema</p>
       </div>
 
       <Tabs defaultValue="integracoes" className="space-y-4">
         <TabsList className="bg-gray-800 border-gray-700">
           <TabsTrigger value="integracoes" className="flex items-center gap-2 data-[state=active]:bg-orange-500">
             <Zap className="h-4 w-4" />
-            IntegraÃ§Ãµes
+            IntegraçÃµes
           </TabsTrigger>
           <TabsTrigger value="sistema" className="flex items-center gap-2 data-[state=active]:bg-orange-500">
             <Settings className="h-4 w-4" />
@@ -133,11 +133,11 @@ export default function ConfiguracoesPage() {
           </TabsTrigger>
           <TabsTrigger value="notificacoes" className="flex items-center gap-2 data-[state=active]:bg-orange-500">
             <Bell className="h-4 w-4" />
-            NotificaÃ§Ãµes
+            NotificaçÃµes
           </TabsTrigger>
           <TabsTrigger value="usuarios" className="flex items-center gap-2 data-[state=active]:bg-orange-500">
             <Users className="h-4 w-4" />
-            UsuÃ¡rios
+            Usuários
           </TabsTrigger>
         </TabsList>
 
@@ -161,7 +161,7 @@ export default function ConfiguracoesPage() {
                       {whatsappConnected ? "Conectado" : "Desconectado"}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      {whatsappConnected ? "NÃºmero: +55 11 99999-9999" : "NÃ£o configurado"}
+                      {whatsappConnected ? "Número: +55 11 99999-9999" : "Não configurado"}
                     </span>
                   </div>
                   <Button
@@ -182,7 +182,7 @@ export default function ConfiguracoesPage() {
                       <Check className="h-4 w-4 text-green-500" /> Webhook configurado
                     </p>
                     <p className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-green-500" /> Mensagens automÃ¡ticas ativas
+                      <Check className="h-4 w-4 text-green-500" /> Mensagens automáticas ativas
                     </p>
                     <p className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-500" /> Captura de leads funcionando
@@ -198,7 +198,7 @@ export default function ConfiguracoesPage() {
                   <Instagram className="h-5 w-5" />
                   Instagram Business
                 </CardTitle>
-                <CardDescription>Capture leads e monitore menÃ§Ãµes no Instagram</CardDescription>
+                <CardDescription>Capture leads e monitore mençÃµes no Instagram</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -210,7 +210,7 @@ export default function ConfiguracoesPage() {
                       {instagramConnected ? "Conectado" : "Desconectado"}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      {instagramConnected ? "@arenacoligados" : "NÃ£o configurado"}
+                      {instagramConnected ? "@arenacoligados" : "Não configurado"}
                     </span>
                   </div>
                   <Button
@@ -231,7 +231,7 @@ export default function ConfiguracoesPage() {
                       <Check className="h-4 w-4 text-green-500" /> API conectada
                     </p>
                     <p className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-green-500" /> Captura de comentÃ¡rios ativa
+                      <Check className="h-4 w-4 text-green-500" /> Captura de comentários ativa
                     </p>
                     <p className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-500" /> DMs sendo monitoradas
@@ -247,7 +247,7 @@ export default function ConfiguracoesPage() {
                   <CreditCard className="h-5 w-5" />
                   Mercado Pago
                 </CardTitle>
-                <CardDescription>Processe pagamentos PIX e cartÃ£o automaticamente</CardDescription>
+                <CardDescription>Processe pagamentos PIX e cartão automaticamente</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -259,7 +259,7 @@ export default function ConfiguracoesPage() {
                       {mercadoPagoConnected ? "Conectado" : "Desconectado"}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      {mercadoPagoConnected ? "Conta verificada" : "NÃ£o configurado"}
+                      {mercadoPagoConnected ? "Conta verificada" : "Não configurado"}
                     </span>
                   </div>
                   <Button
@@ -277,7 +277,7 @@ export default function ConfiguracoesPage() {
                 {!mercadoPagoConnected && (
                   <div className="text-sm text-yellow-600">
                     <p className="flex items-center gap-2">
-                      <X className="h-4 w-4" /> Configure para aceitar pagamentos automÃ¡ticos
+                      <X className="h-4 w-4" /> Configure para aceitar pagamentos automáticos
                     </p>
                   </div>
                 )}
@@ -288,9 +288,9 @@ export default function ConfiguracoesPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <MessageSquare className="h-5 w-5" />
-                  n8n AutomaÃ§Ãµes
+                  n8n AutomaçÃµes
                 </CardTitle>
-                <CardDescription>Workflows automÃ¡ticos para leads e cobranÃ§a</CardDescription>
+                <CardDescription>Workflows automáticos para leads e cobrança</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -311,16 +311,16 @@ export default function ConfiguracoesPage() {
                     <Check className="h-4 w-4 text-green-500" /> Funil de leads Instagram â†’ WhatsApp
                   </p>
                   <p className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" /> CobranÃ§a automÃ¡tica de mensalidades
+                    <Check className="h-4 w-4 text-green-500" /> Cobrança automática de mensalidades
                   </p>
                   <p className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" /> Lembretes de aula experimental
                   </p>
                   <p className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" /> Follow-up pÃ³s-reserva
+                    <Check className="h-4 w-4 text-green-500" /> Follow-up pós-reserva
                   </p>
                   <p className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" /> RelatÃ³rios automÃ¡ticos
+                    <Check className="h-4 w-4 text-green-500" /> Relatórios automáticos
                   </p>
                 </div>
               </CardContent>
@@ -334,7 +334,7 @@ export default function ConfiguracoesPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Building className="h-5 w-5" />
-                  InformaÃ§Ãµes da Arena
+                  InformaçÃµes da Arena
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -377,7 +377,7 @@ export default function ConfiguracoesPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="arena-address">EndereÃ§o Completo</Label>
+                  <Label htmlFor="arena-address">Endereço Completo</Label>
                   <Input
                     id="arena-address"
                     value={arenaInfo.address}
@@ -386,14 +386,14 @@ export default function ConfiguracoesPage() {
                   />
                 </div>
                 <Button onClick={handleSaveArenaInfo} className="bg-orange-500 hover:bg-orange-600">
-                  Salvar AlteraÃ§Ãµes
+                  Salvar AlteraçÃµes
                 </Button>
               </CardContent>
             </Card>
 
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white">HorÃ¡rio de Funcionamento</CardTitle>
+                <CardTitle className="text-white">Horário de Funcionamento</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4">
@@ -425,7 +425,7 @@ export default function ConfiguracoesPage() {
                   ))}
                 </div>
                 <Button onClick={handleSaveHorarios} className="bg-orange-500 hover:bg-orange-600">
-                  Salvar HorÃ¡rios
+                  Salvar Horários
                 </Button>
               </CardContent>
             </Card>
@@ -436,14 +436,14 @@ export default function ConfiguracoesPage() {
           <div className="grid gap-6">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white">PreferÃªncias de NotificaÃ§Ã£o</CardTitle>
-                <CardDescription>Configure como e quando receber notificaÃ§Ãµes</CardDescription>
+                <CardTitle className="text-white">Preferências de Notificação</CardTitle>
+                <CardDescription>Configure como e quando receber notificaçÃµes</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-white">NotificaÃ§Ãµes por Email</Label>
-                    <p className="text-sm text-muted-foreground">Receba resumos diÃ¡rios e alertas importantes</p>
+                    <Label className="text-white">NotificaçÃµes por Email</Label>
+                    <p className="text-sm text-muted-foreground">Receba resumos diários e alertas importantes</p>
                   </div>
                   <Switch
                     checked={emailNotifications}
@@ -455,7 +455,7 @@ export default function ConfiguracoesPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-white">NotificaÃ§Ãµes por SMS</Label>
+                    <Label className="text-white">NotificaçÃµes por SMS</Label>
                     <p className="text-sm text-muted-foreground">Alertas urgentes via mensagem de texto</p>
                   </div>
                   <Switch
@@ -467,7 +467,7 @@ export default function ConfiguracoesPage() {
                 <Separator className="bg-gray-600" />
 
                 <div className="space-y-4">
-                  <Label className="text-white">Tipos de NotificaÃ§Ã£o</Label>
+                  <Label className="text-white">Tipos de Notificação</Label>
                   <div className="space-y-3">
                     {[
                       { label: "Nova reserva", checked: true },
@@ -476,7 +476,7 @@ export default function ConfiguracoesPage() {
                       { label: "Pagamento pendente", checked: false },
                       { label: "Novo lead capturado", checked: true },
                       { label: "Aula experimental agendada", checked: true },
-                      { label: "RelatÃ³rio semanal", checked: false },
+                      { label: "Relatório semanal", checked: false },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center space-x-2">
                         <Switch defaultChecked={item.checked} />
@@ -494,7 +494,7 @@ export default function ConfiguracoesPage() {
           <div className="grid gap-6">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white">UsuÃ¡rios do Sistema</CardTitle>
+                <CardTitle className="text-white">Usuários do Sistema</CardTitle>
                 <CardDescription>Gerencie acessos e permissÃµes</CardDescription>
               </CardHeader>
               <CardContent>
@@ -506,7 +506,7 @@ export default function ConfiguracoesPage() {
                       tipo: "Administrador",
                       status: "Ativo",
                     },
-                    { nome: "JoÃ£o Silva", email: "joao@arenacoligados.com", tipo: "Professor", status: "Ativo" },
+                    { nome: "João Silva", email: "joao@arenacoligados.com", tipo: "Professor", status: "Ativo" },
                     { nome: "Maria Santos", email: "maria@arenacoligados.com", tipo: "Professor", status: "Ativo" },
                     { nome: "Pedro Costa", email: "pedro@arenacoligados.com", tipo: "Professor", status: "Inativo" },
                   ].map((usuario) => (
@@ -544,7 +544,7 @@ export default function ConfiguracoesPage() {
                 </div>
                 <div className="mt-4">
                   <Button onClick={handleAddUser} className="bg-orange-500 hover:bg-orange-600">
-                    Adicionar UsuÃ¡rio
+                    Adicionar Usuário
                   </Button>
                 </div>
               </CardContent>

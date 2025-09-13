@@ -51,7 +51,7 @@ export default function ReservasPage() {
         <TabsList>
           <TabsTrigger value="calendar" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            CalendÃ¡rio
+            Calendário
           </TabsTrigger>
           <TabsTrigger value="list" className="flex items-center gap-2">
             <List className="h-4 w-4" />

@@ -32,9 +32,9 @@ const navigation = [
   { name: "Professores", href: "/dashboard/professores", icon: GraduationCap, roles: ["admin"] },
   { name: "Pagamentos", href: "/dashboard/pagamentos", icon: CreditCard, roles: ["admin"] },
   { name: "Leads", href: "/dashboard/leads", icon: UserCheck, roles: ["admin"] },
-  { name: "RelatÃ³rios", href: "/dashboard/relatorios", icon: BarChart3, roles: ["admin", "professor"] },
-  { name: "DiagnÃ³stico", href: "/dashboard/diagnostico", icon: Database, roles: ["admin"] },
-  { name: "ConfiguraÃ§Ãµes", href: "/dashboard/configuracoes", icon: Settings, roles: ["admin"] },
+  { name: "Relatórios", href: "/dashboard/relatorios", icon: BarChart3, roles: ["admin", "professor"] },
+  { name: "Diagnóstico", href: "/dashboard/diagnostico", icon: Database, roles: ["admin"] },
+  { name: "Configurações", href: "/dashboard/configuracoes", icon: Settings, roles: ["admin"] },
 ]
 
 export function Sidebar() {
@@ -134,7 +134,7 @@ function SidebarContent({
             <h1 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-green-500 bg-clip-text text-transparent">
               Arena Coligados
             </h1>
-            <p className="text-xs text-gray-400 font-medium">GestÃ£o Esportiva</p>
+            <p className="text-xs text-gray-400 font-medium">Gestão Esportiva</p>
           </div>
         </div>
         {onClose && (

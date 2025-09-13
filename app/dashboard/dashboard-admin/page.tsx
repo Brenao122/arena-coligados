@@ -14,6 +14,7 @@ import {
   Settings,
   Zap,
   BarChart3,
+  RefreshCw,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -37,6 +38,8 @@ export default function DashboardPage() {
   })
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
+  const [syncing, setSyncing] = useState(false)
+  const [syncMessage, setSyncMessage] = useState("")
 
   useEffect(() => {
     // Verificar se há usuário logado
@@ -112,6 +115,32 @@ export default function DashboardPage() {
     }
   }
 
+  // Função para sincronizar com Google Sheets
+  const handleSync = async () => {
+    setSyncing(true)
+    setSyncMessage("Sincronizando com Google Sheets...")
+    
+    try {
+      // Recarregar dados do dashboard
+      await fetchDashboardData()
+      
+      setSyncMessage("✅ Sincronização concluída! Dados atualizados.")
+      
+      // Limpar mensagem após 3 segundos
+      setTimeout(() => {
+        setSyncMessage("")
+      }, 3000)
+      
+    } catch (error) {
+      setSyncMessage("❌ Erro na sincronização. Tente novamente.")
+      setTimeout(() => {
+        setSyncMessage("")
+      }, 3000)
+    } finally {
+      setSyncing(false)
+    }
+  }
+
   const handleLogout = () => {
     localStorage.removeItem('arena_user')
     window.location.href = '/login'
@@ -158,6 +187,14 @@ export default function DashboardPage() {
         </div>
         <div className="flex gap-2">
           <Button
+            onClick={handleSync}
+            disabled={syncing}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+            {syncing ? 'Sincronizando...' : 'Sincronizar'}
+          </Button>
+          <Button
             onClick={handleLogout}
             variant="outline"
             className="border-gray-600 text-gray-300 hover:bg-gray-700"
@@ -175,6 +212,17 @@ export default function DashboardPage() {
           </Button>
         </div>
       </div>
+
+      {/* Mensagem de Sincronização */}
+      {syncMessage && (
+        <div className={`p-4 rounded-lg text-center ${
+          syncMessage.includes('✅') 
+            ? 'bg-green-900/20 border border-green-800 text-green-300' 
+            : 'bg-red-900/20 border border-red-800 text-red-300'
+        }`}>
+          {syncMessage}
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

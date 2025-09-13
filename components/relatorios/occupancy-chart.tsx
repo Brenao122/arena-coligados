@@ -24,14 +24,14 @@ export function OccupancyChart() {
       try {
         setLoading(true)
 
-        // Buscar dados reais de ocupaÃ§Ã£o do Supabase
+        // Buscar dados reais de ocupação do Supabase
         const { data: reservasData } = await supabase
           .from("reservas")
           .select("date, quadra_id")
           .gte("date", getWeekStart())
           .lte("date", getWeekEnd())
 
-        // Calcular ocupaÃ§Ã£o por dia da semana
+        // Calcular ocupação por dia da semana
         const weekData = calculateWeeklyOccupancy(reservasData || [])
         setData(weekData)
         setCurrentWeek(getCurrentWeekRange())
@@ -43,7 +43,7 @@ export function OccupancyChart() {
           { day: "Qua", ocupacao: 0, total: 0 },
           { day: "Qui", ocupacao: 0, total: 0 },
           { day: "Sex", ocupacao: 0, total: 0 },
-          { day: "SÃ¡b", ocupacao: 0, total: 0 },
+          { day: "Sáb", ocupacao: 0, total: 0 },
           { day: "Dom", ocupacao: 0, total: 0 },
         ])
       } finally {
@@ -74,7 +74,7 @@ export function OccupancyChart() {
   }
 
   const calculateWeeklyOccupancy = (reservas: Array<{ date: string; quadra_id: string }>) => {
-    const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "SÃ¡b"]
+    const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
     const weekData = days.map((day, index) => {
       const dayReservas = reservas.filter((r) => new Date(r.date).getDay() === index)
       const ocupacao = Math.min((dayReservas.length / 12) * 100, 100) // Assumindo 12 slots por dia
@@ -84,12 +84,12 @@ export function OccupancyChart() {
         total: dayReservas.length,
       }
     })
-    return weekData.slice(1).concat(weekData.slice(0, 1)) // Reordenar para comeÃ§ar na segunda
+    return weekData.slice(1).concat(weekData.slice(0, 1)) // Reordenar para começar na segunda
   }
 
   const chartConfig = {
     ocupacao: {
-      label: "OcupaÃ§Ã£o (%)",
+      label: "Ocupação (%)",
       color: "hsl(var(--color-chart-3))",
     },
   }
@@ -98,7 +98,7 @@ export function OccupancyChart() {
     return (
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader>
-          <CardTitle className="text-white">OcupaÃ§Ã£o das Quadras</CardTitle>
+          <CardTitle className="text-white">Ocupação das Quadras</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-80 animate-pulse bg-gray-700 rounded"></div>
@@ -112,8 +112,8 @@ export function OccupancyChart() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-white">OcupaÃ§Ã£o das Quadras</CardTitle>
-            <CardDescription className="text-gray-400">Percentual de ocupaÃ§Ã£o por dia da semana</CardDescription>
+            <CardTitle className="text-white">Ocupação das Quadras</CardTitle>
+            <CardDescription className="text-gray-400">Percentual de ocupação por dia da semana</CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-700">
@@ -136,7 +136,7 @@ export function OccupancyChart() {
                 content={<ChartTooltipContent />}
                 formatter={(value, name) => [
                   name === "ocupacao" ? `${value}%` : value,
-                  name === "ocupacao" ? "OcupaÃ§Ã£o" : "Total de Reservas",
+                  name === "ocupacao" ? "Ocupação" : "Total de Reservas",
                 ]}
               />
               <Bar dataKey="ocupacao" fill="#10B981" name="ocupacao" radius={[4, 4, 0, 0]} />

@@ -1,8 +1,7 @@
 "use client"
 
-import { useAuth } from "@/hooks/use-auth"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 interface AccessControlProps {
   children: React.ReactNode
@@ -11,22 +10,40 @@ interface AccessControlProps {
 }
 
 export function AccessControl({ children, allowedRoles, requireAuth = true }: AccessControlProps) {
-  const { profile, loading } = useAuth()
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    if (loading) return
-
-    if (requireAuth && !profile) {
-      router.push('/login')
-      return
+    // Verificar se há usuário logado no localStorage
+    const checkUser = () => {
+      try {
+        const savedUser = localStorage.getItem('arena_user')
+        if (savedUser) {
+          const userData = JSON.parse(savedUser)
+          setUser(userData)
+          console.log('[LOGIN→CRM] Usuário encontrado:', userData)
+        } else {
+          console.log('[LOGIN→CRM] Nenhum usuário encontrado no localStorage')
+          if (requireAuth) {
+            router.push('/login')
+          }
+        }
+      } catch (error) {
+        console.error('[LOGIN→CRM] Erro ao verificar usuário:', error)
+        if (requireAuth) {
+          router.push('/login')
+        }
+      }
+      setLoading(false)
     }
 
-    if (allowedRoles && profile && !allowedRoles.includes(profile.role)) {
-      router.push('/dashboard')
-      return
-    }
-  }, [profile, loading, allowedRoles, requireAuth, router])
+    // Aguardar um pouco para garantir que o localStorage está disponível
+    setTimeout(checkUser, 100)
+  }, [requireAuth, router])
+
+  // Debug: log do estado
+  console.log('[LOGIN→CRM] AccessControl - loading:', loading, 'user:', user, 'requireAuth:', requireAuth)
 
   if (loading) {
     return (
@@ -36,11 +53,11 @@ export function AccessControl({ children, allowedRoles, requireAuth = true }: Ac
     )
   }
 
-  if (requireAuth && !profile) {
+  if (requireAuth && !user) {
     return null
   }
 
-  if (allowedRoles && profile && !allowedRoles.includes(profile.role)) {
+  if (allowedRoles && user && !allowedRoles.includes(user.profile?.role)) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-white text-center">

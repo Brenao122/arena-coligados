@@ -48,11 +48,11 @@ export function IntegrationSettings() {
     {
       id: "whatsapp",
       name: "WhatsApp Business API",
-      description: "AutomaÃ§Ã£o de mensagens e chatbot",
+      description: "Automação de mensagens e chatbot",
       icon: MessageSquare,
       status: settings.whatsapp.enabled,
       fields: [
-        { key: "phone", label: "NÃºmero do WhatsApp", placeholder: "+5511999999999" },
+        { key: "phone", label: "Número do WhatsApp", placeholder: "+5511999999999" },
         { key: "apiKey", label: "API Key", placeholder: "Sua chave da API" },
         { key: "webhookUrl", label: "Webhook URL", placeholder: "https://sua-api.com/webhook" },
       ],
@@ -75,14 +75,14 @@ export function IntegrationSettings() {
       icon: CreditCard,
       status: settings.mercadoPago.enabled,
       fields: [
-        { key: "publicKey", label: "Public Key", placeholder: "Chave pÃºblica" },
+        { key: "publicKey", label: "Public Key", placeholder: "Chave pública" },
         { key: "accessToken", label: "Access Token", placeholder: "Token de acesso" },
       ],
     },
     {
       id: "n8n",
       name: "n8n Workflows",
-      description: "AutomaÃ§Ã£o de processos",
+      description: "Automação de processos",
       icon: Zap,
       status: settings.n8n.enabled,
       fields: [
@@ -96,7 +96,7 @@ export function IntegrationSettings() {
     <div className="space-y-6">
       <Alert>
         <AlertDescription>
-          Configure as integraÃ§Ãµes abaixo para ativar funcionalidades avanÃ§adas como automaÃ§Ã£o de WhatsApp, captura de
+          Configure as integraçÃµes abaixo para ativar funcionalidades avançadas como automação de WhatsApp, captura de
           leads do Instagram e processamento de pagamentos.
         </AlertDescription>
       </Alert>
@@ -169,7 +169,7 @@ export function IntegrationSettings() {
 
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={saving} className="bg-brand-primary hover:bg-orange-600">
-          {saving ? "Salvando..." : "Salvar ConfiguraÃ§Ãµes"}
+          {saving ? "Salvando..." : "Salvar ConfiguraçÃµes"}
         </Button>
       </div>
     </div>

@@ -36,11 +36,11 @@ export function RecentBookings() {
     try {
       setLoading(true)
       
-      // Buscar dados da planilha N8N via API
+      // Buscar dados reais das planilhas
       const [reservasRes, clientesRes, quadrasRes] = await Promise.all([
         fetch('/api/sheets/read?sheet=Página1'),
-        fetch('/api/sheets/read?sheet=Página1'),
-        fetch('/api/sheets/read?sheet=Página1')
+        fetch('/api/sheets/read?sheet=clientes'),
+        fetch('/api/sheets/read?sheet=quadras')
       ])
 
       const [reservasData, clientesData, quadrasData] = await Promise.all([

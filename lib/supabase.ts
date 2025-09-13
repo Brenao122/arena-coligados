@@ -26,7 +26,7 @@ export const getProfile = async (userId: string) => {
       return { data, error: null }
     }
 
-    return { data: null, error: error || { message: "Perfil nÃ£o encontrado" } }
+    return { data: null, error: error || { message: "Perfil não encontrado" } }
   } catch (error) {
     return { data: null, error }
   }

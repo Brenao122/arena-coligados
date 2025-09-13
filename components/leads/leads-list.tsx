@@ -41,7 +41,7 @@ export function LeadsList({ refresh }: LeadsListProps) {
   const fetchLeads = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/sheets/read?sheet=Página1')
+      const response = await fetch('/api/sheets/read?sheet=leads')
       const result = await response.json()
       
       if (result.ok) {
@@ -132,7 +132,7 @@ export function LeadsList({ refresh }: LeadsListProps) {
   return (
     <Card className="bg-gray-800 border-gray-700">
       <CardHeader>
-        <CardTitle className="text-white">GestÃ£o de Leads</CardTitle>
+        <CardTitle className="text-white">Gestão de Leads</CardTitle>
         <CardDescription className="text-gray-400">Acompanhe e converta seus leads em clientes</CardDescription>
       </CardHeader>
       <CardContent>
@@ -180,7 +180,7 @@ export function LeadsList({ refresh }: LeadsListProps) {
               <div className="flex items-center gap-2">
                 <div className="h-5 w-5 bg-gradient-to-r from-orange-500 to-green-500 rounded-full" />
                 <div>
-                  <p className="text-sm text-gray-400">Taxa ConversÃ£o</p>
+                  <p className="text-sm text-gray-400">Taxa Conversão</p>
                   <p className="text-2xl font-bold text-white">
                     {leads.length > 0
                       ? Math.round((leads.filter((l) => l.status === "convertido").length / leads.length) * 100)
@@ -215,7 +215,7 @@ export function LeadsList({ refresh }: LeadsListProps) {
               <SelectItem value="whatsapp">WhatsApp</SelectItem>
               <SelectItem value="instagram">Instagram</SelectItem>
               <SelectItem value="site">Site</SelectItem>
-              <SelectItem value="indicacao">IndicaÃ§Ã£o</SelectItem>
+              <SelectItem value="indicacao">Indicação</SelectItem>
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -244,7 +244,7 @@ export function LeadsList({ refresh }: LeadsListProps) {
                 <TableHead className="text-gray-300">Notas</TableHead>
                 <TableHead className="text-gray-300">Status</TableHead>
                 <TableHead className="text-gray-300">Data</TableHead>
-                <TableHead className="text-gray-300">AÃ§Ãµes</TableHead>
+                <TableHead className="text-gray-300">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -23,8 +23,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arenacoligados.verc
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Arena Coligados - GestÃ£o Esportiva",
-  description: "Sistema completo de gestÃ£o para arenas esportivas",
+  title: "Arena Coligados - Gestão Esportiva",
+  description: "Sistema completo de gestão para arenas esportivas",
   generator: "v0.dev",
 }
 

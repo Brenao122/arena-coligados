@@ -11,9 +11,9 @@ export default function RelatoriosPage() {
     <div className="space-y-6 bg-gray-900 min-h-screen text-white p-6">
       <div>
         <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-green-400 bg-clip-text text-transparent">
-          RelatÃ³rios
+          Relatórios
         </h1>
-        <p className="text-gray-400">AnÃ¡lise detalhada do desempenho da arena</p>
+        <p className="text-gray-400">Análise detalhada do desempenho da arena</p>
       </div>
 
       <Tabs defaultValue="financeiro" className="space-y-4">
@@ -30,7 +30,7 @@ export default function RelatoriosPage() {
             className="flex items-center gap-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white text-gray-300"
           >
             <Calendar className="h-4 w-4" />
-            OcupaÃ§Ã£o
+            Ocupação
           </TabsTrigger>
           <TabsTrigger
             value="performance"
@@ -48,7 +48,7 @@ export default function RelatoriosPage() {
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Resumo Mensal</CardTitle>
-                <CardDescription className="text-gray-400">Principais mÃ©tricas do mÃªs atual</CardDescription>
+                <CardDescription className="text-gray-400">Principais métricas do mês atual</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -57,11 +57,11 @@ export default function RelatoriosPage() {
                     <span className="font-medium text-white">R$ 12.450,00</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400">NÃºmero de Reservas</span>
+                    <span className="text-sm text-gray-400">Número de Reservas</span>
                     <span className="font-medium text-white">156</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400">Ticket MÃ©dio</span>
+                    <span className="text-sm text-gray-400">Ticket Médio</span>
                     <span className="font-medium text-white">R$ 79,81</span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -74,8 +74,8 @@ export default function RelatoriosPage() {
 
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-lg text-white">MÃ©todos de Pagamento</CardTitle>
-                <CardDescription className="text-gray-400">DistribuiÃ§Ã£o por forma de pagamento</CardDescription>
+                <CardTitle className="text-lg text-white">Métodos de Pagamento</CardTitle>
+                <CardDescription className="text-gray-400">Distribuição por forma de pagamento</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -89,7 +89,7 @@ export default function RelatoriosPage() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400">CartÃ£o</span>
+                    <span className="text-sm text-gray-400">Cartão</span>
                     <div className="flex items-center gap-2">
                       <div className="w-20 h-2 bg-gray-700 rounded-full">
                         <div className="w-1/3 h-2 bg-gradient-to-r from-green-500 to-green-400 rounded-full"></div>
@@ -118,13 +118,13 @@ export default function RelatoriosPage() {
           <div className="grid gap-4 md:grid-cols-3">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-lg text-white">HorÃ¡rio de Pico</CardTitle>
-                <CardDescription className="text-gray-400">PerÃ­odo com maior ocupaÃ§Ã£o</CardDescription>
+                <CardTitle className="text-lg text-white">Horário de Pico</CardTitle>
+                <CardDescription className="text-gray-400">Período com maior ocupação</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
                   <p className="text-3xl font-bold text-orange-400">19h - 21h</p>
-                  <p className="text-sm text-gray-400">85% de ocupaÃ§Ã£o mÃ©dia</p>
+                  <p className="text-sm text-gray-400">85% de ocupação média</p>
                 </div>
               </CardContent>
             </Card>
@@ -132,20 +132,20 @@ export default function RelatoriosPage() {
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Quadra Mais Popular</CardTitle>
-                <CardDescription className="text-gray-400">Maior nÃºmero de reservas</CardDescription>
+                <CardDescription className="text-gray-400">Maior número de reservas</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-green-400">Quadra 1 - Futsal</p>
-                  <p className="text-sm text-gray-400">45 reservas este mÃªs</p>
+                  <p className="text-sm text-gray-400">45 reservas este mês</p>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-lg text-white">Taxa de OcupaÃ§Ã£o</CardTitle>
-                <CardDescription className="text-gray-400">MÃ©dia semanal</CardDescription>
+                <CardTitle className="text-lg text-white">Taxa de Ocupação</CardTitle>
+                <CardDescription className="text-gray-400">Média semanal</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
@@ -162,12 +162,12 @@ export default function RelatoriosPage() {
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Top Professores</CardTitle>
-                <CardDescription className="text-gray-400">Ranking por nÃºmero de aulas</CardDescription>
+                <CardDescription className="text-gray-400">Ranking por número de aulas</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {[
-                    { name: "JoÃ£o Silva", aulas: 28, receita: 2240 },
+                    { name: "João Silva", aulas: 28, receita: 2240 },
                     { name: "Maria Santos", aulas: 24, receita: 1920 },
                     { name: "Pedro Costa", aulas: 19, receita: 1520 },
                   ].map((professor, index) => (
@@ -191,7 +191,7 @@ export default function RelatoriosPage() {
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-lg text-white">Clientes Mais Ativos</CardTitle>
-                <CardDescription className="text-gray-400">Ranking por frequÃªncia</CardDescription>
+                <CardDescription className="text-gray-400">Ranking por frequência</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

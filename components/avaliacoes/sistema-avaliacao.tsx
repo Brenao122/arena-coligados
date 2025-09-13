@@ -25,13 +25,13 @@ export function SistemaAvaliacao({ professorId, aulaId, tipo }: AvaliacaoProps) 
   })
 
   useEffect(() => {
-    // TODO: Buscar avaliaÃ§Ãµes reais do banco de dados
+    // TODO: Buscar avaliaçÃµes reais do banco de dados
     // fetchAvaliacoes(professorId, aulaId)
   }, [professorId, aulaId])
 
   return (
     <div className="space-y-6">
-      {/* Header com EstatÃ­sticas Positivas */}
+      {/* Header com Estatísticas Positivas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-orange-500/10 to-orange-600/10 border-orange-500/20">
           <CardContent className="p-4 text-center">
@@ -39,7 +39,7 @@ export function SistemaAvaliacao({ professorId, aulaId, tipo }: AvaliacaoProps) 
               <Star className="h-6 w-6 text-orange-500 fill-orange-500" />
             </div>
             <div className="text-2xl font-bold text-orange-500">{estatisticas.mediaGeral}</div>
-            <div className="text-sm text-gray-400">AvaliaÃ§Ã£o MÃ©dia</div>
+            <div className="text-sm text-gray-400">Avaliação Média</div>
           </CardContent>
         </Card>
 
@@ -49,7 +49,7 @@ export function SistemaAvaliacao({ professorId, aulaId, tipo }: AvaliacaoProps) 
               <ThumbsUp className="h-6 w-6 text-green-500" />
             </div>
             <div className="text-2xl font-bold text-green-500">{estatisticas.recomendacao}%</div>
-            <div className="text-sm text-gray-400">RecomendaÃ§Ã£o</div>
+            <div className="text-sm text-gray-400">Recomendação</div>
           </CardContent>
         </Card>
 
@@ -93,7 +93,7 @@ export function SistemaAvaliacao({ professorId, aulaId, tipo }: AvaliacaoProps) 
         </CardContent>
       </Card>
 
-      {/* AvaliaÃ§Ãµes Positivas */}
+      {/* AvaliaçÃµes Positivas */}
       <Card className="bg-gray-800/50 border-gray-700">
         <CardHeader>
           <CardTitle className="text-white">Feedbacks Positivos Recentes</CardTitle>
@@ -130,14 +130,14 @@ export function SistemaAvaliacao({ professorId, aulaId, tipo }: AvaliacaoProps) 
         </CardContent>
       </Card>
 
-      {/* FormulÃ¡rio de AvaliaÃ§Ã£o */}
+      {/* Formulário de Avaliação */}
       <Card className="bg-gray-800/50 border-gray-700">
         <CardHeader>
-          <CardTitle className="text-white">Compartilhe sua ExperiÃªncia</CardTitle>
+          <CardTitle className="text-white">Compartilhe sua Experiência</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="text-sm text-gray-300 mb-2 block">Como foi sua experiÃªncia?</label>
+            <label className="text-sm text-gray-300 mb-2 block">Como foi sua experiência?</label>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button key={star} onClick={() => setRating(star)} className="p-1">
@@ -157,7 +157,7 @@ export function SistemaAvaliacao({ professorId, aulaId, tipo }: AvaliacaoProps) 
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-orange-500 focus:outline-none"
-              placeholder="Compartilhe os pontos positivos da sua experiÃªncia..."
+              placeholder="Compartilhe os pontos positivos da sua experiência..."
               rows={3}
             />
           </div>

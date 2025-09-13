@@ -119,7 +119,7 @@ export default function ProfessorDetalhes() {
   if (!professor) {
     return (
       <div className="min-h-screen bg-gray-900 p-6 flex items-center justify-center">
-        <div className="text-white">Professor nÃ£o encontrado</div>
+        <div className="text-white">Professor não encontrado</div>
       </div>
     )
   }
@@ -139,7 +139,7 @@ export default function ProfessorDetalhes() {
           </div>
         </div>
 
-        {/* Cards de MÃ©tricas */}
+        {/* Cards de Métricas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="bg-gradient-to-br from-green-500 to-green-600 border-0">
             <CardContent className="p-6">
@@ -157,7 +157,7 @@ export default function ProfessorDetalhes() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm">Aulas/MÃªs</p>
+                  <p className="text-blue-100 text-sm">Aulas/Mês</p>
                   <p className="text-2xl font-bold text-white">{professor.aulas_mes || 0}</p>
                 </div>
                 <Calendar className="h-8 w-8 text-blue-100" />
@@ -169,7 +169,7 @@ export default function ProfessorDetalhes() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-sm">PreÃ§o/Aula</p>
+                  <p className="text-orange-100 text-sm">Preço/Aula</p>
                   <p className="text-2xl font-bold text-white">R$ {professor.preco_aula || 0}</p>
                 </div>
                 <Clock className="h-8 w-8 text-orange-100" />
@@ -181,7 +181,7 @@ export default function ProfessorDetalhes() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-100 text-sm">AvaliaÃ§Ã£o</p>
+                  <p className="text-yellow-100 text-sm">Avaliação</p>
                   <p className="text-2xl font-bold text-white">{professor.avaliacao || 0}</p>
                 </div>
                 <Star className="h-8 w-8 text-yellow-100" />
@@ -191,10 +191,10 @@ export default function ProfessorDetalhes() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* InformaÃ§Ãµes Pessoais */}
+          {/* InformaçÃµes Pessoais */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">InformaÃ§Ãµes Pessoais</CardTitle>
+              <CardTitle className="text-white">InformaçÃµes Pessoais</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
@@ -208,7 +208,7 @@ export default function ProfessorDetalhes() {
                 <Phone className="h-5 w-5 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-400">Telefone</p>
-                  <p className="text-white">{professor.phone || "NÃ£o informado"}</p>
+                  <p className="text-white">{professor.phone || "Não informado"}</p>
                 </div>
               </div>
               <div>
@@ -218,7 +218,7 @@ export default function ProfessorDetalhes() {
                     <Badge key={esp} className="bg-orange-500 text-white">
                       {esp}
                     </Badge>
-                  )) || <span className="text-gray-400">NÃ£o informado</span>}
+                  )) || <span className="text-gray-400">Não informado</span>}
                 </div>
               </div>
               <div>
@@ -228,10 +228,10 @@ export default function ProfessorDetalhes() {
             </CardContent>
           </Card>
 
-          {/* PrÃ³ximas Aulas */}
+          {/* Próximas Aulas */}
           <Card className="lg:col-span-2 bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">PrÃ³ximas Aulas</CardTitle>
+              <CardTitle className="text-white">Próximas Aulas</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -252,7 +252,7 @@ export default function ProfessorDetalhes() {
                       <div className="text-right">
                         <p className="text-white font-medium">{new Date(aula.data_inicio).toLocaleDateString()}</p>
                         <Badge className={aula.status === "concluida" ? "bg-green-500" : "bg-orange-500"}>
-                          {aula.status === "concluida" ? "ConcluÃ­da" : "Agendada"}
+                          {aula.status === "concluida" ? "Concluída" : "Agendada"}
                         </Badge>
                       </div>
                     </div>

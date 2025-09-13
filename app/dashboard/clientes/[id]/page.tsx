@@ -91,7 +91,7 @@ export default function ClienteDetalhes() {
     return (
       <div className="min-h-screen bg-gray-900 p-6">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-2xl text-white">Cliente nÃ£o encontrado</h1>
+          <h1 className="text-2xl text-white">Cliente não encontrado</h1>
           <Button onClick={() => router.back()} className="mt-4">
             Voltar
           </Button>
@@ -120,7 +120,7 @@ export default function ClienteDetalhes() {
           </div>
         </div>
 
-        {/* Cards de MÃ©tricas */}
+        {/* Cards de Métricas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="bg-gradient-to-br from-green-500 to-green-600 border-0">
             <CardContent className="p-6">
@@ -150,7 +150,7 @@ export default function ClienteDetalhes() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-sm">FrequÃªncia</p>
+                  <p className="text-orange-100 text-sm">Frequência</p>
                   <p className="text-2xl font-bold text-white">{frequencia}%</p>
                 </div>
                 <Clock className="h-8 w-8 text-orange-100" />
@@ -171,10 +171,10 @@ export default function ClienteDetalhes() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* InformaÃ§Ãµes Pessoais */}
+          {/* InformaçÃµes Pessoais */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">InformaÃ§Ãµes Pessoais</CardTitle>
+              <CardTitle className="text-white">InformaçÃµes Pessoais</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
@@ -196,10 +196,10 @@ export default function ClienteDetalhes() {
             </CardContent>
           </Card>
 
-          {/* HistÃ³rico de Reservas */}
+          {/* Histórico de Reservas */}
           <Card className="lg:col-span-2 bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">HistÃ³rico de Reservas</CardTitle>
+              <CardTitle className="text-white">Histórico de Reservas</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -209,13 +209,13 @@ export default function ClienteDetalhes() {
                   reservas.map((reserva) => (
                     <div key={reserva.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
                       <div>
-                        <p className="text-white font-medium">{reserva.quadras?.[0]?.nome || 'Quadra nÃ£o especificada'}</p>
+                        <p className="text-white font-medium">{reserva.quadras?.[0]?.nome || 'Quadra não especificada'}</p>
                         <p className="text-sm text-gray-400">{new Date(reserva.created_at).toLocaleDateString()}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-white font-medium">R$ {reserva.valor_total.toFixed(2)}</p>
                         <Badge className={reserva.status === "concluida" ? "bg-green-500" : "bg-orange-500"}>
-                          {reserva.status === "concluida" ? "ConcluÃ­da" : "Agendada"}
+                          {reserva.status === "concluida" ? "Concluída" : "Agendada"}
                         </Badge>
                       </div>
                     </div>

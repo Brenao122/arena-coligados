@@ -24,7 +24,7 @@ export function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // ValidaÃ§Ãµes
+    // ValidaçÃµes
     if (!fullName || !email || !password || !confirmPassword) {
       setError("Por favor, preencha todos os campos")
       return
@@ -36,12 +36,12 @@ export function RegisterForm() {
     }
 
     if (password !== confirmPassword) {
-      setError("As senhas nÃ£o coincidem")
+      setError("As senhas não coincidem")
       return
     }
 
     if (!email.includes("@")) {
-      setError("Por favor, insira um email vÃ¡lido")
+      setError("Por favor, insira um email válido")
       return
     }
 
@@ -57,13 +57,13 @@ export function RegisterForm() {
       } else {
         setSuccess("Conta criada com sucesso! Verifique seu email para confirmar.")
         
-        // Limpar formulÃ¡rio
+        // Limpar formulário
         setFullName("")
         setEmail("")
         setPassword("")
         setConfirmPassword("")
         
-        // Redirecionar apÃ³s 3 segundos
+        // Redirecionar após 3 segundos
         setTimeout(() => {
           router.push("/login")
         }, 3000)
@@ -133,7 +133,7 @@ export function RegisterForm() {
             className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500"
             required
           />
-          <p className="text-xs text-gray-400">MÃ­nimo 6 caracteres</p>
+          <p className="text-xs text-gray-400">Mínimo 6 caracteres</p>
         </div>
 
         <div className="space-y-2">
@@ -168,7 +168,7 @@ export function RegisterForm() {
 
         <div className="text-center pt-4">
           <p className="text-gray-300 text-sm">
-            JÃ¡ tem uma conta?{" "}
+            Já tem uma conta?{" "}
             <Button
               type="button"
               variant="link"

@@ -3,44 +3,44 @@
  *
  * 1. ADMINISTRADOR (admin)
  *    - Acesso completo ao sistema
- *    - Dashboard: VisÃ£o geral com todas as mÃ©tricas
+ *    - Dashboard: Visão geral com todas as métricas
  *    - Funcionalidades:
  *      âœ… Gerenciar quadras (criar, editar, desativar)
- *      âœ… Gerenciar professores (contratar, demitir, horÃ¡rios)
- *      âœ… Gerenciar clientes (visualizar, editar, histÃ³rico)
+ *      âœ… Gerenciar professores (contratar, demitir, horários)
+ *      âœ… Gerenciar clientes (visualizar, editar, histórico)
  *      âœ… Gerenciar reservas (todas as reservas)
- *      âœ… RelatÃ³rios financeiros completos
- *      âœ… ConfiguraÃ§Ãµes do sistema
- *      âœ… IntegraÃ§Ãµes (WhatsApp, Instagram, Pagamentos)
+ *      âœ… Relatórios financeiros completos
+ *      âœ… ConfiguraçÃµes do sistema
+ *      âœ… IntegraçÃµes (WhatsApp, Instagram, Pagamentos)
  *      âœ… Leads e conversÃµes
- *      âœ… Pagamentos e cobranÃ§a
+ *      âœ… Pagamentos e cobrança
  *
  * 2. PROFESSOR (professor)
- *    - Acesso focado em gestÃ£o de aulas e alunos
- *    - Dashboard: MÃ©tricas de suas aulas e alunos
+ *    - Acesso focado em gestão de aulas e alunos
+ *    - Dashboard: Métricas de suas aulas e alunos
  *    - Funcionalidades:
  *      âœ… Visualizar suas aulas agendadas
  *      âœ… Gerenciar disponibilidade pessoal
  *      âœ… Visualizar alunos das suas aulas
- *      âœ… Marcar presenÃ§a/falta
- *      âœ… RelatÃ³rios das suas aulas
- *      âŒ NÃ£o pode gerenciar outros professores
- *      âŒ NÃ£o pode alterar preÃ§os
- *      âŒ NÃ£o pode acessar relatÃ³rios financeiros
- *      âŒ NÃ£o pode gerenciar quadras
+ *      âœ… Marcar presença/falta
+ *      âœ… Relatórios das suas aulas
+ *      âŒ Não pode gerenciar outros professores
+ *      âŒ Não pode alterar preços
+ *      âŒ Não pode acessar relatórios financeiros
+ *      âŒ Não pode gerenciar quadras
  *
  * 3. ALUNO/CLIENTE (cliente)
- *    - Acesso limitado para visualizar suas informaÃ§Ãµes
- *    - Dashboard: Progresso pessoal e prÃ³ximas aulas
+ *    - Acesso limitado para visualizar suas informaçÃµes
+ *    - Dashboard: Progresso pessoal e próximas aulas
  *    - Funcionalidades:
  *      âœ… Visualizar suas reservas/aulas
- *      âœ… HistÃ³rico de aulas
+ *      âœ… Histórico de aulas
  *      âœ… Dados pessoais (editar perfil)
  *      âœ… Pagamentos pessoais
- *      âŒ NÃ£o pode ver outros alunos
- *      âŒ NÃ£o pode gerenciar nada do sistema
- *      âŒ NÃ£o pode acessar relatÃ³rios
- *      âŒ NÃ£o pode ver informaÃ§Ãµes financeiras gerais
+ *      âŒ Não pode ver outros alunos
+ *      âŒ Não pode gerenciar nada do sistema
+ *      âŒ Não pode acessar relatórios
+ *      âŒ Não pode ver informaçÃµes financeiras gerais
  */
 
 export const USER_PERMISSIONS = {

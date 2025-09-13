@@ -62,44 +62,52 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Buscar dados da planilha N8N via API
-        const response = await fetch('/api/sheets/read?sheet=Página1')
-        const result = await response.json()
-        
-        if (!result.ok) {
-          throw new Error(result.error || 'Erro ao buscar dados')
+        // Buscar dados reais das planilhas
+        const [quadrasRes, professoresRes, clientesRes] = await Promise.all([
+          fetch('/api/sheets/read?sheet=quadras'),
+          fetch('/api/sheets/read?sheet=professores'),
+          fetch('/api/sheets/read?sheet=clientes')
+        ])
+
+        const [quadrasData, professoresData, clientesData] = await Promise.all([
+          quadrasRes.json(),
+          professoresRes.json(),
+          clientesRes.json()
+        ])
+
+        // Processar quadras
+        if (quadrasData.ok && quadrasData.rows) {
+          const quadrasFormatadas = quadrasData.rows.map((q: any) => ({
+            id: q.id || `quadra-${Math.random().toString(36).substr(2, 9)}`,
+            name: q.nome || 'Quadra sem nome',
+            type: q.tipo || 'Não especificado',
+            price_per_hour: parseFloat(q.preco_hora) || 0
+          }))
+          setQuadras(quadrasFormatadas)
         }
 
-        const dados = result.rows || []
-        
-        // Criar quadras fictícias baseadas nos dados
-        const quadrasFicticias = [
-          { id: "quadra1", name: "Quadra N8N", type: "N8N", price_per_hour: 50 },
-          { id: "quadra2", name: "Quadra Arena", type: "Arena", price_per_hour: 60 }
-        ]
-        setQuadras(quadrasFicticias)
+        // Processar professores
+        if (professoresData.ok && professoresData.rows) {
+          const professoresFormatados = professoresData.rows.map((p: any) => ({
+            id: p.id || `prof-${Math.random().toString(36).substr(2, 9)}`,
+            user_id: p.id,
+            hourly_rate: parseFloat(p.preco_aula) || 0,
+            profiles: { name: p.nome || 'Professor sem nome' }
+          }))
+          setProfessores(professoresFormatados)
+        }
 
-        // Criar professores fictícios
-        const professoresFicticios = [
-          { id: "prof1", user_id: "prof1", hourly_rate: 80, profiles: { name: "Professor N8N" } },
-          { id: "prof2", user_id: "prof2", hourly_rate: 90, profiles: { name: "Professor Arena" } }
-        ]
-        setProfessores(professoresFicticios)
-
-        // Criar clientes baseados nos dados da planilha
-        const clientesUnicos = dados.reduce((acc: any[], item: any) => {
-          if (item.Nome && item.Email && !acc.find(c => c.email === item.Email)) {
-            acc.push({
-              id: item.Telefone || item.Email,
-              name: item.Nome,
-              email: item.Email
-            })
+        // Processar clientes
+        if (clientesData.ok && clientesData.rows) {
+          const clientesFormatados = clientesData.rows.map((c: any) => ({
+            id: c.id || `cliente-${Math.random().toString(36).substr(2, 9)}`,
+            name: c.nome || 'Cliente sem nome',
+            email: c.email || ''
+          }))
+          
+          if (profile?.role === "admin" || profile?.role === "professor") {
+            setClientes(clientesFormatados)
           }
-          return acc
-        }, [])
-
-        if (profile?.role === "admin" || profile?.role === "professor") {
-          setClientes(clientesUnicos)
         }
       } catch (error) {
         console.error('Erro ao buscar dados:', error)

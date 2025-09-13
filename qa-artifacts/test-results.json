@@ -1,0 +1,1560 @@
+{
+  "config": {
+    "configFile": "C:\\arenacoligados\\playwright.config.ts",
+    "rootDir": "C:/arenacoligados/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 16
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "qa-artifacts/report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "qa-artifacts/test-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/arenacoligados/qa-artifacts/.output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 16
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/arenacoligados/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/arenacoligados/qa-artifacts/.output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 16
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/arenacoligados/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/arenacoligados/qa-artifacts/.output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 16
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/arenacoligados/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 16,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "login-crm.spec.ts",
+      "file": "login-crm.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Login → CRM Flow",
+          "file": "login-crm.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "login válido redireciona para /crm",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30666,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 17
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 15 |\u001b[39m     \n \u001b[90m 16 |\u001b[39m     \u001b[90m// Preencher formulário de login\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 17 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 18 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 19 |\u001b[39m     \n \u001b[90m 20 |\u001b[39m     \u001b[90m// Clicar no botão de login\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:17:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: login válido → /crm\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.619Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-e6bc3642cb1f9648ce6e",
+              "file": "login-crm.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "login inválido fica em /login",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 30676,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 46
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 44 |\u001b[39m     \n \u001b[90m 45 |\u001b[39m     \u001b[90m// Preencher com credenciais inválidas\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 46 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'invalid@email.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'wrongpassword'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 48 |\u001b[39m     \n \u001b[90m 49 |\u001b[39m     \u001b[90m// Clicar no botão de login\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:46:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: login inválido → permanece em /login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.672Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-b340fa05dcf45e952d54",
+              "file": "login-crm.spec.ts",
+              "line": 40,
+              "column": 7
+            },
+            {
+              "title": "acesso direto a /crm sem sessão redireciona para /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 14283,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: acesso direto a /crm sem sessão → /login\n"
+                        },
+                        {
+                          "text": "[LOGIN→CRM] ✅ Teste passou: acesso direto a /crm redirecionou para /login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.670Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-3f8486a3ae90a9a05b16",
+              "file": "login-crm.spec.ts",
+              "line": 68,
+              "column": 7
+            },
+            {
+              "title": "acesso /login com sessão redireciona para /crm",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 24484,
+                      "error": {
+                        "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================",
+                        "stack": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================\n    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:103:16",
+                        "location": {
+                          "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                          "column": 16,
+                          "line": 103
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 101 |\u001b[39m     \n \u001b[90m 102 |\u001b[39m     \u001b[90m// Aguardar redirecionamento para /crm\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m     \n \u001b[90m 105 |\u001b[39m     \u001b[90m// Verificar se foi redirecionado para CRM\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/crm$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 103
+                          },
+                          "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================\n\n\u001b[0m \u001b[90m 101 |\u001b[39m     \n \u001b[90m 102 |\u001b[39m     \u001b[90m// Aguardar redirecionamento para /crm\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m     \n \u001b[90m 105 |\u001b[39m     \u001b[90m// Verificar se foi redirecionado para CRM\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/crm$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:103:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: acesso /login com sessão → /crm\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.653Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                        "column": 16,
+                        "line": 103
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-5afad15abc6ba9016527",
+              "file": "login-crm.spec.ts",
+              "line": 83,
+              "column": 7
+            },
+            {
+              "title": "botão entrar funciona corretamente",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "timedOut",
+                      "duration": 30597,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 122
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 120 |\u001b[39m     \n \u001b[90m 121 |\u001b[39m     \u001b[90m// Preencher formulário\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 122 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 123 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 124 |\u001b[39m     \n \u001b[90m 125 |\u001b[39m     \u001b[90m// Clicar no botão\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:122:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: botão entrar funciona\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.690Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-152d06cfe02e92a4964e",
+              "file": "login-crm.spec.ts",
+              "line": 111,
+              "column": 7
+            },
+            {
+              "title": "formulário valida campos obrigatórios",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 15436,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n\n    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:144:80",
+                        "location": {
+                          "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                          "column": 80,
+                          "line": 144
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 142 |\u001b[39m     \n \u001b[90m 143 |\u001b[39m     \u001b[90m// Verificar se há mensagem de erro\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 144 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"error-message\"], .text-red-600'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 145 |\u001b[39m     \n \u001b[90m 146 |\u001b[39m     \u001b[90m// Verificar se permanece na página de login\u001b[39m\n \u001b[90m 147 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/login$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 80,
+                            "line": 144
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n\n\n\u001b[0m \u001b[90m 142 |\u001b[39m     \n \u001b[90m 143 |\u001b[39m     \u001b[90m// Verificar se há mensagem de erro\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 144 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"error-message\"], .text-red-600'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 145 |\u001b[39m     \n \u001b[90m 146 |\u001b[39m     \u001b[90m// Verificar se permanece na página de login\u001b[39m\n \u001b[90m 147 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/login$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:144:80\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: validação de campos obrigatórios\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.663Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                        "column": 80,
+                        "line": 144
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-4f3a41c13ccd5cfb94ee",
+              "file": "login-crm.spec.ts",
+              "line": 135,
+              "column": 7
+            },
+            {
+              "title": "página CRM carrega corretamente",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "timedOut",
+                      "duration": 30654,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 157
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 155 |\u001b[39m     \u001b[90m// Fazer login primeiro\u001b[39m\n \u001b[90m 156 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 157 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 158 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 159 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'button[type=\"submit\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 160 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:157:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: página CRM carrega corretamente\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.693Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-5df374f31a15288bdb26",
+              "file": "login-crm.spec.ts",
+              "line": 152,
+              "column": 7
+            },
+            {
+              "title": "login válido redireciona para /crm",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "timedOut",
+                      "duration": 30134,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 17
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 15 |\u001b[39m     \n \u001b[90m 16 |\u001b[39m     \u001b[90m// Preencher formulário de login\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 17 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 18 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 19 |\u001b[39m     \n \u001b[90m 20 |\u001b[39m     \u001b[90m// Clicar no botão de login\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:17:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: login válido → /crm\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.655Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-firefox\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-firefox\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-b74e84dd84e766db3d4e",
+              "file": "login-crm.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "login inválido fica em /login",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 8,
+                      "status": "timedOut",
+                      "duration": 30136,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 46
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 44 |\u001b[39m     \n \u001b[90m 45 |\u001b[39m     \u001b[90m// Preencher com credenciais inválidas\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 46 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'invalid@email.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'wrongpassword'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 48 |\u001b[39m     \n \u001b[90m 49 |\u001b[39m     \u001b[90m// Clicar no botão de login\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:46:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: login inválido → permanece em /login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.674Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-firefox\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-firefox\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-7362ca4af46d94b8d3ca",
+              "file": "login-crm.spec.ts",
+              "line": 40,
+              "column": 7
+            },
+            {
+              "title": "acesso direto a /crm sem sessão redireciona para /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 9,
+                      "status": "passed",
+                      "duration": 13270,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: acesso direto a /crm sem sessão → /login\n"
+                        },
+                        {
+                          "text": "[LOGIN→CRM] ✅ Teste passou: acesso direto a /crm redirecionou para /login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.675Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-0c91e60bdeac351232eb",
+              "file": "login-crm.spec.ts",
+              "line": 68,
+              "column": 7
+            },
+            {
+              "title": "acesso /login com sessão redireciona para /crm",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 10,
+                      "status": "failed",
+                      "duration": 21216,
+                      "error": {
+                        "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================",
+                        "stack": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================\n    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:103:16",
+                        "location": {
+                          "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                          "column": 16,
+                          "line": 103
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 101 |\u001b[39m     \n \u001b[90m 102 |\u001b[39m     \u001b[90m// Aguardar redirecionamento para /crm\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m     \n \u001b[90m 105 |\u001b[39m     \u001b[90m// Verificar se foi redirecionado para CRM\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/crm$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 103
+                          },
+                          "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================\n\n\u001b[0m \u001b[90m 101 |\u001b[39m     \n \u001b[90m 102 |\u001b[39m     \u001b[90m// Aguardar redirecionamento para /crm\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m     \n \u001b[90m 105 |\u001b[39m     \u001b[90m// Verificar se foi redirecionado para CRM\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/crm$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:103:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: acesso /login com sessão → /crm\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.686Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-firefox\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-firefox\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                        "column": 16,
+                        "line": 103
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-96ef644906e0343569e7",
+              "file": "login-crm.spec.ts",
+              "line": 83,
+              "column": 7
+            },
+            {
+              "title": "botão entrar funciona corretamente",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 11,
+                      "status": "timedOut",
+                      "duration": 30128,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 122
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 120 |\u001b[39m     \n \u001b[90m 121 |\u001b[39m     \u001b[90m// Preencher formulário\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 122 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 123 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 124 |\u001b[39m     \n \u001b[90m 125 |\u001b[39m     \u001b[90m// Clicar no botão\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:122:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: botão entrar funciona\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.703Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-firefox\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-firefox\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-31acca579c3645448bc7",
+              "file": "login-crm.spec.ts",
+              "line": 111,
+              "column": 7
+            },
+            {
+              "title": "formulário valida campos obrigatórios",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 12,
+                      "status": "failed",
+                      "duration": 15320,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n\n    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:144:80",
+                        "location": {
+                          "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                          "column": 80,
+                          "line": 144
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 142 |\u001b[39m     \n \u001b[90m 143 |\u001b[39m     \u001b[90m// Verificar se há mensagem de erro\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 144 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"error-message\"], .text-red-600'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 145 |\u001b[39m     \n \u001b[90m 146 |\u001b[39m     \u001b[90m// Verificar se permanece na página de login\u001b[39m\n \u001b[90m 147 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/login$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 80,
+                            "line": 144
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n\n\n\u001b[0m \u001b[90m 142 |\u001b[39m     \n \u001b[90m 143 |\u001b[39m     \u001b[90m// Verificar se há mensagem de erro\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 144 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"error-message\"], .text-red-600'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 145 |\u001b[39m     \n \u001b[90m 146 |\u001b[39m     \u001b[90m// Verificar se permanece na página de login\u001b[39m\n \u001b[90m 147 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/login$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:144:80\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: validação de campos obrigatórios\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.705Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-firefox\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-firefox\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                        "column": 80,
+                        "line": 144
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-7eb27cfa737a13188d1f",
+              "file": "login-crm.spec.ts",
+              "line": 135,
+              "column": 7
+            },
+            {
+              "title": "página CRM carrega corretamente",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 13,
+                      "status": "timedOut",
+                      "duration": 30141,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 157
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 155 |\u001b[39m     \u001b[90m// Fazer login primeiro\u001b[39m\n \u001b[90m 156 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 157 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 158 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 159 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'button[type=\"submit\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 160 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:157:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: página CRM carrega corretamente\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.698Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-firefox\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-firefox\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-6c5d7e52aabe7311dc69",
+              "file": "login-crm.spec.ts",
+              "line": 152,
+              "column": 7
+            },
+            {
+              "title": "login válido redireciona para /crm",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 14,
+                      "status": "timedOut",
+                      "duration": 30438,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 17
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 15 |\u001b[39m     \n \u001b[90m 16 |\u001b[39m     \u001b[90m// Preencher formulário de login\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 17 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 18 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 19 |\u001b[39m     \n \u001b[90m 20 |\u001b[39m     \u001b[90m// Clicar no botão de login\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:17:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: login válido → /crm\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.722Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-webkit\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-válido-redireciona-para-crm-webkit\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-94aab06139afc497b764",
+              "file": "login-crm.spec.ts",
+              "line": 11,
+              "column": 7
+            },
+            {
+              "title": "login inválido fica em /login",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 15,
+                      "status": "timedOut",
+                      "duration": 30471,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 46
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 44 |\u001b[39m     \n \u001b[90m 45 |\u001b[39m     \u001b[90m// Preencher com credenciais inválidas\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 46 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'invalid@email.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'wrongpassword'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 48 |\u001b[39m     \n \u001b[90m 49 |\u001b[39m     \u001b[90m// Clicar no botão de login\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:46:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: login inválido → permanece em /login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:31.716Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-webkit\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-login-inválido-fica-em-login-webkit\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-8b6161fac65460a47d77",
+              "file": "login-crm.spec.ts",
+              "line": 40,
+              "column": 7
+            },
+            {
+              "title": "acesso direto a /crm sem sessão redireciona para /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 9,
+                      "status": "passed",
+                      "duration": 1144,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: acesso direto a /crm sem sessão → /login\n"
+                        },
+                        {
+                          "text": "[LOGIN→CRM] ✅ Teste passou: acesso direto a /crm redirecionou para /login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:47.188Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-fa10408b8ad4a738c0c7",
+              "file": "login-crm.spec.ts",
+              "line": 68,
+              "column": 7
+            },
+            {
+              "title": "acesso /login com sessão redireciona para /crm",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 11420,
+                      "error": {
+                        "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================",
+                        "stack": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================\n    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:103:16",
+                        "location": {
+                          "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                          "column": 16,
+                          "line": 103
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 101 |\u001b[39m     \n \u001b[90m 102 |\u001b[39m     \u001b[90m// Aguardar redirecionamento para /crm\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m     \n \u001b[90m 105 |\u001b[39m     \u001b[90m// Verificar se foi redirecionado para CRM\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/crm$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 103
+                          },
+                          "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/crm\" until \"load\"\n  navigated to \"http://localhost:3000/login\"\n============================================================\n\n\u001b[0m \u001b[90m 101 |\u001b[39m     \n \u001b[90m 102 |\u001b[39m     \u001b[90m// Aguardar redirecionamento para /crm\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 103 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 104 |\u001b[39m     \n \u001b[90m 105 |\u001b[39m     \u001b[90m// Verificar se foi redirecionado para CRM\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/crm$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:103:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: acesso /login com sessão → /crm\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:47.120Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-webkit\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-458e1-sessão-redireciona-para-crm-webkit\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                        "column": 16,
+                        "line": 103
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-cf40ae15008e4bf93441",
+              "file": "login-crm.spec.ts",
+              "line": 83,
+              "column": 7
+            },
+            {
+              "title": "botão entrar funciona corretamente",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 5,
+                      "status": "timedOut",
+                      "duration": 30136,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 122
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 120 |\u001b[39m     \n \u001b[90m 121 |\u001b[39m     \u001b[90m// Preencher formulário\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 122 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 123 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 124 |\u001b[39m     \n \u001b[90m 125 |\u001b[39m     \u001b[90m// Clicar no botão\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:122:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: botão entrar funciona\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:48.201Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-webkit\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-6abf7-ntrar-funciona-corretamente-webkit\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-c64e7b27b85fa7db3536",
+              "file": "login-crm.spec.ts",
+              "line": 111,
+              "column": 7
+            },
+            {
+              "title": "formulário valida campos obrigatórios",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 9,
+                      "status": "failed",
+                      "duration": 6192,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n\n    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:144:80",
+                        "location": {
+                          "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                          "column": 80,
+                          "line": 144
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 142 |\u001b[39m     \n \u001b[90m 143 |\u001b[39m     \u001b[90m// Verificar se há mensagem de erro\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 144 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"error-message\"], .text-red-600'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 145 |\u001b[39m     \n \u001b[90m 146 |\u001b[39m     \u001b[90m// Verificar se permanece na página de login\u001b[39m\n \u001b[90m 147 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/login$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 80,
+                            "line": 144
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"error-message\"], .text-red-600')\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"error-message\"], .text-red-600')\u001b[22m\n\n\n\u001b[0m \u001b[90m 142 |\u001b[39m     \n \u001b[90m 143 |\u001b[39m     \u001b[90m// Verificar se há mensagem de erro\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 144 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"error-message\"], .text-red-600'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 145 |\u001b[39m     \n \u001b[90m 146 |\u001b[39m     \u001b[90m// Verificar se permanece na página de login\u001b[39m\n \u001b[90m 147 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[35m/\\/login$/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:144:80\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: validação de campos obrigatórios\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:48.393Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-webkit\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-e794f--valida-campos-obrigatórios-webkit\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                        "column": 80,
+                        "line": 144
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-1f1e6c3e3de8cdd04639",
+              "file": "login-crm.spec.ts",
+              "line": 135,
+              "column": 7
+            },
+            {
+              "title": "página CRM carrega corretamente",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 12,
+                      "status": "timedOut",
+                      "duration": 30129,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\arenacoligados\\e2e\\login-crm.spec.ts",
+                            "column": 16,
+                            "line": 157
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 155 |\u001b[39m     \u001b[90m// Fazer login primeiro\u001b[39m\n \u001b[90m 156 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/login'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 157 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin@arena.com'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 158 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'admin123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 159 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'button[type=\"submit\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 160 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'**/crm'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\arenacoligados\\e2e\\login-crm.spec.ts:157:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[LOGIN→CRM] Iniciando teste: página CRM carrega corretamente\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-13T04:09:52.563Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-webkit\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\arenacoligados\\qa-artifacts\\.output\\login-crm-Login-→-CRM-Flow-página-CRM-carrega-corretamente-webkit\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9a8b76bf97283a8c050-f0695f7f54d28c077751",
+              "file": "login-crm.spec.ts",
+              "line": 152,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-09-13T04:09:27.526Z",
+    "duration": 55227.185000000005,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 18,
+    "flaky": 0
+  }
+}

@@ -26,14 +26,14 @@ export default function SyncSheetsButton() {
 
       if (response.ok) {
         setStatus('success');
-        setMessage(data.message || 'SincronizaÃ§Ã£o realizada com sucesso!');
+        setMessage(data.message || 'Sincronização realizada com sucesso!');
       } else {
         setStatus('error');
-        setMessage(data.error || 'Erro na sincronizaÃ§Ã£o');
+        setMessage(data.error || 'Erro na sincronização');
       }
     } catch (error) {
       setStatus('error');
-      setMessage('Erro de conexÃ£o');
+      setMessage('Erro de conexão');
     } finally {
       setIsLoading(false);
     }

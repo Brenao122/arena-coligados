@@ -92,17 +92,16 @@ export function LoginForm() {
       
       setSuccess("Login realizado com sucesso! Redirecionando...")
       
-      // Aguardar um pouco para mostrar a mensagem de sucesso
+      // Redirecionar para dashboard baseado no role
       setTimeout(() => {
-        // Redirecionar baseado no role
         if (userData.profile.role === 'admin') {
-          window.location.href = "/dashboard/dashboard-admin"
+          router.push("/dashboard/dashboard-admin")
         } else if (userData.profile.role === 'professor') {
-          window.location.href = "/dashboard/dashboard-professor"
+          router.push("/dashboard/dashboard-professor")
         } else {
-          window.location.href = "/dashboard/dashboard-aluno"
+          router.push("/dashboard/dashboard-aluno")
         }
-      }, 1000)
+      }, 500)
       
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro inesperado")
@@ -132,7 +131,7 @@ export function LoginForm() {
     <div className="w-full max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <Alert variant="destructive" className="bg-red-900/20 border-red-800 text-red-300">
+          <Alert variant="destructive" className="bg-red-900/20 border-red-800 text-red-300" data-testid="error-message">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -149,6 +148,7 @@ export function LoginForm() {
           </Label>
           <Input
             id="email"
+            name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -165,6 +165,7 @@ export function LoginForm() {
           </Label>
           <Input
             id="password"
+            name="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

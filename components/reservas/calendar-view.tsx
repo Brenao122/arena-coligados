@@ -114,14 +114,14 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
           id: reserva.id,
           data_inicio: dataInicio,
           data_fim: dataFim,
-          tipo: reserva.tipo || "LocaÃ§Ã£o",
+          tipo: reserva.tipo || "Locação",
           status: reserva.status || "confirmada",
           valor: reserva.valor_total || reserva.valor || 0,
           profiles: {
-            full_name: reserva.profiles?.full_name || "Cliente nÃ£o informado",
+            full_name: reserva.profiles?.full_name || "Cliente não informado",
           },
           quadras: {
-            nome: reserva.quadras?.nome || "Quadra nÃ£o informada",
+            nome: reserva.quadras?.nome || "Quadra não informada",
           },
         }
       })
@@ -164,7 +164,7 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>CalendÃ¡rio de Reservas</CardTitle>
+          <CardTitle>Calendário de Reservas</CardTitle>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={previousWeek}>
               <ChevronLeft className="h-4 w-4" />
@@ -192,7 +192,7 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
             <div className="min-w-[800px]">
               {/* Header with days */}
               <div className="grid grid-cols-8 gap-1 mb-2">
-                <div className="p-2 text-sm font-medium text-gray-500">HorÃ¡rio</div>
+                <div className="p-2 text-sm font-medium text-gray-500">Horário</div>
                 {weekDays.map((day) => (
                   <div key={day.toISOString()} className="p-2 text-center">
                     <div className="text-sm font-medium">{format(day, "EEE", { locale: ptBR })}</div>

@@ -19,7 +19,7 @@ export default function LoginPage() {
             Arena Coligados
             <div className="absolute inset-0 text-orange-500 blur-sm -z-10">Arena Coligados</div>
           </h1>
-          <p className="mt-2 text-gray-300 text-lg">GestÃ£o Esportiva</p>
+          <p className="mt-2 text-gray-300 text-lg">Gestão Esportiva</p>
         </div>
 
         <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">

@@ -129,7 +129,7 @@ export function FinancialChart() {
               <span className="text-white font-medium">R$ {data.receita.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <span className="text-green-400">TransaÃ§Ãµes:</span>
+              <span className="text-green-400">TransaçÃµes:</span>
               <span className="text-white font-medium">{data.transacoes}</span>
             </div>
             <div className="flex items-center justify-between gap-4">
@@ -139,7 +139,7 @@ export function FinancialChart() {
             <div className="flex items-center justify-between gap-4">
               <span className="text-purple-400 flex items-center gap-1">
                 <Activity className="w-3 h-3" />
-                InteraÃ§Ãµes:
+                InteraçÃµes:
               </span>
               <span className="text-white font-medium">{data.interacoes}</span>
             </div>
@@ -190,7 +190,7 @@ export function FinancialChart() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-400 text-sm font-medium">Total TransaÃ§Ãµes</p>
+                <p className="text-green-400 text-sm font-medium">Total TransaçÃµes</p>
                 <p className="text-2xl font-bold text-white">{totalTransacoes}</p>
               </div>
               <Activity className="w-8 h-8 text-green-400" />
@@ -202,7 +202,7 @@ export function FinancialChart() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-400 text-sm font-medium">MÃ©dia DiÃ¡ria</p>
+                <p className="text-blue-400 text-sm font-medium">Média Diária</p>
                 <p className="text-2xl font-bold text-white">R$ {Math.round(mediaReceita).toLocaleString()}</p>
               </div>
               <TrendingUp className="w-8 h-8 text-blue-400" />
@@ -229,10 +229,10 @@ export function FinancialChart() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-white text-xl font-bold bg-gradient-to-r from-orange-400 to-green-400 bg-clip-text text-transparent">
-                AnÃ¡lise Financeira DiÃ¡ria
+                Análise Financeira Diária
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Receita, transaÃ§Ãµes e interaÃ§Ãµes por dia do mÃªs - Janeiro 2025
+                Receita, transaçÃµes e interaçÃµes por dia do mês - Janeiro 2025
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -242,7 +242,7 @@ export function FinancialChart() {
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
                   <SelectItem value="diario" className="text-white hover:bg-gray-700">
-                    DiÃ¡rio
+                    Diário
                   </SelectItem>
                   <SelectItem value="semanal" className="text-white hover:bg-gray-700">
                     Semanal
@@ -312,7 +312,7 @@ export function FinancialChart() {
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#interacoesGradient)"
-                    name="InteraÃ§Ãµes"
+                    name="InteraçÃµes"
                   />
                 </AreaChart>
               ) : chartType === "bar" ? (
@@ -332,7 +332,7 @@ export function FinancialChart() {
                   <Legend wrapperStyle={{ color: "#9ca3af" }} />
                   <Bar dataKey="receita" fill="#f97316" name="Receita (R$)" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="pagamentos" fill="#22c55e" name="Pagamentos" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="interacoes" fill="#3b82f6" name="InteraÃ§Ãµes" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="interacoes" fill="#3b82f6" name="InteraçÃµes" radius={[4, 4, 0, 0]} />
                 </BarChart>
               ) : (
                 <LineChart data={dailyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -363,7 +363,7 @@ export function FinancialChart() {
                     dataKey="interacoes"
                     stroke="#22c55e"
                     strokeWidth={3}
-                    name="InteraÃ§Ãµes"
+                    name="InteraçÃµes"
                     dot={{ fill: "#22c55e", strokeWidth: 2, r: 4 }}
                     activeDot={{ r: 6, fill: "#22c55e" }}
                   />
