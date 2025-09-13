@@ -39,37 +39,71 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
   const fetchClientes = async () => {
     try {
       setLoading(true)
+      console.log('🔍 Buscando clientes da planilha...')
 
-      // Buscar dados da planilha N8N via API
-      const response = await fetch('/api/sheets/read?sheet=Página1')
+      // Buscar dados da aba 'clientes' via API
+      const response = await fetch('/api/sheets/read?sheet=clientes&range=clientes!A1:Z100')
       const result = await response.json()
+      
+      console.log('📊 Resposta da API:', result)
       
       if (!result.ok) {
         throw new Error(result.error || 'Erro ao buscar dados')
       }
 
-      const dados = result.rows || []
+      const values = result.values || []
+      console.log('📋 Dados brutos da planilha:', values)
       
-      // Criar clientes únicos baseados nos dados da planilha
-      const clientesUnicos = dados.reduce((acc: any[], item: any) => {
-        if (item.Nome && item.Email && !acc.find(c => c.email === item.Email)) {
-          acc.push({
-            id: item.Telefone || item.Email,
-            full_name: item.Nome,
-            email: item.Email,
-            phone: item.Telefone || "",
-            created_at: item.Data || new Date().toISOString(),
-            reservas_count: dados.filter(d => d.Email === item.Email).length,
-            ultima_reserva: item.Data,
-            total_gasto: 0
-          })
-        }
-        return acc
-      }, [])
+      if (values.length === 0) {
+        console.log('⚠️ Planilha vazia ou sem dados')
+        setClientes([])
+        return
+      }
 
-      setClientes(clientesUnicos)
+      // Primeira linha são os cabeçalhos
+      const headers = values[0] || []
+      const dataRows = values.slice(1) || []
+      
+      console.log('📝 Cabeçalhos:', headers)
+      console.log('📊 Linhas de dados:', dataRows.length)
+
+      // Mapear dados para estrutura de clientes
+      const clientesMapeados = dataRows.map((row: any[], index: number) => {
+        const cliente: any = {
+          id: `cliente-${index}`,
+          full_name: '',
+          email: '',
+          phone: '',
+          created_at: new Date().toISOString(),
+          reservas_count: 0,
+          ultima_reserva: '',
+          total_gasto: 0
+        }
+
+        // Mapear colunas baseado nos cabeçalhos
+        headers.forEach((header: string, colIndex: number) => {
+          const value = row[colIndex] || ''
+          const headerLower = header.toLowerCase()
+          
+          if (headerLower.includes('nome') || headerLower.includes('name')) {
+            cliente.full_name = value
+          } else if (headerLower.includes('email')) {
+            cliente.email = value
+          } else if (headerLower.includes('telefone') || headerLower.includes('phone')) {
+            cliente.phone = value
+          } else if (headerLower.includes('data') || headerLower.includes('date')) {
+            cliente.created_at = value || new Date().toISOString()
+          }
+        })
+
+        return cliente
+      }).filter(cliente => cliente.full_name && cliente.email) // Filtrar clientes válidos
+
+      console.log('✅ Clientes mapeados:', clientesMapeados)
+      setClientes(clientesMapeados)
+      
     } catch (error) {
-      console.error('Erro ao buscar clientes:', error)
+      console.error('❌ Erro ao buscar clientes:', error)
       setClientes([])
     } finally {
       setLoading(false)
