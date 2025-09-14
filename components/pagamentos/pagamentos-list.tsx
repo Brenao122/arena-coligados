@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Search, DollarSign, CreditCard, Smartphone } from "lucide-react"
-import { supabase } from "@/lib/supabase"
+// Migrado para Google Sheets
 import { useToast } from "@/hooks/use-toast"
 
 interface Pagamento {
@@ -50,22 +50,38 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
   const fetchPagamentos = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from("pagamentos")
-        .select(`
-          *,
-          reservas (
-            cliente_id,
-            quadra_id,
-            duracao,
-            profiles:cliente_id (full_name),
-            quadras:quadra_id (nome)
-          )
-        `)
-        .order("created_at", { ascending: false })
+      // Buscar dados de pagamentos do Google Sheets (usando reservas como base)
+      const response = await fetch('/api/sheets/read?sheet=Reservas')
+      const result = await response.json()
+      
+      if (!result.ok) throw new Error('Erro ao buscar pagamentos')
+      
+      const reservas = result.values?.slice(1) || []
+      const pagamentos = reservas
+        .filter((r: any[]) => r[8] && parseFloat(r[8]) > 0) // apenas reservas com valor
+        .map((r: any[]): Pagamento => ({
+          id: r[0] || '',
+          reserva_id: r[0] || '',
+          amount: parseFloat(r[8]) || 0, // valor_total
+          method: r[9] || 'pix', // método de pagamento (assumindo coluna 9)
+          status: r[7] === 'concluida' ? 'aprovado' : 'pendente', // status
+          transaction_id: r[10] || null, // transaction_id (assumindo coluna 10)
+          paid_at: r[7] === 'concluida' ? r[4] : null, // data_inicio se concluida
+          created_at: r[4] || new Date().toISOString(), // data_inicio
+          reservas: {
+            cliente_id: r[1] || '',
+            quadra_id: r[2] || '',
+            duracao: r[6] || '',
+            profiles: {
+              full_name: r[1] || 'Cliente'
+            },
+            quadras: {
+              nome: r[2] || 'Quadra'
+            }
+          }
+        }))
 
-      if (error) throw error
-      setPagamentos(data || [])
+      setPagamentos(pagamentos)
     } catch (error) {
       toast({
         title: "Erro",

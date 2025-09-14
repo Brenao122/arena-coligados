@@ -6,7 +6,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { supabase } from "@/lib/supabase"
+// Migrado para Google Sheets
 
 interface OccupancyData {
   day: string
@@ -24,12 +24,22 @@ export function OccupancyChart() {
       try {
         setLoading(true)
 
-        // Buscar dados reais de ocupação do Supabase
-        const { data: reservasData } = await supabase
-          .from("reservas")
-          .select("date, quadra_id")
-          .gte("date", getWeekStart())
-          .lte("date", getWeekEnd())
+        // Buscar dados reais de ocupação do Google Sheets
+        const response = await fetch('/api/sheets/read?sheet=Reservas')
+        const result = await response.json()
+        
+        if (!result.ok) throw new Error('Erro ao buscar reservas')
+        
+        const reservas = result.values?.slice(1) || []
+        const reservasData = reservas
+          .filter((r: any[]) => {
+            const dataInicio = new Date(r[4]) // data_inicio
+            return dataInicio >= getWeekStart() && dataInicio <= getWeekEnd()
+          })
+          .map((r: any[]) => ({
+            date: r[4], // data_inicio
+            quadra_id: r[2] // quadra
+          }))
 
         // Calcular ocupação por dia da semana
         const weekData = calculateWeeklyOccupancy(reservasData || [])

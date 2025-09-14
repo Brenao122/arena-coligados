@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { supabase } from "@/lib/supabase"
+// Migrado para Google Sheets
 import {
   Bar,
   BarChart,
@@ -41,19 +41,23 @@ export function FinancialChart() {
   const fetchFinancialData = async () => {
     try {
       setLoading(true)
-      const { data: pagamentos, error } = await supabase
-        .from("pagamentos")
-        .select(`
-          amount,
-          created_at,
-          reservas:reserva_id (
-            date,
-            total_price
-          )
-        `)
-        .eq("status", "aprovado")
-
-      if (error) throw error
+      // Buscar dados financeiros do Google Sheets
+      const response = await fetch('/api/sheets/read?sheet=Reservas')
+      const result = await response.json()
+      
+      if (!result.ok) throw new Error('Erro ao buscar dados financeiros')
+      
+      const reservas = result.values?.slice(1) || []
+      const pagamentos = reservas
+        .filter((r: any[]) => r[7] === 'concluida') // status aprovado/concluido
+        .map((r: any[]) => ({
+          amount: parseFloat(r[8]) || 0, // valor_total
+          created_at: r[4], // data_inicio
+          reservas: {
+            date: r[4], // data_inicio
+            total_price: parseFloat(r[8]) || 0
+          }
+        }))
 
       // Processar dados por dia
       const dailyStats: { [key: string]: DailyFinancialData } = {}

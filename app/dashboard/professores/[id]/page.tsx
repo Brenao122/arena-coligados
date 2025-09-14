@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Phone, Mail, Calendar, Users, Clock, Star } from "lucide-react"
-import { getBrowserClient } from "@/lib/supabase/browser-client"
+// Migrado para Google Sheets
 
 interface Professor {
   id: string
@@ -42,63 +42,58 @@ export default function ProfessorDetalhes() {
   useEffect(() => {
     const fetchProfessorData = async () => {
       try {
-        const supabase = getBrowserClient()
+        // Buscar dados dos professores do Google Sheets
+        const professoresResponse = await fetch('/api/sheets/read?sheet=Professores')
+        const professoresData = await professoresResponse.json()
+        
+        if (!professoresData.ok) throw new Error('Erro ao buscar professores')
+        
+        // Encontrar o professor pelo ID (assumindo que ID está na coluna 0)
+        const professores = professoresData.values?.slice(1) || []
+        const professorData = professores.find((p: any[]) => p[0] === params.id)
+        
+        if (!professorData) throw new Error('Professor não encontrado')
 
-        // Buscar dados do professor
-        const { data: professorData, error: professorError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", params.id)
-          .single()
+        // Mapear dados do professor (ajustar índices conforme estrutura da planilha)
+        const professor: Professor = {
+          id: professorData[0] || '',
+          full_name: professorData[1] || '',
+          email: professorData[2] || '',
+          phone: professorData[3] || '',
+          especialidades: professorData[4] ? professorData[4].split(',').map((e: string) => e.trim()) : [],
+          created_at: professorData[5] || new Date().toISOString(),
+          preco_aula: parseFloat(professorData[6]) || 0,
+          alunos_ativos: parseInt(professorData[7]) || 0,
+          aulas_mes: parseInt(professorData[8]) || 0,
+          avaliacao: parseFloat(professorData[9]) || 0
+        }
 
-        if (professorError) throw professorError
+        // Buscar aulas/reservas do professor
+        const reservasResponse = await fetch('/api/sheets/read?sheet=Reservas')
+        const reservasData = await reservasResponse.json()
+        
+        if (!reservasData.ok) throw new Error('Erro ao buscar reservas')
+        
+        // Filtrar reservas do professor (assumindo que professor_id está na coluna 3)
+        const reservas = reservasData.values?.slice(1) || []
+        const aulasProfessor = reservas
+          .filter((r: any[]) => r[3] === params.id) // professor_id
+          .slice(0, 10) // limitar a 10
+          .map((a: any[]): Aula => ({
+            id: a[0] || '',
+            data_inicio: a[4] || '', // data_inicio
+            data_fim: a[5] || '', // data_fim
+            duracao: a[6] || '',
+            status: (a[7] || 'confirmada') as AulaStatus,
+            cliente: { full_name: a[1] || 'Cliente' }, // cliente
+            quadra: { nome: a[2] || 'Quadra' }, // quadra
+          }))
 
-        // Buscar aulas do professor
-        const { data: aulasData, error: aulasError } = await supabase
-          .from("reservas")
-          .select(`
-            id,
-            duracao,
-            status,
-            cliente:cliente_id (full_name),
-            quadra:quadra_id (nome)
-          `)
-          .eq("professor_id", params.id)
-          .order("duracao", { ascending: true })
-          .limit(10)
-
-        if (aulasError) throw aulasError
-
-        // Transformar dados das aulas (normaliza entrada incerta -> saída tipada)
-        const aulasTransformadas: Aula[] = (Array.isArray(aulasData) ? aulasData : []).map((a: any): Aula => {
-          const clienteFull = Array.isArray(a?.cliente)
-            ? String(a.cliente[0]?.full_name ?? "")
-            : String(a?.cliente?.full_name ?? "");
-
-          const quadraNome = Array.isArray(a?.quadra)
-            ? String(a.quadra[0]?.nome ?? "")
-            : String(a?.quadra?.nome ?? "");
-
-          const status: AulaStatus =
-            a?.status && ["pendente", "confirmada", "cancelada", "concluida"].includes(a.status)
-              ? a.status
-              : "outro";
-
-          return {
-            id: String(a?.id ?? ""),
-            data_inicio: String(a?.data_inicio ?? ""),
-            data_fim: String(a?.data_fim ?? ""),
-            duracao: a?.duracao ? String(a.duracao) : undefined,
-            status,
-            cliente: { full_name: clienteFull },
-            quadra: { nome: quadraNome },
-          };
-        });
-
-        setProfessor(professorData)
-        setAulas(aulasTransformadas)
+        setProfessor(professor)
+        setAulas(aulasProfessor)
       } catch (error) {
-        } finally {
+        console.error('Erro ao buscar dados do professor:', error)
+      } finally {
         setLoading(false)
       }
     }

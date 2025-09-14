@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, addWeeks, subWeeks, isSameDay } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
-import { fetchReservasWithSchema } from "@/lib/supabase/schema-detector"
+// Migrado para Google Sheets
 
 interface Reserva {
   id: string
@@ -64,70 +64,41 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
     try {
       setLoading(true)
 
-      const query = await fetchReservasWithSchema(weekStart, weekEnd)
-      const { data, error } = await query
+      // Buscar reservas do Google Sheets
+      const response = await fetch('/api/sheets/read?sheet=Reservas')
+      const result = await response.json()
 
-      if (error) {
+      if (!result.ok) {
         setReservas([])
         return
       }
 
-      const transformedReservas = (data || []).map((reserva: {
-        id: string;
-        duracao?: string;
-        data_inicio?: string;
-        data_fim?: string;
-        tipo?: string;
-        status?: string;
-        valor_total?: number;
-        valor?: number;
-        profiles?: { full_name: string };
-        quadras?: { nome: string };
-      }) => {
-        let dataInicio = new Date().toISOString()
-        let dataFim = new Date().toISOString()
-
-        try {
-          if (reserva.duracao) {
-            // TSTZRANGE format
-            const duracaoStr = reserva.duracao.toString()
-            const match =
-              duracaoStr.match(/\["([^"]+)","([^"]+)"\)/) ||
-              duracaoStr.match(/\[([^,]+),([^)]+)\)/) ||
-              duracaoStr.match(/\(([^,]+),([^)]+)\]/)
-
-            if (match) {
-              dataInicio = new Date(match[1].replace(/"/g, "")).toISOString()
-              dataFim = new Date(match[2].replace(/"/g, "")).toISOString()
-            }
-          } else if (reserva.data_inicio && reserva.data_fim) {
-            // Separate columns format
-            dataInicio = new Date(reserva.data_inicio).toISOString()
-            dataFim = new Date(reserva.data_fim).toISOString()
-          }
-        } catch (error) {
-          dataInicio = new Date().toISOString()
-          dataFim = new Date(Date.now() + 60 * 60 * 1000).toISOString()
-        }
-
-        return {
-          id: reserva.id,
-          data_inicio: dataInicio,
-          data_fim: dataFim,
-          tipo: reserva.tipo || "Locação",
-          status: reserva.status || "confirmada",
-          valor: reserva.valor_total || reserva.valor || 0,
+      const reservas = result.values?.slice(1) || []
+      
+      // Filtrar reservas da semana atual e transformar dados
+      const transformedReservas = reservas
+        .filter((reserva: any[]) => {
+          const dataInicio = new Date(reserva[4]) // data_inicio
+          return dataInicio >= weekStart && dataInicio <= weekEnd
+        })
+        .map((reserva: any[]): Reserva => ({
+          id: reserva[0] || '',
+          data_inicio: reserva[4] || new Date().toISOString(), // data_inicio
+          data_fim: reserva[5] || new Date().toISOString(), // data_fim
+          tipo: reserva[6] || "Locação", // tipo
+          status: reserva[7] || "confirmada", // status
+          valor: parseFloat(reserva[8]) || 0, // valor_total
           profiles: {
-            full_name: reserva.profiles?.full_name || "Cliente não informado",
+            full_name: reserva[1] || "Cliente não informado", // cliente
           },
           quadras: {
-            nome: reserva.quadras?.nome || "Quadra não informada",
+            nome: reserva[2] || "Quadra não informada", // quadra
           },
-        }
-      })
+        }))
 
       setReservas(transformedReservas)
     } catch (error) {
+      console.error('Erro ao buscar reservas:', error)
       setReservas([])
     } finally {
       setLoading(false)
