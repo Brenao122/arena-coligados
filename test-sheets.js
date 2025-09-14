@@ -1,57 +1,52 @@
-// test-sheets.js
-const { google } = require('googleapis');
+// test-sheets.js - Script de teste para Google Sheets
+const { testConnection, readSheet } = require('./lib/google-sheets.ts');
 
-async function testSheets() {
+async function testGoogleSheets() {
+  console.log('🧪 Testando conexão com Google Sheets...');
+  
   try {
-    const email = process.env.GOOGLE_SERVICE_EMAIL;
-    const rawKey = process.env.GOOGLE_PRIVATE_KEY;
-    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
+    // Teste 1: Conectividade
+    console.log('\n1. Testando conectividade...');
+    const connectionTest = await testConnection();
     
-    console.log('=== TESTE GOOGLE SHEETS ===');
-    console.log('Email:', email);
-    console.log('Spreadsheet ID:', spreadsheetId);
-    console.log('Private Key:', rawKey ? 'Presente' : 'Ausente');
-    
-    if (!email || !rawKey || !spreadsheetId) {
-      throw new Error('Variáveis de ambiente ausentes');
+    if (connectionTest.success) {
+      console.log('✅ Conexão bem-sucedida!');
+      console.log('📊 Título da planilha:', connectionTest.title);
+      console.log('📋 Abas disponíveis:', connectionTest.sheets.map(s => s.title));
+    } else {
+      console.log('❌ Falha na conexão:', connectionTest.message);
+      return;
     }
 
-    const auth = new google.auth.JWT({
-      email,
-      key: rawKey.replace(/\\n/g, '\n'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
+    // Teste 2: Leitura de dados
+    console.log('\n2. Testando leitura de dados...');
+    
+    const sheets = ['Reservas', 'Clientes', 'Quadras', 'Professores', 'Usuarios'];
+    
+    for (const sheet of sheets) {
+      try {
+        console.log(`\n📖 Lendo aba: ${sheet}`);
+        const data = await readSheet(`${sheet}!A:Z`);
+        console.log(`✅ ${sheet}: ${data.length} linhas encontradas`);
+        
+        if (data.length > 0) {
+          console.log(`   Headers: ${data[0].join(' | ')}`);
+        }
+      } catch (error) {
+        console.log(`❌ ${sheet}: Erro - ${error.message}`);
+      }
+    }
 
-    const sheets = google.sheets({ version: 'v4', auth });
-
-    // Testar leitura da planilha
-    console.log('\n=== TESTANDO LEITURA ===');
-    const { data } = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range: 'leads!A1:Z1',
-    });
-
-    console.log('✅ Leitura funcionou!');
-    console.log('Dados:', data.values || 'Planilha vazia');
-
-    // Testar escrita na planilha
-    console.log('\n=== TESTANDO ESCRITA ===');
-    await sheets.spreadsheets.values.update({
-      spreadsheetId,
-      range: 'leads!A1',
-      valueInputOption: 'USER_ENTERED',
-      requestBody: {
-        values: [['id', 'nome', 'telefone', 'email', 'status', 'created_at']]
-      },
-    });
-
-    console.log('✅ Escrita funcionou!');
-    console.log('✅ GOOGLE SHEETS CONFIGURADO COM SUCESSO!');
-
+    console.log('\n🎉 Teste concluído!');
+    
   } catch (error) {
-    console.error('❌ ERRO:', error.message);
-    console.error('Detalhes:', error);
+    console.error('💥 Erro durante o teste:', error);
   }
 }
 
-testSheets();
+// Executar teste se chamado diretamente
+if (require.main === module) {
+  testGoogleSheets();
+}
+
+module.exports = { testGoogleSheets };

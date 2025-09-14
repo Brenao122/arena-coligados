@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { appendToGoogleSheet } from "@/lib/google-sheets-auth";
+import { appendRow } from "@/lib/google-sheets";
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 type AppendBody = {
-  sheet?: string;          // aba, ex: 'Leads'
-  values: (string | number | null)[][]; // linhas a inserir
+  sheet?: string;
+  values: (string | number | null)[][];
 };
 
 export async function POST(req: Request) {
@@ -22,31 +22,26 @@ export async function POST(req: Request) {
     console.log(`Appending to sheet: ${sheet}, rows: ${values.length}`);
 
     const range = `${sheet}!A1`;
-    const result = await appendToGoogleSheet(range, values);
+    const results = [];
+    
+    // Adicionar cada linha individualmente
+    for (const row of values) {
+      const result = await appendRow(range, row);
+      results.push(result);
+    }
 
     return NextResponse.json({ 
       ok: true, 
-      result,
+      results,
       sheet,
       range,
       rowsAdded: values.length
     });
-  } catch (err: any) {
-    console.error("APPEND ERROR:", JSON.stringify({
-      message: err?.message,
-      stack: err?.stack,
-      body: req.body,
-      env: {
-        hasPrivateKey: !!process.env.GOOGLE_PRIVATE_KEY,
-        hasServiceEmail: !!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        hasSpreadsheetId: !!process.env.GOOGLE_SHEETS_SPREADSHEET_ID
-      }
-    }, null, 2));
-    
+  } catch (error: any) {
+    console.error("APPEND ERROR:", error);
     return NextResponse.json({
       ok: false,
-      message: err?.message || "Failed to append to Google Sheet",
-      error: process.env.NODE_ENV === 'development' ? err?.stack : undefined
+      message: error?.message || "Failed to append to Google Sheet"
     }, { status: 500 });
   }
 }
