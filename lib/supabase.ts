@@ -20,13 +20,30 @@ export const getSupabaseClient = () => {
 
 export const getProfile = async (userId: string) => {
   try {
-    const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single()
-
-    if (data) {
+    const response = await fetch('/api/sheets/read?sheet=Usuarios')
+    const result = await response.json()
+    
+    if (!result.ok) {
+      return { data: null, error: { message: "Erro ao buscar usuários" } }
+    }
+    
+    const usuarios = result.values?.slice(1) || []
+    const usuario = usuarios.find((u: any[]) => u[0] === userId) // ID na coluna 0
+    
+    if (usuario) {
+      const data = {
+        id: usuario[0],
+        email: usuario[1],
+        full_name: usuario[2],
+        phone: usuario[3],
+        theme_preference: usuario[4] || 'system',
+        created_at: usuario[5] || new Date().toISOString(),
+        updated_at: usuario[6] || new Date().toISOString()
+      }
       return { data, error: null }
     }
 
-    return { data: null, error: error || { message: "Perfil não encontrado" } }
+    return { data: null, error: { message: "Perfil não encontrado" } }
   } catch (error) {
     return { data: null, error }
   }
@@ -34,8 +51,31 @@ export const getProfile = async (userId: string) => {
 
 export const getQuadras = async () => {
   try {
-    const { data, error } = await supabase.from("quadras").select("*").eq("ativa", true).order("nome")
-    return { data, error }
+    const response = await fetch('/api/sheets/read?sheet=Quadras')
+    const result = await response.json()
+    
+    if (!result.ok) {
+      return { data: [], error: { message: "Erro ao buscar quadras" } }
+    }
+    
+    const quadras = result.values?.slice(1) || []
+    const data = quadras
+      .filter((q: any[]) => q[5] === 'true' || q[5] === true) // ativa na coluna 5
+      .map((q: any[]) => ({
+        id: q[0],
+        nome: q[1],
+        tipo: q[2],
+        preco_hora: parseFloat(q[3]) || 0,
+        capacidade: parseInt(q[4]) || 0,
+        ativa: q[5] === 'true' || q[5] === true,
+        descricao: q[6],
+        imagem_url: q[7],
+        equipamentos: q[8] ? q[8].split(',').map((e: string) => e.trim()) : [],
+        created_at: q[9] || new Date().toISOString(),
+        updated_at: q[10] || new Date().toISOString()
+      }))
+    
+    return { data, error: null }
   } catch (error) {
     return { data: [], error }
   }
@@ -43,8 +83,28 @@ export const getQuadras = async () => {
 
 export const getLeads = async () => {
   try {
-    const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false })
-    return { data, error }
+    const response = await fetch('/api/sheets/read?sheet=Leads')
+    const result = await response.json()
+    
+    if (!result.ok) {
+      return { data: [], error: { message: "Erro ao buscar leads" } }
+    }
+    
+    const leads = result.values?.slice(1) || []
+    const data = leads
+      .sort((a: any[], b: any[]) => new Date(b[6]).getTime() - new Date(a[6]).getTime()) // created_at na coluna 6
+      .map((l: any[]) => ({
+        id: l[0],
+        nome: l[1],
+        telefone: l[2],
+        email: l[3],
+        origem: l[4] || 'site',
+        interesse: l[5],
+        status: l[6] || 'novo',
+        created_at: l[7] || new Date().toISOString()
+      }))
+    
+    return { data, error: null }
   } catch (error) {
     return { data: [], error }
   }

@@ -68,10 +68,10 @@ export default function DashboardPage() {
 
       // Buscar dados do Google Sheets
       const [reservasResponse, clientesResponse, quadrasResponse, professoresResponse] = await Promise.all([
-        fetch('/api/sheets/read?sheet=reservas'),
-        fetch('/api/sheets/read?sheet=clientes'),
-        fetch('/api/sheets/read?sheet=quadras'),
-        fetch('/api/sheets/read?sheet=usuarios')
+        fetch('/api/sheets/read?sheet=Reservas'),
+        fetch('/api/sheets/read?sheet=Clientes'),
+        fetch('/api/sheets/read?sheet=Quadras'),
+        fetch('/api/sheets/read?sheet=Usuarios')
       ])
 
       const [reservasResult, clientesResult, quadrasResult, professoresResult] = await Promise.all([

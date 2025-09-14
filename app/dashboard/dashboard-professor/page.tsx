@@ -38,7 +38,7 @@ export default function ProfessorDashboardPage() {
 
   const fetchProximasAulas = async () => {
     try {
-      const response = await fetch('/api/sheets/read?sheet=reservas')
+      const response = await fetch('/api/sheets/read?sheet=Reservas')
       const result = await response.json()
       
       if (result.ok && result.values) {

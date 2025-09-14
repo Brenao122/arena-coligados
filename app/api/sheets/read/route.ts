@@ -42,9 +42,16 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ ok: true, values });
   } catch (err: any) {
-    console.error("READ ERROR:", JSON.stringify(err, null, 2));
+    console.error("READ ERROR:", JSON.stringify({
+      message: err?.message,
+      errors: err?.errors,
+      code: err?.code,
+      stack: err?.stack,
+      sheet: searchParams.get("sheet"),
+      range: `${searchParams.get("sheet") || "reservas"}!A:Z`
+    }, null, 2));
     return NextResponse.json(
-      { ok: false, message: err.message ?? "Erro ao ler planilha" },
+      { ok: false, message: err?.message ?? "read-error" },
       { status: 500 }
     );
   }
