@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSheetsClient, getSpreadsheetId } from '@/lib/google/sheets';
-import { formatSheetRange } from '@/lib/google/sheets-utils';
+import { appendRow } from '@/lib/google-sheets';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -8,7 +7,6 @@ export const dynamic = 'force-dynamic';
 type AppendBody = {
   sheet?: string;          // aba, ex: 'leads'
   values: (string | number | null)[][]; // linhas a inserir
-  userEntered?: boolean;   // default: true (USER_ENTERED)
 };
 
 export async function POST(req: Request) {
@@ -16,28 +14,25 @@ export async function POST(req: Request) {
     const body = (await req.json()) as AppendBody;
     const sheet = body.sheet ?? 'leads';
     const values = body.values;
-    if (!Array.isArray(values) || !Array.isArray(values[0])) {
+    
+    if (!Array.isArray(values) || values.length === 0) {
       return NextResponse.json({ ok: false, error: 'values inválido' }, { status: 400 });
     }
 
-    const sheets = getSheetsClient();
-    const spreadsheetId = getSpreadsheetId();
+    const range = `${sheet}!A1`;
+    
+    // Adicionar cada linha individualmente
+    const results = [];
+    for (const row of values) {
+      const result = await appendRow(range, row);
+      results.push(result);
+    }
 
-    const range = formatSheetRange(sheet, 'A1');
-    const valueInputOption = body.userEntered !== false ? 'USER_ENTERED' : 'RAW';
-
-    const { data } = await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range,
-      valueInputOption,
-      insertDataOption: 'INSERT_ROWS',
-      requestBody: { values },
-    });
-
-    return NextResponse.json({ ok: true, updates: data.updates ?? null });
+    return NextResponse.json({ ok: true, updates: results });
   } catch (err: any) {
+    console.error("APPEND ERROR:", err);
     return NextResponse.json(
-      { ok: false, error: String(err?.message ?? err) },
+      { ok: false, message: err?.message ?? "Erro ao adicionar dados" },
       { status: 500 }
     );
   }
