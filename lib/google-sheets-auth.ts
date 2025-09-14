@@ -20,8 +20,24 @@ export function getGoogleSheetsConfig(): GoogleSheetsConfig {
     - Spreadsheet ID: ${!!spreadsheetId}`);
   }
 
+  // Tratamento robusto da chave privada
+  let formattedPrivateKey = privateKey;
+  
+  // Se a chave não começa com -----BEGIN, pode estar em formato diferente
+  if (!formattedPrivateKey.includes('-----BEGIN')) {
+    throw new Error('Invalid private key format - must start with -----BEGIN PRIVATE KEY-----');
+  }
+  
+  // Substituir quebras de linha escapadas por quebras reais
+  formattedPrivateKey = formattedPrivateKey.replace(/\\n/g, '\n');
+  
+  // Garantir que termina com quebra de linha
+  if (!formattedPrivateKey.endsWith('\n')) {
+    formattedPrivateKey += '\n';
+  }
+
   return {
-    privateKey: privateKey.replace(/\\n/g, '\n'),
+    privateKey: formattedPrivateKey,
     clientEmail,
     spreadsheetId
   };
@@ -32,9 +48,20 @@ export function createGoogleSheetsClient() {
   try {
     const config = getGoogleSheetsConfig();
     
-    const auth = new google.auth.JWT({
-      email: config.clientEmail,
-      key: config.privateKey,
+    // Usar GoogleAuth com credenciais completas (mais robusto que JWT)
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        type: "service_account",
+        project_id: "credencial-n8n-471801",
+        private_key_id: "69a3c66a99a364b1fa4a9eb6142eeb2d8a60c9f0",
+        private_key: config.privateKey,
+        client_email: config.clientEmail,
+        client_id: "115903598446847987846",
+        auth_uri: "https://accounts.google.com/o/oauth2/auth",
+        token_uri: "https://oauth2.googleapis.com/token",
+        auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+        client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${encodeURIComponent(config.clientEmail)}`
+      },
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     });
 
