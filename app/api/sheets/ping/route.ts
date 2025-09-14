@@ -6,8 +6,22 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    if (!process.env.GOOGLE_PRIVATE_KEY || !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
-      throw new Error("Google Sheets credentials not configured");
+    // Diagnóstico das variáveis de ambiente
+    const hasPrivateKey = !!process.env.GOOGLE_PRIVATE_KEY;
+    const hasServiceEmail = !!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const hasSpreadsheetId = !!process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
+    
+    console.log("ENV CHECK:", {
+      hasPrivateKey,
+      hasServiceEmail,
+      hasSpreadsheetId,
+      privateKeyLength: process.env.GOOGLE_PRIVATE_KEY?.length || 0,
+      serviceEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || 'NOT_SET',
+      spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID || 'NOT_SET'
+    });
+
+    if (!hasPrivateKey || !hasServiceEmail || !hasSpreadsheetId) {
+      throw new Error(`Google Sheets credentials not configured: PK=${hasPrivateKey}, Email=${hasServiceEmail}, SheetID=${hasSpreadsheetId}`);
     }
 
     const auth = new google.auth.GoogleAuth({
