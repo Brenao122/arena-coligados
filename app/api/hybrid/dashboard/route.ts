@@ -1,52 +1,41 @@
 import 'server-only'
-import { NextResponse } from "next/server"
-import { createClient } from '@supabase/supabase-js'
-import { google } from 'googleapis'
+import { NextResponse } from 'next/server'
 
-export const runtime = "nodejs"
-export const dynamic = "force-dynamic"
+export const runtime = 'nodejs'
 
-// GET - Buscar estatísticas do dashboard
 export async function GET() {
-  try {
-    // SUPABASE (server)
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!  // server role no servidor
+  const url = process.env.SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  // NUNCA logue a key inteira
+  const safeUrl = url ?? '(undefined)'
+  const safeKeyInfo = key ? `len=${key.length}` : '(undefined)'
+
+  if (!url || !key) {
+    return NextResponse.json(
+      { ok: false, source: 'env', url: !!url, key: !!key, msg: 'missing SUPABASE_URL or SERVICE_ROLE_KEY' },
+      { status: 500 }
     )
-    const { data: leads, error: leadsErr } = await supabase
-      .from('leads')
-      .select('*')
-      .limit(1)
+  }
 
-    if (leadsErr) {
-      console.error('[DASHBOARD] supabase error:', leadsErr)
-      return NextResponse.json({ ok: false, source: 'supabase', error: leadsErr.message }, { status: 500 })
-    }
-
-    // SHEETS (server)
-    const auth = new google.auth.JWT({
-      email: process.env.GOOGLE_SERVICE_EMAIL!,
-      key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-    })
-    const sheets = google.sheets({ version: 'v4', auth })
-    const sheetId = process.env.SHEETS_SPREADSHEET_ID!
-    const r = await sheets.spreadsheets.values.get({
-      spreadsheetId: sheetId,
-      range: 'clientes',
-    })
-
-    return NextResponse.json({
-      ok: true,
-      source: 'hybrid',
-      counts: {
-        supabaseLeads: leads?.length ?? 0,
-        sheetClientes: r.data.values?.length ?? 0,
+  try {
+    // ping direto no REST (só pra validar URL/conexão)
+    const ping = await fetch(`${url}/rest/v1/`, {
+      method: 'GET',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
       },
     })
+
+    return NextResponse.json(
+      { ok: true, ping: { status: ping.status, url: safeUrl, key: safeKeyInfo } },
+      { status: 200 }
+    )
   } catch (e: any) {
-    console.error('[DASHBOARD] fatal:', e)
-    return NextResponse.json({ ok: false, source: 'fatal', error: String(e?.message ?? e) }, { status: 500 })
+    return NextResponse.json(
+      { ok: false, source: 'supabase', error: String(e?.message ?? e), url: safeUrl, key: safeKeyInfo },
+      { status: 500 }
+    )
   }
 }
