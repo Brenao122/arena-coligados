@@ -1,8 +1,9 @@
 // lib/data-manager.ts
 // Sistema híbrido: Supabase (principal) + Google Sheets (backup)
 
-import { getBrowserClient } from './supabase/browser-client'
-import { getServerClient } from './supabase/server-client'
+import 'server-only'
+import { supabaseServer } from './supabase/server'
+import { readSheet } from './sheets'
 
 export interface DataManagerConfig {
   useSupabase: boolean
@@ -25,7 +26,7 @@ export class DataManager {
     }
     
     // Usar server client para APIs do servidor
-    this.supabase = getServerClient()
+    this.supabase = supabaseServer()
   }
 
   // =============================================
