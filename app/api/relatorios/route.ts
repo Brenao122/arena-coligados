@@ -400,3 +400,5 @@ function gerarGraficoReservasPorDia(reservas: any[]) {
   return Object.values(reservasPorDia).sort((a: any, b: any) => a.data.localeCompare(b.data))
 }
 
+
+

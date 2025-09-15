@@ -24,7 +24,8 @@ export class DataManager {
       ...config
     }
     
-    this.supabase = getBrowserClient()
+    // Usar server client para APIs do servidor
+    this.supabase = getServerClient()
   }
 
   // =============================================

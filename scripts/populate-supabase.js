@@ -325,3 +325,5 @@ async function popularSupabase() {
 // Executar
 popularSupabase()
 
+
+
