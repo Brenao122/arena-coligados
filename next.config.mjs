@@ -27,6 +27,8 @@ const nextConfig = {
     GOOGLE_SERVICE_EMAIL: 'placeholder@example.com',
     GOOGLE_PRIVATE_KEY: 'placeholder-key',
     SHEETS_SPREADSHEET_ID: 'placeholder-sheet-id',
+    AUTH_COOKIE_DOMAIN: 'arenacoligados.com.br',
+    AUTH_COOKIE_SECURE: 'true',
   },
 };
 
