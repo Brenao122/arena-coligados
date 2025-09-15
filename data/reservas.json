@@ -1,0 +1,47 @@
+[
+  {
+    "cliente_nome": "João Silva",
+    "quadra_nome": "Quadra 1",
+    "data_inicio": "2024-01-20 10:00:00",
+    "data_fim": "2024-01-20 12:00:00",
+    "valor_total": 160,
+    "status": "confirmada",
+    "tipo": "locacao"
+  },
+  {
+    "cliente_nome": "Maria Santos",
+    "quadra_nome": "Quadra 2",
+    "data_inicio": "2024-01-21 14:00:00",
+    "data_fim": "2024-01-21 16:00:00",
+    "valor_total": 160,
+    "status": "pendente",
+    "tipo": "locacao"
+  },
+  {
+    "cliente_nome": "Pedro Costa",
+    "quadra_nome": "Quadra 3",
+    "data_inicio": "2024-01-22 18:00:00",
+    "data_fim": "2024-01-22 20:00:00",
+    "valor_total": 200,
+    "status": "confirmada",
+    "tipo": "aula_particular"
+  },
+  {
+    "cliente_nome": "Ana Oliveira",
+    "quadra_nome": "Quadra 1",
+    "data_inicio": "2024-01-23 09:00:00",
+    "data_fim": "2024-01-23 11:00:00",
+    "valor_total": 160,
+    "status": "confirmada",
+    "tipo": "locacao"
+  },
+  {
+    "cliente_nome": "Carlos Lima",
+    "quadra_nome": "Quadra 2",
+    "data_inicio": "2024-01-24 15:00:00",
+    "data_fim": "2024-01-24 17:00:00",
+    "valor_total": 160,
+    "status": "pendente",
+    "tipo": "locacao"
+  }
+]

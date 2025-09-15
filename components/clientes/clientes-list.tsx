@@ -39,65 +39,39 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
   const fetchClientes = async () => {
     try {
       setLoading(true)
-      console.log('🔍 Buscando clientes da planilha...')
+      console.log('🔍 Buscando clientes via sistema híbrido...')
 
-      // Buscar dados da aba 'clientes' via API
-      const response = await fetch('/api/sheets/read?sheet=clientes&range=clientes!A1:Z100')
+      // Usar nova API híbrida
+      const response = await fetch('/api/hybrid/clientes')
       const result = await response.json()
       
-      console.log('📊 Resposta da API:', result)
+      console.log('📊 Resposta da API híbrida:', result)
       
       if (!result.ok) {
         throw new Error(result.error || 'Erro ao buscar dados')
       }
 
-      const values = result.values || []
-      console.log('📋 Dados brutos da planilha:', values)
+      const clientesData = result.data || []
+      console.log('📋 Dados dos clientes:', clientesData)
+      console.log('🔄 Fonte dos dados:', result.source)
       
-      if (values.length === 0) {
-        console.log('⚠️ Planilha vazia ou sem dados')
+      if (clientesData.length === 0) {
+        console.log('⚠️ Nenhum cliente encontrado')
         setClientes([])
         return
       }
 
-      // Primeira linha são os cabeçalhos
-      const headers = values[0] || []
-      const dataRows = values.slice(1) || []
-      
-      console.log('📝 Cabeçalhos:', headers)
-      console.log('📊 Linhas de dados:', dataRows.length)
-
-      // Mapear dados para estrutura de clientes
-      const clientesMapeados = dataRows.map((row: any[], index: number) => {
-        const cliente: any = {
-          id: `cliente-${index}`,
-          full_name: '',
-          email: '',
-          phone: '',
-          created_at: new Date().toISOString(),
-          reservas_count: 0,
-          ultima_reserva: '',
-          total_gasto: 0
-        }
-
-        // Mapear colunas baseado nos cabeçalhos
-        headers.forEach((header: string, colIndex: number) => {
-          const value = row[colIndex] || ''
-          const headerLower = header.toLowerCase()
-          
-          if (headerLower.includes('nome') || headerLower.includes('name')) {
-            cliente.full_name = value
-          } else if (headerLower.includes('email')) {
-            cliente.email = value
-          } else if (headerLower.includes('telefone') || headerLower.includes('phone')) {
-            cliente.phone = value
-          } else if (headerLower.includes('data') || headerLower.includes('date')) {
-            cliente.created_at = value || new Date().toISOString()
-          }
-        })
-
-        return cliente
-      }).filter(cliente => cliente.full_name && cliente.email) // Filtrar clientes válidos
+      // Mapear dados para estrutura esperada
+      const clientesMapeados = clientesData.map((cliente: any) => ({
+        id: cliente.id,
+        full_name: cliente.nome || cliente.full_name || '',
+        email: cliente.email || '',
+        phone: cliente.telefone || cliente.phone || '',
+        created_at: cliente.created_at || new Date().toISOString(),
+        reservas_count: cliente.reservas_count || 0,
+        ultima_reserva: cliente.ultima_reserva || '',
+        total_gasto: cliente.total_gasto || 0
+      })).filter(cliente => cliente.full_name && cliente.email) // Filtrar clientes válidos
 
       console.log('✅ Clientes mapeados:', clientesMapeados)
       setClientes(clientesMapeados)

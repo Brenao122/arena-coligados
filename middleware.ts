@@ -3,23 +3,35 @@
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   
-  // [LOGIN→CRM] Middleware simplificado para não interferir com redirecionamento
-  console.log('[LOGIN→CRM] Middleware executado para:', pathname)
+  // Middleware para proteção de rotas e autenticação
+  console.log('[ARENA-COLIGADOS] Middleware executado para:', pathname)
+  
+  // Rotas públicas que não precisam de autenticação
+  const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password']
+  const isPublicRoute = publicRoutes.includes(pathname)
   
   // Rotas protegidas que precisam de autenticação
   const protectedRoutes = ["/dashboard", "/crm"]
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route))
   const isAuthRoute = pathname === "/login" || pathname.startsWith("/auth")
   
-  // Para rotas protegidas, permitir acesso (o AccessControl no layout gerencia a autenticação)
+  // Para rotas protegidas, verificar autenticação via localStorage (fallback)
   if (isProtected) {
-    console.log('[LOGIN→CRM] Rota protegida acessada:', pathname)
-    return NextResponse.next()
+    console.log('[ARENA-COLIGADOS] Rota protegida acessada:', pathname)
+    
+    // Verificar se há usuário logado via localStorage (fallback para SSR)
+    const userFromStorage = req.headers.get('x-user-data')
+    if (!userFromStorage && !isAuthRoute) {
+      console.log('[ARENA-COLIGADOS] Usuário não autenticado, redirecionando para login')
+      const redirectUrl = new URL('/login', req.url)
+      redirectUrl.searchParams.set('redirectTo', pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
   }
   
   // Para rotas de auth, permitir acesso
   if (isAuthRoute) {
-    console.log('[LOGIN→CRM] Rota de auth acessada:', pathname)
+    console.log('[ARENA-COLIGADOS] Rota de auth acessada:', pathname)
     return NextResponse.next()
   }
   
