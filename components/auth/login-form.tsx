@@ -94,13 +94,14 @@ export function LoginForm() {
       
       // Redirecionar para dashboard baseado no role
       setTimeout(() => {
-        if (userData.profile.role === 'admin') {
-          router.push("/dashboard/dashboard-admin")
-        } else if (userData.profile.role === 'professor') {
-          router.push("/dashboard/dashboard-professor")
-        } else {
-          router.push("/dashboard/dashboard-aluno")
-        }
+        const redirectTo = userData.profile.role === 'admin' 
+          ? "/dashboard/dashboard-admin"
+          : userData.profile.role === 'professor'
+          ? "/dashboard/dashboard-professor"
+          : "/dashboard/dashboard-aluno"
+        
+        router.replace(redirectTo)
+        router.refresh() // importante pro SSR já ver o cookie novo
       }, 500)
       
     } catch (err) {
