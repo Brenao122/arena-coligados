@@ -1,4 +1,5 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(req: NextRequest) {
@@ -10,21 +11,37 @@ export async function middleware(req: NextRequest) {
     {
       cookies: {
         get: (name) => req.cookies.get(name)?.value,
-        set: (name, value, options) => res.cookies.set(name, value, options),
-        remove: (name, options) =>
-          res.cookies.set(name, '', { ...options, maxAge: 0 }),
+        set: (name, value, options) => {
+          res.cookies.set({ name, value, ...options })
+        },
+        remove: (name, options) => {
+          res.cookies.delete({ name, ...options })
+        },
       },
     }
   )
 
-  // Força o Supabase a "atualizar/sincronizar" os cookies
-  await supabase.auth.getSession()
+  const { data: { user } } = await supabase.auth.getUser()
+  const path = req.nextUrl.pathname
+
+  const isLogin = path.startsWith('/login')
+  const isDashboard = path.startsWith('/dashboard')
+
+  if (user && isLogin) {
+    // já logado e na tela de login? vai para o dashboard
+    return NextResponse.redirect(new URL('/dashboard/dashboard-admin', req.url))
+  }
+
+  if (!user && isDashboard) {
+    // não logado querendo dashboard? vai pro login
+    const url = new URL('/login', req.url)
+    url.searchParams.set('redirectTo', path)
+    return NextResponse.redirect(url)
+  }
+
   return res
 }
 
-// Limita as rotas que precisam de autenticação
-export const config = { 
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|api/auth).*)'
-  ] 
+export const config = {
+  matcher: ['/', '/login', '/dashboard/:path*'],
 }

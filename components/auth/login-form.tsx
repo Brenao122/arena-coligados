@@ -100,8 +100,8 @@ export function LoginForm() {
           ? "/dashboard/dashboard-professor"
           : "/dashboard/dashboard-aluno"
         
-        router.replace(redirectTo)
-        router.refresh() // importante pro SSR já ver o cookie novo
+        // Redirect hard para garantir que o middleware funcione
+        window.location.href = redirectTo
       }, 500)
       
     } catch (err) {

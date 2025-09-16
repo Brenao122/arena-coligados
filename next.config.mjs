@@ -14,10 +14,7 @@ const nextConfig = {
   // Correção: flag atualizada no Next 15
   serverExternalPackages: ["googleapis", "google-auth-library"],
 
-  // Desabilitar prerendering para páginas com autenticação
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
+  // Configurações experimentais removidas para Next 15
 
   env: {
     NEXT_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co',
