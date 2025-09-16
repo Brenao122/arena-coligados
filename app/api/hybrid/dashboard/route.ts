@@ -1,26 +1,14 @@
 import 'server-only'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
+import { ENV } from '@/lib/env'
 
 export async function GET() {
-  // Verificar se as ENVs server estão presentes
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return NextResponse.json({
-      ok: false,
-      error: 'Missing server env',
-      hasUrl: !!process.env.SUPABASE_URL,
-      hasServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-    }, { status: 500 })
-  }
-
   try {
     // Criar client Supabase com variáveis server
     const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      ENV.SUPABASE_URL,
+      ENV.SUPABASE_SERVICE_ROLE_KEY
     )
 
     // Buscar dados do dashboard
@@ -46,8 +34,8 @@ export async function GET() {
   } catch (error: any) {
     return NextResponse.json({
       ok: false,
-      error: error.message,
-      source: 'supabase'
+      source: 'supabase',
+      error: error.message
     }, { status: 500 })
   }
 }

@@ -1,10 +1,25 @@
+// lib/supabase/server.ts (server-only)
 import 'server-only'
-import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
+import { ENV } from '@/lib/env'
 
-export function supabaseServer() {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!, // use a service role aqui (no servidor)
-    { auth: { persistSession: false } }
+export function getServerSupabase() {
+  const store = cookies()
+  return createServerClient(
+    ENV.NEXT_PUBLIC_SUPABASE_URL,
+    ENV.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        get: (name) => store.get(name)?.value,
+        set: (name, value, options) => store.set(name, value, options),
+        remove: (name, options) => store.set(name, '', { ...options, maxAge: 0 }),
+      },
+    }
   )
+}
+
+// Função legacy para compatibilidade
+export function supabaseServer() {
+  return getServerSupabase()
 }

@@ -4,21 +4,11 @@
   "description": "Sistema completo de gestão para arenas esportivas - Arena Coligados",
   "private": true,
   "scripts": {
-    "build": "next build",
     "dev": "next dev -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
     "lint": "next lint",
-    "start": "next start",
-    "type-check": "tsc --noEmit",
-    "test": "echo 'No tests configured yet'",
-    "check-all": "npm run lint && npm run type-check && npm run build",
-    "verify": "npm run lint && npm run type-check && npm run build && echo '✅ All checks passed!'",
-    "setup": "node scripts/setup.js",
-    "start:prod": "npm run build && npm run start",
-    "validate": "npm run lint && npm run type-check && npm run build",
-    "sheets:create": "node scripts/create-sheets.js",
-    "qa:init": "node tools/ensureQaArtifacts.mjs",
-    "qa:test": "playwright test",
-    "qa:run": "npm run qa:init && npm run qa:test"
+    "self-check": "node scripts/self-check.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
