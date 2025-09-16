@@ -8,7 +8,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
-export function LoginForm() {
+type Props = {
+  action: (formData: FormData) => Promise<{ ok?: boolean; error?: string } | void>
+  redirectTo: string
+}
+
+export function LoginForm({ action, redirectTo }: Props) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -73,37 +78,25 @@ export function LoginForm() {
     return userData
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+  const handleSubmit = async (formData: FormData) => {
     if (!mounted) return
-
-    if (!email || !password) {
-      setError("Por favor, preencha todos os campos")
-      return
-    }
 
     setLoading(true)
     setError("")
     setSuccess("")
 
     try {
-      const userData = await handleLogin(email, password)
+      // Adiciona redirectTo ao formData
+      formData.set('redirectTo', redirectTo)
       
-      setSuccess("Login realizado com sucesso! Redirecionando...")
+      const res = await action(formData)
       
-      // Redirecionar para dashboard baseado no role
-      setTimeout(() => {
-        const redirectTo = userData.profile.role === 'admin' 
-          ? "/dashboard/dashboard-admin"
-          : userData.profile.role === 'professor'
-          ? "/dashboard/dashboard-professor"
-          : "/dashboard/dashboard-aluno"
-        
-        // Redirect hard para garantir que o middleware funcione
-        window.location.href = redirectTo
-      }, 500)
-      
+      if (res && 'error' in res && res.error) {
+        setError(res.error)
+      } else {
+        setSuccess("Login realizado com sucesso! Redirecionando...")
+        // Sucesso: a server action faz redirect(), nada a fazer aqui
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro inesperado")
     } finally {
@@ -130,7 +123,7 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form action={handleSubmit} className="space-y-6">
         {error && (
           <Alert variant="destructive" className="bg-red-900/20 border-red-800 text-red-300" data-testid="error-message">
             <AlertDescription>{error}</AlertDescription>

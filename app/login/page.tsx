@@ -1,8 +1,15 @@
 ﻿import { LoginForm } from "@/components/auth/login-form"
+import { loginAction } from "./actions"
 
 export const dynamic = 'force-dynamic'
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams?: { redirectTo?: string }
+}) {
+  const redirectTo = searchParams?.redirectTo ?? '/dashboard'
+
   return (
     <div
       className="min-h-screen flex items-center justify-center relative"
@@ -25,7 +32,8 @@ export default function LoginPage() {
         </div>
 
         <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">
-          <LoginForm />
+          {/* passe a action e o redirectTo */}
+          <LoginForm action={loginAction} redirectTo={redirectTo} />
         </div>
       </div>
     </div>
