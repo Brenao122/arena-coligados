@@ -1,49 +1,30 @@
-﻿import { NextResponse, type NextRequest } from "next/server"
+﻿import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl
-  
-  // Middleware para proteção de rotas e autenticação
-  console.log('[ARENA-COLIGADOS] Middleware executado para:', pathname)
-  
-  // Rotas públicas que não precisam de autenticação
-  const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password']
-  const isPublicRoute = publicRoutes.includes(pathname)
-  
-  // Rotas protegidas que precisam de autenticação
-  const protectedRoutes = ["/dashboard", "/crm"]
-  const isProtected = protectedRoutes.some((route) => pathname.startsWith(route))
-  const isAuthRoute = pathname === "/login" || pathname.startsWith("/auth")
-  
-  // Para rotas protegidas, verificar autenticação via localStorage (fallback)
-  if (isProtected) {
-    console.log('[ARENA-COLIGADOS] Rota protegida acessada:', pathname)
-    
-    // Verificar se há usuário logado via localStorage (fallback para SSR)
-    const userFromStorage = req.headers.get('x-user-data')
-    if (!userFromStorage && !isAuthRoute) {
-      console.log('[ARENA-COLIGADOS] Usuário não autenticado, redirecionando para login')
-      const redirectUrl = new URL('/login', req.url)
-      redirectUrl.searchParams.set('redirectTo', pathname)
-      return NextResponse.redirect(redirectUrl)
+  const res = NextResponse.next()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => req.cookies.get(name)?.value,
+        set: (name, value, options) => res.cookies.set(name, value, options),
+        remove: (name, options) =>
+          res.cookies.set(name, '', { ...options, maxAge: 0 }),
+      },
     }
-  }
-  
-  // Para rotas de auth, permitir acesso
-  if (isAuthRoute) {
-    console.log('[ARENA-COLIGADOS] Rota de auth acessada:', pathname)
-    return NextResponse.next()
-  }
-  
-  // Para outras rotas, permitir acesso
-  return NextResponse.next()
+  )
+
+  // Força o Supabase a "atualizar/sincronizar" os cookies
+  await supabase.auth.getSession()
+  return res
 }
 
-export const config = {
+// Limita as rotas que precisam de autenticação
+export const config = { 
   matcher: [
-    "/crm/:path*",
-    "/dashboard/:path*", 
-    "/login",
-    "/auth/:path*"
-  ]
+    '/((?!_next/static|_next/image|favicon.ico|api/auth).*)'
+  ] 
 }
