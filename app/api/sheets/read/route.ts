@@ -1,32 +1,37 @@
 import 'server-only'
-import { NextResponse } from "next/server";
-import { readSheet } from "@/lib/google-sheets";
+import { NextResponse } from 'next/server'
+import { sheetsService } from '@/lib/sheets'
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
-export async function GET(req: Request) {
+export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const sheet = searchParams.get("sheet") || "Reservas";
-    const range = `${sheet}!A:Z`;
-
-    console.log(`Reading sheet: ${range}`);
-
-    const values = await readSheet(range);
-
-    return NextResponse.json({ 
-      ok: true, 
-      values,
-      sheet,
-      range,
-      count: values.length
-    });
+    const { searchParams } = new URL(request.url)
+    const sheet = searchParams.get('sheet') || 'Página1'
+    const range = searchParams.get('range') || 'A:Z'
+    
+    console.log(`📖 Lendo planilha: ${sheet}, range: ${range}`)
+    
+    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID!
+    const result = await sheetsService.readSheet(spreadsheetId, `${sheet}!${range}`)
+    
+    if (result.ok) {
+      return NextResponse.json({
+        ok: true,
+        data: result.data,
+        count: result.count,
+        sheet,
+        range
+      })
+    } else {
+      return NextResponse.json({
+        ok: false,
+        error: result.error
+      }, { status: 500 })
+    }
   } catch (error: any) {
-    console.error("READ ERROR:", error);
+    console.error('❌ Erro na API sheets/read:', error.message)
     return NextResponse.json({
       ok: false,
-      message: error?.message || "Failed to read Google Sheet"
-    }, { status: 500 });
+      error: error.message
+    }, { status: 500 })
   }
 }

@@ -71,8 +71,8 @@ export default function DashboardPage() {
       setLoading(true)
       console.log('🔍 Buscando dados do dashboard via sistema híbrido...')
 
-      // Usar nova API híbrida para estatísticas
-      const dashboardResponse = await fetch('/api/hybrid/dashboard')
+      // Usar nova API com Google Sheets como principal
+      const dashboardResponse = await fetch('/api/sheets-primary/dashboard')
       const dashboardResult = await dashboardResponse.json()
 
       if (dashboardResult.ok) {
@@ -101,9 +101,9 @@ export default function DashboardPage() {
         console.log('🔄 Tentando fallback com APIs individuais...')
         
         const [reservasResponse, clientesResponse, quadrasResponse] = await Promise.all([
-          fetch('/api/hybrid/reservas'),
-          fetch('/api/hybrid/clientes'),
-          fetch('/api/hybrid/quadras')
+          fetch('/api/sheets-primary/reservas'),
+          fetch('/api/sheets-primary/clientes'),
+          fetch('/api/sheets-primary/quadras')
         ])
 
         const [reservasResult, clientesResult, quadrasResult] = await Promise.all([
@@ -167,7 +167,7 @@ export default function DashboardPage() {
       console.log('🔄 Iniciando sincronização via API híbrida...')
       
       // Usar nova API de sincronização
-      const syncResponse = await fetch('/api/hybrid/sync', {
+      const syncResponse = await fetch('/api/sheets-primary/sync', {
         method: 'POST'
       })
       

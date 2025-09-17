@@ -42,7 +42,7 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
       console.log('🔍 Buscando clientes via sistema híbrido...')
 
       // Usar nova API híbrida
-      const response = await fetch('/api/hybrid/clientes')
+      const response = await fetch('/api/sheets-primary/clientes')
       const result = await response.json()
       
       console.log('📊 Resposta da API híbrida:', result)

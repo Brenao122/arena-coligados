@@ -1,47 +1,43 @@
-import { NextResponse } from 'next/server';
-import { appendRow } from "@/lib/google-sheets";
+import 'server-only'
+import { NextResponse } from 'next/server'
+import { sheetsService } from '@/lib/sheets'
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
-type AppendBody = {
-  sheet?: string;
-  values: (string | number | null)[][];
-};
-
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const body = (await req.json()) as AppendBody;
-    const sheet = body.sheet ?? 'Leads';
-    const values = body.values;
+    const body = await request.json()
+    const { sheet = 'Página1', range = 'A:Z', values } = body
     
-    if (!Array.isArray(values) || values.length === 0) {
-      return NextResponse.json({ ok: false, error: 'values inválido' }, { status: 400 });
+    if (!values || !Array.isArray(values)) {
+      return NextResponse.json({
+        ok: false,
+        error: 'Valores são obrigatórios e devem ser um array'
+      }, { status: 400 })
     }
-
-    console.log(`Appending to sheet: ${sheet}, rows: ${values.length}`);
-
-    const range = `${sheet}!A1`;
-    const results = [];
     
-    // Adicionar cada linha individualmente
-    for (const row of values) {
-      const result = await appendRow(range, row);
-      results.push(result);
+    console.log(`📝 Escrevendo na planilha: ${sheet}, range: ${range}`)
+    
+    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID!
+    const result = await sheetsService.appendToSheet(spreadsheetId, `${sheet}!${range}`, values)
+    
+    if (result.ok) {
+      return NextResponse.json({
+        ok: true,
+        data: result.data,
+        updatedRows: result.updatedRows,
+        sheet,
+        range
+      })
+    } else {
+      return NextResponse.json({
+        ok: false,
+        error: result.error
+      }, { status: 500 })
     }
-
-    return NextResponse.json({ 
-      ok: true, 
-      results,
-      sheet,
-      range,
-      rowsAdded: values.length
-    });
   } catch (error: any) {
-    console.error("APPEND ERROR:", error);
+    console.error('❌ Erro na API sheets/append:', error.message)
     return NextResponse.json({
       ok: false,
-      message: error?.message || "Failed to append to Google Sheet"
-    }, { status: 500 });
+      error: error.message
+    }, { status: 500 })
   }
 }
