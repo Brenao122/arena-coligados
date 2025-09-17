@@ -3,12 +3,13 @@ import { loginAction } from "./actions"
 
 export const dynamic = 'force-dynamic'
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: { redirectTo?: string }
+  searchParams?: Promise<{ redirectTo?: string }>
 }) {
-  const redirectTo = searchParams?.redirectTo ?? '/dashboard'
+  const params = await searchParams
+  const redirectTo = params?.redirectTo ?? '/dashboard'
 
   return (
     <div
