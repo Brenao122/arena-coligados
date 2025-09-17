@@ -1,43 +1,19 @@
-import 'server-only'
-import { NextResponse } from 'next/server'
-import { sheetsService } from '@/lib/sheets'
+export const runtime = 'nodejs';
 
-export async function POST(request: Request) {
+import { NextResponse } from 'next/server';
+import { appendObject } from '@/lib/googleSheets';
+
+export async function POST(req: Request) {
   try {
-    const body = await request.json()
-    const { sheet = 'Página1', range = 'A:Z', values } = body
-    
-    if (!values || !Array.isArray(values)) {
-      return NextResponse.json({
-        ok: false,
-        error: 'Valores são obrigatórios e devem ser um array'
-      }, { status: 400 })
-    }
-    
-    console.log(`📝 Escrevendo na planilha: ${sheet}, range: ${range}`)
-    
-    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID!
-    const result = await sheetsService.appendToSheet(spreadsheetId, `${sheet}!${range}`, values)
-    
-    if (result.ok) {
-      return NextResponse.json({
-        ok: true,
-        data: result.data,
-        updatedRows: result.updatedRows,
-        sheet,
-        range
-      })
-    } else {
-      return NextResponse.json({
-        ok: false,
-        error: result.error
-      }, { status: 500 })
-    }
-  } catch (error: any) {
-    console.error('❌ Erro na API sheets/append:', error.message)
-    return NextResponse.json({
-      ok: false,
-      error: error.message
-    }, { status: 500 })
+    const body = await req.json();
+    const sheet: string = body.sheet || 'reservas';
+    const data: Record<string, any> = body.data || {};
+    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID!;
+    if (!spreadsheetId) throw new Error('GOOGLE_SHEETS_SPREADSHEET_ID ausente');
+
+    await appendObject(spreadsheetId, sheet, data);
+    return NextResponse.json({ ok: true }, { status: 200 });
+  } catch (err: any) {
+    return NextResponse.json({ ok: false, error: String(err?.message ?? err) }, { status: 500 });
   }
 }

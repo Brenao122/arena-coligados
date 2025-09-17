@@ -1,37 +1,18 @@
-import 'server-only'
-import { NextResponse } from 'next/server'
-import { sheetsService } from '@/lib/sheets'
+export const runtime = 'nodejs'; // googleapis precisa de Node runtime
 
-export async function GET(request: Request) {
+import { NextResponse } from 'next/server';
+import { readSheetAsObjects } from '@/lib/googleSheets';
+
+export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(request.url)
-    const sheet = searchParams.get('sheet') || 'Página1'
-    const range = searchParams.get('range') || 'A:Z'
-    
-    console.log(`📖 Lendo planilha: ${sheet}, range: ${range}`)
-    
-    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID!
-    const result = await sheetsService.readSheet(spreadsheetId, `${sheet}!${range}`)
-    
-    if (result.ok) {
-      return NextResponse.json({
-        ok: true,
-        data: result.data,
-        count: result.count,
-        sheet,
-        range
-      })
-    } else {
-      return NextResponse.json({
-        ok: false,
-        error: result.error
-      }, { status: 500 })
-    }
-  } catch (error: any) {
-    console.error('❌ Erro na API sheets/read:', error.message)
-    return NextResponse.json({
-      ok: false,
-      error: error.message
-    }, { status: 500 })
+    const url = new URL(req.url);
+    const sheet = url.searchParams.get('sheet') || 'reservas';
+    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID!;
+    if (!spreadsheetId) throw new Error('GOOGLE_SHEETS_SPREADSHEET_ID ausente');
+
+    const data = await readSheetAsObjects(spreadsheetId, sheet);
+    return NextResponse.json({ ok: true, sheet, count: data.length, data }, { status: 200 });
+  } catch (err: any) {
+    return NextResponse.json({ ok: false, error: String(err?.message ?? err) }, { status: 500 });
   }
 }
