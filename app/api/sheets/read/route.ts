@@ -1,7 +1,7 @@
 export const runtime = 'nodejs'; // googleapis precisa de Node runtime
 
 import { NextResponse } from 'next/server';
-import { readSheetAsObjects } from '@/lib/google-sheets';
+import { readSheetAsObjects } from '@/lib/googleSheets';
 
 export async function GET(req: Request) {
   try {
