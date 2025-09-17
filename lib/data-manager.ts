@@ -2,7 +2,8 @@
 // Sistema híbrido: Supabase (principal) + Google Sheets (backup)
 
 import 'server-only'
-import { supabaseServer } from './supabase/server'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 import { readSheet } from './sheets'
 
 export interface DataManagerConfig {
@@ -13,7 +14,6 @@ export interface DataManagerConfig {
 }
 
 export class DataManager {
-  private supabase: any
   private config: DataManagerConfig
 
   constructor(config: Partial<DataManagerConfig> = {}) {
@@ -24,9 +24,21 @@ export class DataManager {
       fallbackToSheets: true,
       ...config
     }
-    
-    // Usar server client para APIs do servidor
-    this.supabase = supabaseServer()
+  }
+
+  private getSupabase() {
+    const store = cookies()
+    return createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => store.get(name)?.value,
+          set: (name, value, options) => store.set(name, value, options),
+          remove: (name, options) => store.set(name, '', { ...options, maxAge: 0 }),
+        },
+      }
+    )
   }
 
   // =============================================
@@ -36,7 +48,8 @@ export class DataManager {
   async getClientes() {
     try {
       if (this.config.useSupabase) {
-        const { data, error } = await this.supabase
+        const supabase = this.getSupabase()
+        const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('role', 'cliente')
@@ -69,7 +82,7 @@ export class DataManager {
     try {
       // 1. Salvar no Supabase primeiro
       if (this.config.useSupabase) {
-        const { data, error } = await this.supabase
+        const { data, error } = await this.getSupabase()
           .from('profiles')
           .insert([{
             ...clienteData,
@@ -118,7 +131,7 @@ export class DataManager {
   async getQuadras() {
     try {
       if (this.config.useSupabase) {
-        const { data, error } = await this.supabase
+        const { data, error } = await this.getSupabase()
           .from('quadras')
           .select('*')
           .eq('ativo', true)
@@ -151,7 +164,7 @@ export class DataManager {
     try {
       // 1. Salvar no Supabase primeiro
       if (this.config.useSupabase) {
-        const { data, error } = await this.supabase
+        const { data, error } = await this.getSupabase()
           .from('quadras')
           .insert([{
             ...quadraData,
@@ -199,7 +212,7 @@ export class DataManager {
   async getReservas() {
     try {
       if (this.config.useSupabase) {
-        const { data, error } = await this.supabase
+        const { data, error } = await this.getSupabase()
           .from('reservas_com_detalhes')
           .select('*')
           .order('data_inicio', { ascending: false })
@@ -231,7 +244,7 @@ export class DataManager {
     try {
       // 1. Verificar disponibilidade no Supabase
       if (this.config.useSupabase) {
-        const { data: disponivel } = await this.supabase
+        const { data: disponivel } = await this.getSupabase()
           .rpc('check_quadra_availability', {
             p_quadra_id: reservaData.quadra_id,
             p_data_inicio: reservaData.data_inicio,
@@ -243,7 +256,7 @@ export class DataManager {
         }
 
         // 2. Salvar no Supabase
-        const { data, error } = await this.supabase
+        const { data, error } = await this.getSupabase()
           .from('reservas')
           .insert([{
             ...reservaData,
@@ -291,7 +304,7 @@ export class DataManager {
   async getDashboardStats() {
     try {
       if (this.config.useSupabase) {
-        const { data, error } = await this.supabase
+        const { data, error } = await this.getSupabase()
           .rpc('get_dashboard_stats')
 
         if (!error && data) {
