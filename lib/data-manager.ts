@@ -4,7 +4,6 @@
 import 'server-only'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { readSheet } from './sheets'
 
 export interface DataManagerConfig {
   useSupabase: boolean
@@ -26,16 +25,27 @@ export class DataManager {
     }
   }
 
-  private getSupabase() {
-    const store = cookies()
+  private async getSupabase() {
+    const store = await cookies()
     return createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get: (name) => store.get(name)?.value,
-          set: (name, value, options) => store.set(name, value, options),
-          remove: (name, options) => store.set(name, '', { ...options, maxAge: 0 }),
+          getAll() {
+            return store.getAll()
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                store.set(name, value, options)
+              )
+            } catch {
+              // The `setAll` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing
+              // user sessions.
+            }
+          },
         },
       }
     )
@@ -48,7 +58,7 @@ export class DataManager {
   async getClientes() {
     try {
       if (this.config.useSupabase) {
-        const supabase = this.getSupabase()
+        const supabase = await this.getSupabase()
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
@@ -82,7 +92,8 @@ export class DataManager {
     try {
       // 1. Salvar no Supabase primeiro
       if (this.config.useSupabase) {
-        const { data, error } = await this.getSupabase()
+        const supabase = await this.getSupabase()
+        const { data, error } = await supabase
           .from('profiles')
           .insert([{
             ...clienteData,
@@ -131,7 +142,8 @@ export class DataManager {
   async getQuadras() {
     try {
       if (this.config.useSupabase) {
-        const { data, error } = await this.getSupabase()
+        const supabase = await this.getSupabase()
+        const { data, error } = await supabase
           .from('quadras')
           .select('*')
           .eq('ativo', true)
@@ -164,7 +176,8 @@ export class DataManager {
     try {
       // 1. Salvar no Supabase primeiro
       if (this.config.useSupabase) {
-        const { data, error } = await this.getSupabase()
+        const supabase = await this.getSupabase()
+        const { data, error } = await supabase
           .from('quadras')
           .insert([{
             ...quadraData,
@@ -212,7 +225,8 @@ export class DataManager {
   async getReservas() {
     try {
       if (this.config.useSupabase) {
-        const { data, error } = await this.getSupabase()
+        const supabase = await this.getSupabase()
+        const { data, error } = await supabase
           .from('reservas_com_detalhes')
           .select('*')
           .order('data_inicio', { ascending: false })
@@ -244,7 +258,8 @@ export class DataManager {
     try {
       // 1. Verificar disponibilidade no Supabase
       if (this.config.useSupabase) {
-        const { data: disponivel } = await this.getSupabase()
+        const supabase = await this.getSupabase()
+        const { data: disponivel } = await supabase
           .rpc('check_quadra_availability', {
             p_quadra_id: reservaData.quadra_id,
             p_data_inicio: reservaData.data_inicio,
@@ -256,7 +271,7 @@ export class DataManager {
         }
 
         // 2. Salvar no Supabase
-        const { data, error } = await this.getSupabase()
+        const { data, error } = await supabase
           .from('reservas')
           .insert([{
             ...reservaData,
@@ -304,7 +319,8 @@ export class DataManager {
   async getDashboardStats() {
     try {
       if (this.config.useSupabase) {
-        const { data, error } = await this.getSupabase()
+        const supabase = await this.getSupabase()
+        const { data, error } = await supabase
           .rpc('get_dashboard_stats')
 
         if (!error && data) {

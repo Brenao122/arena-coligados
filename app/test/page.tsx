@@ -67,7 +67,7 @@ export default function TestPage() {
 
     } catch (error) {
       console.error('❌ Erro nos testes:', error)
-      setResults({ error: error.message })
+      setResults({ error: error instanceof Error ? error.message : 'Erro desconhecido' })
     } finally {
       setLoading(false)
     }
@@ -91,7 +91,7 @@ export default function TestPage() {
 
     } catch (error) {
       console.error('❌ Erro ao popular dados:', error)
-      setPopulateResults({ error: error.message })
+      setPopulateResults({ error: error instanceof Error ? error.message : 'Erro desconhecido' })
     } finally {
       setPopulateLoading(false)
     }

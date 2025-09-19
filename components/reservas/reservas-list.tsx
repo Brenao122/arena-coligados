@@ -36,7 +36,7 @@ interface ReservasListProps {
 }
 
 export function ReservasList({ onEdit, refresh }: ReservasListProps) {
-  const { profile } = useAuth()
+  const { profile: _profile } = useAuth()
   const [reservas, setReservas] = useState<ReservaCompleta[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")

@@ -71,7 +71,7 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
         reservas_count: cliente.reservas_count || 0,
         ultima_reserva: cliente.ultima_reserva || '',
         total_gasto: cliente.total_gasto || 0
-      })).filter(cliente => cliente.full_name && cliente.email) // Filtrar clientes válidos
+      })).filter((cliente: any) => cliente.full_name && cliente.email) // Filtrar clientes válidos
 
       console.log('✅ Clientes mapeados:', clientesMapeados)
       setClientes(clientesMapeados)

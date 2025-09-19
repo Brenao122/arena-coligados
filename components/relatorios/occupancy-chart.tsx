@@ -34,7 +34,7 @@ export function OccupancyChart() {
         const reservasData = reservas
           .filter((r: any[]) => {
             const dataInicio = new Date(r[4]) // data_inicio
-            return dataInicio >= getWeekStart() && dataInicio <= getWeekEnd()
+            return dataInicio >= new Date(getWeekStart()) && dataInicio <= new Date(getWeekEnd())
           })
           .map((r: any[]) => ({
             date: r[4], // data_inicio

@@ -33,8 +33,10 @@ export default function ClienteDetalhes() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchClienteData()
-  }, [params.id])
+    if (params?.id) {
+      fetchClienteData()
+    }
+  }, [params?.id])
 
   const fetchClienteData = async () => {
     try {
@@ -48,7 +50,7 @@ export default function ClienteDetalhes() {
       
       // Encontrar o cliente pelo ID (assumindo que ID está na coluna 0)
       const clientes = clientesData.values?.slice(1) || []
-      const clienteData = clientes.find((c: any[]) => c[0] === params.id)
+      const clienteData = clientes.find((c: any[]) => c[0] === params?.id)
       
       if (!clienteData) throw new Error('Cliente não encontrado')
 
@@ -70,7 +72,7 @@ export default function ClienteDetalhes() {
       // Filtrar reservas do cliente (assumindo que cliente_id está na coluna 1)
       const reservas = reservasData.values?.slice(1) || []
       const reservasCliente = reservas
-        .filter((r: any[]) => r[1] === params.id) // cliente_id
+        .filter((r: any[]) => r[1] === params?.id) // cliente_id
         .map((r: any[]): Reserva => ({
           id: r[0] || '',
           created_at: r[4] || new Date().toISOString(), // data_inicio

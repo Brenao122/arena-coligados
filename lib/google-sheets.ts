@@ -113,7 +113,7 @@ export async function getSpreadsheetInfo() {
 
     return {
       title: response.data.properties?.title,
-      sheets: response.data.sheets?.map(sheet => ({
+      sheets: response.data.sheets?.map((sheet: any) => ({
         title: sheet.properties?.title,
         sheetId: sheet.properties?.sheetId
       })) || []

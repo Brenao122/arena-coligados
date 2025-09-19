@@ -62,7 +62,7 @@ export function FinancialChart() {
       // Processar dados por dia
       const dailyStats: { [key: string]: DailyFinancialData } = {}
 
-      pagamentos?.forEach((pagamento) => {
+      pagamentos?.forEach((pagamento: any) => {
         const date = new Date(pagamento.created_at)
         const day = date.getDate()
         const dateStr = date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })

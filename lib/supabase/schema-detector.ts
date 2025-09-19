@@ -11,7 +11,7 @@ export async function detectReservasSchema(): Promise<ReservasSchema> {
   return cachedSchema
 }
 
-export async function fetchReservasWithSchema(startDate: Date, endDate: Date, additionalFilters?: Record<string, unknown>) {
+export async function fetchReservasWithSchema(startDate: Date, endDate: Date, _additionalFilters?: Record<string, unknown>) {
   try {
     // Buscar reservas do Google Sheets
     const response = await fetch('/api/sheets/read?sheet=Reservas')

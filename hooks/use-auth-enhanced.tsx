@@ -36,7 +36,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const { data: { session }, error } = await supabase.auth.getSession()
         if (error) {
           console.error('Erro ao obter sessão:', error)
-          setError(error)
+          setError(error as any)
         } else {
           setSession(session)
           setUser(session?.user ?? null)
@@ -129,7 +129,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (error) {
-        setError(error)
+        setError(error as any)
         return { error }
       }
 
@@ -163,7 +163,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (error) {
-        setError(error)
+        setError(error as any)
         return { error }
       }
 
@@ -185,7 +185,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { error } = await supabase.auth.signOut()
 
       if (error) {
-        setError(error)
+        setError(error as any)
         return { error }
       }
 
@@ -212,7 +212,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (error) {
-        setError(error)
+        setError(error as any)
         return { error }
       }
 
@@ -224,7 +224,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  const updateProfile = async (updates: any) => {
+  const updateProfile = async (updates: any): Promise<{ error: AuthError | null }> => {
     try {
       setError(null)
 
@@ -243,8 +243,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         .eq('id', user.id)
 
       if (error) {
-        setError(error)
-        return { error }
+        setError(error as any)
+        return { error: error as unknown as AuthError | null }
       }
 
       return { error: null }
@@ -261,7 +261,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { data, error } = await supabase.auth.refreshSession()
       
       if (error) {
-        setError(error)
+        setError(error as any)
       } else {
         setSession(data.session)
         setUser(data.session?.user ?? null)
@@ -323,7 +323,7 @@ export function useProfile() {
           .single()
 
         if (error) {
-          setError(error)
+          setError(error as any)
         } else {
           setProfile(data)
         }

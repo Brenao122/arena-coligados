@@ -59,7 +59,7 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
             email: item.Email,
             phone: item.Telefone || "",
             created_at: item.Data || new Date().toISOString(),
-            reservas_count: dados.filter(d => d.Email === item.Email).length,
+            reservas_count: dados.filter((d: any) => d.Email === item.Email).length,
             ultima_reserva: item.Data,
             total_gasto: 0
           })

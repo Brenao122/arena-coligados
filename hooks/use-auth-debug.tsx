@@ -125,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('✅ Usuário salvo no localStorage')
 
       setUser(userData)
-      setProfile(profileData)
+      setProfile(profileData as any)
       
       console.log('🎉 Login bem-sucedido!')
       return { error: null }

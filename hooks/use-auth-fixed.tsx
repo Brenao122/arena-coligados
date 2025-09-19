@@ -109,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }))
 
       setUser(userData)
-      setProfile(profileData)
+      setProfile(profileData as any)
       
       return { error: null }
     } catch (error) {

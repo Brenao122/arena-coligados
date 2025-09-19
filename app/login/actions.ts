@@ -25,12 +25,23 @@ export async function loginAction(formData: FormData) {
     return { ok: false, error: `Supabase indisponível: ${e?.message ?? 'health failed'}` }
   }
 
-  const store = cookies()
+  const store = await cookies()
   const supabase = createServerClient(url, anon, {
     cookies: {
-      get: (n) => store.get(n)?.value,
-      set: (n, v, o) => store.set(n, v, o),
-      remove: (n, o) => store.set(n, '', { ...o, maxAge: 0 }),
+      getAll() {
+        return store.getAll()
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            store.set(name, value, options)
+          )
+        } catch {
+          // The `setAll` method was called from a Server Component.
+          // This can be ignored if you have middleware refreshing
+          // user sessions.
+        }
+      },
     },
   })
 

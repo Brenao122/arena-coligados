@@ -12,6 +12,7 @@ import { ptBR } from "date-fns/locale"
 import { Search, DollarSign, CreditCard, Smartphone } from "lucide-react"
 // Migrado para Google Sheets
 import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/lib/supabase-client"
 
 interface Pagamento {
   id: string

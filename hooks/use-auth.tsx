@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('arena_user', JSON.stringify(userToSave))
 
       setUser(userData)
-      setProfile(profileData)
+      setProfile(profileData as any)
       
       return { error: null, user: userToSave }
     } catch (error) {

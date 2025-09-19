@@ -175,7 +175,7 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
             <SelectContent className="bg-gray-700 border-gray-600">
               <SelectItem value="all" className="text-white hover:bg-gray-600">Todos</SelectItem>
               {tipos.map((tipo) => (
-                <SelectItem key={tipo} value={tipo} className="text-white hover:bg-gray-600">
+                <SelectItem key={tipo} value={tipo || ''} className="text-white hover:bg-gray-600">
                   {tipo}
                 </SelectItem>
               ))}

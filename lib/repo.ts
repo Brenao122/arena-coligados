@@ -1,5 +1,5 @@
 // lib/repo.ts
-import { appendRows, readRows } from '@/lib/google-sheets';
+import { appendRow, readSheet } from '@/lib/google-sheets';
 
 // Tipos baseados na estrutura real da planilha criada
 
@@ -107,72 +107,72 @@ export type Usuario = {
 
 // ===== LEADS (usando aba leads) =====
 export async function getLeads() {
-  return readRows<Lead>('leads');
+  return readSheet('leads!A:Z');
 }
 
 export async function addLead(lead: Lead) {
-  await appendRows('leads', [lead]);
+  await appendRow('leads!A1', Object.values(lead));
 }
 
 // ===== CLIENTES (usando aba clientes) =====
 export async function getClientes() {
-  return readRows<Cliente>('clientes');
+  return readSheet('clientes!A:Z');
 }
 
 export async function addCliente(cliente: Cliente) {
-  await appendRows('clientes', [cliente]);
+  await appendRow('clientes!A1', Object.values(cliente));
 }
 
 // ===== QUADRAS (usando aba quadras) =====
 export async function getQuadras() {
-  return readRows<Quadra>('quadras');
+  return readSheet('quadras!A:Z');
 }
 
 export async function addQuadra(quadra: Quadra) {
-  await appendRows('quadras', [quadra]);
+  await appendRow('quadras!A1', Object.values(quadra).map(v => v === null || v === undefined ? '' : String(v)));
 }
 
 // ===== PROFESSORES (usando aba professores) =====
 export async function getProfessores() {
-  return readRows<Professor>('professores');
+  return readSheet('professores!A:Z');
 }
 
 export async function addProfessor(professor: Professor) {
-  await appendRows('professores', [professor]);
+  await appendRow('professores!A1', Object.values(professor).map(v => v === null || v === undefined ? '' : String(v)));
 }
 
 // ===== RESERVAS (usando aba Página1 - dados existentes) =====
 export async function getReservas() {
-  return readRows<Reserva>('Página1');
+  return readSheet('Página1!A:Z');
 }
 
 export async function addReserva(reserva: Reserva) {
-  await appendRows('Página1', [reserva]);
+  await appendRow('Página1!A1', Object.values(reserva).map(v => v === null || v === undefined ? '' : String(v)));
 }
 
 // ===== PAGAMENTOS (usando aba pagamentos) =====
 export async function getPagamentos() {
-  return readRows<Pagamento>('pagamentos');
+  return readSheet('pagamentos!A:Z');
 }
 
 export async function addPagamento(pagamento: Pagamento) {
-  await appendRows('pagamentos', [pagamento]);
+  await appendRow('pagamentos!A1', Object.values(pagamento).map(v => v === null || v === undefined ? '' : String(v)));
 }
 
 // ===== AVALIAÇÕES (usando aba avaliacoes) =====
 export async function getAvaliacoes() {
-  return readRows<Avaliacao>('avaliacoes');
+  return readSheet('avaliacoes!A:Z');
 }
 
 export async function addAvaliacao(avaliacao: Avaliacao) {
-  await appendRows('avaliacoes', [avaliacao]);
+  await appendRow('avaliacoes!A1', Object.values(avaliacao).map(v => v === null || v === undefined ? '' : String(v)));
 }
 
 // ===== USUÁRIOS (usando aba usuarios) =====
 export async function getUsuarios() {
-  return readRows<Usuario>('usuarios');
+  return readSheet('usuarios!A:Z');
 }
 
 export async function addUsuario(usuario: Usuario) {
-  await appendRows('usuarios', [usuario]);
+  await appendRow('usuarios!A1', Object.values(usuario).map(v => v === null || v === undefined ? '' : String(v)));
 }

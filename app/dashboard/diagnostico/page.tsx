@@ -16,6 +16,12 @@ interface DiagnosticResult {
   details?: number | string | object
 }
 
+interface TestResult {
+  status: string
+  message: string
+  details?: number | string | object
+}
+
 // Helper para transformar qualquer string em um DiagnosticStatus válido
 function normalizeStatus(s: string): DiagnosticStatus {
   if (s === "success" || s === "error" || s === "warning" || s === "loading") {
@@ -184,17 +190,17 @@ export default function DiagnosticoPage() {
       ])
 
       try {
-        const result = await diagnostic.test()
+        const result: TestResult = await diagnostic.test()
 
         // Atualiza com o resultado real
         setResults(prev =>
           prev.map(r =>
             r.name === diagnostic.name
               ? {
-                  name: diagnostic.name,
+                  ...r,
                   status: normalizeStatus(result.status),
                   message: result.message ?? "",
-                  details: result.details
+                  details: 'details' in result ? (result as any).details : null
                 }
               : r
           )

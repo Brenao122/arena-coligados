@@ -177,9 +177,6 @@ export default function HomePage() {
                   key={index}
                   className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl border border-white/20 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 transform hover:scale-105 group relative overflow-hidden"
                 >
-                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
-                    {stat.urgency}
-                  </div>
                   <stat.icon className="h-16 w-16 text-orange-300 mx-auto mb-6 group-hover:scale-110 transition-transform drop-shadow-lg" />
                   <div className="text-5xl font-black text-white mb-3 drop-shadow-lg">{stat.number}</div>
                   <div className="text-gray-200 font-semibold text-lg">{stat.label}</div>

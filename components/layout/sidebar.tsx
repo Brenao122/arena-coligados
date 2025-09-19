@@ -73,7 +73,7 @@ export function Sidebar() {
         <div className="fixed inset-y-0 left-0 flex w-80 flex-col bg-gray-900 shadow-2xl border-r border-gray-700">
           <SidebarContent
             navigation={filteredNavigation}
-            pathname={pathname}
+            pathname={pathname || ''}
             profile={profile}
             signOut={signOut}
             onClose={() => setSidebarOpen(false)}
@@ -83,7 +83,7 @@ export function Sidebar() {
 
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col">
-        <SidebarContent navigation={filteredNavigation} pathname={pathname} profile={profile} signOut={signOut} />
+        <SidebarContent navigation={filteredNavigation} pathname={pathname || ''} profile={profile} signOut={signOut} />
       </div>
 
       {/* Mobile menu button */}

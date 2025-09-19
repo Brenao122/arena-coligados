@@ -109,8 +109,8 @@ export function ClienteDetails({ clienteId, onBack }: ClienteDetailsProps) {
 
       // Calcular estatísticas
       const totalReservas = transformedReservas.length
-      const totalGasto = transformedReservas.reduce((sum, r) => sum + r.valor, 0)
-      const reservasPendentes = transformedReservas.filter(r => r.status === 'Pendente').length
+      const totalGasto = transformedReservas.reduce((sum: number, r: any) => sum + r.valor, 0)
+      const reservasPendentes = transformedReservas.filter((r: any) => r.status === 'Pendente').length
       const ultimaReserva = transformedReservas.length > 0 ? transformedReservas[0].data_inicio : null
 
       setStats({

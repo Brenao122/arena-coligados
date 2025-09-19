@@ -50,7 +50,7 @@ export default function ProfessorDetalhes() {
         
         // Encontrar o professor pelo ID (assumindo que ID está na coluna 0)
         const professores = professoresData.values?.slice(1) || []
-        const professorData = professores.find((p: any[]) => p[0] === params.id)
+        const professorData = professores.find((p: any[]) => p[0] === params?.id)
         
         if (!professorData) throw new Error('Professor não encontrado')
 
@@ -77,7 +77,7 @@ export default function ProfessorDetalhes() {
         // Filtrar reservas do professor (assumindo que professor_id está na coluna 3)
         const reservas = reservasData.values?.slice(1) || []
         const aulasProfessor = reservas
-          .filter((r: any[]) => r[3] === params.id) // professor_id
+          .filter((r: any[]) => r[3] === params?.id) // professor_id
           .slice(0, 10) // limitar a 10
           .map((a: any[]): Aula => ({
             id: a[0] || '',
@@ -98,10 +98,10 @@ export default function ProfessorDetalhes() {
       }
     }
 
-    if (params.id) {
+    if (params?.id) {
       fetchProfessorData()
     }
-  }, [params.id])
+  }, [params?.id])
 
   if (loading) {
     return (
