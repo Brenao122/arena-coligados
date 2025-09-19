@@ -72,7 +72,7 @@ export default function DashboardPage() {
       console.log('🔍 Buscando dados do dashboard via sistema híbrido...')
 
       // Usar API correta que funciona
-      const dashboardResponse = await fetch('/api/sheets-primary/dash', {
+      const dashboardResponse = await fetch('/api/dashboard-stats', {
         cache: 'no-store'
       })
       const dashboardResult = await dashboardResponse.json()
@@ -172,7 +172,7 @@ export default function DashboardPage() {
       console.log('🔄 Iniciando sincronização via API híbrida...')
       
       // Usar API de sincronização simples (recarregar dados)
-      const syncResponse = await fetch('/api/sheets-primary/dash', {
+      const syncResponse = await fetch('/api/dashboard-stats', {
         cache: 'no-store'
       })
       

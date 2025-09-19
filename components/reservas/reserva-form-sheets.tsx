@@ -154,15 +154,21 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
         Quadra: quadras.find(q => q.id === formData.quadra_id)?.name || ""
       }
 
-      // Enviar para Google Sheets via API
-      const response = await fetch('/api/sheets/append', {
+      // Enviar para API de reservas
+      const response = await fetch('/api/reservas/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          sheet: 'Página1',
-          rows: [reservaData]
+          cliente_id: formData.cliente_id,
+          quadra_id: formData.quadra_id,
+          data_inicio: `${formData.data}T${formData.hora_inicio}:00`,
+          data_fim: `${formData.data}T${formData.hora_fim}:00`,
+          valor_total: calculateValue(),
+          tipo: formData.tipo,
+          professor_id: formData.professor_id,
+          observacoes: formData.observacoes
         })
       })
 
