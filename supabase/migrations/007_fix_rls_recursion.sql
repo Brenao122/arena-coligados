@@ -87,3 +87,4 @@ CREATE POLICY "Enable insert for all users" ON audit_logs
     FOR INSERT WITH CHECK (true);
 
 
+

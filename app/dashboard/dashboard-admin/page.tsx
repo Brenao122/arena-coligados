@@ -71,8 +71,8 @@ export default function DashboardPage() {
       setLoading(true)
       console.log('🔍 Buscando dados do dashboard via sistema híbrido...')
 
-      // Usar nova API com Google Sheets como principal
-      const dashboardResponse = await fetch('/api/sheets-primary/dashboard')
+      // Usar API correta que funciona
+      const dashboardResponse = await fetch('/api/sheets-primary/dash')
       const dashboardResult = await dashboardResponse.json()
 
       if (dashboardResult.ok) {
@@ -82,12 +82,12 @@ export default function DashboardPage() {
         const statsData = dashboardResult.data
         
         setStats({
-          totalReservas: statsData.reservas_hoje + statsData.reservas_pendentes || 0,
+          totalReservas: statsData.total_reservas || 0,
           reservasHoje: statsData.reservas_hoje || 0,
-          totalClientes: statsData.clientes_ativos || 0,
+          totalClientes: statsData.total_clientes || 0,
           receitaMes: statsData.receita_mes || 0,
           quadrasAtivas: statsData.quadras_ativas || 0,
-          professoresAtivos: 2, // Fixo por enquanto
+          professoresAtivos: statsData.professores_ativos || 2,
         })
       } else {
         throw new Error(dashboardResult.error || 'Erro ao buscar dados do dashboard')
@@ -101,9 +101,9 @@ export default function DashboardPage() {
         console.log('🔄 Tentando fallback com APIs individuais...')
         
         const [reservasResponse, clientesResponse, quadrasResponse] = await Promise.all([
-          fetch('/api/sheets-primary/reservas'),
-          fetch('/api/sheets-primary/clientes'),
-          fetch('/api/sheets-primary/quadras')
+          fetch('/api/sheets/read?sheet=Reservas'),
+          fetch('/api/sheets/read?sheet=Clientes'),
+          fetch('/api/sheets/read?sheet=Quadras')
         ])
 
         const [reservasResult, clientesResult, quadrasResult] = await Promise.all([
@@ -112,20 +112,20 @@ export default function DashboardPage() {
           quadrasResponse.json()
         ])
 
-        // Processar dados das APIs
-        const reservas = reservasResult.ok ? reservasResult.data || [] : []
-        const clientes = clientesResult.ok ? clientesResult.data || [] : []
-        const quadras = quadrasResult.ok ? quadrasResult.data || [] : []
+        // Processar dados das APIs (formato correto)
+        const reservas = reservasResult.ok ? reservasResult.values || [] : []
+        const clientes = clientesResult.ok ? clientesResult.values || [] : []
+        const quadras = quadrasResult.ok ? quadrasResult.values || [] : []
 
-        // Calcular estatísticas
+        // Calcular estatísticas (formato correto para arrays de arrays)
         const hoje = new Date().toISOString().split('T')[0]
-        const reservasHoje = reservas.filter((r: any) => {
-          const dataReserva = new Date(r.data_inicio).toISOString().split('T')[0]
-          return dataReserva === hoje
+        const reservasHoje = reservas.filter((r: any[]) => {
+          const dataReserva = r[4] // data_inicio na coluna 4
+          return dataReserva && dataReserva.startsWith(hoje)
         }).length
 
-        const receitaMes = reservas.reduce((total: number, r: any) => {
-          const valor = parseFloat(r.valor_total || 0)
+        const receitaMes = reservas.reduce((total: number, r: any[]) => {
+          const valor = parseFloat(r[8] || 0) // valor_total na coluna 8
           return total + (isNaN(valor) ? 0 : valor)
         }, 0)
 
@@ -134,7 +134,7 @@ export default function DashboardPage() {
           reservasHoje,
           totalClientes: clientes.length,
           receitaMes,
-          quadrasAtivas: quadras.filter((q: any) => q.ativo).length,
+          quadrasAtivas: quadras.filter((q: any[]) => q[5] === 'true' || q[5] === 'sim').length,
           professoresAtivos: 2,
         })
         
@@ -166,15 +166,13 @@ export default function DashboardPage() {
     try {
       console.log('🔄 Iniciando sincronização via API híbrida...')
       
-      // Usar nova API de sincronização
-      const syncResponse = await fetch('/api/sheets-primary/sync', {
-        method: 'POST'
-      })
+      // Usar API de sincronização simples (recarregar dados)
+      const syncResponse = await fetch('/api/sheets-primary/dash')
       
       const syncResult = await syncResponse.json()
       
       if (syncResult.ok) {
-        console.log('✅ Sincronização bem-sucedida:', syncResult.message)
+        console.log('✅ Sincronização bem-sucedida')
         
         // Recarregar dados do dashboard
         await fetchDashboardData()

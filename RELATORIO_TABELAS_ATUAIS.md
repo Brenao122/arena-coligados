@@ -229,3 +229,4 @@ POST http://localhost:3002/api/supabase/reservas
 **Status: 🚀 PRONTO PARA PRODUÇÃO - TUDO FUNCIONANDO PERFEITAMENTE!**
 
 
+

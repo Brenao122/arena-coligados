@@ -46,3 +46,4 @@ Resolver erro 500 e conectar com Supabase
 **Status: 🔧 EM CORREÇÃO - SERVIDOR FUNCIONANDO**
 
 
+

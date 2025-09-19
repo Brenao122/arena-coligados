@@ -216,3 +216,4 @@ const { data: reservas } = await supabase
 **Status: 🎉 SISTEMA 100% FUNCIONAL E PRONTO PARA USO!**
 
 
+
