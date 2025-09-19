@@ -18,10 +18,10 @@ export async function GET(req: Request) {
 
     switch (tipo) {
       case 'ocupacao':
-        relatorio = await gerarRelatorioOcupacao(inicio, fim, quadra_id)
+        relatorio = await gerarRelatorioOcupacao(inicio, fim, quadra_id || undefined)
         break
       case 'financeiro':
-        relatorio = await gerarRelatorioFinanceiro(inicio, fim, quadra_id)
+        relatorio = await gerarRelatorioFinanceiro(inicio, fim, quadra_id || undefined)
         break
       case 'clientes':
         relatorio = await gerarRelatorioClientes(inicio, fim)
@@ -82,12 +82,12 @@ async function gerarRelatorioOcupacao(inicio: string, fim: string, quadra_id?: s
   }
 
   // Calcular estatísticas por quadra
-  const estatisticasQuadras = {}
+  const estatisticasQuadras: Record<string, any> = {}
   let totalHoras = 0
   let totalReservas = 0
 
   reservas.forEach(reserva => {
-    const quadraNome = reserva.quadra?.nome || 'Quadra não encontrada'
+    const quadraNome = (reserva.quadra as any)?.[0]?.nome ?? 'Quadra não encontrada'
     const inicioReserva = new Date(reserva.data_inicio)
     const fimReserva = new Date(reserva.data_fim)
     const horas = (fimReserva.getTime() - inicioReserva.getTime()) / (1000 * 60 * 60)
@@ -95,8 +95,8 @@ async function gerarRelatorioOcupacao(inicio: string, fim: string, quadra_id?: s
     if (!estatisticasQuadras[quadraNome]) {
       estatisticasQuadras[quadraNome] = {
         nome: quadraNome,
-        tipo: reserva.quadra?.tipo,
-        capacidade: reserva.quadra?.capacidade,
+        tipo: (reserva.quadra as any)?.[0]?.tipo,
+        capacidade: (reserva.quadra as any)?.[0]?.capacidade,
         total_horas: 0,
         total_reservas: 0,
         total_receita: 0,
@@ -171,13 +171,13 @@ async function gerarRelatorioFinanceiro(inicio: string, fim: string, quadra_id?:
   const receitaTotal = reservas.reduce((total, reserva) => total + reserva.valor_total, 0)
 
   // Calcular receita por quadra
-  const receitaPorQuadra = {}
+  const receitaPorQuadra: Record<string, any> = {}
   reservas.forEach(reserva => {
-    const quadraNome = reserva.quadra?.nome || 'Quadra não encontrada'
+    const quadraNome = (reserva.quadra as any)?.[0]?.nome ?? 'Quadra não encontrada'
     if (!receitaPorQuadra[quadraNome]) {
       receitaPorQuadra[quadraNome] = {
         nome: quadraNome,
-        tipo: reserva.quadra?.tipo,
+        tipo: (reserva.quadra as any)?.[0]?.tipo,
         receita: 0,
         reservas: 0
       }
@@ -187,7 +187,7 @@ async function gerarRelatorioFinanceiro(inicio: string, fim: string, quadra_id?:
   })
 
   // Calcular receita por dia
-  const receitaPorDia = {}
+  const receitaPorDia: Record<string, any> = {}
   reservas.forEach(reserva => {
     const data = new Date(reserva.data_inicio).toISOString().split('T')[0]
     if (!receitaPorDia[data]) {
@@ -387,7 +387,7 @@ async function gerarRelatorioQuadras(inicio: string, fim: string) {
 
 // Função auxiliar para gerar gráfico de reservas por dia
 function gerarGraficoReservasPorDia(reservas: any[]) {
-  const reservasPorDia = {}
+  const reservasPorDia: Record<string, any> = {}
   
   reservas.forEach(reserva => {
     const data = new Date(reserva.data_inicio).toISOString().split('T')[0]

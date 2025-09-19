@@ -30,7 +30,7 @@ async function backupTable(tableName: string) {
 // Função para fazer backup completo do banco de dados
 async function fullBackup() {
   const tables = ['profiles', 'quadras', 'reservas', 'leads', 'notifications']
-  const backupResults = {}
+  const backupResults: Record<string, any> = {}
 
   console.log('🔄 Iniciando backup completo do banco de dados...')
 
@@ -69,7 +69,7 @@ async function saveBackupToGoogleSheets(backupData: any) {
     console.error('Erro ao salvar backup no Google Sheets:', error)
     return {
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Erro desconhecido'
     }
   }
 }
