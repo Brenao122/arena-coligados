@@ -72,7 +72,9 @@ export default function DashboardPage() {
       console.log('🔍 Buscando dados do dashboard via sistema híbrido...')
 
       // Usar API correta que funciona
-      const dashboardResponse = await fetch('/api/sheets-primary/dash')
+      const dashboardResponse = await fetch('/api/sheets-primary/dash', {
+        cache: 'no-store'
+      })
       const dashboardResult = await dashboardResponse.json()
 
       if (dashboardResult.ok) {
@@ -81,14 +83,17 @@ export default function DashboardPage() {
         
         const statsData = dashboardResult.data
         
-        setStats({
+        const newStats = {
           totalReservas: statsData.total_reservas || 0,
           reservasHoje: statsData.reservas_hoje || 0,
           totalClientes: statsData.total_clientes || 0,
           receitaMes: statsData.receita_mes || 0,
           quadrasAtivas: statsData.quadras_ativas || 0,
           professoresAtivos: statsData.professores_ativos || 2,
-        })
+        }
+        
+        console.log('🔄 Atualizando stats com:', newStats)
+        setStats(newStats)
       } else {
         throw new Error(dashboardResult.error || 'Erro ao buscar dados do dashboard')
       }
@@ -101,9 +106,9 @@ export default function DashboardPage() {
         console.log('🔄 Tentando fallback com APIs individuais...')
         
         const [reservasResponse, clientesResponse, quadrasResponse] = await Promise.all([
-          fetch('/api/sheets/read?sheet=Reservas'),
-          fetch('/api/sheets/read?sheet=Clientes'),
-          fetch('/api/sheets/read?sheet=Quadras')
+          fetch('/api/sheets/read?sheet=Reservas', { cache: 'no-store' }),
+          fetch('/api/sheets/read?sheet=Clientes', { cache: 'no-store' }),
+          fetch('/api/sheets/read?sheet=Quadras', { cache: 'no-store' })
         ])
 
         const [reservasResult, clientesResult, quadrasResult] = await Promise.all([
@@ -167,7 +172,9 @@ export default function DashboardPage() {
       console.log('🔄 Iniciando sincronização via API híbrida...')
       
       // Usar API de sincronização simples (recarregar dados)
-      const syncResponse = await fetch('/api/sheets-primary/dash')
+      const syncResponse = await fetch('/api/sheets-primary/dash', {
+        cache: 'no-store'
+      })
       
       const syncResult = await syncResponse.json()
       

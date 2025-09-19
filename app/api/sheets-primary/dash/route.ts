@@ -63,7 +63,8 @@ export async function GET() {
     return NextResponse.json({ 
       ok: true, 
       data: stats,
-      source: 'google-sheets-primary'
+      source: 'google-sheets-primary',
+      timestamp: new Date().toISOString()
     }, { status: 200 });
   } catch (error: any) {
     console.error('❌ [SHEETS-PRIMARY/DASH] Erro ao calcular estatísticas:', error);
