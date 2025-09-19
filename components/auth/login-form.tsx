@@ -98,7 +98,18 @@ export function LoginForm({ action, redirectTo }: Props) {
         // Sucesso: a server action faz redirect(), nada a fazer aqui
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro inesperado")
+      console.error('Erro no login:', err)
+      if (err instanceof Error) {
+        if (err.message.includes('fetch failed')) {
+          setError("Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.")
+        } else if (err.message.includes('Supabase indisponível')) {
+          setError("Serviço temporariamente indisponível. Tente novamente em alguns minutos.")
+        } else {
+          setError(err.message)
+        }
+      } else {
+        setError("Erro inesperado. Tente novamente mais tarde.")
+      }
     } finally {
       setLoading(false)
     }

@@ -14,7 +14,13 @@ export async function loginAction(formData: FormData) {
   if (!url || !anon) return { ok: false, error: 'ENVs ausentes no runtime' }
 
   try {
-    await fetch(`${url}/auth/v1/health`, { cache: 'no-store' })
+    await fetch(`${url}/auth/v1/health`, { 
+      cache: 'no-store',
+      headers: {
+        'apikey': anon,
+        'Content-Type': 'application/json'
+      }
+    })
   } catch (e: any) {
     return { ok: false, error: `Supabase indisponível: ${e?.message ?? 'health failed'}` }
   }
