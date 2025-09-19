@@ -1,13 +1,10 @@
-﻿// lib/supabase/browser-client.ts
-"use client";
-import { createBrowserClient } from "@supabase/ssr";
+﻿'use client';
 
-export const browserClient = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { createBrowserClient } from '@supabase/ssr';
 
 export function getBrowserClient() {
-  return browserClient;
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 }
-

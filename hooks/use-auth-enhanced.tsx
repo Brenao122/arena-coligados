@@ -2,7 +2,7 @@
 
 import { useEffect, useState, createContext, useContext, ReactNode } from "react"
 import { User, Session, AuthError } from "@supabase/supabase-js"
-import { supabase } from "@/lib/supabase-client"
+import { getBrowserClient } from "@/lib/supabase/browser-client"
 
 interface AuthContextType {
   user: User | null
@@ -33,7 +33,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Verificar se há uma sessão ativa
     const getInitialSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
+        const { data: { session }, error } = await getBrowserClient().auth.getSession()
         if (error) {
           console.error('Erro ao obter sessão:', error)
           setError(error as any)
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     getInitialSession()
 
     // Escutar mudanças de autenticação
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription } } = getBrowserClient().auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email)
         setSession(session)
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const createOrUpdateProfile = async (user: User) => {
     try {
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile } = await getBrowserClient()
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!existingProfile) {
         // Criar novo perfil
-        const { error } = await supabase
+        const { error } = await getBrowserClient()
           .from('profiles')
           .insert({
             id: user.id,
@@ -101,7 +101,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
       } else {
         // Atualizar perfil existente
-        const { error } = await supabase
+        const { error } = await getBrowserClient()
           .from('profiles')
           .update({
             email: user.email!,
@@ -123,7 +123,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(true)
       setError(null)
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await getBrowserClient().auth.signInWithPassword({
         email,
         password,
       })
@@ -148,7 +148,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(true)
       setError(null)
 
-      const { error } = await supabase.auth.signUp({
+      const { error } = await getBrowserClient().auth.signUp({
         email,
         password,
         options: {
@@ -182,7 +182,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(true)
       setError(null)
 
-      const { error } = await supabase.auth.signOut()
+      const { error } = await getBrowserClient().auth.signOut()
 
       if (error) {
         setError(error as any)
@@ -207,7 +207,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setError(null)
 
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await getBrowserClient().auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`
       })
 
@@ -234,7 +234,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return { error: authError }
       }
 
-      const { error } = await supabase
+      const { error } = await getBrowserClient()
         .from('profiles')
         .update({
           ...updates,
@@ -258,7 +258,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const refreshSession = async () => {
     try {
       setError(null)
-      const { data, error } = await supabase.auth.refreshSession()
+      const { data, error } = await getBrowserClient().auth.refreshSession()
       
       if (error) {
         setError(error as any)
@@ -316,7 +316,7 @@ export function useProfile() {
       }
 
       try {
-        const { data, error } = await supabase
+        const { data, error } = await getBrowserClient()
           .from('profiles')
           .select('*')
           .eq('id', user.id)
