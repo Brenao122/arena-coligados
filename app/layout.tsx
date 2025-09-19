@@ -2,7 +2,7 @@
 import type { Metadata } from "next"
 import { Montserrat, Oswald } from "next/font/google"
 import "./globals.css"
-import { AuthProvider } from "@/hooks/use-auth-enhanced"
+import { AuthProvider } from "@/hooks/use-auth-simple"
 import { ThemeProvider } from "@/contexts/theme-context"
 
 const montserrat = Montserrat({

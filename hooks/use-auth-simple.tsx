@@ -15,7 +15,7 @@ type AuthContextType = {
   user: any | null
   profile: Profile | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: any }>
+  signIn: (email: string, password: string) => Promise<{ error: any; user?: any }>
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>
   signOut: () => Promise<void>
 }
@@ -28,40 +28,142 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simular usuário logado para o build
-    const mockUser = {
-      id: "mock-user-id",
-      email: "admin@arena.com",
-      user_metadata: {
-        full_name: "Admin Arena"
+    // Verificar se há usuário salvo no localStorage
+    const savedUser = localStorage.getItem('arena_user')
+    if (savedUser) {
+      try {
+        const userData = JSON.parse(savedUser)
+        setUser(userData)
+        setProfile(userData.profile)
+      } catch (error) {
+        localStorage.removeItem('arena_user')
       }
     }
-    
-    const mockProfile = {
-      id: "mock-user-id",
-      email: "admin@arena.com",
-      full_name: "Admin Arena",
-      phone: "(11) 99999-9999",
-      role: "admin" as const
-    }
-
-    setUser(mockUser)
-    setProfile(mockProfile)
     setLoading(false)
   }, [])
 
   const signIn = async (email: string, password: string) => {
-    // Simular login para o build
-    return { error: null }
+    try {
+      setLoading(true)
+      
+      // Usuários hardcoded para garantir funcionamento
+      const usuarios = [
+        {
+          id: 'admin-001',
+          email: 'admin@arena.com',
+          senha: 'admin123',
+          nome: 'Administrador Arena',
+          telefone: '(11) 99999-9999',
+          role: 'admin',
+          ativo: 'SIM'
+        },
+        {
+          id: 'prof-001',
+          email: 'professor@arena.com',
+          senha: 'prof123',
+          nome: 'Professor Arena',
+          telefone: '(11) 88888-8888',
+          role: 'professor',
+          ativo: 'SIM'
+        },
+        {
+          id: 'cliente-001',
+          email: 'cliente@arena.com',
+          senha: 'cliente123',
+          nome: 'Cliente Arena',
+          telefone: '(11) 77777-7777',
+          role: 'cliente',
+          ativo: 'SIM'
+        }
+      ]
+      
+      // Procurar usuário com email e senha
+      const usuario = usuarios.find((u: any) => 
+        u.email === email && u.senha === password && u.ativo === 'SIM'
+      )
+      
+      if (!usuario) {
+        throw new Error('Email ou senha incorretos')
+      }
+
+      const userData = {
+        id: usuario.id,
+        email: usuario.email,
+        user_metadata: {
+          full_name: usuario.nome
+        }
+      }
+
+      const profileData = {
+        id: usuario.id,
+        email: usuario.email,
+        full_name: usuario.nome,
+        phone: usuario.telefone,
+        role: usuario.role
+      }
+
+      // Salvar no localStorage
+      const userToSave = {
+        ...userData,
+        profile: profileData
+      }
+      
+      localStorage.setItem('arena_user', JSON.stringify(userToSave))
+
+      setUser(userData)
+      setProfile(profileData as any)
+      
+      return { error: null, user: userToSave }
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'Erro ao fazer login' }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    // Simular cadastro para o build
-    return { error: null }
+    try {
+      setLoading(true)
+      
+      // Criar novo usuário na planilha
+      const novoUsuario = {
+        id: `user-${Date.now()}`,
+        email: email,
+        senha: password,
+        nome: fullName,
+        telefone: '',
+        role: 'cliente',
+        ativo: 'SIM',
+        criado_em: new Date().toISOString()
+      }
+
+      const response = await fetch('/api/sheets/append', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sheet: 'usuarios',
+          rows: [novoUsuario]
+        })
+      })
+
+      const result = await response.json()
+
+      if (!result.ok) {
+        throw new Error('Erro ao criar usuário')
+      }
+
+      return { error: null }
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'Erro ao criar conta' }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const signOut = async () => {
-    // Simular logout para o build
+    localStorage.removeItem('arena_user')
     setUser(null)
     setProfile(null)
   }
