@@ -1,7 +1,11 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState, useRef } from "react"
+import type { User } from "@supabase/supabase-js"
+import { getBrowserClient } from "@/lib/supabase/browser-client"
+import { getUserWithRole } from "@/lib/supabase/get-user-with-role"
+import { useRouter } from "next/navigation"
 
 type Profile = {
   id: string
@@ -12,10 +16,10 @@ type Profile = {
 }
 
 type AuthContextType = {
-  user: any | null
+  user: User | null
   profile: Profile | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: any; user?: any }>
+  signIn: (email: string, password: string) => Promise<{ error: any }>
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>
   signOut: () => Promise<void>
 }
@@ -23,163 +27,208 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const fetchingProfile = useRef(false)
+  const lastFetchedUserId = useRef<string | null>(null)
 
   useEffect(() => {
-    // Verificar se há usuário salvo no localStorage
-    const savedUser = localStorage.getItem('arena_user')
-    if (savedUser) {
+    const initAuth = async () => {
       try {
-        const userData = JSON.parse(savedUser)
-        setUser(userData)
-        setProfile(userData.profile)
+        const supabase = getBrowserClient()
+
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          await fetchProfile(session.user.id, false)
+        }
+
+        setLoading(false)
+
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log("🔄 Auth state changed:", event)
+          setUser(session?.user ?? null)
+          if (session?.user) {
+            if (session.user.id !== lastFetchedUserId.current && !fetchingProfile.current) {
+              await fetchProfile(session.user.id, false)
+            }
+          } else {
+            setProfile(null)
+            lastFetchedUserId.current = null
+            fetchingProfile.current = false
+          }
+        })
+
+        return () => subscription.unsubscribe()
       } catch (error) {
-        localStorage.removeItem('arena_user')
+        console.error("❌ Erro na inicialização da auth:", error)
+        setLoading(false)
       }
     }
-    setLoading(false)
+
+    initAuth()
   }, [])
+
+  const fetchProfile = async (userId: string, shouldRedirect = false) => {
+    if (fetchingProfile.current || lastFetchedUserId.current === userId) {
+      return
+    }
+
+    fetchingProfile.current = true
+
+    try {
+      console.log("🔍 Buscando perfil para usuário:", userId)
+
+      const { user, role } = await getUserWithRole()
+
+      if (!user) {
+        console.error("❌ Usuário não encontrado")
+        throw new Error("Usuário não encontrado")
+      }
+
+      const supabase = getBrowserClient()
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single()
+
+      if (profileError) {
+        console.error("❌ Erro ao buscar perfil:", profileError)
+        throw profileError
+      }
+
+      console.log("[v0] Profile data:", profileData)
+      console.log("[v0] Role from getUserWithRole:", role)
+
+      const profileWithRole = {
+        ...profileData,
+        role: role as "admin" | "professor" | "cliente",
+      }
+
+      setProfile(profileWithRole)
+      lastFetchedUserId.current = userId
+
+      if (shouldRedirect && role) {
+        console.log(`[v0] Redirecting to ${role} dashboard`)
+        redirectBasedOnRole(role as "admin" | "professor" | "cliente")
+      }
+    } catch (error) {
+      console.error("❌ Erro ao buscar perfil:", error)
+    } finally {
+      setLoading(false)
+      fetchingProfile.current = false
+    }
+  }
+
+  const redirectBasedOnRole = (role: "admin" | "professor" | "cliente") => {
+    console.log("🔄 Redirecionando usuário com role:", role)
+
+    switch (role) {
+      case "admin":
+        console.log("➡️ Admin redirecionado para dashboard admin")
+        router.push("/dashboard/dashboard-admin")
+        break
+      case "professor":
+        console.log("➡️ Professor redirecionado para dashboard professor")
+        router.push("/dashboard/dashboard-professor")
+        break
+      case "cliente":
+        console.log("➡️ Cliente redirecionado para dashboard aluno")
+        router.push("/dashboard/dashboard-aluno")
+        break
+      default:
+        console.log("⚠️ Role não reconhecido, redirecionando para admin")
+        router.push("/dashboard/dashboard-admin")
+    }
+  }
 
   const signIn = async (email: string, password: string) => {
     try {
-      setLoading(true)
-      
-      // Usuários hardcoded para garantir funcionamento
-      const usuarios = [
-        {
-          id: 'admin-001',
-          email: 'admin@arena.com',
-          senha: 'admin123',
-          nome: 'Administrador Arena',
-          telefone: '(11) 99999-9999',
-          role: 'admin',
-          ativo: 'SIM'
-        },
-        {
-          id: 'prof-001',
-          email: 'professor@arena.com',
-          senha: 'prof123',
-          nome: 'Professor Arena',
-          telefone: '(11) 88888-8888',
-          role: 'professor',
-          ativo: 'SIM'
-        },
-        {
-          id: 'cliente-001',
-          email: 'cliente@arena.com',
-          senha: 'cliente123',
-          nome: 'Cliente Arena',
-          telefone: '(11) 77777-7777',
-          role: 'cliente',
-          ativo: 'SIM'
-        }
-      ]
-      
-      // Procurar usuário com email e senha
-      const usuario = usuarios.find((u: any) => 
-        u.email === email && u.senha === password && u.ativo === 'SIM'
-      )
-      
-      if (!usuario) {
-        throw new Error('Email ou senha incorretos')
+      const supabase = getBrowserClient()
+
+      console.log("🔐 Fazendo login com Supabase...")
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        console.error("❌ Erro no login:", error)
+        return { error: { message: "Email ou senha incorretos" } }
       }
 
-      const userData = {
-        id: usuario.id,
-        email: usuario.email,
-        user_metadata: {
-          full_name: usuario.nome
-        }
+      if (!data.user) {
+        console.error("❌ Usuário não retornado")
+        return { error: { message: "Erro interno do sistema" } }
       }
 
-      const profileData = {
-        id: usuario.id,
-        email: usuario.email,
-        full_name: usuario.nome,
-        phone: usuario.telefone,
-        role: usuario.role
-      }
+      console.log("✅ Login bem-sucedido, usuário:", data.user.email)
 
-      // Salvar no localStorage
-      const userToSave = {
-        ...userData,
-        profile: profileData
-      }
-      
-      localStorage.setItem('arena_user', JSON.stringify(userToSave))
+      fetchingProfile.current = false
+      lastFetchedUserId.current = null
+      await fetchProfile(data.user.id, true)
 
-      setUser(userData)
-      setProfile(profileData as any)
-      
-      return { error: null, user: userToSave }
+      return { error: null }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : 'Erro ao fazer login' }
-    } finally {
-      setLoading(false)
+      console.error("❌ Erro no signIn:", error)
+      return { error: { message: "Email ou senha incorretos" } }
     }
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      setLoading(true)
-      
-      // Criar novo usuário na planilha
-      const novoUsuario = {
-        id: `user-${Date.now()}`,
-        email: email,
-        senha: password,
-        nome: fullName,
-        telefone: '',
-        role: 'cliente',
-        ativo: 'SIM',
-        criado_em: new Date().toISOString()
-      }
+      const supabase = getBrowserClient()
 
-      const response = await fetch('/api/sheets/append', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || window.location.origin,
         },
-        body: JSON.stringify({
-          sheet: 'usuarios',
-          rows: [novoUsuario]
-        })
       })
-
-      const result = await response.json()
-
-      if (!result.ok) {
-        throw new Error('Erro ao criar usuário')
-      }
-
-      return { error: null }
+      return { error }
     } catch (error) {
-      return { error: error instanceof Error ? error.message : 'Erro ao criar conta' }
-    } finally {
-      setLoading(false)
+      return { error }
     }
   }
 
   const signOut = async () => {
-    localStorage.removeItem('arena_user')
-    setUser(null)
-    setProfile(null)
+    try {
+      const supabase = getBrowserClient()
+
+      console.log("🚪 Fazendo logout...")
+      await supabase.auth.signOut()
+
+      setUser(null)
+      setProfile(null)
+      router.push("/")
+    } catch (error) {
+      console.error("❌ Erro no logout:", error)
+      router.push("/")
+    }
   }
 
-  return (
-    <AuthContext.Provider value={{
-      user,
-      profile,
-      loading,
-      signIn,
-      signUp,
-      signOut
-    }}>
-      {children}
-    </AuthContext.Provider>
-  )
+  const value = {
+    user,
+    profile,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+  }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

@@ -21,7 +21,7 @@ INSERT INTO public.profiles (
     gen_random_uuid(),
     'contatobrenofilm@gmail.com',
     'Breno Amancio',
-    '+556293550635',
+    '+5562981912294',
     NOW(),
     NOW()
 ) ON CONFLICT (email) DO UPDATE SET

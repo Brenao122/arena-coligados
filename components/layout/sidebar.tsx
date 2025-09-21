@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import Link from "next/link"
@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useAuth } from "@/hooks/use-auth-simple"
+import { useAuth } from "@/hooks/use-auth"
 import Image from "next/image"
 import {
   Calendar,
@@ -73,7 +73,7 @@ export function Sidebar() {
         <div className="fixed inset-y-0 left-0 flex w-80 flex-col bg-gray-900 shadow-2xl border-r border-gray-700">
           <SidebarContent
             navigation={filteredNavigation}
-            pathname={pathname || ''}
+            pathname={pathname}
             profile={profile}
             signOut={signOut}
             onClose={() => setSidebarOpen(false)}
@@ -83,7 +83,7 @@ export function Sidebar() {
 
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col">
-        <SidebarContent navigation={filteredNavigation} pathname={pathname || ''} profile={profile} signOut={signOut} />
+        <SidebarContent navigation={filteredNavigation} pathname={pathname} profile={profile} signOut={signOut} />
       </div>
 
       {/* Mobile menu button */}
@@ -108,14 +108,9 @@ function SidebarContent({
   signOut,
   onClose,
 }: {
-  navigation: Array<{
-    name: string;
-    href: string;
-    icon: React.ComponentType<{ className?: string }>;
-    roles: string[];
-  }>
+  navigation: any[]
   pathname: string
-  profile: { full_name?: string; role?: string } | null
+  profile: any
   signOut: () => void
   onClose?: () => void
 }) {
@@ -199,4 +194,3 @@ function SidebarContent({
     </div>
   )
 }
-

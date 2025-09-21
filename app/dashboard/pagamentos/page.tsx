@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { PagamentosList } from "@/components/pagamentos/pagamentos-list"
@@ -17,4 +17,3 @@ export default function PagamentosPage() {
     </div>
   )
 }
-

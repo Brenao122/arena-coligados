@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -33,43 +33,51 @@ export default function HomePage() {
   const modalidades = [
     {
       name: "Beach Tennis",
-      icon: "ðŸ",
-      description: "🎾 Aprenda e evolua — grupos reduzidos de até 6 alunos",
-      subtitle: "Quadras 1, 2, 3, 4, 5 - Quadras 3 e 5 (pequenas): apenas Beach Tennis e Vôlei",
+      icon: "🏐",
+      description: "A modalidade que mais cresce no Brasil",
+      subtitle: "Quadras profissionais com areia importada",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/b8529c78-39c5-4aa4-bdac-94e318b5cf98-cgajBFxQprEq8DDQ2fAAZvwgptQxyM.png",
       features: ["Raquetes profissionais", "Bolas oficiais", "Areia premium"],
     },
     {
       name: "Vôlei",
-      icon: "ðŸ",
-      description: "🏐 Energia em equipe — aulas completas para até 10 alunos",
-      subtitle: "Quadras 1, 2, 3, 4, 5 - Quadras 3 e 5 (pequenas): apenas Vôlei e Beach Tennis",
+      icon: "🏐",
+      description: "Tradição e paixão em cada jogada",
+      subtitle: "Quadras com padrão olímpico",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/9263210e-51f6-4f5e-aa03-8acec0076252-dtDWKxHsAMXArMoEhIxPacbwmxssar.png",
       features: ["Rede oficial", "Piso profissional", "Iluminação LED"],
     },
     {
       name: "Futevôlei",
-      icon: "âš½",
-      description: "⚡ Intensidade na areia — treine em grupos de até 10 pessoas",
-      subtitle: "Quadras 1, 2, 4 (grandes) - Suportam todas as modalidades",
+      icon: "⚽",
+      description: "Arte brasileira em movimento",
+      subtitle: "Quadras grandes para máxima performance",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/946a596c-d20e-45cc-9950-9852afc1d697-e7q1ArrposcV5deu9cKjKZORZTDCPe.png",
       features: ["Areia especial", "Rede regulamentada", "Espaço amplo"],
     },
+    {
+      name: "Futebol Society",
+      icon: "⚽",
+      description: "Quadras 1, 2 e 4 (Grandes)",
+      image:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/9ea7f297-f7a0-4bff-93ca-3ff9329f50e6-NZh6Js68duFIT3FwT6u0lecZhuE97x.png",
+      features: ["Grama sintética", "Iluminação profissional", "Vestiários completos"],
+    },
   ]
 
   const horarios = [
-    { periodo: "Segunda a Sexta", horario: "09:00 às 17:00", preco: "R$ 50,00", tipo: "promocional", cta: "💰 Promoção especial: jogue mais pagando menos" },
-    { periodo: "Segunda a Sexta", horario: "22:00 às 23:00", preco: "R$ 50,00", tipo: "promocional", cta: "💰 Promoção especial: jogue mais pagando menos" },
-    { periodo: "Demais horários", horario: "Outros", preco: "R$ 80,00", tipo: "normal", cta: "Valor padrão" },
+    { periodo: "Segunda a Sexta", horario: "09:00 às 17:00", preco: "R$ 50,00", tipo: "promocional" },
+    { periodo: "Segunda a Sexta", horario: "22:00 às 23:00", preco: "R$ 50,00", tipo: "promocional" },
+    { periodo: "Demais horários", horario: "Outros", preco: "R$ 80,00", tipo: "normal" },
   ]
 
   const stats = [
     { number: "7", label: "Quadras Profissionais", icon: Trophy },
     { number: "2", label: "Unidades em Goiânia", icon: MapPin },
-    { number: "3", label: "Modalidades Esportivas", icon: Target },
+    { number: "4", label: "Modalidades Esportivas", icon: Target },
     { number: "100%", label: "Satisfação dos Clientes", icon: Star },
   ]
 
@@ -107,7 +115,7 @@ export default function HomePage() {
           <Link href="/login">
             <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 transform hover:scale-105 group border-0">
               <LogIn className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform" />
-              Ãrea do Cliente
+              Área do Cliente
             </Button>
           </Link>
         </div>
@@ -131,7 +139,7 @@ export default function HomePage() {
             <h1 className="text-7xl md:text-9xl font-black mb-12 leading-tight">
               <span className="bg-gradient-to-r from-orange-300 via-orange-200 to-white bg-clip-text text-transparent">
                 ONDE{" "}
-                <span className="champion-text text-8xl md:text-[10rem] leading-none">
+                <span className="text-orange-400 drop-shadow-[0_0_20px_rgba(251,146,60,0.8)] animate-pulse">
                   CAMPEÕES
                 </span>
               </span>
@@ -147,17 +155,17 @@ export default function HomePage() {
 
             <div className="flex flex-wrap justify-center gap-8 mb-20">
               <a
-                href="https://wa.me/556293550635?text=Olá! Gostaria de reservar uma quadra na Arena Coligados. Podem me ajudar com horários e disponibilidade?"
+                href="https://wa.me/5562982935151?text=Olá! Gostaria de agendar uma quadra na Arena Coligados. Podem me ajudar com horários e disponibilidade?"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-orange-500/25 transition-all duration-300 transform hover:scale-105 group border-0">
                   <Play className="h-10 w-10 mr-4 group-hover:scale-110 transition-transform" />
-                  🔥 Reserve já sua quadra — últimas vagas promocionais!
+                  AGENDE AGORA
                 </Button>
               </a>
               <a
-                href="https://wa.me/556293550635?text=Olá! Quero minha primeira aula experimental gratuita na Arena Coligados. Podem me informar sobre as modalidades disponíveis e horários?"
+                href="https://wa.me/5562982935151?text=Olá! Tenho interesse em uma aula experimental na Arena Coligados. Podem me informar sobre as modalidades disponíveis e horários?"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -166,7 +174,7 @@ export default function HomePage() {
                   className="text-2xl px-16 py-8 rounded-2xl border-2 border-white/40 text-white hover:bg-white/10 backdrop-blur-sm bg-white/5 shadow-2xl hover:shadow-white/10 transition-all duration-300 transform hover:scale-105"
                 >
                   <Award className="h-10 w-10 mr-4" />
-                  🎾 Experimente grátis sua 1ª aula — vagas limitadas por turma!
+                  AULA EXPERIMENTAL
                 </Button>
               </a>
             </div>
@@ -175,7 +183,7 @@ export default function HomePage() {
               {stats.map((stat, index) => (
                 <div
                   key={index}
-                  className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl border border-white/20 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 transform hover:scale-105 group relative overflow-hidden"
+                  className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl border border-white/20 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 transform hover:scale-105 group"
                 >
                   <stat.icon className="h-16 w-16 text-orange-300 mx-auto mb-6 group-hover:scale-110 transition-transform drop-shadow-lg" />
                   <div className="text-5xl font-black text-white mb-3 drop-shadow-lg">{stat.number}</div>
@@ -265,7 +273,7 @@ export default function HomePage() {
                     : "text-gray-200 hover:text-white hover:bg-white/10"
                 }`}
               >
-                🏆 Unidade Matriz Premium — Estrutura completa
+                Matriz Premium
               </button>
               <button
                 onClick={() => setActiveUnit("vila-rosa")}
@@ -275,7 +283,7 @@ export default function HomePage() {
                     : "text-gray-200 hover:text-white hover:bg-white/10"
                 }`}
               >
-                ✨ Unidade Vila Rosa Elite — Exclusividade pra você
+                Vila Rosa Elite
               </button>
             </div>
           </div>
@@ -310,12 +318,12 @@ export default function HomePage() {
                     <div className="flex items-center gap-4 text-gray-200">
                       <DollarSign className="h-8 w-8 text-green-400" />
                       <span className="text-xl">
-                        R$ 80,00/hora â€¢ <span className="text-orange-300 font-bold">Promocional R$ 50,00</span>
+                        R$ 80,00/hora • <span className="text-orange-300 font-bold">Promocional R$ 50,00</span>
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-gray-200">
                       <Users className="h-8 w-8 text-blue-400" />
-                      <span className="text-xl">3 Quadras Grandes â€¢ 2 Quadras Pequenas</span>
+                      <span className="text-xl">3 Quadras Grandes • 2 Quadras Pequenas</span>
                     </div>
                   </div>
 
@@ -339,7 +347,7 @@ export default function HomePage() {
                     <div className="flex items-center gap-4 text-gray-200">
                       <DollarSign className="h-8 w-8 text-green-400" />
                       <span className="text-xl">
-                        R$ 70,00/hora â€¢ <span className="text-orange-300 font-bold">Promocional R$ 50,00</span>
+                        R$ 70,00/hora • <span className="text-orange-300 font-bold">Promocional R$ 50,00</span>
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-gray-200">
@@ -386,7 +394,7 @@ export default function HomePage() {
                     </div>
                     <div className="text-sm text-gray-400">por hora</div>
                     {horario.tipo === "promocional" && (
-                      <Badge className="bg-orange-500/20 text-orange-400 mt-2">ðŸ”¥ PROMOCIONAL</Badge>
+                      <Badge className="bg-orange-500/20 text-orange-400 mt-2">🔥 PROMOCIONAL</Badge>
                     )}
                   </div>
                 </CardContent>
@@ -409,7 +417,7 @@ export default function HomePage() {
           <div className="max-w-3xl mx-auto">
             <h3 className="text-3xl font-bold text-white mb-6">Sistema Grava Lance</h3>
             <p className="text-gray-300 mb-8 text-lg">
-              Todas as nossas quadras têm o sistema Grava Lance! Ã‰ super fácil e totalmente grátis!
+              Todas as nossas quadras têm o sistema Grava Lance! É super fácil e totalmente grátis!
             </p>
 
             <div className="grid md:grid-cols-4 gap-6">
@@ -503,10 +511,10 @@ export default function HomePage() {
 
             <div className="space-y-8">
               <div className="bg-white/10 backdrop-blur-xl p-10 rounded-3xl border border-white/20 shadow-2xl">
-                <h3 className="text-4xl font-black text-white mb-6">🎓 Sua primeira aula é por nossa conta — aprenda com professores qualificados agora mesmo!</h3>
+                <h3 className="text-4xl font-black text-white mb-6">Experimente Gratuitamente</h3>
                 <p className="text-gray-200 text-xl mb-8 leading-relaxed">
                   Professores qualificados e turmas niveladas para todos os níveis: Aprendiz, Iniciante, Intermediário e
-                  Avançado. Alunos sem experiência devem ser sempre direcionados ao nível Aprendiz.
+                  Avançado.
                 </p>
 
                 <div className="grid md:grid-cols-3 gap-6">
@@ -536,54 +544,9 @@ export default function HomePage() {
                 </div>
 
                 <div className="mt-8 text-center">
-                  <Badge className="bg-blue-500/20 text-blue-400 px-6 py-3 text-lg">👦👧 Turmas Kids até 13 anos (até 15 com autorização) — aprendizado seguro e divertido</Badge>
+                  <Badge className="bg-blue-500/20 text-blue-400 px-6 py-3 text-lg">Turmas KIDS até 13-15 anos</Badge>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Regras de Agendamento */}
-      <section className="py-16 px-4 bg-gray-800/30">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h3 className="text-4xl font-bold text-white mb-6">📋 Regras de Agendamento</h3>
-            <p className="text-gray-300 text-xl">Informações importantes para sua melhor experiência</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 shadow-2xl text-center">
-              <div className="text-4xl mb-4">⏰</div>
-              <h4 className="text-xl font-bold text-white mb-4">Horários da Semana</h4>
-              <p className="text-gray-300 mb-4">Evitar horários quebrados entre 19h–21h</p>
-              <Badge className="bg-orange-500/20 text-orange-400">Durante a semana</Badge>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 shadow-2xl text-center">
-              <div className="text-4xl mb-4">📅</div>
-              <h4 className="text-xl font-bold text-white mb-4">Fins de Semana</h4>
-              <p className="text-gray-300 mb-4">Horários quebrados permitidos sem restrição</p>
-              <Badge className="bg-green-500/20 text-green-400">Sábados e domingos</Badge>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 shadow-2xl text-center">
-              <div className="text-4xl mb-4">✅</div>
-              <h4 className="text-xl font-bold text-white mb-4">Cancelamentos</h4>
-              <p className="text-gray-300 mb-4">Crédito garantido apenas se feitos com mínimo de 8h de antecedência</p>
-              <Badge className="bg-blue-500/20 text-blue-400">8h de antecedência</Badge>
-            </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 backdrop-blur-xl p-8 rounded-3xl border border-orange-500/30 shadow-2xl max-w-4xl mx-auto">
-              <h4 className="text-2xl font-bold text-white mb-4">💰 Promoção Especial</h4>
-              <p className="text-gray-200 text-lg mb-4">
-                Horários promocionais exclusivos em períodos de baixa demanda
-              </p>
-              <p className="text-orange-300 font-bold text-xl">
-                R$ 50,00/h (seg–sex 09h–17h e 22h–23h)
-              </p>
             </div>
           </div>
         </div>
@@ -643,19 +606,6 @@ export default function HomePage() {
               </a>
             </div>
 
-            <div className="mb-8">
-              <a
-                href="https://wa.me/556293550635?text=Olá! Quero reservar minha quadra na Arena Coligados agora mesmo!"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-12 py-6 rounded-2xl shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 group border-0">
-                  <MessageCircle className="h-8 w-8 mr-4 group-hover:scale-110 transition-transform" />
-                  📲 Reserve agora mesmo pelo WhatsApp em segundos
-                </Button>
-              </a>
-            </div>
-            
             <p className="text-gray-400 text-xl">© 2024 Arena Coligados. Todos os direitos reservados.</p>
             <p className="text-gray-500 mt-3 text-lg">
               Marque <span className="text-orange-400 font-bold">@arenacoligados</span> em suas postagens!
@@ -665,7 +615,7 @@ export default function HomePage() {
       </footer>
 
       <a
-        href="https://wa.me/556293550635?text=Olá! Quero reservar minha quadra na Arena Coligados agora mesmo!"
+        href="https://wa.me/5562982935151?text=Olá! Gostaria de saber mais sobre a Arena Coligados"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-8 right-8 z-50"
@@ -677,4 +627,3 @@ export default function HomePage() {
     </div>
   )
 }
-

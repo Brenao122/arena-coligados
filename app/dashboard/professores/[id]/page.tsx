@@ -1,11 +1,11 @@
-﻿"use client"
+"use client"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Phone, Mail, Calendar, Users, Clock, Star } from "lucide-react"
-// Migrado para Google Sheets
+import { getBrowserClient } from "@/lib/supabase/browser-client"
 
 interface Professor {
   id: string
@@ -20,17 +20,18 @@ interface Professor {
   avaliacao?: number
 }
 
-type AulaStatus = "pendente" | "confirmada" | "cancelada" | "concluida" | "outro";
-
-type Aula = {
-  id: string;
-  data_inicio: string;
-  data_fim: string;
-  duracao?: string;
-  status: AulaStatus;
-  cliente: { full_name: string };
-  quadra: { nome: string };
-};
+interface Aula {
+  id: string
+  data_inicio: string
+  data_fim: string
+  cliente: {
+    full_name: string
+  }
+  quadra: {
+    nome: string
+  }
+  status: string
+}
 
 export default function ProfessorDetalhes() {
   const params = useParams()
@@ -42,66 +43,57 @@ export default function ProfessorDetalhes() {
   useEffect(() => {
     const fetchProfessorData = async () => {
       try {
-        // Buscar dados dos professores do Google Sheets
-        const professoresResponse = await fetch('/api/sheets/read?sheet=Professores')
-        const professoresData = await professoresResponse.json()
-        
-        if (!professoresData.ok) throw new Error('Erro ao buscar professores')
-        
-        // Encontrar o professor pelo ID (assumindo que ID está na coluna 0)
-        const professores = professoresData.values?.slice(1) || []
-        const professorData = professores.find((p: any[]) => p[0] === params?.id)
-        
-        if (!professorData) throw new Error('Professor não encontrado')
+        const supabase = getBrowserClient()
 
-        // Mapear dados do professor (ajustar índices conforme estrutura da planilha)
-        const professor: Professor = {
-          id: professorData[0] || '',
-          full_name: professorData[1] || '',
-          email: professorData[2] || '',
-          phone: professorData[3] || '',
-          especialidades: professorData[4] ? professorData[4].split(',').map((e: string) => e.trim()) : [],
-          created_at: professorData[5] || new Date().toISOString(),
-          preco_aula: parseFloat(professorData[6]) || 0,
-          alunos_ativos: parseInt(professorData[7]) || 0,
-          aulas_mes: parseInt(professorData[8]) || 0,
-          avaliacao: parseFloat(professorData[9]) || 0
-        }
+        // Buscar dados do professor
+        const { data: professorData, error: professorError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", params.id)
+          .single()
 
-        // Buscar aulas/reservas do professor
-        const reservasResponse = await fetch('/api/sheets/read?sheet=Reservas')
-        const reservasData = await reservasResponse.json()
-        
-        if (!reservasData.ok) throw new Error('Erro ao buscar reservas')
-        
-        // Filtrar reservas do professor (assumindo que professor_id está na coluna 3)
-        const reservas = reservasData.values?.slice(1) || []
-        const aulasProfessor = reservas
-          .filter((r: any[]) => r[3] === params?.id) // professor_id
-          .slice(0, 10) // limitar a 10
-          .map((a: any[]): Aula => ({
-            id: a[0] || '',
-            data_inicio: a[4] || '', // data_inicio
-            data_fim: a[5] || '', // data_fim
-            duracao: a[6] || '',
-            status: (a[7] || 'confirmada') as AulaStatus,
-            cliente: { full_name: a[1] || 'Cliente' }, // cliente
-            quadra: { nome: a[2] || 'Quadra' }, // quadra
-          }))
+        if (professorError) throw professorError
 
-        setProfessor(professor)
-        setAulas(aulasProfessor)
+        // Buscar aulas do professor
+        const { data: aulasData, error: aulasError } = await supabase
+          .from("reservas")
+          .select(`
+            id,
+            duracao,
+            status,
+            cliente:cliente_id (full_name),
+            quadra:quadra_id (nome)
+          `)
+          .eq("professor_id", params.id)
+          .order("duracao", { ascending: true })
+          .limit(10)
+
+        if (aulasError) throw aulasError
+
+        // Transformar dados das aulas
+        const aulasTransformadas =
+          aulasData?.map((aula) => ({
+            id: aula.id,
+            data_inicio: aula.duracao ? aula.duracao.split(",")[0].replace("[", "") : "",
+            data_fim: aula.duracao ? aula.duracao.split(",")[1].replace(")", "") : "",
+            cliente: aula.cliente || { full_name: "Cliente não encontrado" },
+            quadra: aula.quadra || { nome: "Quadra não encontrada" },
+            status: aula.status || "agendada",
+          })) || []
+
+        setProfessor(professorData)
+        setAulas(aulasTransformadas)
       } catch (error) {
-        console.error('Erro ao buscar dados do professor:', error)
+        console.error("Erro ao buscar dados do professor:", error)
       } finally {
         setLoading(false)
       }
     }
 
-    if (params?.id) {
+    if (params.id) {
       fetchProfessorData()
     }
-  }, [params?.id])
+  }, [params.id])
 
   if (loading) {
     return (
@@ -186,10 +178,10 @@ export default function ProfessorDetalhes() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* InformaçÃµes Pessoais */}
+          {/* Informações Pessoais */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">InformaçÃµes Pessoais</CardTitle>
+              <CardTitle className="text-white">Informações Pessoais</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
@@ -236,7 +228,7 @@ export default function ProfessorDetalhes() {
                       <div>
                         <p className="text-white font-medium">{aula.cliente.full_name}</p>
                         <p className="text-sm text-gray-400">
-                          {aula.quadra.nome} â€¢{" "}
+                          {aula.quadra.nome} •{" "}
                           {new Date(aula.data_inicio).toLocaleTimeString("pt-BR", {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -263,4 +255,3 @@ export default function ProfessorDetalhes() {
     </div>
   )
 }
-

@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, addWeeks, subWeeks, isSameDay } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
-// Migrado para Google Sheets
+import { fetchReservasWithSchema } from "@/lib/supabase/schema-detector"
 
 interface Reserva {
   id: string
@@ -64,41 +64,62 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
     try {
       setLoading(true)
 
-      // Buscar reservas do Google Sheets
-      const response = await fetch('/api/sheets/read?sheet=Reservas')
-      const result = await response.json()
+      const query = await fetchReservasWithSchema(weekStart, weekEnd)
+      const { data, error } = await query
 
-      if (!result.ok) {
+      if (error) {
+        console.error("Erro ao buscar reservas:", error)
         setReservas([])
         return
       }
 
-      const reservas = result.values?.slice(1) || []
-      
-      // Filtrar reservas da semana atual e transformar dados
-      const transformedReservas = reservas
-        .filter((reserva: any[]) => {
-          const dataInicio = new Date(reserva[4]) // data_inicio
-          return dataInicio >= weekStart && dataInicio <= weekEnd
-        })
-        .map((reserva: any[]): Reserva => ({
-          id: reserva[0] || '',
-          data_inicio: reserva[4] || new Date().toISOString(), // data_inicio
-          data_fim: reserva[5] || new Date().toISOString(), // data_fim
-          tipo: reserva[6] || "Locação", // tipo
-          status: reserva[7] || "confirmada", // status
-          valor: parseFloat(reserva[8]) || 0, // valor_total
+      const transformedReservas = (data || []).map((reserva: any) => {
+        let dataInicio = new Date().toISOString()
+        let dataFim = new Date().toISOString()
+
+        try {
+          if (reserva.duracao) {
+            // TSTZRANGE format
+            const duracaoStr = reserva.duracao.toString()
+            const match =
+              duracaoStr.match(/\["([^"]+)","([^"]+)"\)/) ||
+              duracaoStr.match(/\[([^,]+),([^)]+)\)/) ||
+              duracaoStr.match(/\(([^,]+),([^)]+)\]/)
+
+            if (match) {
+              dataInicio = new Date(match[1].replace(/"/g, "")).toISOString()
+              dataFim = new Date(match[2].replace(/"/g, "")).toISOString()
+            }
+          } else if (reserva.data_inicio && reserva.data_fim) {
+            // Separate columns format
+            dataInicio = new Date(reserva.data_inicio).toISOString()
+            dataFim = new Date(reserva.data_fim).toISOString()
+          }
+        } catch (error) {
+          console.error("Erro ao parsear duracao:", error, reserva.duracao || reserva.data_inicio)
+          dataInicio = new Date().toISOString()
+          dataFim = new Date(Date.now() + 60 * 60 * 1000).toISOString()
+        }
+
+        return {
+          id: reserva.id,
+          data_inicio: dataInicio,
+          data_fim: dataFim,
+          tipo: reserva.tipo || "Locação",
+          status: reserva.status || "confirmada",
+          valor: reserva.valor_total || reserva.valor || 0,
           profiles: {
-            full_name: reserva[1] || "Cliente não informado", // cliente
+            full_name: reserva.profiles?.full_name || "Cliente não informado",
           },
           quadras: {
-            nome: reserva[2] || "Quadra não informada", // quadra
+            nome: reserva.quadras?.nome || "Quadra não informada",
           },
-        }))
+        }
+      })
 
       setReservas(transformedReservas)
     } catch (error) {
-      console.error('Erro ao buscar reservas:', error)
+      console.error("Erro ao conectar com Supabase:", error)
       setReservas([])
     } finally {
       setLoading(false)
@@ -207,4 +228,3 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
     </Card>
   )
 }
-

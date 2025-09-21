@@ -1,8 +1,8 @@
-﻿import type React from "react"
+import type React from "react"
 import type { Metadata } from "next"
 import { Montserrat, Oswald } from "next/font/google"
 import "./globals.css"
-import { AuthProvider } from "@/hooks/use-auth-simple"
+import { AuthProvider } from "@/hooks/use-auth"
 import { ThemeProvider } from "@/contexts/theme-context"
 
 const montserrat = Montserrat({
@@ -64,4 +64,3 @@ export default function RootLayout({
     </html>
   )
 }
-

@@ -1,10 +1,12 @@
-﻿'use client';
+import { createBrowserClient as createSupabaseBrowserClient } from "@supabase/ssr"
 
-import { createBrowserClient } from '@supabase/ssr';
+export function createBrowserClient() {
+  return createSupabaseBrowserClient(
+    "https://fksahbiajrccraxvowtv.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2FoYmlhanJjY3JheHZvd3R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3NjI4NzQsImV4cCI6MjA1MTMzODg3NH0.WRJGmb3KepODc1EWK1ypkg_-rHuInWe",
+  )
+}
 
 export function getBrowserClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  return createBrowserClient()
 }

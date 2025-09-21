@@ -1,4 +1,4 @@
-﻿import { getBrowserClient } from "@/lib/supabase/browser-client"
+import { getBrowserClient } from "@/lib/supabase/browser-client"
 
 export async function getUserWithRole() {
   const supabase = getBrowserClient()
@@ -8,23 +8,19 @@ export async function getUserWithRole() {
   } = await supabase.auth.getUser()
   if (userErr || !user) return { user: null, role: null }
 
-  let role = null
+  const { data: roleRow, error: roleErr } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .limit(1)
+    .maybeSingle()
 
-  try {
-    // Buscar role do usuário no Google Sheets
-    const response = await fetch('/api/sheets/read?sheet=Usuarios')
-    const result = await response.json()
-    
-    if (result.ok && result.values) {
-      const usuarios = result.values.slice(1)
-      const usuario = usuarios.find((u: any[]) => u[0] === user.id) // ID na coluna 0
-      role = usuario?.[7] || "cliente" // role na coluna 7
-    }
-  } catch (error) {
-    console.error('Erro ao buscar role do usuário:', error)
-    role = "cliente" // default seguro
+  let role = roleRow?.role ?? null
+
+  if (!role) {
+    const { data: profileRow } = await supabase.from("profiles").select("role").eq("id", user.id).limit(1).maybeSingle()
+    role = profileRow?.role ?? "cliente" // default seguro
   }
 
   return { user, role }
 }
-

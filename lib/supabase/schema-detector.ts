@@ -1,52 +1,88 @@
-﻿// Migrado para Google Sheets - schema detector simplificado
-// Google Sheets sempre usa formato de colunas separadas
+import { getBrowserClient } from "./browser-client"
 
-export type ReservasSchema = "separate_columns"
+export type ReservasSchema = "tstzrange" | "separate_columns"
 
 let cachedSchema: ReservasSchema | null = null
 
 export async function detectReservasSchema(): Promise<ReservasSchema> {
-  // Google Sheets sempre usa colunas separadas (data_inicio, data_fim)
-  cachedSchema = "separate_columns"
-  return cachedSchema
+  if (cachedSchema) return cachedSchema
+
+  const supabase = getBrowserClient()
+
+  try {
+    // Tenta fazer uma query simples para detectar as colunas
+    const { data, error } = await supabase.from("reservas").select("*").limit(1)
+
+    if (error) {
+      console.log("[v0] Error detecting schema:", error.message)
+      // Default para separate_columns se houver erro
+      cachedSchema = "separate_columns"
+      return cachedSchema
+    }
+
+    // Verifica se existe a coluna 'duracao' (TSTZRANGE) ou 'data_inicio'/'data_fim'
+    if (data && data.length > 0) {
+      const firstRow = data[0]
+      if ("duracao" in firstRow) {
+        cachedSchema = "tstzrange"
+      } else if ("data_inicio" in firstRow && "data_fim" in firstRow) {
+        cachedSchema = "separate_columns"
+      } else {
+        // Fallback para separate_columns
+        cachedSchema = "separate_columns"
+      }
+    } else {
+      // Se não há dados, tenta uma query de metadados
+      const { data: metaData, error: metaError } = await supabase.from("reservas").select("duracao").limit(1)
+
+      if (metaError && metaError.message.includes('column "duracao" does not exist')) {
+        cachedSchema = "separate_columns"
+      } else {
+        cachedSchema = "tstzrange"
+      }
+    }
+
+    console.log("[v0] Detected reservas schema:", cachedSchema)
+    return cachedSchema
+  } catch (error) {
+    console.log("[v0] Error in schema detection:", error)
+    cachedSchema = "separate_columns"
+    return cachedSchema
+  }
 }
 
-export async function fetchReservasWithSchema(startDate: Date, endDate: Date, _additionalFilters?: Record<string, unknown>) {
-  try {
-    // Buscar reservas do Google Sheets
-    const response = await fetch('/api/sheets/read?sheet=Reservas')
-    const result = await response.json()
-    
-    if (!result.ok) {
-      return { data: [], error: { message: "Erro ao buscar reservas" } }
-    }
-    
-    const reservas = result.values?.slice(1) || []
-    
-    // Filtrar por data se necessário
-    const filteredReservas = reservas.filter((r: any[]) => {
-      const dataInicio = new Date(r[4]) // data_inicio na coluna 4
-      return dataInicio >= startDate && dataInicio <= endDate
+export async function fetchReservasWithSchema(startDate: Date, endDate: Date, additionalFilters?: any) {
+  const supabase = getBrowserClient()
+  const schema = await detectReservasSchema()
+
+  let query = supabase.from("reservas").select(`
+      *,
+      profiles:cliente_id (full_name),
+      quadras:quadra_id (nome),
+      professores:professor_id (
+        profiles:profile_id (full_name)
+      )
+    `)
+
+  // Aplicar filtros adicionais se fornecidos
+  if (additionalFilters) {
+    Object.entries(additionalFilters).forEach(([key, value]) => {
+      query = query.eq(key, value)
     })
-    
-    // Transformar para formato esperado
-    const transformedData = filteredReservas.map((r: any[]) => ({
-      id: r[0],
-      cliente_id: r[1],
-      quadra_id: r[2],
-      professor_id: r[3],
-      data_inicio: r[4],
-      data_fim: r[5],
-      tipo: r[6],
-      status: r[7],
-      valor_total: parseFloat(r[8]) || 0,
-      profiles: { full_name: r[1] }, // cliente
-      quadras: { nome: r[2] }, // quadra
-      professores: { profiles: { full_name: r[3] } } // professor
-    }))
-    
-    return { data: transformedData, error: null }
-  } catch (error) {
-    return { data: [], error }
   }
+
+  if (schema === "tstzrange") {
+    const startISO = startDate.toISOString().replace("T", " ").replace("Z", "+00")
+    const endISO = endDate.toISOString().replace("T", " ").replace("Z", "+00")
+    const range = `[${startISO},${endISO})`
+
+    query = query.overlaps("duracao", range)
+  } else {
+    const startISO = startDate.toISOString()
+    const endISO = endDate.toISOString()
+
+    query = query.lte("data_inicio", endISO).gte("data_fim", startISO)
+  }
+
+  return query
 }

@@ -1,16 +1,6 @@
-﻿import { LoginForm } from "@/components/auth/login-form"
-import { loginAction } from "./actions"
+import { LoginForm } from "@/components/auth/login-form"
 
-export const dynamic = 'force-dynamic'
-
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ redirectTo?: string }>
-}) {
-  const params = await searchParams
-  const redirectTo = params?.redirectTo ?? '/dashboard'
-
+export default function LoginPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center relative"
@@ -32,12 +22,10 @@ export default async function LoginPage({
           <p className="mt-2 text-gray-300 text-lg">Gestão Esportiva</p>
         </div>
 
-        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">
-          {/* passe a action e o redirectTo */}
-          <LoginForm action={loginAction} redirectTo={redirectTo} />
+        <div className="backdrop-blur-md bg-black/30 border border-white/20 rounded-2xl p-8 shadow-2xl">
+          <LoginForm />
         </div>
       </div>
     </div>
   )
 }
-

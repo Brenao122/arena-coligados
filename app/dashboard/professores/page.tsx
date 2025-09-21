@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { ProfessoresList } from "@/components/professores/professores-list"
@@ -55,4 +55,3 @@ export default function ProfessoresPage() {
     </div>
   )
 }
-

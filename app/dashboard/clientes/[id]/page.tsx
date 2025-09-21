@@ -1,11 +1,11 @@
-﻿"use client"
+"use client"
 import { useParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Phone, Mail, Calendar, TrendingUp, Clock } from "lucide-react"
-// Migrado para Google Sheets
+import { supabase } from "@/lib/supabase"
 
 interface Cliente {
   id: string
@@ -22,7 +22,7 @@ interface Reserva {
   status: string
   quadras: {
     nome: string
-  }[]
+  }
 }
 
 export default function ClienteDetalhes() {
@@ -33,58 +33,39 @@ export default function ClienteDetalhes() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (params?.id) {
-      fetchClienteData()
-    }
-  }, [params?.id])
+    fetchClienteData()
+  }, [params.id])
 
   const fetchClienteData = async () => {
     try {
       setLoading(true)
 
-      // Buscar dados dos clientes do Google Sheets
-      const clientesResponse = await fetch('/api/sheets/read?sheet=Clientes')
-      const clientesData = await clientesResponse.json()
-      
-      if (!clientesData.ok) throw new Error('Erro ao buscar clientes')
-      
-      // Encontrar o cliente pelo ID (assumindo que ID está na coluna 0)
-      const clientes = clientesData.values?.slice(1) || []
-      const clienteData = clientes.find((c: any[]) => c[0] === params?.id)
-      
-      if (!clienteData) throw new Error('Cliente não encontrado')
+      const { data: clienteData, error: clienteError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", params.id)
+        .single()
 
-      // Mapear dados do cliente (ajustar índices conforme estrutura da planilha)
-      const cliente: Cliente = {
-        id: clienteData[0] || '',
-        full_name: clienteData[1] || '',
-        email: clienteData[2] || '',
-        phone: clienteData[3] || '',
-        created_at: clienteData[4] || new Date().toISOString()
-      }
+      if (clienteError) throw clienteError
 
-      // Buscar reservas do cliente
-      const reservasResponse = await fetch('/api/sheets/read?sheet=Reservas')
-      const reservasData = await reservasResponse.json()
-      
-      if (!reservasData.ok) throw new Error('Erro ao buscar reservas')
-      
-      // Filtrar reservas do cliente (assumindo que cliente_id está na coluna 1)
-      const reservas = reservasData.values?.slice(1) || []
-      const reservasCliente = reservas
-        .filter((r: any[]) => r[1] === params?.id) // cliente_id
-        .map((r: any[]): Reserva => ({
-          id: r[0] || '',
-          created_at: r[4] || new Date().toISOString(), // data_inicio
-          valor_total: parseFloat(r[8]) || 0, // valor_total
-          status: r[7] || 'confirmada',
-          quadras: [{ nome: r[2] || 'Quadra' }] // quadra
-        }))
+      const { data: reservasData, error: reservasError } = await supabase
+        .from("reservas")
+        .select(`
+          id,
+          created_at,
+          valor_total,
+          status,
+          quadras (nome)
+        `)
+        .eq("cliente_id", params.id)
+        .order("created_at", { ascending: false })
 
-      setCliente(cliente)
-      setReservas(reservasCliente)
+      if (reservasError) throw reservasError
+
+      setCliente(clienteData)
+      setReservas(reservasData || [])
     } catch (error) {
-      console.error('Erro ao buscar dados do cliente:', error)
+      console.error("Erro ao buscar dados do cliente:", error)
     } finally {
       setLoading(false)
     }
@@ -191,10 +172,10 @@ export default function ClienteDetalhes() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* InformaçÃµes Pessoais */}
+          {/* Informações Pessoais */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">InformaçÃµes Pessoais</CardTitle>
+              <CardTitle className="text-white">Informações Pessoais</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
@@ -229,7 +210,7 @@ export default function ClienteDetalhes() {
                   reservas.map((reserva) => (
                     <div key={reserva.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
                       <div>
-                        <p className="text-white font-medium">{reserva.quadras?.[0]?.nome || 'Quadra não especificada'}</p>
+                        <p className="text-white font-medium">{reserva.quadras?.nome}</p>
                         <p className="text-sm text-gray-400">{new Date(reserva.created_at).toLocaleDateString()}</p>
                       </div>
                       <div className="text-right">
@@ -249,4 +230,3 @@ export default function ClienteDetalhes() {
     </div>
   )
 }
-

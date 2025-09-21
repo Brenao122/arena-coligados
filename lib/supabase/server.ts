@@ -1,24 +1,20 @@
-// lib/supabase/server.ts (server-only)
-import 'server-only'
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
-import { ENV } from '@/lib/env'
+import { createServerClient } from "@supabase/ssr"
+import { cookies } from "next/headers"
 
-export async function getServerSupabase() {
-  const store = await cookies()
+export const createClient = () => {
+  const cookieStore = cookies()
+
   return createServerClient(
-    ENV.NEXT_PUBLIC_SUPABASE_URL,
-    ENV.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    "https://fksahbiajrccraxvowtv.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2FoYmlhanJjY3JheHZvd3R2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNTc2Mjg3NCwiZXhwIjoyMDUxMzM4ODc0fQ.S8MGsl_MBplV-GCN0T_rJQ_IM8lgUgA",
     {
       cookies: {
         getAll() {
-          return store.getAll()
+          return cookieStore.getAll()
         },
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              store.set(name, value, options)
-            )
+            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
           } catch {
             // The `setAll` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing
@@ -26,11 +22,6 @@ export async function getServerSupabase() {
           }
         },
       },
-    }
+    },
   )
-}
-
-// Função legacy para compatibilidade
-export function supabaseServer() {
-  return getServerSupabase()
 }

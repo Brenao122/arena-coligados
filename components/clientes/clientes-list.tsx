@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { supabase } from "@/lib/supabase"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Edit, Trash2, Search, Users, Eye, Calendar } from "lucide-react"
@@ -39,45 +40,39 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
   const fetchClientes = async () => {
     try {
       setLoading(true)
-      console.log('🔍 Buscando clientes via sistema híbrido...')
 
-      // Usar nova API híbrida
-      const response = await fetch('/api/sheets-primary/clientes')
-      const result = await response.json()
-      
-      console.log('📊 Resposta da API híbrida:', result)
-      
-      if (!result.ok) {
-        throw new Error(result.error || 'Erro ao buscar dados')
-      }
+      // Fetch clients from profiles table
+      const { data: clientesData, error: clientesError } = await supabase
+        .from("profiles")
+        .select(`
+          id, 
+          full_name, 
+          email, 
+          phone, 
+          created_at,
+          user_roles!inner(role)
+        `)
+        .eq("user_roles.role", "cliente")
+        .order("created_at", { ascending: false })
 
-      const clientesData = result.data || []
-      console.log('📋 Dados dos clientes:', clientesData)
-      console.log('🔄 Fonte dos dados:', result.source)
-      
-      if (clientesData.length === 0) {
-        console.log('⚠️ Nenhum cliente encontrado')
+      if (clientesError) {
+        console.error("Error fetching clientes:", clientesError)
         setClientes([])
         return
       }
 
-      // Mapear dados para estrutura esperada
-      const clientesMapeados = clientesData.map((cliente: any) => ({
-        id: cliente.id,
-        full_name: cliente.nome || cliente.full_name || '',
-        email: cliente.email || '',
-        phone: cliente.telefone || cliente.phone || '',
-        created_at: cliente.created_at || new Date().toISOString(),
-        reservas_count: cliente.reservas_count || 0,
-        ultima_reserva: cliente.ultima_reserva || '',
-        total_gasto: cliente.total_gasto || 0
-      })).filter((cliente: any) => cliente.full_name && cliente.email) // Filtrar clientes válidos
+      // For now, set basic client data without complex reservation stats
+      // This can be enhanced later with actual reservation counting
+      const clientesWithBasicStats = (clientesData || []).map((cliente) => ({
+        ...cliente,
+        reservas_count: 0,
+        ultima_reserva: undefined,
+        total_gasto: 0,
+      }))
 
-      console.log('✅ Clientes mapeados:', clientesMapeados)
-      setClientes(clientesMapeados)
-      
+      setClientes(clientesWithBasicStats)
     } catch (error) {
-      console.error('❌ Erro ao buscar clientes:', error)
+      console.error("Error fetching clientes:", error)
       setClientes([])
     } finally {
       setLoading(false)
@@ -88,11 +83,12 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
     if (!confirm("Tem certeza que deseja excluir este cliente?")) return
 
     try {
-      // Para Google Sheets, vamos apenas atualizar o estado local
-      // Em uma implementação completa, você criaria uma função de delete no repo
+      const { error } = await supabase.from("profiles").delete().eq("id", clienteId)
+
+      if (error) throw error
       setClientes((prev) => prev.filter((c) => c.id !== clienteId))
     } catch (error) {
-      console.error('Erro ao excluir cliente:', error)
+      console.error("Error deleting cliente:", error)
     }
   }
 

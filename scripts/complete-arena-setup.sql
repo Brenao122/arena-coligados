@@ -270,7 +270,7 @@ values (
   gen_random_uuid(),
   'admin122@arena.com',
   'Admin 122',
-  '+556293550635',
+  '+5562981912294',
   now(),
   now()
 )
@@ -293,7 +293,7 @@ values (
   gen_random_uuid(),
   'contatobrenofilm@gmail.com',
   'Breno Amancio - Desenvolvedor',
-  '+556293550635',
+  '+5562981912294',
   now(),
   now()
 )

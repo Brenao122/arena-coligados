@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { getBrowserClient } from "@/lib/supabase/browser-client"
 import { Loader2, X } from "lucide-react"
 
 interface ClienteFormProps {
@@ -33,49 +34,72 @@ export function ClienteForm({ onClose, onSuccess, clienteId }: ClienteFormProps)
     setError("")
 
     try {
-      if (!formData.full_name || !formData.email) {
-        throw new Error("Nome e email são obrigatórios")
-      }
+      const supabase = getBrowserClient()
 
       if (!clienteId && formData.password !== formData.confirmPassword) {
         throw new Error("As senhas não coincidem")
       }
 
-      // Criar dados do cliente para Google Sheets
-      const clienteData = {
-        id: `cliente-${Date.now()}`,
-        nome: formData.full_name,
-        email: formData.email,
-        telefone: formData.phone,
-        data_nascimento: '',
-        endereco: '',
-        status: 'ativo',
-        data_cadastro: new Date().toISOString(),
-        observacoes: 'Cliente cadastrado via formulário'
+      if (!formData.full_name || !formData.email) {
+        throw new Error("Nome e email são obrigatórios")
       }
 
-      // Enviar para Google Sheets via API
-      const response = await fetch('/api/sheets/append', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sheet: 'clientes',
-          rows: [clienteData]
+      if (!clienteId) {
+        // Criar usuário no Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              full_name: formData.full_name,
+              phone: formData.phone,
+            },
+          },
         })
-      })
 
-      const result = await response.json()
+        if (authError) throw authError
 
-      if (!result.ok) {
-        throw new Error(result.error || 'Erro ao salvar cliente')
+        // Inserir perfil na tabela profiles
+        if (authData.user) {
+          const { error: profileError } = await supabase.from("profiles").insert([
+            {
+              id: authData.user.id,
+              email: formData.email,
+              full_name: formData.full_name,
+              phone: formData.phone,
+            },
+          ])
+
+          if (profileError) throw profileError
+
+          // Criar role de cliente
+          const { error: roleError } = await supabase.from("user_roles").insert([
+            {
+              user_id: authData.user.id,
+              role: "cliente",
+            },
+          ])
+
+          if (roleError) throw roleError
+        }
+      } else {
+        // Atualizar cliente existente
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update({
+            full_name: formData.full_name,
+            phone: formData.phone,
+          })
+          .eq("id", clienteId)
+
+        if (updateError) throw updateError
       }
 
       onSuccess()
       onClose()
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Erro ao salvar cliente")
+    } catch (error: any) {
+      console.error("Error saving cliente:", error)
+      setError(error.message || "Erro ao salvar cliente")
     } finally {
       setLoading(false)
     }
@@ -99,32 +123,36 @@ export function ClienteForm({ onClose, onSuccess, clienteId }: ClienteFormProps)
             </Alert>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="full_name" className="text-gray-200">
-              Nome Completo *
-            </Label>
-            <Input
-              id="full_name"
-              type="text"
-              value={formData.full_name}
-              onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-              className="bg-gray-700 border-gray-600 text-white"
-              required
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="full_name" className="text-gray-200">
+                Nome Completo
+              </Label>
+              <Input
+                id="full_name"
+                value={formData.full_name}
+                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                placeholder="Nome completo do cliente"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                required
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-200">
-              Email *
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="bg-gray-700 border-gray-600 text-white"
-              required
-            />
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-200">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="email@exemplo.com"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                disabled={!!clienteId}
+                required
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -133,44 +161,45 @@ export function ClienteForm({ onClose, onSuccess, clienteId }: ClienteFormProps)
             </Label>
             <Input
               id="phone"
-              type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="bg-gray-700 border-gray-600 text-white"
               placeholder="(11) 99999-9999"
+              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
             />
           </div>
 
           {!clienteId && (
-            <>
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-gray-200">
-                  Senha *
+                  Senha
                 </Label>
                 <Input
                   id="password"
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="bg-gray-700 border-gray-600 text-white"
+                  placeholder="••••••••"
+                  className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                   required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-gray-200">
-                  Confirmar Senha *
+                  Confirmar Senha
                 </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="bg-gray-700 border-gray-600 text-white"
+                  placeholder="••••••••"
+                  className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                   required
                 />
               </div>
-            </>
+            </div>
           )}
 
           <div className="flex gap-2 pt-4">
@@ -189,7 +218,7 @@ export function ClienteForm({ onClose, onSuccess, clienteId }: ClienteFormProps)
                   Salvando...
                 </>
               ) : (
-                clienteId ? "Atualizar Cliente" : "Criar Cliente"
+                "Salvar Cliente"
               )}
             </Button>
           </div>

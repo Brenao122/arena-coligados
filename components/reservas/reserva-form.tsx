@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/hooks/use-auth-simple"
+import { useAuth } from "@/hooks/use-auth"
+import { supabase } from "@/lib/supabase"
 import { Loader2, X } from "lucide-react"
 
 interface ReservaFormProps {
@@ -62,55 +63,31 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Buscar dados reais das planilhas
-        const [quadrasRes, professoresRes, clientesRes] = await Promise.all([
-          fetch('/api/sheets/read?sheet=quadras'),
-          fetch('/api/sheets/read?sheet=professores'),
-          fetch('/api/sheets/read?sheet=clientes')
-        ])
+        const { data: quadrasData } = await supabase.from("quadras").select("*").eq("active", true)
 
-        const [quadrasData, professoresData, clientesData] = await Promise.all([
-          quadrasRes.json(),
-          professoresRes.json(),
-          clientesRes.json()
-        ])
+        if (quadrasData) setQuadras(quadrasData)
 
-        // Processar quadras
-        if (quadrasData.ok && quadrasData.rows) {
-          const quadrasFormatadas = quadrasData.rows.map((q: any) => ({
-            id: q.id || `quadra-${Math.random().toString(36).substr(2, 9)}`,
-            name: q.nome || 'Quadra sem nome',
-            type: q.tipo || 'Não especificado',
-            price_per_hour: parseFloat(q.preco_hora) || 0
-          }))
-          setQuadras(quadrasFormatadas)
-        }
+        const { data: professoresData } = await supabase
+          .from("professores")
+          .select(`
+            id,
+            user_id,
+            hourly_rate,
+            profiles!professores_user_id_fkey (
+              name
+            )
+          `)
+          .eq("active", true)
 
-        // Processar professores
-        if (professoresData.ok && professoresData.rows) {
-          const professoresFormatados = professoresData.rows.map((p: any) => ({
-            id: p.id || `prof-${Math.random().toString(36).substr(2, 9)}`,
-            user_id: p.id,
-            hourly_rate: parseFloat(p.preco_aula) || 0,
-            profiles: { name: p.nome || 'Professor sem nome' }
-          }))
-          setProfessores(professoresFormatados)
-        }
+        if (professoresData) setProfessores(professoresData)
 
-        // Processar clientes
-        if (clientesData.ok && clientesData.rows) {
-          const clientesFormatados = clientesData.rows.map((c: any) => ({
-            id: c.id || `cliente-${Math.random().toString(36).substr(2, 9)}`,
-            name: c.nome || 'Cliente sem nome',
-            email: c.email || ''
-          }))
-          
-          if (profile?.role === "admin" || profile?.role === "professor") {
-            setClientes(clientesFormatados)
-          }
+        if (profile?.role === "admin" || profile?.role === "professor") {
+          const { data: clientesData } = await supabase.from("profiles").select("id, name, email").eq("role", "aluno")
+
+          if (clientesData) setClientes(clientesData)
         }
       } catch (error) {
-        console.error('Erro ao buscar dados:', error)
+        console.error("Erro ao buscar dados:", error)
       }
     }
 
@@ -141,40 +118,26 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
 
     try {
       const reservaData = {
-        Nome: clientes.find(c => c.id === formData.cliente_id)?.name || profile?.full_name || "Cliente",
-        Email: clientes.find(c => c.id === formData.cliente_id)?.email || profile?.email || "",
-        Telefone: clientes.find(c => c.id === formData.cliente_id)?.id || profile?.phone || "",
-        Data: formData.data,
-        Hora: formData.hora_inicio,
-        Serviço: formData.tipo === "aula" ? "Aula" : "Locação",
-        Status: "Pendente",
-        Observações: formData.observacoes,
-        Valor: calculateValue(),
-        Professor: formData.tipo === "aula" ? professores.find(p => p.id === formData.professor_id)?.profiles.name || "" : "",
-        Quadra: quadras.find(q => q.id === formData.quadra_id)?.name || ""
+        user_id: formData.cliente_id || profile?.id,
+        quadra_id: formData.quadra_id,
+        professor_id: formData.professor_id || null,
+        date: formData.data,
+        start_time: formData.hora_inicio,
+        end_time: formData.hora_fim,
+        total_price: calculateValue(),
+        status: "pendente",
+        payment_status: "pendente",
+        notes: formData.observacoes,
       }
 
-      // Enviar para Google Sheets via API
-      const response = await fetch('/api/sheets/append', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sheet: 'Página1',
-          rows: [reservaData]
-        })
-      })
+      const { error: supabaseError } = await supabase.from("reservas").insert([reservaData])
 
-      const result = await response.json()
-
-      if (!result.ok) {
-        throw new Error(result.error || 'Erro ao salvar reserva')
-      }
+      if (supabaseError) throw supabaseError
 
       onSuccess()
       onClose()
-    } catch (error: unknown) {
+    } catch (error: any) {
+      console.error("Erro ao salvar reserva:", error)
       setError("Erro ao salvar reserva")
     } finally {
       setLoading(false)

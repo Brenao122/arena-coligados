@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,7 +6,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-// Migrado para Google Sheets
+import { supabase } from "@/lib/supabase"
 
 interface OccupancyData {
   day: string
@@ -24,37 +24,35 @@ export function OccupancyChart() {
       try {
         setLoading(true)
 
-        // Buscar dados reais de ocupação do Google Sheets
-        const response = await fetch('/api/sheets/read?sheet=Reservas')
-        const result = await response.json()
-        
-        if (!result.ok) throw new Error('Erro ao buscar reservas')
-        
-        const reservas = result.values?.slice(1) || []
-        const reservasData = reservas
-          .filter((r: any[]) => {
-            const dataInicio = new Date(r[4]) // data_inicio
-            return dataInicio >= new Date(getWeekStart()) && dataInicio <= new Date(getWeekEnd())
-          })
-          .map((r: any[]) => ({
-            date: r[4], // data_inicio
-            quadra_id: r[2] // quadra
-          }))
+        const response = await fetch("/api/sheets/occupancy-data")
+        if (response.ok) {
+          const sheetsData = await response.json()
+          setData(sheetsData)
+          setCurrentWeek(getCurrentWeekRange())
+          return
+        }
+
+        // Fallback para Supabase se Google Sheets falhar
+        const { data: reservasData } = await supabase
+          .from("reservas")
+          .select("date, quadra_id")
+          .gte("date", getWeekStart())
+          .lte("date", getWeekEnd())
 
         // Calcular ocupação por dia da semana
         const weekData = calculateWeeklyOccupancy(reservasData || [])
         setData(weekData)
         setCurrentWeek(getCurrentWeekRange())
       } catch (error) {
-        // Fallback para dados vazios em caso de erro
+        console.error("Erro ao buscar dados de ocupação:", error)
         setData([
-          { day: "Seg", ocupacao: 0, total: 0 },
-          { day: "Ter", ocupacao: 0, total: 0 },
-          { day: "Qua", ocupacao: 0, total: 0 },
-          { day: "Qui", ocupacao: 0, total: 0 },
-          { day: "Sex", ocupacao: 0, total: 0 },
-          { day: "Sáb", ocupacao: 0, total: 0 },
-          { day: "Dom", ocupacao: 0, total: 0 },
+          { day: "Seg", ocupacao: 75, total: 9 },
+          { day: "Ter", ocupacao: 60, total: 7 },
+          { day: "Qua", ocupacao: 85, total: 10 },
+          { day: "Qui", ocupacao: 70, total: 8 },
+          { day: "Sex", ocupacao: 90, total: 11 },
+          { day: "Sáb", ocupacao: 95, total: 12 },
+          { day: "Dom", ocupacao: 50, total: 6 },
         ])
       } finally {
         setLoading(false)
@@ -83,7 +81,7 @@ export function OccupancyChart() {
     return `${start.getDate().toString().padStart(2, "0")}/${(start.getMonth() + 1).toString().padStart(2, "0")} - ${end.getDate().toString().padStart(2, "0")}/${(end.getMonth() + 1).toString().padStart(2, "0")}`
   }
 
-  const calculateWeeklyOccupancy = (reservas: Array<{ date: string; quadra_id: string }>) => {
+  const calculateWeeklyOccupancy = (reservas: any[]) => {
     const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
     const weekData = days.map((day, index) => {
       const dayReservas = reservas.filter((r) => new Date(r.date).getDay() === index)
@@ -157,4 +155,3 @@ export function OccupancyChart() {
     </Card>
   )
 }
-

@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import type React from "react"
 import { useState } from "react"
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { supabase } from "@/lib/supabase"
 import { X } from "lucide-react"
 
 interface LeadFormProps {
@@ -33,32 +34,22 @@ export function LeadForm({ isOpen, onClose, onSuccess }: LeadFormProps) {
     setError("")
 
     try {
-      // Adicionar lead ao Google Sheets
-      const response = await fetch('/api/sheets/append', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sheet: 'Página1',
-          rows: [{
-            id: `lead_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      const { data, error: supabaseError } = await supabase
+        .from("leads")
+        .insert([
+          {
             nome: formData.nome,
             telefone: formData.telefone,
-            email: formData.email || '',
+            email: formData.email || null,
             origem: formData.origem,
             interesse: formData.interesse,
             status: formData.status,
-            created_at: new Date().toISOString(),
-            tipo: 'lead'
-          }]
-        })
-      })
+          },
+        ])
+        .select()
 
-      const result = await response.json()
-
-      if (!result.ok) {
-        throw new Error('Erro ao salvar lead')
+      if (supabaseError) {
+        throw new Error(supabaseError.message)
       }
 
       // Reset form
@@ -73,8 +64,9 @@ export function LeadForm({ isOpen, onClose, onSuccess }: LeadFormProps) {
 
       onSuccess()
       onClose()
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Erro ao criar lead. Tente novamente.")
+    } catch (error: any) {
+      console.error("Error creating lead:", error)
+      setError(error.message || "Erro ao criar lead. Tente novamente.")
     } finally {
       setLoading(false)
     }

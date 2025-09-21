@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { ClientesList } from "@/components/clientes/clientes-list"
@@ -105,4 +105,3 @@ export default function ClientesPage() {
     </div>
   )
 }
-

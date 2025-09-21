@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { FinancialChart } from "@/components/relatorios/financial-chart"
 import { OccupancyChart } from "@/components/relatorios/occupancy-chart"
@@ -222,4 +222,3 @@ export default function RelatoriosPage() {
     </div>
   )
 }
-

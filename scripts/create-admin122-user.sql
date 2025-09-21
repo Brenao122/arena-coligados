@@ -45,7 +45,7 @@ INSERT INTO public.profiles (
     (SELECT id FROM auth.users WHERE email = 'admin122@arena.com'),
     'admin122@arena.com',
     'Admin 122',
-    '+556293550635',
+    '+5562981912294',
     NOW(),
     NOW()
 ) ON CONFLICT (id) DO UPDATE SET
@@ -106,7 +106,7 @@ INSERT INTO public.profiles (
     (SELECT id FROM auth.users WHERE email = 'contatobrenofilm@gmail.com'),
     'contatobrenofilm@gmail.com',
     'Breno Amancio',
-    '+556293550635',
+    '+5562981912294',
     NOW(),
     NOW()
 ) ON CONFLICT (id) DO UPDATE SET

@@ -1,4 +1,4 @@
-﻿export default function DashboardLoading() {
+export default function DashboardLoading() {
   return (
     <div className="space-y-6">
       <div className="animate-pulse">
@@ -23,4 +23,3 @@
     </div>
   )
 }
-

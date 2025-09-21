@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -79,8 +79,8 @@ export default function ConfiguracoesPage() {
   const handleSaveArenaInfo = () => {
     localStorage.setItem("arena-info", JSON.stringify(arenaInfo))
     toast({
-      title: "InformaçÃµes Salvas",
-      description: "As informaçÃµes da arena foram atualizadas com sucesso",
+      title: "Informações Salvas",
+      description: "As informações da arena foram atualizadas com sucesso",
     })
   }
 
@@ -101,7 +101,7 @@ export default function ConfiguracoesPage() {
 
     toast({
       title: "Preferências Atualizadas",
-      description: `NotificaçÃµes por ${type === "email" ? "email" : "SMS"} ${value ? "ativadas" : "desativadas"}`,
+      description: `Notificações por ${type === "email" ? "email" : "SMS"} ${value ? "ativadas" : "desativadas"}`,
     })
   }
 
@@ -116,16 +116,16 @@ export default function ConfiguracoesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-orange-500 to-green-500 bg-clip-text text-transparent">
-          ConfiguraçÃµes
+          Configurações
         </h1>
-        <p className="text-muted-foreground">Configure integraçÃµes e preferências do sistema</p>
+        <p className="text-muted-foreground">Configure integrações e preferências do sistema</p>
       </div>
 
       <Tabs defaultValue="integracoes" className="space-y-4">
         <TabsList className="bg-gray-800 border-gray-700">
           <TabsTrigger value="integracoes" className="flex items-center gap-2 data-[state=active]:bg-orange-500">
             <Zap className="h-4 w-4" />
-            IntegraçÃµes
+            Integrações
           </TabsTrigger>
           <TabsTrigger value="sistema" className="flex items-center gap-2 data-[state=active]:bg-orange-500">
             <Settings className="h-4 w-4" />
@@ -133,7 +133,7 @@ export default function ConfiguracoesPage() {
           </TabsTrigger>
           <TabsTrigger value="notificacoes" className="flex items-center gap-2 data-[state=active]:bg-orange-500">
             <Bell className="h-4 w-4" />
-            NotificaçÃµes
+            Notificações
           </TabsTrigger>
           <TabsTrigger value="usuarios" className="flex items-center gap-2 data-[state=active]:bg-orange-500">
             <Users className="h-4 w-4" />
@@ -161,7 +161,7 @@ export default function ConfiguracoesPage() {
                       {whatsappConnected ? "Conectado" : "Desconectado"}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      {whatsappConnected ? "Número: +55 62 9355-0635" : "Não configurado"}
+                      {whatsappConnected ? "Número: +55 11 99999-9999" : "Não configurado"}
                     </span>
                   </div>
                   <Button
@@ -198,7 +198,7 @@ export default function ConfiguracoesPage() {
                   <Instagram className="h-5 w-5" />
                   Instagram Business
                 </CardTitle>
-                <CardDescription>Capture leads e monitore mençÃµes no Instagram</CardDescription>
+                <CardDescription>Capture leads e monitore menções no Instagram</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -288,7 +288,7 @@ export default function ConfiguracoesPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <MessageSquare className="h-5 w-5" />
-                  n8n AutomaçÃµes
+                  n8n Automações
                 </CardTitle>
                 <CardDescription>Workflows automáticos para leads e cobrança</CardDescription>
               </CardHeader>
@@ -308,7 +308,7 @@ export default function ConfiguracoesPage() {
                 </div>
                 <div className="text-sm text-muted-foreground">
                   <p className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" /> Funil de leads Instagram â†’ WhatsApp
+                    <Check className="h-4 w-4 text-green-500" /> Funil de leads Instagram → WhatsApp
                   </p>
                   <p className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" /> Cobrança automática de mensalidades
@@ -334,7 +334,7 @@ export default function ConfiguracoesPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Building className="h-5 w-5" />
-                  InformaçÃµes da Arena
+                  Informações da Arena
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -386,7 +386,7 @@ export default function ConfiguracoesPage() {
                   />
                 </div>
                 <Button onClick={handleSaveArenaInfo} className="bg-orange-500 hover:bg-orange-600">
-                  Salvar AlteraçÃµes
+                  Salvar Alterações
                 </Button>
               </CardContent>
             </Card>
@@ -411,7 +411,7 @@ export default function ConfiguracoesPage() {
                           setHorarios(newHorarios)
                         }}
                       />
-                      <span className="text-white">Ã s</span>
+                      <span className="text-white">às</span>
                       <Input
                         className="w-24 bg-gray-700 border-gray-600 text-white"
                         value={horario.fim}
@@ -437,12 +437,12 @@ export default function ConfiguracoesPage() {
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-white">Preferências de Notificação</CardTitle>
-                <CardDescription>Configure como e quando receber notificaçÃµes</CardDescription>
+                <CardDescription>Configure como e quando receber notificações</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-white">NotificaçÃµes por Email</Label>
+                    <Label className="text-white">Notificações por Email</Label>
                     <p className="text-sm text-muted-foreground">Receba resumos diários e alertas importantes</p>
                   </div>
                   <Switch
@@ -455,7 +455,7 @@ export default function ConfiguracoesPage() {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-white">NotificaçÃµes por SMS</Label>
+                    <Label className="text-white">Notificações por SMS</Label>
                     <p className="text-sm text-muted-foreground">Alertas urgentes via mensagem de texto</p>
                   </div>
                   <Switch
@@ -495,7 +495,7 @@ export default function ConfiguracoesPage() {
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-white">Usuários do Sistema</CardTitle>
-                <CardDescription>Gerencie acessos e permissÃµes</CardDescription>
+                <CardDescription>Gerencie acessos e permissões</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -555,4 +555,3 @@ export default function ConfiguracoesPage() {
     </div>
   )
 }
-

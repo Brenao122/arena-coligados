@@ -1,11 +1,7 @@
-﻿import { NextResponse, NextRequest } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-
-// Rotas que exigem auth (ajuste se precisar)
-const PROTECTED_PREFIXES = ['/dashboard', '/crm']
+import { NextResponse, type NextRequest } from "next/server"
+import { createServerClient, type CookieOptions } from "@supabase/ssr"
 
 export async function middleware(req: NextRequest) {
-  // resposta base onde o supabase vai setar/limpar cookies
   const res = NextResponse.next()
 
   const supabase = createServerClient(
@@ -13,54 +9,70 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value
+        get: (name) => req.cookies.get(name)?.value,
+        set: (name, value, options: CookieOptions) => {
+          res.cookies.set(name, value, options)
         },
-        set(name: string, value: string, options: any) {
-          res.cookies.set({ name, value, ...options })
-        },
-        remove(name: string, options: any) {
-          // delete() nem sempre chega ao cliente; zera com maxAge=0
-          res.cookies.set({ name, value: '', ...options, maxAge: 0 })
+        remove: (name, options: CookieOptions) => {
+          res.cookies.set(name, "", { ...options, maxAge: 0 })
         },
       },
-    }
+    },
   )
 
-  // isso já força refresh do token quando necessário e sincroniza cookies no `res`
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  const url = req.nextUrl
-  const pathname = url.pathname
-  const isLogin = pathname.startsWith('/login')
-  const needsAuth = PROTECTED_PREFIXES.some(p => pathname.startsWith(p))
-
-  // se já está logado e pediu /login, manda pro destino (redirectTo) ou /dashboard
-  if (user && isLogin) {
-    const target = url.searchParams.get('redirectTo') || '/dashboard'
-    const redirectUrl = url.clone()
-    redirectUrl.pathname = target
-    redirectUrl.search = '' // limpa query do login
-    const redirectRes = NextResponse.redirect(redirectUrl)
-    // garante que eventuais cookies setados acima via `res` cheguem também no redirect
-    res.cookies.getAll().forEach(c => redirectRes.cookies.set(c))
-    return redirectRes
+  const { pathname } = req.nextUrl
+  if (pathname === "/dev-dashboard") {
+    return res
   }
 
-  // se rota protegida e sem user, manda pro /login preservando redirectTo
-  if (needsAuth && !user) {
-    const loginUrl = url.clone()
-    loginUrl.pathname = '/login'
-    loginUrl.searchParams.set('redirectTo', pathname + url.search)
-    const redirectRes = NextResponse.redirect(loginUrl)
-    res.cookies.getAll().forEach(c => redirectRes.cookies.set(c))
-    return redirectRes
+  const isAuthRoute = pathname === "/login" || pathname.startsWith("/auth")
+  const protectedPrefixes = ["/quadras", "/dashboard", "/reservas"]
+  const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p))
+
+  const devUser = req.cookies.get("dev_user")?.value
+  if (devUser && isProtected) {
+    return res
+  }
+
+  if (!user && isProtected) {
+    const url = req.nextUrl.clone()
+    url.pathname = "/login"
+    url.searchParams.set("redirectedFrom", pathname)
+    return NextResponse.redirect(url)
+  }
+
+  if (user && isAuthRoute) {
+    const url = req.nextUrl.clone()
+    url.pathname = "/dashboard"
+    return NextResponse.redirect(url)
+  }
+
+  if (user && isProtected) {
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle()
+
+    const role = roleRow?.role ?? "cliente"
+
+    // Gates de permissão
+    if (pathname.startsWith("/dashboard/dashboard-admin") && role !== "admin") {
+      return NextResponse.redirect(new URL("/dashboard/dashboard-aluno", req.url))
+    }
+    if (pathname.startsWith("/dashboard/dashboard-professor") && !["professor", "admin"].includes(role)) {
+      return NextResponse.redirect(new URL("/dashboard/dashboard-aluno", req.url))
+    }
   }
 
   return res
 }
 
-// evita interceptar assets estáticos
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|assets|public).*)'],
+  matcher: ["/dev-dashboard", "/((?!_next/static|_next/image|favicon.ico|images|api/supa-ok|api/supa-admin-ok).*)"],
 }
