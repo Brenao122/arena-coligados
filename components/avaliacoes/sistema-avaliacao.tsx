@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { Star, Award, TrendingUp, MessageCircle, ThumbsUp } from "lucide-react"
@@ -173,4 +173,3 @@ export function SistemaAvaliacao({ professorId, aulaId, tipo }: AvaliacaoProps) 
     </div>
   )
 }
-

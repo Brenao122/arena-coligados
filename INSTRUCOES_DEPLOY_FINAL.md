@@ -31,12 +31,12 @@ A plataforma está **100% funcional** e otimizada para produção. Todas as melh
 ## 📋 CHECKLIST PARA DEPLOY NA VERCEL
 
 ### **1. Configuração de Ambiente**
-```env
+\`\`\`env
 # Adicione estas variáveis no Vercel Dashboard
 NEXT_PUBLIC_SUPABASE_URL=sua_url_do_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anonima_do_supabase
 NEXT_PUBLIC_SITE_URL=https://arenacoligados.vercel.app
-```
+\`\`\`
 
 ### **2. Execução dos Scripts SQL**
 1. Acesse o Supabase Dashboard
@@ -46,11 +46,11 @@ NEXT_PUBLIC_SITE_URL=https://arenacoligados.vercel.app
 
 ### **3. Deploy no Vercel**
 1. Faça push para o GitHub:
-```bash
+\`\`\`bash
 git add .
 git commit -m "Deploy: Arena Coligados v1.0.0 - Pronto para produção"
 git push origin main
-```
+\`\`\`
 
 2. O Vercel fará deploy automático
 3. Configure as variáveis de ambiente no Vercel Dashboard
@@ -84,19 +84,19 @@ git push origin main
 ## 🛠️ SCRIPTS DISPONÍVEIS
 
 ### **Limpeza de Produção**
-```bash
+\`\`\`bash
 node scripts/cleanup-production.js
-```
+\`\`\`
 
 ### **Verificação do Supabase**
-```bash
+\`\`\`bash
 node scripts/verify-supabase-connection.js
-```
+\`\`\`
 
 ### **Build e Deploy**
-```bash
+\`\`\`bash
 bash scripts/build-and-deploy.sh
-```
+\`\`\`
 
 ---
 

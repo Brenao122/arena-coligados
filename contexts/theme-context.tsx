@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
@@ -117,4 +117,3 @@ export function useTheme() {
   }
   return context
 }
-

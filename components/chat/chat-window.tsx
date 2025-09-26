@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { X, Send, Minimize2, Users, Phone, Video } from "lucide-react"
@@ -160,4 +160,3 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
     </div>
   )
 }
-

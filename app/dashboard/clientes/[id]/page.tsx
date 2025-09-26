@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { useParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -229,4 +229,3 @@ export default function ClienteDetalhes() {
     </div>
   )
 }
-

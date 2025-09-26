@@ -1,4 +1,4 @@
-﻿// lib/google-sheets.ts
+// lib/google-sheets.ts
 import { google } from 'googleapis';
 
 export type Row = Record<string, any>;

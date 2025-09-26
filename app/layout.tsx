@@ -1,4 +1,4 @@
-﻿import type React from "react"
+import type React from "react"
 import type { Metadata } from "next"
 import { Montserrat, Oswald } from "next/font/google"
 import "./globals.css"
@@ -64,4 +64,3 @@ export default function RootLayout({
     </html>
   )
 }
-

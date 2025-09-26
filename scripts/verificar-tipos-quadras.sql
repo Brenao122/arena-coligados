@@ -44,5 +44,3 @@ ORDER BY ordinal_position;
 -- - beach_tennis
 -- - futevolei
 -- - poliesportiva
-
-

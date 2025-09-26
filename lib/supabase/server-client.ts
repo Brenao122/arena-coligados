@@ -1,4 +1,4 @@
-﻿// lib/supabase/server-client.ts
+// lib/supabase/server-client.ts
 import "server-only";
 import { cookies } from "next/headers";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
@@ -21,4 +21,3 @@ export async function getServerClient() {
     { cookies: cookieStore }
   );
 }
-

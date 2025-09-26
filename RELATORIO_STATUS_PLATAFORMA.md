@@ -24,7 +24,7 @@ A plataforma Arena Coligados está **100% funcional** e pronta para deploy em pr
 - **Gerenciamento de Estado:** React Context API
 
 ### **Estrutura do Projeto**
-```
+\`\`\`
 arenacoligados/
 ├── app/                    # App Router (Next.js 13+)
 ├── components/             # Componentes reutilizáveis
@@ -32,7 +32,7 @@ arenacoligados/
 ├── lib/                    # Utilitários e configurações
 ├── scripts/                # Scripts de automação
 └── public/                 # Assets estáticos
-```
+\`\`\`
 
 ---
 
@@ -148,24 +148,24 @@ arenacoligados/
 ## 🛠️ SCRIPTS CRIADOS
 
 ### **1. Limpeza de Produção**
-```bash
+\`\`\`bash
 node scripts/cleanup-production.js
-```
+\`\`\`
 - Remove todos os console.logs
 - Prepara código para produção
 
 ### **2. Verificação do Supabase**
-```bash
+\`\`\`bash
 node scripts/verify-supabase-connection.js
-```
+\`\`\`
 - Testa conexão com banco
 - Verifica estrutura de tabelas
 - Valida usuários e roles
 
 ### **3. Build e Deploy**
-```bash
+\`\`\`bash
 bash scripts/build-and-deploy.sh
-```
+\`\`\`
 - Processo automatizado completo
 - Verificações de segurança
 - Deploy otimizado
@@ -175,11 +175,11 @@ bash scripts/build-and-deploy.sh
 ## 🔐 CONFIGURAÇÃO DE AMBIENTE
 
 ### **Variáveis Necessárias**
-```env
+\`\`\`env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 NEXT_PUBLIC_SITE_URL=https://arenacoligados.vercel.app
-```
+\`\`\`
 
 ### **Credenciais de Teste**
 - **Admin:** `admin@arena.com` / `admin123`
@@ -213,7 +213,7 @@ NEXT_PUBLIC_SITE_URL=https://arenacoligados.vercel.app
 ## 🚀 INSTRUÇÕES DE DEPLOY
 
 ### **1. Preparação**
-```bash
+\`\`\`bash
 # Clone o repositório
 git clone [url-do-repo]
 
@@ -223,10 +223,10 @@ npm install
 # Configure variáveis de ambiente
 cp env.example .env.local
 # Edite .env.local com suas credenciais
-```
+\`\`\`
 
 ### **2. Verificação**
-```bash
+\`\`\`bash
 # Limpe console.logs
 node scripts/cleanup-production.js
 
@@ -235,17 +235,17 @@ node scripts/verify-supabase-connection.js
 
 # Teste build
 npm run build
-```
+\`\`\`
 
 ### **3. Deploy**
-```bash
+\`\`\`bash
 # Push para GitHub
 git add .
 git commit -m "Deploy: Arena Coligados v1.0.0"
 git push origin main
 
 # Vercel fará deploy automático
-```
+\`\`\`
 
 ---
 

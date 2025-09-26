@@ -43,4 +43,3 @@ WITH CHECK (false);
 -- 4) Verificação final
 SELECT 'Políticas RLS corrigidas com sucesso!' as resultado;
 SELECT 'Faça logout/login para testar' as proxima_acao;
-

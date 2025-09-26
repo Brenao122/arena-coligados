@@ -1,4 +1,3 @@
-﻿export default function Loading() {
+export default function Loading() {
   return null
 }
-

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * HIERARQUIA DE USUÃRIOS - ARENA COLIGADOS
  *
  * 1. ADMINISTRADOR (admin)
@@ -78,4 +78,3 @@ export const USER_PERMISSIONS = {
     configuracoes: { view: false, manage: false },
   },
 } as const
-

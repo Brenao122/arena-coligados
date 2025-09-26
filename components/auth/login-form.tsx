@@ -22,60 +22,91 @@ export function LoginForm() {
     setMounted(true)
   }, [])
 
-  // Função de login direta (sem usar o hook useAuth)
   const handleLogin = async (email: string, password: string) => {
-    // Usuários hardcoded
-    const usuarios = [
-      {
-        id: 'admin-001',
-        email: 'admin@arena.com',
-        senha: 'admin123',
-        nome: 'Administrador Arena',
-        role: 'admin'
-      },
-      {
-        id: 'prof-001',
-        email: 'professor@arena.com',
-        senha: 'prof123',
-        nome: 'Professor Arena',
-        role: 'professor'
-      },
-      {
-        id: 'cliente-001',
-        email: 'cliente@arena.com',
-        senha: 'cliente123',
-        nome: 'Cliente Arena',
-        role: 'cliente'
+    try {
+      // Buscar usuários da planilha Google Sheets
+      const response = await fetch("/api/sheets/read?sheet=usuarios")
+      const result = await response.json()
+
+      if (!result.ok) {
+        throw new Error("Erro ao conectar com o sistema de autenticação")
       }
-    ]
 
-    const usuario = usuarios.find((u) => 
-      u.email === email && u.senha === password
-    )
+      const usuarios = result.rows || []
 
-    if (!usuario) {
-      throw new Error('Email ou senha incorretos')
-    }
+      // Procurar usuário com email e senha correspondentes
+      const usuario = usuarios.find((u: any) => u.email === email && u.senha === password)
 
-    // Salvar no localStorage
-    const userData = {
-      id: usuario.id,
-      email: usuario.email,
-      profile: {
+      if (!usuario) {
+        throw new Error("Email ou senha incorretos")
+      }
+
+      // Salvar no localStorage
+      const userData = {
+        id: usuario.id || `user-${Date.now()}`,
+        email: usuario.email,
+        profile: {
+          id: usuario.id || `user-${Date.now()}`,
+          email: usuario.email,
+          full_name: usuario.nome || "Usuário",
+          role: usuario.role || "cliente",
+        },
+      }
+
+      localStorage.setItem("arena_user", JSON.stringify(userData))
+      return userData
+    } catch (error) {
+      // Fallback para usuários hardcoded em caso de erro na planilha
+      const usuariosFallback = [
+        {
+          id: "admin-001",
+          email: "admin@arena.com",
+          senha: "admin123",
+          nome: "Administrador Arena",
+          role: "admin",
+        },
+        {
+          id: "prof-001",
+          email: "professor@arena.com",
+          senha: "prof123",
+          nome: "Professor Arena",
+          role: "professor",
+        },
+        {
+          id: "cliente-001",
+          email: "cliente@arena.com",
+          senha: "cliente123",
+          nome: "Cliente Arena",
+          role: "cliente",
+        },
+      ]
+
+      const usuario = usuariosFallback.find((u) => u.email === email && u.senha === password)
+
+      if (!usuario) {
+        throw new Error("Email ou senha incorretos")
+      }
+
+      // Salvar no localStorage
+      const userData = {
         id: usuario.id,
         email: usuario.email,
-        full_name: usuario.nome,
-        role: usuario.role
+        profile: {
+          id: usuario.id,
+          email: usuario.email,
+          full_name: usuario.nome,
+          role: usuario.role,
+        },
       }
-    }
 
-    localStorage.setItem('arena_user', JSON.stringify(userData))
-    return userData
+      localStorage.setItem("arena_user", JSON.stringify(userData))
+      return userData
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!mounted) return
 
     if (!email || !password) {
@@ -89,20 +120,19 @@ export function LoginForm() {
 
     try {
       const userData = await handleLogin(email, password)
-      
+
       setSuccess("Login realizado com sucesso! Redirecionando...")
-      
+
       // Redirecionar para dashboard baseado no role
       setTimeout(() => {
-        if (userData.profile.role === 'admin') {
+        if (userData.profile.role === "admin") {
           router.push("/dashboard/dashboard-admin")
-        } else if (userData.profile.role === 'professor') {
+        } else if (userData.profile.role === "professor") {
           router.push("/dashboard/dashboard-professor")
         } else {
           router.push("/dashboard/dashboard-aluno")
         }
       }, 500)
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro inesperado")
     } finally {
@@ -131,7 +161,11 @@ export function LoginForm() {
     <div className="w-full max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <Alert variant="destructive" className="bg-red-900/20 border-red-800 text-red-300" data-testid="error-message">
+          <Alert
+            variant="destructive"
+            className="bg-red-900/20 border-red-800 text-red-300"
+            data-testid="error-message"
+          >
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -194,7 +228,7 @@ export function LoginForm() {
           >
             Esqueci minha senha
           </Button>
-          
+
           <div className="text-gray-300 text-sm">
             Não tem uma conta?{" "}
             <Button

@@ -58,7 +58,7 @@
 ## 🔧 **CORREÇÕES NECESSÁRIAS:**
 
 ### **1. Corrigir Recent Bookings (Normal)**
-```typescript
+\`\`\`typescript
 // ATUAL (INCORRETO):
 fetch('/api/sheets/read?sheet=Página1') // para clientes
 fetch('/api/sheets/read?sheet=Página1') // para quadras
@@ -66,19 +66,19 @@ fetch('/api/sheets/read?sheet=Página1') // para quadras
 // DEVERIA SER:
 fetch('/api/sheets/read?sheet=clientes') // para clientes
 fetch('/api/sheets/read?sheet=quadras') // para quadras
-```
+\`\`\`
 
 ### **2. Corrigir Recent Bookings (Sheets)**
-```typescript
+\`\`\`typescript
 // ATUAL (INCORRETO):
 fetch('/api/sheets/read?sheet=reservas') // para reservas
 
 // DEVERIA SER:
 fetch('/api/sheets/read?sheet=Página1') // para reservas
-```
+\`\`\`
 
 ### **3. Corrigir Formulário de Reserva (Sheets)**
-```typescript
+\`\`\`typescript
 // ATUAL (INCORRETO):
 fetch('/api/sheets/read?sheet=Página1') // para tudo
 
@@ -86,7 +86,7 @@ fetch('/api/sheets/read?sheet=Página1') // para tudo
 fetch('/api/sheets/read?sheet=quadras') // para quadras
 fetch('/api/sheets/read?sheet=professores') // para professores
 fetch('/api/sheets/read?sheet=clientes') // para clientes
-```
+\`\`\`
 
 ## 📋 **ESTRUTURA CORRETA DAS ABAS:**
 

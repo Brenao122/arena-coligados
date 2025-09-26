@@ -1,4 +1,4 @@
-﻿import { getBrowserClient } from "@/lib/supabase/browser-client"
+import { getBrowserClient } from "@/lib/supabase/browser-client"
 
 export async function getUserWithRole() {
   const supabase = getBrowserClient()
@@ -24,4 +24,3 @@ export async function getUserWithRole() {
 
   return { user, role }
 }
-

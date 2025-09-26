@@ -19,4 +19,3 @@ SELECT COUNT(*) as quadras_ativas FROM public.quadras WHERE ativa = true;
 
 -- Ver quadras inativas
 SELECT COUNT(*) as quadras_inativas FROM public.quadras WHERE ativa = false;
-

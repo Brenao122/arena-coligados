@@ -1,4 +1,4 @@
-﻿export class SecurityValidator {
+export class SecurityValidator {
   static sanitizeInput(input: string): string {
     return input
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
@@ -55,4 +55,3 @@ export class RateLimiter {
     return true
   }
 }
-

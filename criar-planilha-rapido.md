@@ -32,9 +32,9 @@ Clique no "+" (adicionar aba) e crie:
 - ID: **`1ABC123...`**
 
 ### **5. Adicionar ao .env.local:**
-```env
+\`\`\`env
 GOOGLE_SHEETS_SPREADSHEET_ID=1ABC123...
-```
+\`\`\`
 
 ## 🚀 **DEPOIS DISSO:**
 1. **Testar APIs** (`/api/sheets/read` e `/api/sheets/append`)

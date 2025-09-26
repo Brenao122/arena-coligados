@@ -1,5 +1,5 @@
 # Page snapshot
 
-```yaml
+\`\`\`yaml
 - generic [ref=e4]: Carregando...
-```
+\`\`\`

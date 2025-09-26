@@ -4,7 +4,7 @@ Este diretório contém todos os artefatos de Quality Assurance (QA) e testes au
 
 ## Estrutura de Diretórios
 
-```
+\`\`\`
 qa-artifacts/
 ├── screens/          # Screenshots dos testes
 ├── videos/           # Vídeos dos testes
@@ -12,12 +12,12 @@ qa-artifacts/
 ├── report/           # Relatórios HTML do Playwright
 ├── .output/          # Artefatos temporários dos testes
 └── README.md         # Este arquivo
-```
+\`\`\`
 
 ## Comandos Disponíveis
 
 ### PowerShell (Windows)
-```powershell
+\`\`\`powershell
 # Criar diretórios manualmente (se necessário)
 @(
   "qa-artifacts",
@@ -31,16 +31,16 @@ qa-artifacts/
 
 # Executar testes
 npm run qa:run
-```
+\`\`\`
 
 ### Bash (macOS/Linux/Git Bash)
-```bash
+\`\`\`bash
 # Criar diretórios manualmente (se necessário)
 mkdir -p qa-artifacts/screens qa-artifacts/videos qa-artifacts/seeds qa-artifacts/report qa-artifacts/.output e2e
 
 # Executar testes
 npm run qa:run
-```
+\`\`\`
 
 ## Scripts NPM
 
@@ -51,14 +51,14 @@ npm run qa:run
 ## Fluxo Recomendado
 
 1. **Garantir pastas (portável):**
-   ```bash
+   \`\`\`bash
    npm run qa:init
-   ```
+   \`\`\`
 
 2. **Rodar testes:**
-   ```bash
+   \`\`\`bash
    npm run qa:run
-   ```
+   \`\`\`
 
 3. **Ver evidências:**
    - Relatório HTML: `qa-artifacts/report/index.html`

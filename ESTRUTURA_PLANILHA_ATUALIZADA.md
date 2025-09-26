@@ -10,58 +10,58 @@
 ### 🗂️ **ABAS CRIADAS (8 abas):**
 
 #### **1. 📋 Página1 (Reservas - Dados Existentes)**
-```
+\`\`\`
 Nome | Telefone | Email | Data | Hora | Serviço | Status
-```
+\`\`\`
 - **Dados:** 21 linhas (dados reais do N8N)
 - **Uso:** Reservas existentes
 
 #### **2. 👥 usuarios (Usuários)**
-```
+\`\`\`
 id | nome | email | telefone | role | status | created_at | updated_at
-```
+\`\`\`
 - **Dados:** 7 linhas
 - **Uso:** Gestão de usuários do sistema
 
 #### **3. 🏟️ quadras (Quadras)**
-```
+\`\`\`
 id | nome | tipo | preco_hora | capacidade | ativa | descricao | imagem_url | equipamentos | created_at | updated_at
-```
+\`\`\`
 - **Dados:** 3 linhas (2 quadras de exemplo)
 - **Uso:** Gestão de quadras esportivas
 
 #### **4. 👨‍🏫 professores (Professores)**
-```
+\`\`\`
 id | nome | telefone | email | especialidades | preco_aula | disponibilidade | ativo | created_at | updated_at
-```
+\`\`\`
 - **Dados:** 2 linhas (1 professor de exemplo)
 - **Uso:** Gestão de professores/instrutores
 
 #### **5. 👤 clientes (Clientes)**
-```
+\`\`\`
 id | nome | telefone | email | endereco | data_nascimento | status | created_at | updated_at
-```
+\`\`\`
 - **Dados:** 2 linhas (1 cliente de exemplo)
 - **Uso:** Gestão de clientes
 
 #### **6. 🎯 leads (Leads)**
-```
+\`\`\`
 id | nome | telefone | email | origem | interesse | status | observacoes | created_at | updated_at
-```
+\`\`\`
 - **Dados:** 2 linhas (1 lead de exemplo)
 - **Uso:** Gestão de leads/prospects
 
 #### **7. 💰 pagamentos (Pagamentos)**
-```
+\`\`\`
 id | reserva_id | valor | metodo | status | data_pagamento | created_at | updated_at
-```
+\`\`\`
 - **Dados:** 1 linha (estrutura criada)
 - **Uso:** Gestão de pagamentos
 
 #### **8. ⭐ avaliacoes (Avaliações)**
-```
+\`\`\`
 id | cliente_id | professor_id | reserva_id | nota | comentario | created_at | updated_at
-```
+\`\`\`
 - **Dados:** 1 linha (estrutura criada)
 - **Uso:** Sistema de avaliações
 
@@ -90,19 +90,19 @@ id | cliente_id | professor_id | reserva_id | nota | comentario | created_at | u
 ## 🚀 **COMO USAR:**
 
 ### **1. Verificar Conexão:**
-```bash
+\`\`\`bash
 node test-google-sheets.js
-```
+\`\`\`
 
 ### **2. Testar APIs (com servidor rodando):**
-```bash
+\`\`\`bash
 node test-apis-sheets.js
-```
+\`\`\`
 
 ### **3. Iniciar Desenvolvimento:**
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 ### **4. Acessar APIs no Navegador:**
 - http://localhost:3000/api/sheets/read?sheet=quadras

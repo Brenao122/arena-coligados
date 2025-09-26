@@ -1,4 +1,4 @@
-﻿import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { LucideIcon } from "lucide-react"
 
 interface StatsCardProps {
@@ -35,4 +35,3 @@ export function StatsCard({ title, value, description, icon: Icon, trend }: Stat
     </Card>
   )
 }
-

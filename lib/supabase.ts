@@ -1,4 +1,4 @@
-﻿import { getBrowserClient } from "./supabase/browser-client"
+import { getBrowserClient } from "./supabase/browser-client"
 
 export const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fksahbiajrccraxvowtv.supabase.co"
 export const supabaseAnonKey =
@@ -114,4 +114,3 @@ export type Database = {
     }
   }
 }
-

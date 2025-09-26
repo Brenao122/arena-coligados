@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { QuadrasList } from "@/components/quadras/quadras-list"
@@ -55,4 +55,3 @@ export default function QuadrasPage() {
     </div>
   )
 }
-

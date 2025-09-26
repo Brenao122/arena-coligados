@@ -7,10 +7,10 @@
 - **Next.js:** 15.5.3
 
 ## Comandos Executados
-```bash
+\`\`\`bash
 npm install
 npm run build
-```
+\`\`\`
 
 ## Warnings Identificados
 1. **next.config.mjs:** `experimental.serverComponentsExternalPackages` está deprecated

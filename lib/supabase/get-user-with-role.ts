@@ -1,4 +1,4 @@
-﻿// lib/supabase/get-user-with-role.ts
+// lib/supabase/get-user-with-role.ts
 import "server-only";
 import { getServerClient } from "./server-client";
 
@@ -31,4 +31,3 @@ export async function getUserWithRole() {
 
   return { user, role };
 }
-

@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { CalendarView } from "@/components/reservas/calendar-view"
@@ -75,4 +75,3 @@ export default function ReservasPage() {
     </div>
   )
 }
-

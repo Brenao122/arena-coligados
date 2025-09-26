@@ -169,5 +169,3 @@ SELECT
         THEN '1. Cadastrar quadras reais 2. Configurar n8n 3. Testar integrações'
         ELSE '1. Configurar n8n 2. Testar integrações 3. Implementar automações'
     END as proximos_passos;
-
-

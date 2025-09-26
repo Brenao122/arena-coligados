@@ -333,5 +333,3 @@ BEGIN
   RAISE NOTICE '4. Verifique as permissões RLS';
   RAISE NOTICE '=====================================================';
 END $$;
-
-

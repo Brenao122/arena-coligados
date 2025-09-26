@@ -1,4 +1,4 @@
-﻿import { getBrowserClient } from "./browser-client"
+import { getBrowserClient } from "./browser-client"
 
 export type ReservasSchema = "tstzrange" | "separate_columns"
 
@@ -83,4 +83,3 @@ export async function fetchReservasWithSchema(startDate: Date, endDate: Date, ad
 
   return query
 }
-

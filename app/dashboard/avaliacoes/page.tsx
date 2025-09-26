@@ -1,4 +1,4 @@
-﻿import { SistemaAvaliacao } from "@/components/avaliacoes/sistema-avaliacao"
+import { SistemaAvaliacao } from "@/components/avaliacoes/sistema-avaliacao"
 
 export default function AvaliacoesPage() {
   return (
@@ -16,5 +16,3 @@ export default function AvaliacoesPage() {
     </div>
   )
 }
-
-

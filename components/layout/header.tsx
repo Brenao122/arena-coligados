@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { Bell, MessageSquare, Search, User, Sun, Moon, Monitor, Palette } from "lucide-react"
 import { Button } from "@/components/ui/button"

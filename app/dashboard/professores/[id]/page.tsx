@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -268,4 +268,3 @@ export default function ProfessorDetalhes() {
     </div>
   )
 }
-
