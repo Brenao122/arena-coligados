@@ -8,9 +8,7 @@ const nextConfig = {
     unoptimized: true,
   },
   output: 'standalone',
-  experimental: {
-    serverComponentsExternalPackages: ['googleapis']
-  }
+  serverExternalPackages: ['googleapis']
 }
 
 export default nextConfig
