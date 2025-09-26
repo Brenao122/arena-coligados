@@ -13,7 +13,6 @@ export const supabase = getBrowserClient()
 
 export const getSupabaseClient = () => {
   if (!isSupabaseConfigured()) {
-    console.error("Supabase not configured properly")
     return null
   }
   return getBrowserClient()
@@ -21,18 +20,14 @@ export const getSupabaseClient = () => {
 
 export const getProfile = async (userId: string) => {
   try {
-    console.log("🔍 Buscando perfil para ID:", userId)
     const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single()
 
     if (data) {
-      console.log("✅ Perfil encontrado:", data)
       return { data, error: null }
     }
 
-    console.error("❌ Perfil não encontrado para ID:", userId)
     return { data: null, error: error || { message: "Perfil não encontrado" } }
   } catch (error) {
-    console.error("❌ Erro ao buscar perfil:", error)
     return { data: null, error }
   }
 }

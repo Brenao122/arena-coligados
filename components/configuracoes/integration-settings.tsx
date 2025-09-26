@@ -96,7 +96,7 @@ export function IntegrationSettings() {
     <div className="space-y-6">
       <Alert>
         <AlertDescription>
-          Configure as integrações abaixo para ativar funcionalidades avançadas como automação de WhatsApp, captura de
+          Configure as integraçÃµes abaixo para ativar funcionalidades avançadas como automação de WhatsApp, captura de
           leads do Instagram e processamento de pagamentos.
         </AlertDescription>
       </Alert>
@@ -149,7 +149,7 @@ export function IntegrationSettings() {
                   <Input
                     id={`${integration.id}-${field.key}`}
                     placeholder={field.placeholder}
-                    value={settings[integration.id as keyof typeof settings][field.key as keyof any] || ""}
+                    value={String(settings[integration.id as keyof typeof settings][field.key as keyof (typeof settings)[keyof typeof settings]] || "")}
                     onChange={(e) =>
                       setSettings({
                         ...settings,
@@ -169,7 +169,7 @@ export function IntegrationSettings() {
 
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={saving} className="bg-brand-primary hover:bg-orange-600">
-          {saving ? "Salvando..." : "Salvar Configurações"}
+          {saving ? "Salvando..." : "Salvar ConfiguraçÃµes"}
         </Button>
       </div>
     </div>

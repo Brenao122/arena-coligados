@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Search, Filter, Plus, Phone, Mail, MessageCircle, TrendingUp, Users, Target } from "lucide-react"
 import { LeadForm } from "@/components/leads/lead-form"
-import { supabase } from "@/lib/supabase"
 
 interface Lead {
   id: string
@@ -36,13 +35,33 @@ export default function LeadsPage() {
     try {
       setLoading(true)
 
-      const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false })
+      // Buscar leads do Google Sheets
+      const response = await fetch('/api/sheets/read?sheet=Página1')
+      const result = await response.json()
 
-      if (error) throw error
+      if (result.ok && result.rows) {
+        // Filtrar apenas os leads (assumindo que estão na planilha)
+        const leadsData = result.rows.filter((row: any) => 
+          row.nome && row.telefone && row.origem
+        ).map((row: any) => ({
+          id: row.id || `lead_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+          nome: row.nome || row.Nome || '',
+          telefone: row.telefone || row.Telefone || '',
+          email: row.email || row.Email || '',
+          origem: row.origem || row.Origem || 'site',
+          interesse: row.interesse || row.Interesse || '',
+          status: row.status || row.Status || 'novo',
+          created_at: row.created_at || row.Created_at || new Date().toISOString(),
+          valor_estimado: row.valor_estimado || row.Valor_estimado || 0
+        }))
 
-      setLeads(data || [])
+        setLeads(leadsData)
+      } else {
+        setLeads([])
+      }
     } catch (error) {
-      console.error("Erro ao buscar leads:", error)
+      console.error('Erro ao buscar leads:', error)
+      setLeads([])
     } finally {
       setLoading(false)
     }
@@ -72,13 +91,13 @@ export default function LeadsPage() {
       case "instagram":
         return "📷"
       case "whatsapp":
-        return "💬"
+        return "📱"
       case "site":
         return "🌐"
       case "google":
         return "🔍"
       default:
-        return "📱"
+        return "📞"
     }
   }
 

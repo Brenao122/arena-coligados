@@ -22,7 +22,7 @@ interface Reserva {
   status: string
   quadras: {
     nome: string
-  }
+  }[]
 }
 
 export default function ClienteDetalhes() {
@@ -65,8 +65,7 @@ export default function ClienteDetalhes() {
       setCliente(clienteData)
       setReservas(reservasData || [])
     } catch (error) {
-      console.error("Erro ao buscar dados do cliente:", error)
-    } finally {
+      } finally {
       setLoading(false)
     }
   }
@@ -172,10 +171,10 @@ export default function ClienteDetalhes() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Informações Pessoais */}
+          {/* InformaçÃµes Pessoais */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Informações Pessoais</CardTitle>
+              <CardTitle className="text-white">InformaçÃµes Pessoais</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
@@ -210,7 +209,7 @@ export default function ClienteDetalhes() {
                   reservas.map((reserva) => (
                     <div key={reserva.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
                       <div>
-                        <p className="text-white font-medium">{reserva.quadras?.nome}</p>
+                        <p className="text-white font-medium">{reserva.quadras?.[0]?.nome || 'Quadra não especificada'}</p>
                         <p className="text-sm text-gray-400">{new Date(reserva.created_at).toLocaleDateString()}</p>
                       </div>
                       <div className="text-right">

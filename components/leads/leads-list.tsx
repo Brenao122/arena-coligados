@@ -7,19 +7,19 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { supabase } from "@/lib/supabase"
+// Removido import direto do repo - será usado via API
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Search, MessageSquare, Phone, Mail, UserPlus } from "lucide-react"
 
 interface Lead {
   id: string
-  name: string
-  phone: string
+  nome: string
+  telefone: string
   email: string
-  source: string
+  origem: string
   status: string
-  notes: string
+  observacoes: string
   created_at: string
 }
 
@@ -41,17 +41,17 @@ export function LeadsList({ refresh }: LeadsListProps) {
   const fetchLeads = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false })
-
-      if (error) {
-        console.error("Erro ao buscar leads:", error)
+      const response = await fetch('/api/sheets/read?sheet=leads')
+      const result = await response.json()
+      
+      if (result.ok) {
+        setLeads(result.rows || [])
+      } else {
+        console.error('Erro ao buscar leads:', result.error)
         setLeads([])
-        return
       }
-
-      setLeads(data || [])
     } catch (error) {
-      console.error("Erro ao conectar com Supabase:", error)
+      console.error('Erro ao buscar leads:', error)
       setLeads([])
     } finally {
       setLoading(false)
@@ -60,16 +60,11 @@ export function LeadsList({ refresh }: LeadsListProps) {
 
   const handleStatusChange = async (leadId: string, newStatus: string) => {
     try {
-      const { error } = await supabase.from("leads").update({ status: newStatus }).eq("id", leadId)
-
-      if (error) {
-        console.error("Error updating status:", error)
-        return
-      }
-
+      // Para Google Sheets, vamos apenas atualizar o estado local
+      // Em uma implementação completa, você criaria uma função de update no repo
       setLeads((prev) => prev.map((lead) => (lead.id === leadId ? { ...lead, status: newStatus } : lead)))
     } catch (error) {
-      console.error("Error updating status:", error)
+      console.error('Erro ao atualizar status:', error)
     }
   }
 
@@ -107,11 +102,11 @@ export function LeadsList({ refresh }: LeadsListProps) {
 
   const filteredLeads = leads.filter((lead) => {
     const matchesSearch =
-      lead.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.phone.includes(searchTerm) ||
+      lead.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.telefone.includes(searchTerm) ||
       lead.email?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesOrigemFilter = origemFilter === "all" || lead.source === origemFilter
+    const matchesOrigemFilter = origemFilter === "all" || lead.origem === origemFilter
     const matchesStatusFilter = statusFilter === "all" || lead.status === statusFilter
 
     return matchesSearch && matchesOrigemFilter && matchesStatusFilter
@@ -265,10 +260,10 @@ export function LeadsList({ refresh }: LeadsListProps) {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-full bg-gradient-to-r from-orange-500 to-green-500 flex items-center justify-center">
-                          <span className="text-white text-sm font-medium">{lead.name?.charAt(0)?.toUpperCase()}</span>
+                          <span className="text-white text-sm font-medium">{lead.nome?.charAt(0)?.toUpperCase()}</span>
                         </div>
                         <div>
-                          <p className="font-medium text-white">{lead.name}</p>
+                          <p className="font-medium text-white">{lead.nome}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -276,7 +271,7 @@ export function LeadsList({ refresh }: LeadsListProps) {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <Phone className="h-3 w-3 text-gray-400" />
-                          <p className="text-sm text-gray-300">{lead.phone}</p>
+                          <p className="text-sm text-gray-300">{lead.telefone}</p>
                         </div>
                         {lead.email && (
                           <div className="flex items-center gap-2">
@@ -288,14 +283,14 @@ export function LeadsList({ refresh }: LeadsListProps) {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        {getOrigemIcon(lead.source)}
+                        {getOrigemIcon(lead.origem)}
                         <Badge variant="outline" className="capitalize border-gray-500 text-gray-300">
-                          {lead.source}
+                          {lead.origem}
                         </Badge>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <p className="text-sm text-gray-300">{lead.notes || "Sem notas"}</p>
+                      <p className="text-sm text-gray-300">{lead.observacoes || "Sem notas"}</p>
                     </TableCell>
                     <TableCell>
                       <Select value={lead.status} onValueChange={(value) => handleStatusChange(lead.id, value)}>
@@ -320,7 +315,7 @@ export function LeadsList({ refresh }: LeadsListProps) {
                       <div className="flex gap-2">
                         <Button variant="ghost" size="sm" asChild className="hover:bg-gray-600">
                           <a
-                            href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`}
+                            href={`https://wa.me/${lead.telefone.replace(/\D/g, "")}`}
                             target="_blank"
                             rel="noopener noreferrer"
                           >

@@ -4,31 +4,33 @@ export interface DatabaseError {
   details?: string
 }
 
-export function handleDatabaseError(error: any): DatabaseError {
+export function handleDatabaseError(error: unknown): DatabaseError {
+  const errorMessage = error instanceof Error ? error.message : String(error)
+  
   // UUID validation errors
-  if (error.message?.includes("invalid input syntax for type uuid")) {
+  if (errorMessage?.includes("invalid input syntax for type uuid")) {
     return {
       code: "INVALID_UUID",
-      message: "ID inválido fornecido",
-      details: "O identificador fornecido não é um UUID válido",
+      message: "ID invÃ¡lido fornecido",
+      details: "O identificador fornecido nÃ£o Ã© um UUID vÃ¡lido",
     }
   }
 
   // Column not found errors
-  if (error.message?.includes("column") && error.message?.includes("does not exist")) {
+  if (errorMessage?.includes("column") && errorMessage?.includes("does not exist")) {
     return {
       code: "COLUMN_NOT_FOUND",
       message: "Erro de estrutura do banco de dados",
-      details: "Uma coluna esperada não foi encontrada na tabela",
+      details: "Uma coluna esperada nÃ£o foi encontrada na tabela",
     }
   }
 
   // RLS policy errors
-  if (error.message?.includes("row-level security policy")) {
+  if (errorMessage?.includes("row-level security policy")) {
     return {
       code: "PERMISSION_DENIED",
       message: "Acesso negado",
-      details: "Você não tem permissão para realizar esta operação",
+      details: "VocÃª nÃ£o tem permissÃ£o para realizar esta operaÃ§Ã£o",
     }
   }
 
@@ -36,7 +38,7 @@ export function handleDatabaseError(error: any): DatabaseError {
   return {
     code: "DATABASE_ERROR",
     message: "Erro interno do sistema",
-    details: error.message || "Erro desconhecido",
+    details: errorMessage || "Erro desconhecido",
   }
 }
 

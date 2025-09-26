@@ -24,15 +24,7 @@ export function OccupancyChart() {
       try {
         setLoading(true)
 
-        const response = await fetch("/api/sheets/occupancy-data")
-        if (response.ok) {
-          const sheetsData = await response.json()
-          setData(sheetsData)
-          setCurrentWeek(getCurrentWeekRange())
-          return
-        }
-
-        // Fallback para Supabase se Google Sheets falhar
+        // Buscar dados reais de ocupação do Supabase
         const { data: reservasData } = await supabase
           .from("reservas")
           .select("date, quadra_id")
@@ -44,15 +36,15 @@ export function OccupancyChart() {
         setData(weekData)
         setCurrentWeek(getCurrentWeekRange())
       } catch (error) {
-        console.error("Erro ao buscar dados de ocupação:", error)
+        // Fallback para dados vazios em caso de erro
         setData([
-          { day: "Seg", ocupacao: 75, total: 9 },
-          { day: "Ter", ocupacao: 60, total: 7 },
-          { day: "Qua", ocupacao: 85, total: 10 },
-          { day: "Qui", ocupacao: 70, total: 8 },
-          { day: "Sex", ocupacao: 90, total: 11 },
-          { day: "Sáb", ocupacao: 95, total: 12 },
-          { day: "Dom", ocupacao: 50, total: 6 },
+          { day: "Seg", ocupacao: 0, total: 0 },
+          { day: "Ter", ocupacao: 0, total: 0 },
+          { day: "Qua", ocupacao: 0, total: 0 },
+          { day: "Qui", ocupacao: 0, total: 0 },
+          { day: "Sex", ocupacao: 0, total: 0 },
+          { day: "Sáb", ocupacao: 0, total: 0 },
+          { day: "Dom", ocupacao: 0, total: 0 },
         ])
       } finally {
         setLoading(false)
@@ -81,7 +73,7 @@ export function OccupancyChart() {
     return `${start.getDate().toString().padStart(2, "0")}/${(start.getMonth() + 1).toString().padStart(2, "0")} - ${end.getDate().toString().padStart(2, "0")}/${(end.getMonth() + 1).toString().padStart(2, "0")}`
   }
 
-  const calculateWeeklyOccupancy = (reservas: any[]) => {
+  const calculateWeeklyOccupancy = (reservas: Array<{ date: string; quadra_id: string }>) => {
     const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
     const weekData = days.map((day, index) => {
       const dayReservas = reservas.filter((r) => new Date(r.date).getDay() === index)

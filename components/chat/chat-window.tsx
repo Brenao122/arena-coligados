@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { X, Send, Minimize2, Users, Phone, Video } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,38 +18,13 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
   const [isMinimized, setIsMinimized] = useState(false)
   const [activeChat, setActiveChat] = useState("professor")
 
-  const conversations = [
-    {
-      id: "professor",
-      name: "Carlos Santos",
-      role: "Professor",
-      avatar: "CS",
-      online: true,
-      unread: 2,
-      lastMessage: "Oi! Como está o progresso?",
-    },
-    {
-      id: "admin",
-      name: "Admin Arena",
-      role: "Administrador",
-      avatar: "AA",
-      online: true,
-      unread: 0,
-      lastMessage: "Reunião amanhã às 14h",
-    },
-  ]
+  const [conversations, setConversations] = useState<any[]>([])
+  const [messages, setMessages] = useState<any[]>([])
 
-  const messages = [
-    { id: 1, sender: "Carlos Santos", content: "Oi! Como está o progresso?", time: "14:30", isMe: false },
-    { id: 2, sender: "Você", content: "Oi professor! Está indo bem, obrigado!", time: "14:32", isMe: true },
-    {
-      id: 3,
-      sender: "Carlos Santos",
-      content: "Ótimo! Vamos focar nos fundamentos na próxima aula.",
-      time: "14:33",
-      isMe: false,
-    },
-  ]
+  useEffect(() => {
+    // TODO: Buscar conversas reais do banco de dados
+    // fetchConversations()
+  }, [])
 
   const handleSendMessage = () => {
     if (message.trim()) {

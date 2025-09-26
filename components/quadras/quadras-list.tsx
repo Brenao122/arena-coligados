@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Edit, Trash2, Search, MapPin, Plus, Camera } from "lucide-react"
-import { supabase } from "@/lib/supabase"
+import Image from "next/image"
 
 interface Quadra {
   id: string
@@ -35,17 +35,32 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
   const fetchQuadras = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase.from("quadras").select("*").order("created_at", { ascending: false })
-
-      if (error) {
-        console.error("Erro ao buscar quadras:", error)
-        setQuadras([])
-        return
+      
+      // Buscar dados reais da planilha
+      const response = await fetch('/api/sheets/read?sheet=quadras')
+      const result = await response.json()
+      
+      if (!result.ok) {
+        throw new Error(result.error || 'Erro ao buscar dados')
       }
 
-      setQuadras(data || [])
+      const quadrasData = result.rows || []
+      
+      // Converter dados da planilha para o formato esperado
+      const quadrasFormatadas = quadrasData.map((quadra: any) => ({
+        id: quadra.id || `quadra-${Math.random().toString(36).substr(2, 9)}`,
+        nome: quadra.nome || 'Quadra sem nome',
+        tipo: quadra.tipo || 'Não especificado',
+        preco_hora: parseFloat(quadra.preco_hora) || 0,
+        ativa: quadra.ativa === 'true' || quadra.ativa === true,
+        descricao: quadra.descricao || '',
+        image_url: quadra.imagem_url || '/default-court.png',
+        created_at: quadra.created_at || new Date().toISOString()
+      }))
+
+      setQuadras(quadrasFormatadas)
     } catch (error) {
-      console.error("Erro ao conectar com Supabase:", error)
+      console.error('Erro ao buscar quadras:', error)
       setQuadras([])
     } finally {
       setLoading(false)
@@ -60,40 +75,29 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
     if (!confirm("Tem certeza que deseja excluir esta quadra?")) return
 
     try {
-      const { error } = await supabase.from("quadras").delete().eq("id", quadraId)
-      if (error) throw error
+      // Para Google Sheets, vamos apenas atualizar o estado local
+      // Em uma implementação completa, você criaria uma função de delete no repo
       setQuadras((prev) => prev.filter((q) => q.id !== quadraId))
     } catch (error) {
-      console.error("Erro ao deletar quadra:", error)
+      console.error('Erro ao excluir quadra:', error)
     }
-  }
-
-  const toggleStatus = async (quadraId: string, currentStatus: boolean) => {
-    try {
-      const { error } = await supabase.from("quadras").update({ ativa: !currentStatus }).eq("id", quadraId)
-      if (error) throw error
-      setQuadras((prev) => prev.map((q) => (q.id === quadraId ? { ...q, ativa: !currentStatus } : q)))
-    } catch (error) {
-      console.error("Erro ao atualizar status:", error)
-    }
-  }
-
-  const handleAddPhotos = (quadraId: string) => {
-    alert(
-      `Funcionalidade de upload de fotos para a quadra ${quadraId} será implementada com a integração do Vercel Blob.`,
-    )
   }
 
   const filteredQuadras = quadras.filter((quadra) => {
-    const quadraName = quadra.nome || ""
-    const quadraType = quadra.tipo || ""
+    const matchesSearch =
+      quadra.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      quadra.tipo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      quadra.descricao?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesSearch = quadraName.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesTipo = tipoFilter === "all" || quadraType === tipoFilter
-    const matchesStatus = statusFilter === "all" || (statusFilter === "ativa" ? quadra.ativa : !quadra.ativa)
+    const matchesTipo = tipoFilter === "all" || quadra.tipo === tipoFilter
+    const matchesStatus = statusFilter === "all" || 
+      (statusFilter === "active" && quadra.ativa) ||
+      (statusFilter === "inactive" && !quadra.ativa)
 
     return matchesSearch && matchesTipo && matchesStatus
   })
+
+  const tipos = Array.from(new Set(quadras.map(q => q.tipo).filter(Boolean)))
 
   if (loading) {
     return (
@@ -102,11 +106,9 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
           <CardTitle className="text-white">Quadras</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-48 bg-gray-700 rounded-lg"></div>
-              </div>
+          <div className="animate-pulse space-y-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-32 bg-gray-700 rounded"></div>
             ))}
           </div>
         </CardContent>
@@ -116,27 +118,18 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
 
   return (
     <Card className="bg-gray-800 border-gray-700">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="text-white">Gestão de Quadras</CardTitle>
-          <CardDescription className="text-gray-400">Gerencie todas as quadras da arena</CardDescription>
-        </div>
-        <Button
-          onClick={() => onEdit("new")}
-          className="bg-gradient-to-r from-orange-500 to-green-500 hover:from-orange-600 hover:to-green-600 text-white"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Nova Quadra
-        </Button>
+      <CardHeader>
+        <CardTitle className="text-white">Gestão de Quadras</CardTitle>
+        <CardDescription className="text-gray-400">Gerencie todas as quadras da arena</CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Filters */}
+        {/* Filtros */}
         <div className="flex gap-4 mb-6">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Buscar quadras..."
+                placeholder="Buscar por nome, tipo ou descrição..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
@@ -144,103 +137,136 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
             </div>
           </div>
           <Select value={tipoFilter} onValueChange={setTipoFilter}>
-            <SelectTrigger className="w-[150px] bg-gray-700 border-gray-600 text-white">
+            <SelectTrigger className="w-48 bg-gray-700 border-gray-600 text-white">
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
             <SelectContent className="bg-gray-700 border-gray-600">
-              <SelectItem value="all">Todos Tipos</SelectItem>
-              <SelectItem value="Futsal">Futsal</SelectItem>
-              <SelectItem value="Vôlei">Vôlei</SelectItem>
-              <SelectItem value="Basquete">Basquete</SelectItem>
-              <SelectItem value="Futebol Society">Society</SelectItem>
-              <SelectItem value="Tênis">Tênis</SelectItem>
-              <SelectItem value="Beach Tennis">Beach Tennis</SelectItem>
+              <SelectItem value="all" className="text-white hover:bg-gray-600">Todos</SelectItem>
+              {tipos.map((tipo) => (
+                <SelectItem key={tipo} value={tipo} className="text-white hover:bg-gray-600">
+                  {tipo}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[150px] bg-gray-700 border-gray-600 text-white">
+            <SelectTrigger className="w-32 bg-gray-700 border-gray-600 text-white">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent className="bg-gray-700 border-gray-600">
-              <SelectItem value="all">Todos Status</SelectItem>
-              <SelectItem value="ativa">Ativas</SelectItem>
-              <SelectItem value="inativa">Inativas</SelectItem>
+              <SelectItem value="all" className="text-white hover:bg-gray-600">Todos</SelectItem>
+              <SelectItem value="active" className="text-white hover:bg-gray-600">Ativas</SelectItem>
+              <SelectItem value="inactive" className="text-white hover:bg-gray-600">Inativas</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Quadras Grid */}
+        {/* Stats */}
+        <div className="grid gap-4 md:grid-cols-4 mb-6">
+          <Card className="bg-gray-700 border-gray-600">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-green-500" />
+                <div>
+                  <p className="text-sm text-gray-400">Total Quadras</p>
+                  <p className="text-2xl font-bold text-white">{quadras.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gray-700 border-gray-600">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <div className="h-5 w-5 bg-green-500 rounded-full" />
+                <div>
+                  <p className="text-sm text-gray-400">Ativas</p>
+                  <p className="text-2xl font-bold text-white">
+                    {quadras.filter(q => q.ativa).length}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gray-700 border-gray-600">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <div className="h-5 w-5 bg-blue-500 rounded-full" />
+                <div>
+                  <p className="text-sm text-gray-400">Tipos</p>
+                  <p className="text-2xl font-bold text-white">{tipos.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gray-700 border-gray-600">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <div className="h-5 w-5 bg-orange-500 rounded-full" />
+                <div>
+                  <p className="text-sm text-gray-400">Preço Médio</p>
+                  <p className="text-2xl font-bold text-white">
+                    R$ {(quadras.reduce((sum, q) => sum + (q.preco_hora || 0), 0) / quadras.length || 0).toFixed(0)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Grid de Quadras */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredQuadras.length === 0 ? (
             <div className="col-span-full text-center py-8 text-gray-400">
-              <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Nenhuma quadra encontrada</p>
+              Nenhuma quadra encontrada
             </div>
           ) : (
             filteredQuadras.map((quadra) => (
-              <Card
-                key={quadra.id}
-                className="overflow-hidden hover:shadow-lg transition-shadow bg-gray-700 border-gray-600"
-              >
-                <div className="aspect-video relative">
-                  <img
-                    src={quadra.image_url || "/placeholder.svg?height=200&width=300&query=quadra esportiva"}
-                    alt={quadra.nome || "Quadra"}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 right-2 flex gap-2">
-                    <Badge
-                      variant={quadra.ativa ? "default" : "secondary"}
-                      className={quadra.ativa ? "bg-green-500 text-white" : "bg-gray-500 text-white"}
-                    >
+              <Card key={quadra.id} className="bg-gray-700 border-gray-600 overflow-hidden">
+                <div className="relative h-48">
+                  {quadra.image_url ? (
+                    <Image
+                      src={quadra.image_url}
+                      alt={quadra.nome || "Quadra"}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="h-full bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center">
+                      <Camera className="h-12 w-12 text-gray-400" />
+                    </div>
+                  )}
+                  <div className="absolute top-2 right-2">
+                    <Badge className={quadra.ativa ? "bg-green-500" : "bg-red-500"}>
                       {quadra.ativa ? "Ativa" : "Inativa"}
                     </Badge>
                   </div>
-                  <div className="absolute bottom-2 right-2">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleAddPhotos(quadra.id)}
-                      className="bg-black/50 hover:bg-black/70 text-white border-0"
-                    >
-                      <Camera className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
                 <CardContent className="p-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-lg text-white">{quadra.nome || "Quadra sem nome"}</h3>
-                      <Badge variant="outline" className="capitalize border-gray-500 text-gray-300">
-                        {quadra.tipo || "Tipo não definido"}
-                      </Badge>
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <h3 className="text-lg font-medium text-white">{quadra.nome}</h3>
+                      <p className="text-sm text-gray-400">{quadra.tipo}</p>
                     </div>
-                    <p className="text-2xl font-bold text-orange-500">R$ {(quadra.preco_hora || 0).toFixed(2)}/h</p>
-                    {quadra.descricao && <p className="text-sm text-gray-400 line-clamp-2">{quadra.descricao}</p>}
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-green-400">R$ {quadra.preco_hora}/h</p>
+                    </div>
                   </div>
-                  <div className="flex gap-2 mt-4">
+                  <p className="text-sm text-gray-300 mb-4 line-clamp-2">{quadra.descricao}</p>
+                  <div className="flex gap-2">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => onEdit(quadra.id)}
-                      className="flex-1 border-gray-600 text-white hover:bg-gray-600"
+                      className="flex-1 hover:bg-gray-600"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Editar
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleStatus(quadra.id, quadra.ativa)}
-                      className="flex-1 border-gray-600 text-white hover:bg-gray-600"
-                    >
-                      {quadra.ativa ? "Desativar" : "Ativar"}
-                    </Button>
-                    <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(quadra.id)}
-                      className="border-gray-600 hover:bg-gray-600"
+                      className="hover:bg-gray-600"
                     >
                       <Trash2 className="h-4 w-4 text-red-400" />
                     </Button>

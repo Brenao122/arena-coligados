@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  eslint: { ignoreDuringBuilds: false }, // Habilitando ESLint para detectar erros
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false, // Habilitando verificação TypeScript
   },
   images: {
     unoptimized: true,
   },
+  output: 'standalone',
+  serverExternalPackages: ['googleapis']
 }
 
 export default nextConfig

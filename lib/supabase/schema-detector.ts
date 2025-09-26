@@ -14,7 +14,6 @@ export async function detectReservasSchema(): Promise<ReservasSchema> {
     const { data, error } = await supabase.from("reservas").select("*").limit(1)
 
     if (error) {
-      console.log("[v0] Error detecting schema:", error.message)
       // Default para separate_columns se houver erro
       cachedSchema = "separate_columns"
       return cachedSchema
@@ -32,7 +31,7 @@ export async function detectReservasSchema(): Promise<ReservasSchema> {
         cachedSchema = "separate_columns"
       }
     } else {
-      // Se não há dados, tenta uma query de metadados
+      // Se nÃ£o hÃ¡ dados, tenta uma query de metadados
       const { data: metaData, error: metaError } = await supabase.from("reservas").select("duracao").limit(1)
 
       if (metaError && metaError.message.includes('column "duracao" does not exist')) {
@@ -42,16 +41,14 @@ export async function detectReservasSchema(): Promise<ReservasSchema> {
       }
     }
 
-    console.log("[v0] Detected reservas schema:", cachedSchema)
     return cachedSchema
   } catch (error) {
-    console.log("[v0] Error in schema detection:", error)
     cachedSchema = "separate_columns"
     return cachedSchema
   }
 }
 
-export async function fetchReservasWithSchema(startDate: Date, endDate: Date, additionalFilters?: any) {
+export async function fetchReservasWithSchema(startDate: Date, endDate: Date, additionalFilters?: Record<string, unknown>) {
   const supabase = getBrowserClient()
   const schema = await detectReservasSchema()
 

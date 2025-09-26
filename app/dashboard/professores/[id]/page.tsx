@@ -20,18 +20,17 @@ interface Professor {
   avaliacao?: number
 }
 
-interface Aula {
-  id: string
-  data_inicio: string
-  data_fim: string
-  cliente: {
-    full_name: string
-  }
-  quadra: {
-    nome: string
-  }
-  status: string
-}
+type AulaStatus = "pendente" | "confirmada" | "cancelada" | "concluida" | "outro";
+
+type Aula = {
+  id: string;
+  data_inicio: string;
+  data_fim: string;
+  duracao?: string;
+  status: AulaStatus;
+  cliente: { full_name: string };
+  quadra: { nome: string };
+};
 
 export default function ProfessorDetalhes() {
   const params = useParams()
@@ -70,22 +69,36 @@ export default function ProfessorDetalhes() {
 
         if (aulasError) throw aulasError
 
-        // Transformar dados das aulas
-        const aulasTransformadas =
-          aulasData?.map((aula) => ({
-            id: aula.id,
-            data_inicio: aula.duracao ? aula.duracao.split(",")[0].replace("[", "") : "",
-            data_fim: aula.duracao ? aula.duracao.split(",")[1].replace(")", "") : "",
-            cliente: aula.cliente || { full_name: "Cliente não encontrado" },
-            quadra: aula.quadra || { nome: "Quadra não encontrada" },
-            status: aula.status || "agendada",
-          })) || []
+        // Transformar dados das aulas (normaliza entrada incerta -> saída tipada)
+        const aulasTransformadas: Aula[] = (Array.isArray(aulasData) ? aulasData : []).map((a: any): Aula => {
+          const clienteFull = Array.isArray(a?.cliente)
+            ? String(a.cliente[0]?.full_name ?? "")
+            : String(a?.cliente?.full_name ?? "");
+
+          const quadraNome = Array.isArray(a?.quadra)
+            ? String(a.quadra[0]?.nome ?? "")
+            : String(a?.quadra?.nome ?? "");
+
+          const status: AulaStatus =
+            a?.status && ["pendente", "confirmada", "cancelada", "concluida"].includes(a.status)
+              ? a.status
+              : "outro";
+
+          return {
+            id: String(a?.id ?? ""),
+            data_inicio: String(a?.data_inicio ?? ""),
+            data_fim: String(a?.data_fim ?? ""),
+            duracao: a?.duracao ? String(a.duracao) : undefined,
+            status,
+            cliente: { full_name: clienteFull },
+            quadra: { nome: quadraNome },
+          };
+        });
 
         setProfessor(professorData)
         setAulas(aulasTransformadas)
       } catch (error) {
-        console.error("Erro ao buscar dados do professor:", error)
-      } finally {
+        } finally {
         setLoading(false)
       }
     }
@@ -178,10 +191,10 @@ export default function ProfessorDetalhes() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Informações Pessoais */}
+          {/* InformaçÃµes Pessoais */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Informações Pessoais</CardTitle>
+              <CardTitle className="text-white">InformaçÃµes Pessoais</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
@@ -228,7 +241,7 @@ export default function ProfessorDetalhes() {
                       <div>
                         <p className="text-white font-medium">{aula.cliente.full_name}</p>
                         <p className="text-sm text-gray-400">
-                          {aula.quadra.nome} •{" "}
+                          {aula.quadra.nome} â€¢{" "}
                           {new Date(aula.data_inicio).toLocaleTimeString("pt-BR", {
                             hour: "2-digit",
                             minute: "2-digit",

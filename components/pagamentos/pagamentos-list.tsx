@@ -67,7 +67,6 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
       if (error) throw error
       setPagamentos(data || [])
     } catch (error) {
-      console.error("Erro ao buscar pagamentos:", error)
       toast({
         title: "Erro",
         description: "Não foi possível carregar os pagamentos",
@@ -101,7 +100,6 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
 
       fetchPagamentos() // Recarregar dados
     } catch (error) {
-      console.error("Erro ao atualizar status:", error)
       toast({
         title: "Erro",
         description: "Não foi possível atualizar o status",
@@ -207,7 +205,7 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
               <div className="flex items-center gap-2">
                 <div className="h-5 w-5 bg-orange-500 rounded-full" />
                 <div>
-                  <p className="text-sm text-gray-400">Total de Transações</p>
+                  <p className="text-sm text-gray-400">Total de TransaçÃµes</p>
                   <p className="text-2xl font-bold text-white">{pagamentos.length}</p>
                 </div>
               </div>
@@ -264,7 +262,7 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
                 <TableHead className="text-gray-300">Status</TableHead>
                 <TableHead className="text-gray-300">Data</TableHead>
                 <TableHead className="text-gray-300">ID Transação</TableHead>
-                <TableHead className="text-gray-300">Ações</TableHead>
+                <TableHead className="text-gray-300">AçÃµes</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

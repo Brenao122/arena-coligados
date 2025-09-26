@@ -1,46 +1,46 @@
 /**
- * HIERARQUIA DE USUÁRIOS - ARENA COLIGADOS
+ * HIERARQUIA DE USUÃRIOS - ARENA COLIGADOS
  *
  * 1. ADMINISTRADOR (admin)
  *    - Acesso completo ao sistema
  *    - Dashboard: Visão geral com todas as métricas
  *    - Funcionalidades:
- *      ✅ Gerenciar quadras (criar, editar, desativar)
- *      ✅ Gerenciar professores (contratar, demitir, horários)
- *      ✅ Gerenciar clientes (visualizar, editar, histórico)
- *      ✅ Gerenciar reservas (todas as reservas)
- *      ✅ Relatórios financeiros completos
- *      ✅ Configurações do sistema
- *      ✅ Integrações (WhatsApp, Instagram, Pagamentos)
- *      ✅ Leads e conversões
- *      ✅ Pagamentos e cobrança
+ *      âœ… Gerenciar quadras (criar, editar, desativar)
+ *      âœ… Gerenciar professores (contratar, demitir, horários)
+ *      âœ… Gerenciar clientes (visualizar, editar, histórico)
+ *      âœ… Gerenciar reservas (todas as reservas)
+ *      âœ… Relatórios financeiros completos
+ *      âœ… ConfiguraçÃµes do sistema
+ *      âœ… IntegraçÃµes (WhatsApp, Instagram, Pagamentos)
+ *      âœ… Leads e conversÃµes
+ *      âœ… Pagamentos e cobrança
  *
  * 2. PROFESSOR (professor)
  *    - Acesso focado em gestão de aulas e alunos
  *    - Dashboard: Métricas de suas aulas e alunos
  *    - Funcionalidades:
- *      ✅ Visualizar suas aulas agendadas
- *      ✅ Gerenciar disponibilidade pessoal
- *      ✅ Visualizar alunos das suas aulas
- *      ✅ Marcar presença/falta
- *      ✅ Relatórios das suas aulas
- *      ❌ Não pode gerenciar outros professores
- *      ❌ Não pode alterar preços
- *      ❌ Não pode acessar relatórios financeiros
- *      ❌ Não pode gerenciar quadras
+ *      âœ… Visualizar suas aulas agendadas
+ *      âœ… Gerenciar disponibilidade pessoal
+ *      âœ… Visualizar alunos das suas aulas
+ *      âœ… Marcar presença/falta
+ *      âœ… Relatórios das suas aulas
+ *      âŒ Não pode gerenciar outros professores
+ *      âŒ Não pode alterar preços
+ *      âŒ Não pode acessar relatórios financeiros
+ *      âŒ Não pode gerenciar quadras
  *
  * 3. ALUNO/CLIENTE (cliente)
- *    - Acesso limitado para visualizar suas informações
+ *    - Acesso limitado para visualizar suas informaçÃµes
  *    - Dashboard: Progresso pessoal e próximas aulas
  *    - Funcionalidades:
- *      ✅ Visualizar suas reservas/aulas
- *      ✅ Histórico de aulas
- *      ✅ Dados pessoais (editar perfil)
- *      ✅ Pagamentos pessoais
- *      ❌ Não pode ver outros alunos
- *      ❌ Não pode gerenciar nada do sistema
- *      ❌ Não pode acessar relatórios
- *      ❌ Não pode ver informações financeiras gerais
+ *      âœ… Visualizar suas reservas/aulas
+ *      âœ… Histórico de aulas
+ *      âœ… Dados pessoais (editar perfil)
+ *      âœ… Pagamentos pessoais
+ *      âŒ Não pode ver outros alunos
+ *      âŒ Não pode gerenciar nada do sistema
+ *      âŒ Não pode acessar relatórios
+ *      âŒ Não pode ver informaçÃµes financeiras gerais
  */
 
 export const USER_PERMISSIONS = {

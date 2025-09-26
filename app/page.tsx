@@ -33,7 +33,7 @@ export default function HomePage() {
   const modalidades = [
     {
       name: "Beach Tennis",
-      icon: "🏐",
+      icon: "ðŸ",
       description: "A modalidade que mais cresce no Brasil",
       subtitle: "Quadras profissionais com areia importada",
       image:
@@ -42,7 +42,7 @@ export default function HomePage() {
     },
     {
       name: "Vôlei",
-      icon: "🏐",
+      icon: "ðŸ",
       description: "Tradição e paixão em cada jogada",
       subtitle: "Quadras com padrão olímpico",
       image:
@@ -51,7 +51,7 @@ export default function HomePage() {
     },
     {
       name: "Futevôlei",
-      icon: "⚽",
+      icon: "âš½",
       description: "Arte brasileira em movimento",
       subtitle: "Quadras grandes para máxima performance",
       image:
@@ -60,7 +60,7 @@ export default function HomePage() {
     },
     {
       name: "Futebol Society",
-      icon: "⚽",
+      icon: "âš½",
       description: "Quadras 1, 2 e 4 (Grandes)",
       image:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/9ea7f297-f7a0-4bff-93ca-3ff9329f50e6-NZh6Js68duFIT3FwT6u0lecZhuE97x.png",
@@ -115,7 +115,7 @@ export default function HomePage() {
           <Link href="/login">
             <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 transform hover:scale-105 group border-0">
               <LogIn className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform" />
-              Área do Cliente
+              Ãrea do Cliente
             </Button>
           </Link>
         </div>
@@ -318,12 +318,12 @@ export default function HomePage() {
                     <div className="flex items-center gap-4 text-gray-200">
                       <DollarSign className="h-8 w-8 text-green-400" />
                       <span className="text-xl">
-                        R$ 80,00/hora • <span className="text-orange-300 font-bold">Promocional R$ 50,00</span>
+                        R$ 80,00/hora â€¢ <span className="text-orange-300 font-bold">Promocional R$ 50,00</span>
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-gray-200">
                       <Users className="h-8 w-8 text-blue-400" />
-                      <span className="text-xl">3 Quadras Grandes • 2 Quadras Pequenas</span>
+                      <span className="text-xl">3 Quadras Grandes â€¢ 2 Quadras Pequenas</span>
                     </div>
                   </div>
 
@@ -347,7 +347,7 @@ export default function HomePage() {
                     <div className="flex items-center gap-4 text-gray-200">
                       <DollarSign className="h-8 w-8 text-green-400" />
                       <span className="text-xl">
-                        R$ 70,00/hora • <span className="text-orange-300 font-bold">Promocional R$ 50,00</span>
+                        R$ 70,00/hora â€¢ <span className="text-orange-300 font-bold">Promocional R$ 50,00</span>
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-gray-200">
@@ -394,7 +394,7 @@ export default function HomePage() {
                     </div>
                     <div className="text-sm text-gray-400">por hora</div>
                     {horario.tipo === "promocional" && (
-                      <Badge className="bg-orange-500/20 text-orange-400 mt-2">🔥 PROMOCIONAL</Badge>
+                      <Badge className="bg-orange-500/20 text-orange-400 mt-2">ðŸ”¥ PROMOCIONAL</Badge>
                     )}
                   </div>
                 </CardContent>
@@ -417,7 +417,7 @@ export default function HomePage() {
           <div className="max-w-3xl mx-auto">
             <h3 className="text-3xl font-bold text-white mb-6">Sistema Grava Lance</h3>
             <p className="text-gray-300 mb-8 text-lg">
-              Todas as nossas quadras têm o sistema Grava Lance! É super fácil e totalmente grátis!
+              Todas as nossas quadras têm o sistema Grava Lance! Ã‰ super fácil e totalmente grátis!
             </p>
 
             <div className="grid md:grid-cols-4 gap-6">
@@ -606,7 +606,7 @@ export default function HomePage() {
               </a>
             </div>
 
-            <p className="text-gray-400 text-xl">© 2024 Arena Coligados. Todos os direitos reservados.</p>
+            <p className="text-gray-400 text-xl">Â© 2024 Arena Coligados. Todos os direitos reservados.</p>
             <p className="text-gray-500 mt-3 text-lg">
               Marque <span className="text-orange-400 font-bold">@arenacoligados</span> em suas postagens!
             </p>

@@ -1,13 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { StatsCard } from "@/components/dashboard/stats-card"
-import { RecentBookings } from "@/components/dashboard/recent-bookings"
-import { SheetsStatus } from "@/components/dashboard/sheets-status"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/hooks/use-auth"
-import { supabase } from "@/lib/supabase"
 import {
   Calendar,
   Users,
@@ -17,6 +12,7 @@ import {
   UserCheck,
   Plus,
   Settings,
+  Zap,
   BarChart3,
   RefreshCw,
 } from "lucide-react"
@@ -31,19 +27,7 @@ interface DashboardStats {
   professoresAtivos: number
 }
 
-interface WeeklyData {
-  day: string
-  reservas: number
-  receita: number
-}
-
-interface QuadraOcupacao {
-  nome: string
-  ocupacao: number
-}
-
 export default function DashboardPage() {
-  const { profile } = useAuth()
   const [stats, setStats] = useState<DashboardStats>({
     totalReservas: 0,
     reservasHoje: 0,
@@ -53,150 +37,139 @@ export default function DashboardPage() {
     professoresAtivos: 0,
   })
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<any>(null)
   const [syncing, setSyncing] = useState(false)
-  const [weeklyData, setWeeklyData] = useState<WeeklyData[]>([])
-  const [quadrasOcupacao, setQuadrasOcupacao] = useState<QuadraOcupacao[]>([])
+  const [syncMessage, setSyncMessage] = useState("")
 
   useEffect(() => {
-    fetchDashboardStats()
+    // Verificar se há usuário logado
+    const savedUser = localStorage.getItem('arena_user')
+    if (savedUser) {
+      try {
+        const userData = JSON.parse(savedUser)
+        setUser(userData)
+      } catch (error) {
+        // Se não conseguir parsear, redirecionar para login
+        window.location.href = '/login'
+        return
+      }
+    } else {
+      // Se não há usuário, redirecionar para login
+      window.location.href = '/login'
+      return
+    }
+
+    fetchDashboardData()
   }, [])
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardData = async () => {
     try {
       setLoading(true)
 
-      const { data: reservasData, error: reservasError } = await supabase
-        .from("reservas")
-        .select("id, data_inicio, valor, created_at")
+      // Buscar dados do Google Sheets
+      const [reservasResponse, clientesResponse, quadrasResponse, professoresResponse] = await Promise.all([
+        fetch('/api/sheets/read?sheet=Página1'),
+        fetch('/api/sheets/read?sheet=Página1'),
+        fetch('/api/sheets/read?sheet=Página1'),
+        fetch('/api/sheets/read?sheet=Página1')
+      ])
 
-      const { data: clientesData, error: clientesError } = await supabase.from("clientes").select("id")
+      const [reservasResult, clientesResult, quadrasResult, professoresResult] = await Promise.all([
+        reservasResponse.json(),
+        clientesResponse.json(),
+        quadrasResponse.json(),
+        professoresResponse.json()
+      ])
 
-      const { data: quadrasData, error: quadrasError } = await supabase
-        .from("quadras")
-        .select("id, nome, ativa")
-        .eq("ativa", true)
+      // Processar dados das reservas
+      const reservas = reservasResult.ok ? reservasResult.rows.filter((r: any) => r.tipo === 'reserva' || r.Data) : []
+      const clientes = clientesResult.ok ? clientesResult.rows.filter((r: any) => r.tipo === 'cliente' || r.Nome) : []
+      const quadras = quadrasResult.ok ? quadrasResult.rows.filter((r: any) => r.tipo === 'quadra' || r.nome) : []
+      const professores = professoresResult.ok ? professoresResult.rows.filter((r: any) => r.tipo === 'professor' || r.nome) : []
 
-      const { data: professoresData, error: professoresError } = await supabase
-        .from("professores")
-        .select("id, ativo")
-        .eq("ativo", true)
+      // Calcular estatísticas
+      const hoje = new Date().toISOString().split('T')[0]
+      const reservasHoje = reservas.filter((r: any) => {
+        const dataReserva = r.data_inicio || r.Data || r.created_at
+        return dataReserva && dataReserva.includes(hoje)
+      }).length
 
-      const totalReservas = reservasData?.length || 0
-      const totalClientes = clientesData?.length || 0
-      const quadrasAtivas = quadrasData?.length || 0
-      const professoresAtivos = professoresData?.length || 0
-
-      const today = new Date().toISOString().split("T")[0]
-      const reservasHoje =
-        reservasData?.filter((r) => {
-          const reservaDate = new Date(r.data_inicio).toISOString().split("T")[0]
-          return reservaDate === today
-        }).length || 0
-
-      const currentMonth = new Date().getMonth()
-      const currentYear = new Date().getFullYear()
-      const receitaMes =
-        reservasData
-          ?.filter((r) => {
-            const reservaDate = new Date(r.created_at)
-            return reservaDate.getMonth() === currentMonth && reservaDate.getFullYear() === currentYear
-          })
-          .reduce((sum, r) => sum + (r.valor || 0), 0) || 0
+      const receitaMes = reservas.reduce((total: number, r: any) => {
+        const valor = parseFloat(r.valor || r.Valor || r.preco || 0)
+        return total + (isNaN(valor) ? 0 : valor)
+      }, 0)
 
       setStats({
-        totalReservas,
+        totalReservas: reservas.length,
         reservasHoje,
-        totalClientes,
+        totalClientes: clientes.length,
         receitaMes,
-        quadrasAtivas,
-        professoresAtivos,
+        quadrasAtivas: quadras.length,
+        professoresAtivos: professores.length,
       })
 
-      const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
-      const weeklyStats = weekDays.map((day, index) => {
-        const dayReservas =
-          reservasData?.filter((r) => {
-            const reservaDate = new Date(r.data_inicio)
-            return reservaDate.getDay() === index
-          }) || []
-
-        return {
-          day,
-          reservas: dayReservas.length,
-          receita: dayReservas.reduce((sum, r) => sum + (r.valor || 0), 0),
-        }
-      })
-      setWeeklyData(weeklyStats)
-
-      if (quadrasData) {
-        const ocupacaoData = quadrasData.map((quadra) => {
-          const reservasQuadra =
-            reservasData?.filter((r) => {
-              return r.quadra_id === quadra.id
-            }) || []
-
-          const ocupacaoPercentual = Math.min((reservasQuadra.length / 35) * 100, 100)
-
-          return {
-            nome: quadra.nome,
-            ocupacao: Math.round(ocupacaoPercentual),
-          }
-        })
-        setQuadrasOcupacao(ocupacaoData)
-      }
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error)
+      console.error('Erro ao buscar dados do dashboard:', error)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleManualSync = async () => {
+  // Função para sincronizar com Google Sheets
+  const handleSync = async () => {
+    setSyncing(true)
+    setSyncMessage("Sincronizando com Google Sheets...")
+    
     try {
-      setSyncing(true)
-
-      // Force sync with Google Sheets
-      const response = await fetch("/api/sheets/sync-all", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      if (response.ok) {
-        // Refresh dashboard data after sync
-        await fetchDashboardStats()
-        console.log("[v0] Manual sync completed successfully")
-      } else {
-        console.error("[v0] Manual sync failed:", await response.text())
-      }
+      // Recarregar dados do dashboard
+      await fetchDashboardData()
+      
+      setSyncMessage("✅ Sincronização concluída! Dados atualizados.")
+      
+      // Limpar mensagem após 3 segundos
+      setTimeout(() => {
+        setSyncMessage("")
+      }, 3000)
+      
     } catch (error) {
-      console.error("[v0] Error during manual sync:", error)
+      setSyncMessage("❌ Erro na sincronização. Tente novamente.")
+      setTimeout(() => {
+        setSyncMessage("")
+      }, 3000)
     } finally {
       setSyncing(false)
     }
   }
 
-  const getGreeting = () => {
-    const hour = new Date().getHours()
-    if (hour < 12) return "Bom dia"
-    if (hour < 18) return "Boa tarde"
-    return "Boa noite"
+  const handleLogout = () => {
+    localStorage.removeItem('arena_user')
+    window.location.href = '/login'
   }
 
   if (loading) {
     return (
       <div className="space-y-6 bg-gray-900 min-h-screen text-white p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-700 rounded w-1/3 mb-2"></div>
-          <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-700 rounded w-1/3"></div>
+          <div className="grid grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-24 bg-gray-700 rounded"></div>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="h-32 bg-gray-700 rounded"></div>
-            </div>
-          ))}
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="space-y-6 bg-gray-900 min-h-screen text-white p-6">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-500">Acesso Negado</h1>
+          <p className="text-gray-400">Você precisa fazer login para acessar esta página.</p>
+          <Button onClick={() => window.location.href = '/login'} className="mt-4">
+            Ir para Login
+          </Button>
         </div>
       </div>
     )
@@ -204,48 +177,62 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 bg-gray-900 min-h-screen text-white p-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-green-400 bg-clip-text text-transparent">
-            {getGreeting()}, {profile?.nome || "Administrador"}!
+            Dashboard Administrativo
           </h1>
-          <p className="text-gray-400">Aqui está um resumo da sua arena hoje.</p>
+          <p className="text-gray-400">Bem-vindo, {user.profile?.full_name || 'Administrador'}!</p>
         </div>
         <div className="flex gap-2">
           <Button
-            onClick={handleManualSync}
+            onClick={handleSync}
             disabled={syncing}
-            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+            className="bg-blue-600 hover:bg-blue-700 text-white"
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? "animate-spin" : ""}`} />
-            {syncing ? "Sincronizando..." : "Atualizar Tudo"}
+            <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+            {syncing ? 'Sincronizando...' : 'Sincronizar'}
           </Button>
-          <Link href="/dashboard/reservas">
-            <Button className="bg-gradient-to-r from-orange-500 to-green-600 hover:from-orange-600 hover:to-green-700 text-white">
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="border-gray-600 text-gray-300 hover:bg-gray-700"
+          >
+            Sair
+          </Button>
+          <Button
+            asChild
+            className="bg-gradient-to-r from-orange-500 to-green-600 hover:from-orange-600 hover:to-green-700 text-white"
+          >
+            <Link href="/dashboard/reservas">
               <Plus className="h-4 w-4 mr-2" />
               Nova Reserva
-            </Button>
-          </Link>
-          <Link href="/dashboard/relatorios">
-            <Button
-              variant="outline"
-              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white bg-transparent"
-            >
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Ver Relatórios
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
 
+      {/* Mensagem de Sincronização */}
+      {syncMessage && (
+        <div className={`p-4 rounded-lg text-center ${
+          syncMessage.includes('✅') 
+            ? 'bg-green-900/20 border border-green-800 text-green-300' 
+            : 'bg-red-900/20 border border-red-800 text-red-300'
+        }`}>
+          {syncMessage}
+        </div>
+      )}
+
+      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 border-blue-700/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-300">Total de Reservas</p>
-                <p className="text-2xl font-bold text-white">{stats.totalReservas}</p>
-                <p className="text-xs text-blue-400">Dados em tempo real</p>
+                <p className="text-sm font-medium text-blue-300">Reservas Hoje</p>
+                <p className="text-2xl font-bold text-white">{stats.reservasHoje}</p>
+                <p className="text-xs text-blue-400">Total: {stats.totalReservas}</p>
               </div>
               <Calendar className="h-8 w-8 text-blue-400" />
             </div>
@@ -256,11 +243,24 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-300">Reservas Hoje</p>
-                <p className="text-2xl font-bold text-white">{stats.reservasHoje}</p>
-                <p className="text-xs text-green-400">Atualizando em tempo real</p>
+                <p className="text-sm font-medium text-green-300">Clientes Ativos</p>
+                <p className="text-2xl font-bold text-white">{stats.totalClientes}</p>
+                <p className="text-xs text-green-400">Cadastrados</p>
               </div>
-              <TrendingUp className="h-8 w-8 text-green-400" />
+              <Users className="h-8 w-8 text-green-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-orange-900/50 to-orange-800/50 border-orange-700/50">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-orange-300">Receita do Mês</p>
+                <p className="text-2xl font-bold text-white">R$ {stats.receitaMes.toLocaleString("pt-BR")}</p>
+                <p className="text-xs text-orange-400">Faturamento</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-orange-400" />
             </div>
           </CardContent>
         </Card>
@@ -269,193 +269,112 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-300">Clientes Ativos</p>
-                <p className="text-2xl font-bold text-white">{stats.totalClientes}</p>
-                <p className="text-xs text-purple-400">Total de clientes</p>
+                <p className="text-sm font-medium text-purple-300">Quadras Ativas</p>
+                <p className="text-2xl font-bold text-white">{stats.quadrasAtivas}</p>
+                <p className="text-xs text-purple-400">Disponíveis</p>
               </div>
-              <Users className="h-8 w-8 text-purple-400" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-yellow-900/50 to-orange-800/50 border-yellow-700/50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-yellow-300">Receita do Mês</p>
-                <p className="text-2xl font-bold text-white">
-                  R$ {stats.receitaMes.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                </p>
-                <p className="text-xs text-yellow-400">Mês atual</p>
-              </div>
-              <DollarSign className="h-8 w-8 text-yellow-400" />
+              <MapPin className="h-8 w-8 text-purple-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-orange-400" />
-              Reservas da Semana
-            </CardTitle>
-            <CardDescription className="text-gray-400">Reservas e receita por dia</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {weeklyData.map((item, index) => (
-                <div key={item.day} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 w-20">
-                    <span className="text-sm font-medium text-gray-300">{item.day}</span>
-                  </div>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-gray-700 rounded-full h-3 overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-orange-500 to-green-500 rounded-full transition-all duration-1000 ease-out"
-                        style={{
-                          width: `${Math.max((item.reservas / Math.max(...weeklyData.map((d) => d.reservas), 1)) * 100, 5)}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="text-right w-24">
-                    <div className="text-sm font-bold text-white">{item.reservas}</div>
-                    <div className="text-xs text-gray-400">R$ {item.receita.toFixed(0)}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-green-400" />
-              Ocupação das Quadras
-            </CardTitle>
-            <CardDescription className="text-gray-400">Taxa de ocupação por quadra</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {quadrasOcupacao.length === 0 ? (
-                <p className="text-gray-400 text-center py-4">Nenhuma quadra encontrada</p>
-              ) : (
-                quadrasOcupacao.map((quadra, index) => (
-                  <div key={quadra.nome} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-300">{quadra.nome}</span>
-                      <span className="text-sm font-bold text-white">{quadra.ocupacao}%</span>
-                    </div>
-                    <div className="bg-gray-700 rounded-full h-2 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-1000 ease-out ${
-                          quadra.ocupacao >= 85
-                            ? "bg-gradient-to-r from-green-500 to-emerald-400"
-                            : quadra.ocupacao >= 70
-                              ? "bg-gradient-to-r from-yellow-500 to-orange-400"
-                              : "bg-gradient-to-r from-red-500 to-pink-400"
-                        }`}
-                        style={{ width: `${quadra.ocupacao}%` }}
-                      />
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <SheetsStatus />
-      </div>
-
-      {profile?.role === "admin" && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatsCard
-            title="Quadras Ativas"
-            value={stats.quadrasAtivas}
-            description="Conectadas ao sistema"
-            icon={MapPin}
-          />
-          <StatsCard
-            title="Professores Ativos"
-            value={stats.professoresAtivos}
-            description="Disponíveis hoje"
-            icon={UserCheck}
-          />
-          <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 border-blue-700/50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-blue-300">Integrações</p>
-                  <p className="text-xs text-blue-400">WhatsApp, Instagram</p>
-                </div>
-                <Link href="/dashboard/configuracoes">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="border-blue-600 text-blue-300 hover:bg-blue-800 bg-transparent"
-                  >
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-green-900/50 to-green-800/50 border-green-700/50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-green-300">Sistema</p>
-                  <p className="text-xs text-green-400">Conectado ao Supabase</p>
-                </div>
-                <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white">Visão Geral</CardTitle>
-            <CardDescription className="text-gray-400">Resumo das atividades da arena</CardDescription>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg bg-gradient-to-r from-orange-900/30 to-red-900/30">
-                <div>
-                  <p className="font-medium text-white">Ocupação Hoje</p>
-                  <p className="text-sm text-gray-400">{stats.reservasHoje} reservas agendadas</p>
-                </div>
-                <div className="text-2xl font-bold text-orange-400">
-                  {stats.quadrasAtivas > 0 ? Math.round((stats.reservasHoje / (stats.quadrasAtivas * 12)) * 100) : 0}%
-                </div>
-              </div>
-              <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg bg-gradient-to-r from-green-900/30 to-emerald-900/30">
-                <div>
-                  <p className="font-medium text-white">Sistema Conectado</p>
-                  <p className="text-sm text-gray-400">Dados em tempo real do Supabase</p>
-                </div>
-                <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
-              </div>
-              <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg bg-gradient-to-r from-blue-900/30 to-indigo-900/30">
-                <div>
-                  <p className="font-medium text-white">Quadras Ativas</p>
-                  <p className="text-sm text-gray-400">{stats.quadrasAtivas} quadras disponíveis</p>
-                </div>
-                <div className="text-lg font-bold text-blue-400">{stats.quadrasAtivas}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <div className="col-span-3">
-          <RecentBookings />
-        </div>
-      </div>
+      {/* Quick Actions */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center">
+            <Zap className="h-5 w-5 mr-2 text-orange-500" />
+            Ações Rápidas
+          </CardTitle>
+          <CardDescription className="text-gray-400">
+            Acesso rápido às principais funcionalidades
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Button
+              asChild
+              variant="outline"
+              className="h-20 flex-col border-gray-600 text-gray-300 hover:bg-gray-700 bg-transparent"
+            >
+              <Link href="/dashboard/reservas">
+                <Calendar className="h-6 w-6 mb-2" />
+                Reservas
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-20 flex-col border-gray-600 text-gray-300 hover:bg-gray-700 bg-transparent"
+            >
+              <Link href="/dashboard/clientes">
+                <Users className="h-6 w-6 mb-2" />
+                Clientes
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-20 flex-col border-gray-600 text-gray-300 hover:bg-gray-700 bg-transparent"
+            >
+              <Link href="/dashboard/quadras">
+                <MapPin className="h-6 w-6 mb-2" />
+                Quadras
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-20 flex-col border-gray-600 text-gray-300 hover:bg-gray-700 bg-transparent"
+            >
+              <Link href="/dashboard/professores">
+                <UserCheck className="h-6 w-6 mb-2" />
+                Professores
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-20 flex-col border-gray-600 text-gray-300 hover:bg-gray-700 bg-transparent"
+            >
+              <Link href="/dashboard/leads">
+                <TrendingUp className="h-6 w-6 mb-2" />
+                Leads
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-20 flex-col border-gray-600 text-gray-300 hover:bg-gray-700 bg-transparent"
+            >
+              <Link href="/dashboard/relatorios">
+                <BarChart3 className="h-6 w-6 mb-2" />
+                Relatórios
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-20 flex-col border-gray-600 text-gray-300 hover:bg-gray-700 bg-transparent"
+            >
+              <Link href="/dashboard/pagamentos">
+                <DollarSign className="h-6 w-6 mb-2" />
+                Pagamentos
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-20 flex-col border-gray-600 text-gray-300 hover:bg-gray-700 bg-transparent"
+            >
+              <Link href="/dashboard/configuracoes">
+                <Settings className="h-6 w-6 mb-2" />
+                Configurações
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

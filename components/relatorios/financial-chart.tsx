@@ -41,23 +41,14 @@ export function FinancialChart() {
   const fetchFinancialData = async () => {
     try {
       setLoading(true)
-
-      const response = await fetch("/api/sheets/financial-data")
-      if (response.ok) {
-        const sheetsData = await response.json()
-        setDailyData(sheetsData)
-        return
-      }
-
-      // Fallback para Supabase se Google Sheets falhar
       const { data: pagamentos, error } = await supabase
         .from("pagamentos")
         .select(`
           amount,
           created_at,
           reservas:reserva_id (
-            data_inicio,
-            valor_total
+            date,
+            total_price
           )
         `)
         .eq("status", "aprovado")
@@ -91,7 +82,6 @@ export function FinancialChart() {
 
       setDailyData(Object.values(dailyStats).sort((a, b) => a.day - b.day))
     } catch (error) {
-      console.error("Erro ao buscar dados financeiros:", error)
       setDailyData([
         { day: 1, date: "01/01", receita: 850, transacoes: 12, pagamentos: 8, interacoes: 25 },
         { day: 2, date: "02/01", receita: 920, transacoes: 15, pagamentos: 10, interacoes: 30 },
@@ -119,7 +109,7 @@ export function FinancialChart() {
   const totalTransacoes = dailyData.reduce((sum, day) => sum + day.transacoes, 0)
   const mediaReceita = dailyData.length > 0 ? totalReceita / dailyData.length : 0
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: DailyFinancialData }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
@@ -139,7 +129,7 @@ export function FinancialChart() {
               <span className="text-white font-medium">R$ {data.receita.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <span className="text-green-400">Transações:</span>
+              <span className="text-green-400">TransaçÃµes:</span>
               <span className="text-white font-medium">{data.transacoes}</span>
             </div>
             <div className="flex items-center justify-between gap-4">
@@ -149,7 +139,7 @@ export function FinancialChart() {
             <div className="flex items-center justify-between gap-4">
               <span className="text-purple-400 flex items-center gap-1">
                 <Activity className="w-3 h-3" />
-                Interações:
+                InteraçÃµes:
               </span>
               <span className="text-white font-medium">{data.interacoes}</span>
             </div>
@@ -200,7 +190,7 @@ export function FinancialChart() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-400 text-sm font-medium">Total Transações</p>
+                <p className="text-green-400 text-sm font-medium">Total TransaçÃµes</p>
                 <p className="text-2xl font-bold text-white">{totalTransacoes}</p>
               </div>
               <Activity className="w-8 h-8 text-green-400" />
@@ -242,7 +232,7 @@ export function FinancialChart() {
                 Análise Financeira Diária
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Receita, transações e interações por dia do mês - Janeiro 2025
+                Receita, transaçÃµes e interaçÃµes por dia do mês - Janeiro 2025
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -265,7 +255,7 @@ export function FinancialChart() {
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
                   <SelectItem value="area" className="text-white hover:bg-gray-700">
-                    Área
+                    Ãrea
                   </SelectItem>
                   <SelectItem value="bar" className="text-white hover:bg-gray-700">
                     Barras
@@ -322,7 +312,7 @@ export function FinancialChart() {
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#interacoesGradient)"
-                    name="Interações"
+                    name="InteraçÃµes"
                   />
                 </AreaChart>
               ) : chartType === "bar" ? (
@@ -342,7 +332,7 @@ export function FinancialChart() {
                   <Legend wrapperStyle={{ color: "#9ca3af" }} />
                   <Bar dataKey="receita" fill="#f97316" name="Receita (R$)" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="pagamentos" fill="#22c55e" name="Pagamentos" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="interacoes" fill="#3b82f6" name="Interações" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="interacoes" fill="#3b82f6" name="InteraçÃµes" radius={[4, 4, 0, 0]} />
                 </BarChart>
               ) : (
                 <LineChart data={dailyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -373,7 +363,7 @@ export function FinancialChart() {
                     dataKey="interacoes"
                     stroke="#22c55e"
                     strokeWidth={3}
-                    name="Interações"
+                    name="InteraçÃµes"
                     dot={{ fill: "#22c55e", strokeWidth: 2, r: 4 }}
                     activeDot={{ r: 6, fill: "#22c55e" }}
                   />
