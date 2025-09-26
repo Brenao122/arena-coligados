@@ -1,10 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Fixed @custom-variant dark syntax - removed body content and used proper selector only */
-@custom-variant dark (&:is(.dark *));
-@custom-variant light (&:is(.light *));
-
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -39,46 +35,11 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-oswald: "Oswald", serif;
 }
 
-/* Light theme variables */
-:is(.light *) {
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.646 0.222 41.116); /* Orange primary */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.6 0.118 184.704); /* Green secondary */
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.95 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.95 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.95 0 0);
-  --ring: oklch(0.646 0.222 41.116);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.646 0.222 41.116);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.95 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.9 0 0);
-  --sidebar-ring: oklch(0.646 0.222 41.116);
-}
-
-/* Moved dark mode variables to proper :is(.dark *) selector */
-:is(.dark *) {
+.dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
@@ -114,42 +75,22 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-montserrat); /* Elegante para textos gerais */
-  --font-serif: var(--font-oswald); /* Forte para títulos esportivos */
-
-  /* Arena Coligados Premium Brand Colors - International Quality */
-  --color-primary: #f97316; /* orange-500 - Arena's signature orange */
-  --color-primary-dark: #ea580c; /* orange-600 */
-  --color-primary-light: #fed7aa; /* orange-200 */
-  --color-secondary: #22c55e; /* green-500 - Energy and vitality */
-  --color-secondary-dark: #16a34a; /* green-600 */
-  --color-secondary-light: #bbf7d0; /* green-200 */
-  --color-accent: #3b82f6; /* blue-500 */
-  --color-neutral: #64748b; /* slate-500 */
-  --color-premium-gold: #fbbf24; /* amber-400 for premium highlights */
-  --color-premium-dark: #0f172a; /* slate-900 for depth */
-
-  /* Premium gradients */
-  --gradient-primary: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-  --gradient-secondary: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  --gradient-hero: linear-gradient(135deg, #f97316 0%, #22c55e 50%, #3b82f6 100%);
-  --gradient-premium: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #ea580c 100%);
-
-  /* shadcn/ui's default styles */
+  --font-sans: var(--font-montserrat);
+  --font-serif: var(--font-oswald);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary-shadcn: var(--primary);
-  --color-primary-foreground-shadcn: var(--primary-foreground);
-  --color-secondary-shadcn: var(--secondary);
-  --color-secondary-foreground-shadcn: var(--secondary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent-shadcn: var(--accent);
-  --color-accent-foreground-shadcn: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -174,63 +115,61 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer components {
-  .btn-primary {
-    @apply bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 
-  .btn-secondary {
-    @apply bg-green-500 hover:bg-green-600 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl;
-  }
-
-  .btn-premium {
-    @apply bg-gradient-to-r from-orange-500 to-green-500 hover:from-orange-600 hover:to-green-600 text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-2xl;
-  }
-
-  .card-arena {
-    @apply bg-card border border-border rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105;
-  }
-
-  .card-premium {
-    @apply bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-2xl hover:scale-105 hover:border-orange-500/50;
-  }
-
-  .text-gradient-primary {
-    @apply bg-gradient-to-r from-orange-400 via-orange-500 to-green-500 bg-clip-text text-transparent;
-  }
-
-  .text-gradient-premium {
-    @apply bg-gradient-to-r from-amber-400 via-orange-500 to-green-500 bg-clip-text text-transparent;
-  }
-
-  /* Theme-aware components */
-  .theme-card {
-    @apply bg-card dark:bg-gray-800 light:bg-white border border-border dark:border-gray-700 light:border-gray-200 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl;
-  }
-
-  .theme-text {
-    @apply text-foreground dark:text-white light:text-gray-900 transition-colors duration-300;
-  }
-
-  .theme-text-muted {
-    @apply text-muted-foreground dark:text-gray-400 light:text-gray-600 transition-colors duration-300;
-  }
-
-  /* Premium animations */
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.8s ease-out forwards;
+  /* Adicionando textura premium de fundo */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
   }
 }
 
-/* Premium animations and effects */
+@layer components {
+  /* Botões premium com gradientes e animações */
+  .btn-primary {
+    @apply bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 
+           text-white font-bold px-8 py-4 rounded-2xl shadow-2xl hover:shadow-orange-500/30 
+           transition-all duration-300 transform hover:scale-105 border-0;
+  }
+
+  .btn-secondary {
+    @apply bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 
+           text-white font-bold px-8 py-4 rounded-2xl shadow-2xl hover:shadow-green-500/30 
+           transition-all duration-300 transform hover:scale-105 border-0;
+  }
+
+  /* Cards com efeito glass morphism */
+  .card-premium {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl 
+           transition-all duration-500 hover:shadow-2xl hover:scale-105 hover:border-orange-500/50;
+  }
+
+  /* Texto com gradiente elegante */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-orange-300 via-orange-400 to-orange-500 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-hero {
+    @apply bg-gradient-to-r from-orange-200 via-white to-orange-300 bg-clip-text text-transparent;
+  }
+}
+
+/* Animações premium */
 @keyframes float {
   0%,
   100% {
@@ -242,26 +181,24 @@
 }
 
 @keyframes glow {
-  from {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
   }
-  to {
-    box-shadow: 0 0 30px rgba(249, 115, 22, 0.8), 0 0 40px rgba(34, 197, 94, 0.3);
+  50% {
+    box-shadow: 0 0 40px rgba(249, 115, 22, 0.8), 0 0 60px rgba(34, 197, 94, 0.3);
   }
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
-/* Enhanced premium visual effects */
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Efeitos visuais premium */
 .hero-gradient {
   background: linear-gradient(
     135deg,
@@ -276,126 +213,4 @@
 .premium-blur {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-}
-
-.floating-whatsapp {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 1000;
-  animation: float 3s ease-in-out infinite;
-}
-
-@layer base {
-  html {
-    font-family: var(--font-sans), system-ui, sans-serif;
-  }
-
-  body {
-    @apply bg-background text-foreground antialiased;
-    min-height: 100vh;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-
-  * {
-    @apply border-border;
-  }
-
-  *:focus-visible {
-    @apply outline-2 outline-offset-2 outline-ring;
-  }
-}
-
-/* Custom styles for Arena Coligados */
-.bg-brand-primary {
-  background-color: var(--color-primary);
-}
-
-.bg-brand-secondary {
-  background-color: var(--color-secondary);
-}
-
-.text-brand-primary {
-  color: var(--color-primary);
-}
-
-.text-brand-secondary {
-  color: var(--color-secondary);
-}
-
-.border-brand-primary {
-  border-color: var(--color-primary);
-}
-
-/* Gradient backgrounds */
-.bg-brand-gradient {
-  background: var(--gradient-primary);
-}
-
-.bg-brand-gradient-soft {
-  background: var(--gradient-secondary);
-}
-
-/* Glass morphism effect - theme aware */
-.glass-effect {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.dark .glass-effect {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Modern card shadows - theme aware */
-.card-shadow {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.light .card-shadow {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.dark .card-shadow {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-}
-
-.card-shadow-lg {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Hover animations */
-.hover-lift {
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
-}
-
-/* Logo styles */
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.logo-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.logo-text {
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: 1.25rem;
-  letter-spacing: 0.02em;
-  background: var(--gradient-hero);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }

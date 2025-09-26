@@ -8,11 +8,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from "@/hooks/use-auth"
-import { Loader2 } from "lucide-react"
+import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const { signIn } = useAuth()
@@ -50,15 +51,16 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         {error && (
-          <Alert variant="destructive" className="bg-red-900/20 border-red-800 text-red-300">
-            <AlertDescription>{error}</AlertDescription>
+          <Alert variant="destructive" className="bg-red-900/20 border-red-500/50 text-red-300 backdrop-blur-sm">
+            <AlertDescription className="text-center font-medium">{error}</AlertDescription>
           </Alert>
         )}
 
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-white font-medium">
+        <div className="space-y-3">
+          <Label htmlFor="email" className="text-white font-semibold text-lg flex items-center gap-2">
+            <Mail className="h-5 w-5 text-orange-400" />
             Email
           </Label>
           <Input
@@ -66,35 +68,45 @@ export function LoginForm() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="seu@email.com"
-            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500"
+            placeholder="admin@arena.com"
+            className="bg-white/10 border-white/30 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/50 h-14 text-lg rounded-xl backdrop-blur-sm"
             required
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="password" className="text-white font-medium">
+        <div className="space-y-3">
+          <Label htmlFor="password" className="text-white font-semibold text-lg flex items-center gap-2">
+            <Lock className="h-5 w-5 text-orange-400" />
             Senha
           </Label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500"
-            required
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="bg-white/10 border-white/30 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/50 h-14 text-lg rounded-xl backdrop-blur-sm pr-12"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
         <Button
           type="submit"
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded-lg transition-colors"
+          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 h-16 text-xl rounded-xl shadow-2xl hover:shadow-orange-500/30 transition-all duration-300 transform hover:scale-105 border-0"
           disabled={loading}
         >
           {loading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-3 h-6 w-6 animate-spin" />
               Entrando...
             </>
           ) : (
@@ -102,16 +114,25 @@ export function LoginForm() {
           )}
         </Button>
 
-        <div className="text-center pt-4">
+        <div className="text-center pt-6">
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={() => router.push("/forgot-password")}
-            className="bg-white hover:bg-gray-50 text-orange-500 hover:text-orange-600 border-gray-300 px-4 py-2 text-sm font-medium transition-colors"
+            className="text-orange-300 hover:text-orange-200 hover:bg-orange-500/10 px-6 py-3 text-base font-medium transition-all duration-300 rounded-lg"
           >
             Esqueci minha senha
           </Button>
+        </div>
+
+        <div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl backdrop-blur-sm">
+          <p className="text-blue-300 text-sm font-medium text-center mb-2">Usuários de teste:</p>
+          <div className="text-xs text-blue-200 space-y-1">
+            <p>Admin: admin@arena.com / admin123</p>
+            <p>Professor: professor@arena.com / prof123</p>
+            <p>Cliente: cliente@arena.com / cliente123</p>
+          </div>
         </div>
       </form>
     </div>

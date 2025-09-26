@@ -34,6 +34,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchingProfile = useRef(false)
   const lastFetchedUserId = useRef<string | null>(null)
 
+  const sheetsUsers = [
+    { email: "admin@arena.com", password: "admin123", role: "admin", name: "Administrador Arena" },
+    { email: "professor@arena.com", password: "prof123", role: "professor", name: "Professor Arena" },
+    { email: "cliente@arena.com", password: "cliente123", role: "cliente", name: "Cliente Arena" },
+    { email: "maria.silva@email.com", password: "maria123", role: "cliente", name: "Maria Silva" },
+    { email: "joao.santos@email.com", password: "joao123", role: "cliente", name: "João Santos" },
+  ]
+
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -152,31 +160,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const supabase = getBrowserClient()
+      console.log("🔐 Tentando login híbrido...")
 
-      console.log("🔐 Fazendo login com Supabase...")
+      const supabase = getBrowserClient()
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (error) {
-        console.error("❌ Erro no login:", error)
-        return { error: { message: "Email ou senha incorretos" } }
+      if (!error && data.user) {
+        console.log("✅ Login Supabase bem-sucedido:", data.user.email)
+        fetchingProfile.current = false
+        lastFetchedUserId.current = null
+        await fetchProfile(data.user.id, true)
+        return { error: null }
       }
 
-      if (!data.user) {
-        console.error("❌ Usuário não retornado")
-        return { error: { message: "Erro interno do sistema" } }
+      console.log("🔄 Tentando login com usuários da planilha...")
+      const sheetsUser = sheetsUsers.find((u) => u.email === email && u.password === password)
+
+      if (sheetsUser) {
+        console.log("✅ Login com planilha bem-sucedido:", sheetsUser.email)
+
+        const mockUser = {
+          id: `sheets_${sheetsUser.email}`,
+          email: sheetsUser.email,
+          user_metadata: { full_name: sheetsUser.name },
+        } as User
+
+        const mockProfile = {
+          id: mockUser.id,
+          email: sheetsUser.email,
+          full_name: sheetsUser.name,
+          phone: null,
+          role: sheetsUser.role as "admin" | "professor" | "cliente",
+        }
+
+        setUser(mockUser)
+        setProfile(mockProfile)
+
+        redirectBasedOnRole(sheetsUser.role as "admin" | "professor" | "cliente")
+
+        return { error: null }
       }
 
-      console.log("✅ Login bem-sucedido, usuário:", data.user.email)
-
-      fetchingProfile.current = false
-      lastFetchedUserId.current = null
-      await fetchProfile(data.user.id, true)
-
-      return { error: null }
+      console.error("❌ Credenciais inválidas em ambos os sistemas")
+      return { error: { message: "Email ou senha incorretos" } }
     } catch (error) {
       console.error("❌ Erro no signIn:", error)
       return { error: { message: "Email ou senha incorretos" } }

@@ -56,7 +56,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased bg-gray-900 dark:bg-gray-900 light:bg-gray-50 text-white dark:text-white light:text-gray-900 min-h-screen transition-colors duration-300">
+      <body className="font-sans antialiased bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white min-h-screen transition-all duration-300">
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
