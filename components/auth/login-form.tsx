@@ -1,113 +1,25 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from "@/hooks/use-auth"
+import { Loader2 } from "lucide-react"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-  const [mounted, setMounted] = useState(false)
+  const { signIn } = useAuth()
   const router = useRouter()
-
-  // Garantir que o componente está montado no cliente
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const handleLogin = async (email: string, password: string) => {
-    try {
-      // Buscar usuários da planilha Google Sheets
-      const response = await fetch("/api/sheets/read?sheet=usuarios")
-      const result = await response.json()
-
-      if (!result.ok) {
-        throw new Error("Erro ao conectar com o sistema de autenticação")
-      }
-
-      const usuarios = result.rows || []
-
-      // Procurar usuário com email e senha correspondentes
-      const usuario = usuarios.find((u: any) => u.email === email && u.senha === password)
-
-      if (!usuario) {
-        throw new Error("Email ou senha incorretos")
-      }
-
-      // Salvar no localStorage
-      const userData = {
-        id: usuario.id || `user-${Date.now()}`,
-        email: usuario.email,
-        profile: {
-          id: usuario.id || `user-${Date.now()}`,
-          email: usuario.email,
-          full_name: usuario.nome || "Usuário",
-          role: usuario.role || "cliente",
-        },
-      }
-
-      localStorage.setItem("arena_user", JSON.stringify(userData))
-      return userData
-    } catch (error) {
-      // Fallback para usuários hardcoded em caso de erro na planilha
-      const usuariosFallback = [
-        {
-          id: "admin-001",
-          email: "admin@arena.com",
-          senha: "admin123",
-          nome: "Administrador Arena",
-          role: "admin",
-        },
-        {
-          id: "prof-001",
-          email: "professor@arena.com",
-          senha: "prof123",
-          nome: "Professor Arena",
-          role: "professor",
-        },
-        {
-          id: "cliente-001",
-          email: "cliente@arena.com",
-          senha: "cliente123",
-          nome: "Cliente Arena",
-          role: "cliente",
-        },
-      ]
-
-      const usuario = usuariosFallback.find((u) => u.email === email && u.senha === password)
-
-      if (!usuario) {
-        throw new Error("Email ou senha incorretos")
-      }
-
-      // Salvar no localStorage
-      const userData = {
-        id: usuario.id,
-        email: usuario.email,
-        profile: {
-          id: usuario.id,
-          email: usuario.email,
-          full_name: usuario.nome,
-          role: usuario.role,
-        },
-      }
-
-      localStorage.setItem("arena_user", JSON.stringify(userData))
-      return userData
-    }
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (!mounted) return
 
     if (!email || !password) {
       setError("Por favor, preencha todos os campos")
@@ -116,109 +28,81 @@ export function LoginForm() {
 
     setLoading(true)
     setError("")
-    setSuccess("")
 
     try {
-      const userData = await handleLogin(email, password)
+      console.log("Tentando login com:", email)
+      const result = await signIn(email, password)
 
-      setSuccess("Login realizado com sucesso! Redirecionando...")
-
-      // Redirecionar para dashboard baseado no role
-      setTimeout(() => {
-        if (userData.profile.role === "admin") {
-          router.push("/dashboard/dashboard-admin")
-        } else if (userData.profile.role === "professor") {
-          router.push("/dashboard/dashboard-professor")
-        } else {
-          router.push("/dashboard/dashboard-aluno")
-        }
-      }, 500)
+      if (result.error) {
+        console.error("Erro no login:", result.error)
+        setError("Email ou senha incorretos")
+      } else {
+        console.log("Login bem-sucedido!")
+        router.push("/dashboard")
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro inesperado")
+      console.error("Erro inesperado:", err)
+      setError("Erro inesperado")
     } finally {
       setLoading(false)
     }
-  }
-
-  // Prevenir hidratação mismatch
-  if (!mounted) {
-    return (
-      <div className="w-full max-w-md mx-auto">
-        <div className="space-y-6">
-          <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-gray-700 rounded w-3/4"></div>
-            <div className="h-10 bg-gray-700 rounded"></div>
-            <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-            <div className="h-10 bg-gray-700 rounded"></div>
-            <div className="h-10 bg-orange-500 rounded"></div>
-          </div>
-        </div>
-      </div>
-    )
   }
 
   return (
     <div className="w-full max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <Alert
-            variant="destructive"
-            className="bg-red-900/20 border-red-800 text-red-300"
-            data-testid="error-message"
-          >
+          <Alert variant="destructive" className="bg-red-900/20 border-red-800 text-red-300">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
-        {success && (
-          <Alert className="bg-green-900/20 border-green-800 text-green-300">
-            <AlertDescription>{success}</AlertDescription>
-          </Alert>
-        )}
-
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-gray-300">
+          <Label htmlFor="email" className="text-white font-medium">
             Email
           </Label>
           <Input
             id="email"
-            name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="seu@email.com"
             className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500"
             required
-            autoComplete="email"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-gray-300">
+          <Label htmlFor="password" className="text-white font-medium">
             Senha
           </Label>
           <Input
             id="password"
-            name="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500"
             required
-            autoComplete="current-password"
           />
         </div>
 
         <Button
           type="submit"
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50"
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded-lg transition-colors"
           disabled={loading}
         >
-          {loading ? "Entrando..." : "Entrar"}
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Entrando...
+            </>
+          ) : (
+            "Entrar"
+          )}
         </Button>
 
-        <div className="text-center pt-4 space-y-3">
+        <div className="text-center pt-4">
           <Button
             type="button"
             variant="outline"
@@ -228,18 +112,6 @@ export function LoginForm() {
           >
             Esqueci minha senha
           </Button>
-
-          <div className="text-gray-300 text-sm">
-            Não tem uma conta?{" "}
-            <Button
-              type="button"
-              variant="link"
-              onClick={() => router.push("/register")}
-              className="text-orange-400 hover:text-orange-300 p-0 h-auto font-medium"
-            >
-              Criar conta
-            </Button>
-          </div>
         </div>
       </form>
     </div>

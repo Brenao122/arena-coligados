@@ -108,14 +108,9 @@ function SidebarContent({
   signOut,
   onClose,
 }: {
-  navigation: Array<{
-    name: string;
-    href: string;
-    icon: React.ComponentType<{ className?: string }>;
-    roles: string[];
-  }>
+  navigation: any[]
   pathname: string
-  profile: { full_name?: string; role?: string } | null
+  profile: any
   signOut: () => void
   onClose?: () => void
 }) {

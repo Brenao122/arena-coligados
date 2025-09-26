@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-// Removido import direto do repo - será usado via API
+import { detectReservasSchema } from "@/lib/supabase/schema-detector"
+import { getBrowserClient } from "@/lib/supabase/browser-client"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Link from "next/link"
@@ -35,53 +36,73 @@ export function RecentBookings() {
   const fetchRecentBookings = async () => {
     try {
       setLoading(true)
-      
-      // Buscar dados reais das planilhas
-      const [reservasRes, clientesRes, quadrasRes] = await Promise.all([
-        fetch('/api/sheets/read?sheet=Página1'),
-        fetch('/api/sheets/read?sheet=clientes'),
-        fetch('/api/sheets/read?sheet=quadras')
-      ])
+      const supabase = getBrowserClient()
 
-      const [reservasData, clientesData, quadrasData] = await Promise.all([
-        reservasRes.json(),
-        clientesRes.json(),
-        quadrasRes.json()
-      ])
+      const schema = await detectReservasSchema()
 
-      if (!reservasData.ok) {
-        console.error('Erro ao buscar reservas:', reservasData.error)
-        setBookings([])
-        return
+      let selectFields = `
+        id,
+        status,
+        tipo,
+        profiles:cliente_id (full_name),
+        quadras:quadra_id (nome),
+        created_at
+      `
+
+      if (schema === "tstzrange") {
+        selectFields += `, duracao, valor_total`
+      } else {
+        selectFields += `, data_inicio, data_fim, valor`
       }
 
-      // Criar mapas para lookup rápido
-      const clientesMap = new Map((clientesData.rows || []).map((c: any) => [c.id, c]))
-      const quadrasMap = new Map((quadrasData.rows || []).map((q: any) => [q.id, q]))
+      const { data, error } = await supabase
+        .from("reservas")
+        .select(selectFields)
+        .order("created_at", { ascending: false })
+        .limit(6)
 
-      // Enriquecer reservas e pegar as 6 mais recentes
-      const reservasCompletas = (reservasData.rows || [])
-        .sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
-        .slice(0, 6)
-        .map((reserva: any) => ({
-          id: reserva.id,
-          data_inicio: reserva.data_inicio,
-          data_fim: reserva.data_fim,
-          tipo: reserva.tipo,
-          status: reserva.status,
-          valor: reserva.valor_total || 0,
-          profiles: { 
-            full_name: (clientesMap.get(reserva.cliente_id) as any)?.nome || `Cliente ${reserva.cliente_id}` 
-          },
-          quadras: { 
-            nome: (quadrasMap.get(reserva.quadra_id) as any)?.nome || `Quadra ${reserva.quadra_id}` 
-          },
-        }))
+      if (error) throw error
 
-      setBookings(reservasCompletas)
+      const formattedBookings =
+        data?.map((booking) => {
+          let dataInicio = new Date().toISOString()
+          let dataFim = new Date().toISOString()
+          let valor = 0
+
+          try {
+            if (schema === "tstzrange" && booking.duracao) {
+              const duracaoStr = booking.duracao.toString()
+              const match = duracaoStr.match(/\["([^"]+)","([^"]+)"\)/) || duracaoStr.match(/\[([^,]+),([^)]+)\)/)
+
+              if (match) {
+                dataInicio = match[1].replace(/"/g, "")
+                dataFim = match[2].replace(/"/g, "")
+              }
+              valor = booking.valor_total || 0
+            } else if (schema === "separate_columns") {
+              dataInicio = booking.data_inicio || new Date().toISOString()
+              dataFim = booking.data_fim || new Date().toISOString()
+              valor = booking.valor || 0
+            }
+          } catch (error) {
+            console.error("Erro ao parsear dados da reserva:", error)
+          }
+
+          return {
+            id: booking.id,
+            data_inicio: dataInicio,
+            data_fim: dataFim,
+            tipo: booking.tipo || "Reserva",
+            status: booking.status,
+            valor: valor,
+            profiles: { full_name: booking.profiles?.full_name || "Cliente" },
+            quadras: { nome: booking.quadras?.nome || "Quadra" },
+          }
+        }) || []
+
+      setBookings(formattedBookings)
     } catch (error) {
-      console.error("Erro ao buscar reservas recentes:", error)
-      setBookings([])
+      console.error("Erro ao buscar reservas:", error)
     } finally {
       setLoading(false)
     }
@@ -89,40 +110,32 @@ export function RecentBookings() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pendente":
-        return "bg-yellow-500 text-white"
       case "confirmada":
-        return "bg-green-500 text-white"
+        return "bg-green-100 text-green-800"
+      case "pendente":
+        return "bg-yellow-100 text-yellow-800"
       case "cancelada":
-        return "bg-red-500 text-white"
+        return "bg-red-100 text-red-800"
       case "concluida":
-        return "bg-blue-500 text-white"
+        return "bg-blue-100 text-blue-800"
       default:
-        return "bg-gray-500 text-white"
-    }
-  }
-
-  const getTipoColor = (tipo: string) => {
-    switch (tipo) {
-      case "locacao":
-        return "bg-blue-500 text-white"
-      case "aula":
-        return "bg-purple-500 text-white"
-      default:
-        return "bg-gray-500 text-white"
+        return "bg-gray-100 text-gray-800"
     }
   }
 
   if (loading) {
     return (
-      <Card className="bg-gray-800 border-gray-700">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-white">Reservas Recentes</CardTitle>
+          <CardTitle>Reservas Recentes</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="animate-pulse space-y-4">
+          <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-700 rounded"></div>
+              <div key={i} className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </div>
             ))}
           </div>
         </CardContent>
@@ -131,48 +144,49 @@ export function RecentBookings() {
   }
 
   return (
-    <Card className="bg-gray-800 border-gray-700">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-white">Reservas Recentes</CardTitle>
-          <CardDescription className="text-gray-400">
-            Últimas reservas cadastradas no sistema
-          </CardDescription>
+          <CardTitle>Reservas Recentes</CardTitle>
+          <CardDescription>Últimas 6 reservas realizadas</CardDescription>
         </div>
-        <Button asChild variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700">
-          <Link href="/dashboard/reservas">Ver Todas</Link>
-        </Button>
+        <Link href="/dashboard/reservas">
+          <Button variant="outline" size="sm">
+            Ver Todas
+          </Button>
+        </Link>
       </CardHeader>
       <CardContent>
-        {bookings.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-400">Nenhuma reserva encontrada</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {bookings.map((booking) => (
-              <div key={booking.id} className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
+        <div className="space-y-4">
+          {bookings.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Nenhuma reserva encontrada</p>
+          ) : (
+            bookings.map((booking) => (
+              <div
+                key={booking.id}
+                className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h4 className="font-medium text-white">{booking.profiles.full_name}</h4>
-                    <Badge className={getStatusColor(booking.status)}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="font-medium text-sm">{booking.profiles?.full_name}</p>
+                    <Badge variant="secondary" className={getStatusColor(booking.status)}>
                       {booking.status}
                     </Badge>
-                    <Badge className={getTipoColor(booking.tipo)}>
-                      {booking.tipo}
-                    </Badge>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-400">
-                    <span>📅 {format(new Date(booking.data_inicio), "dd/MM/yyyy", { locale: ptBR })}</span>
-                    <span>🕐 {format(new Date(booking.data_inicio), "HH:mm", { locale: ptBR })} - {format(new Date(booking.data_fim), "HH:mm", { locale: ptBR })}</span>
-                    <span>🏟️ {booking.quadras.nome}</span>
-                    <span className="text-green-400 font-medium">R$ {booking.valor.toFixed(2)}</span>
-                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {booking.quadras?.nome} • {booking.tipo}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {format(new Date(booking.data_inicio), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium text-sm">R$ {booking.valor.toFixed(2)}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </CardContent>
     </Card>
   )

@@ -68,22 +68,12 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
       const { data, error } = await query
 
       if (error) {
+        console.error("Erro ao buscar reservas:", error)
         setReservas([])
         return
       }
 
-      const transformedReservas = (data || []).map((reserva: {
-        id: string;
-        duracao?: string;
-        data_inicio?: string;
-        data_fim?: string;
-        tipo?: string;
-        status?: string;
-        valor_total?: number;
-        valor?: number;
-        profiles?: { full_name: string };
-        quadras?: { nome: string };
-      }) => {
+      const transformedReservas = (data || []).map((reserva: any) => {
         let dataInicio = new Date().toISOString()
         let dataFim = new Date().toISOString()
 
@@ -106,6 +96,7 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
             dataFim = new Date(reserva.data_fim).toISOString()
           }
         } catch (error) {
+          console.error("Erro ao parsear duracao:", error, reserva.duracao || reserva.data_inicio)
           dataInicio = new Date().toISOString()
           dataFim = new Date(Date.now() + 60 * 60 * 1000).toISOString()
         }
@@ -128,6 +119,7 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
 
       setReservas(transformedReservas)
     } catch (error) {
+      console.error("Erro ao conectar com Supabase:", error)
       setReservas([])
     } finally {
       setLoading(false)

@@ -22,7 +22,7 @@ export default function LoginPage() {
           <p className="mt-2 text-gray-300 text-lg">Gestão Esportiva</p>
         </div>
 
-        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">
+        <div className="backdrop-blur-md bg-black/30 border border-white/20 rounded-2xl p-8 shadow-2xl">
           <LoginForm />
         </div>
       </div>
