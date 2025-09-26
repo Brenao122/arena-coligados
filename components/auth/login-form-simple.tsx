@@ -1,26 +1,22 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2 } from "lucide-react"
-
-// Usuários simples para teste
-const USERS = [
-  { email: "admin@arena.com", password: "admin123", name: "Administrador" },
-  { email: "user@arena.com", password: "user123", name: "Usuário" },
-]
+import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth-simple"
 
 export function LoginFormSimple() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const { login } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,14 +24,9 @@ export function LoginFormSimple() {
     setLoading(true)
     setError("")
 
-    // Simular delay de autenticação
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const success = await login(email, password)
 
-    const user = USERS.find((u) => u.email === email && u.password === password)
-
-    if (user) {
-      // Salvar usuário no localStorage
-      localStorage.setItem("arena-user", JSON.stringify(user))
+    if (success) {
       router.push("/dashboard")
     } else {
       setError("Email ou senha incorretos")
@@ -45,59 +36,79 @@ export function LoginFormSimple() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <Alert variant="destructive" className="bg-red-900/20 border-red-500/50">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-white">
-          Email
-        </Label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="admin@arena.com"
-          className="bg-white/10 border-white/30 text-white placeholder-gray-400"
-          required
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="password" className="text-white">
-          Senha
-        </Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          className="bg-white/10 border-white/30 text-white placeholder-gray-400"
-          required
-        />
-      </div>
-
-      <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white" disabled={loading}>
-        {loading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Entrando...
-          </>
-        ) : (
-          "Entrar"
+    <div className="w-full max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {error && (
+          <Alert variant="destructive" className="bg-red-900/20 border-red-500/50 text-red-300 backdrop-blur-sm">
+            <AlertDescription className="text-center font-medium">{error}</AlertDescription>
+          </Alert>
         )}
-      </Button>
 
-      <div className="text-center text-sm text-gray-400">
-        <p>Usuários de teste:</p>
-        <p>admin@arena.com / admin123</p>
-        <p>user@arena.com / user123</p>
-      </div>
-    </form>
+        <div className="space-y-3">
+          <Label htmlFor="email" className="text-white font-semibold text-lg flex items-center gap-2">
+            <Mail className="h-5 w-5 text-orange-400" />
+            Email
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@arena.com"
+            className="bg-white/10 border-white/30 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/50 h-14 text-lg rounded-xl backdrop-blur-sm"
+            required
+          />
+        </div>
+
+        <div className="space-y-3">
+          <Label htmlFor="password" className="text-white font-semibold text-lg flex items-center gap-2">
+            <Lock className="h-5 w-5 text-orange-400" />
+            Senha
+          </Label>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="bg-white/10 border-white/30 text-white placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/50 h-14 text-lg rounded-xl backdrop-blur-sm pr-12"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 h-16 text-xl rounded-xl shadow-2xl hover:shadow-orange-500/30 transition-all duration-300 transform hover:scale-105 border-0"
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-3 h-6 w-6 animate-spin" />
+              Entrando...
+            </>
+          ) : (
+            "Entrar"
+          )}
+        </Button>
+
+        <div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl backdrop-blur-sm">
+          <p className="text-blue-300 text-sm font-medium text-center mb-2">Usuários de teste:</p>
+          <div className="text-xs text-blue-200 space-y-1">
+            <p>Admin: admin@arena.com / admin123</p>
+            <p>Professor: professor@arena.com / prof123</p>
+            <p>Cliente: cliente@arena.com / cliente123</p>
+          </div>
+        </div>
+      </form>
+    </div>
   )
 }
