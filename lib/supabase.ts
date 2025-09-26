@@ -1,22 +1,23 @@
-import { getBrowserClient } from "./supabase/browser-client"
+import { createBrowserClient } from "@supabase/ssr"
 
 export const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fksahbiajrccraxvowtv.supabase.co"
 export const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2FoYmlhanJjY3JheHZvd3R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxMTM1MjQsImV4cCI6MjA3MDY4OTUyNH0.zW0CAWuOkZaRAXVcd0uNRADnf_ADMn9FjtCySFlLKeM"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2FoYmlhanJjY3JheHZvd3R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3NjI4NzQsImV4cCI6MjA1MTMzODg3NH0.WRJGmb3KepODc1EWK1ypkg_-rHuInWe"
+
+let supabaseClient: ReturnType<typeof createBrowserClient> | null = null
+
+export const getSupabaseClient = () => {
+  if (!supabaseClient) {
+    supabaseClient = createBrowserClient(supabaseUrl, supabaseAnonKey)
+  }
+  return supabaseClient
+}
+
+export const supabase = getSupabaseClient()
 
 export const isSupabaseConfigured = () => {
   return !!(supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith("https://"))
-}
-
-export const supabase = getBrowserClient()
-
-export const getSupabaseClient = () => {
-  if (!isSupabaseConfigured()) {
-    console.error("Supabase not configured properly")
-    return null
-  }
-  return getBrowserClient()
 }
 
 export const getProfile = async (userId: string) => {

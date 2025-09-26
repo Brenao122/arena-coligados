@@ -9,6 +9,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  serverExternalPackages: [
+    'googleapis',
+    'google-auth-library',
+    'google-spreadsheet'
+  ],
 }
 
 export default nextConfig

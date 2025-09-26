@@ -4,25 +4,30 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr"
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => req.cookies.get(name)?.value,
-        set: (name, value, options: CookieOptions) => {
-          res.cookies.set(name, value, options)
-        },
-        remove: (name, options: CookieOptions) => {
-          res.cookies.set(name, "", { ...options, maxAge: 0 })
-        },
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fksahbiajrccraxvowtv.supabase.co"
+  const supabaseAnonKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2FoYmlhanJjY3JheHZvd3R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3NjI4NzQsImV4cCI6MjA1MTMzODg3NH0.WRJGmb3KepODc1EWK1ypkg_-rHuInWe"
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get: (name) => req.cookies.get(name)?.value,
+      set: (name, value, options: CookieOptions) => {
+        res.cookies.set(name, value, options)
+      },
+      remove: (name, options: CookieOptions) => {
+        res.cookies.set(name, "", { ...options, maxAge: 0 })
       },
     },
-  )
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (error) {
+    console.warn("[middleware] Auth error:", error)
+  }
 
   const { pathname } = req.nextUrl
   if (pathname === "/dev-dashboard") {
@@ -52,21 +57,25 @@ export async function middleware(req: NextRequest) {
   }
 
   if (user && isProtected) {
-    const { data: roleRow } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .limit(1)
-      .maybeSingle()
+    try {
+      const { data: roleRow } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .limit(1)
+        .maybeSingle()
 
-    const role = roleRow?.role ?? "cliente"
+      const role = roleRow?.role ?? "cliente"
 
-    // Gates de permissão
-    if (pathname.startsWith("/dashboard/dashboard-admin") && role !== "admin") {
-      return NextResponse.redirect(new URL("/dashboard/dashboard-aluno", req.url))
-    }
-    if (pathname.startsWith("/dashboard/dashboard-professor") && !["professor", "admin"].includes(role)) {
-      return NextResponse.redirect(new URL("/dashboard/dashboard-aluno", req.url))
+      // Gates de permissão
+      if (pathname.startsWith("/dashboard/dashboard-admin") && role !== "admin") {
+        return NextResponse.redirect(new URL("/dashboard/dashboard-aluno", req.url))
+      }
+      if (pathname.startsWith("/dashboard/dashboard-professor") && !["professor", "admin"].includes(role)) {
+        return NextResponse.redirect(new URL("/dashboard/dashboard-aluno", req.url))
+      }
+    } catch (error) {
+      console.warn("[middleware] Role check error:", error)
     }
   }
 
