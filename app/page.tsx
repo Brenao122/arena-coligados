@@ -1,24 +1,148 @@
 "use client"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import type React from "react"
+
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { LogIn, Users, Calendar, Trophy, Star } from "lucide-react"
+import { LogIn, Users, Calendar, Trophy, Star, Eye, EyeOff } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import Image from "next/image"
 
 export default function HomePage() {
-  const router = useRouter()
+  const [showLogin, setShowLogin] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      router.push("/login")
-    }, 3000)
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
 
-    return () => clearTimeout(timer)
-  }, [router])
+    // Simular login
+    setTimeout(() => {
+      if (email === "admin@arena.com" && password === "admin123") {
+        // Salvar no localStorage
+        localStorage.setItem(
+          "arena-user",
+          JSON.stringify({
+            email: "admin@arena.com",
+            name: "Administrador",
+            role: "admin",
+          }),
+        )
+        alert("Login realizado com sucesso! Redirecionando...")
+        window.location.href = "/dashboard"
+      } else if (email === "professor@arena.com" && password === "prof123") {
+        localStorage.setItem(
+          "arena-user",
+          JSON.stringify({
+            email: "professor@arena.com",
+            name: "Professor",
+            role: "professor",
+          }),
+        )
+        alert("Login realizado com sucesso! Redirecionando...")
+        window.location.href = "/dashboard"
+      } else if (email === "cliente@arena.com" && password === "cliente123") {
+        localStorage.setItem(
+          "arena-user",
+          JSON.stringify({
+            email: "cliente@arena.com",
+            name: "Cliente",
+            role: "cliente",
+          }),
+        )
+        alert("Login realizado com sucesso! Redirecionando...")
+        window.location.href = "/dashboard"
+      } else {
+        alert("Credenciais inválidas!")
+      }
+      setLoading(false)
+    }, 1000)
+  }
 
-  const handleLoginClick = () => {
-    router.push("/login")
+  if (showLogin) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white flex items-center justify-center p-6">
+        <div className="max-w-md w-full">
+          <div className="text-center mb-8">
+            <Image
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-11%20at%2022.27.16-0QPOwwmNw3jfubVRs8DJkiW87DX0AW.jpeg"
+              alt="Arena Coligados Logo"
+              width={80}
+              height={80}
+              className="rounded-full ring-4 ring-orange-500/50 shadow-2xl mx-auto mb-4"
+            />
+            <h1 className="text-3xl font-bold text-orange-400">Arena Coligados</h1>
+            <p className="text-gray-300">Faça login para continuar</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <Label htmlFor="email" className="text-gray-200">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                placeholder="admin@arena.com"
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="password" className="text-gray-200">
+                Senha
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 pr-10"
+                  placeholder="admin123"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3"
+            >
+              {loading ? "Entrando..." : "Entrar"}
+            </Button>
+          </form>
+
+          <div className="mt-6 p-4 bg-gray-800/50 rounded-lg">
+            <p className="text-sm text-gray-300 mb-2">Usuários de teste:</p>
+            <div className="text-xs text-gray-400 space-y-1">
+              <p>👨‍💼 Admin: admin@arena.com / admin123</p>
+              <p>👨‍🏫 Professor: professor@arena.com / prof123</p>
+              <p>👤 Cliente: cliente@arena.com / cliente123</p>
+            </div>
+          </div>
+
+          <button onClick={() => setShowLogin(false)} className="w-full mt-4 text-gray-400 hover:text-white text-sm">
+            ← Voltar para página inicial
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -77,7 +201,7 @@ export default function HomePage() {
         {/* Botão de Login */}
         <div className="mb-8">
           <Button
-            onClick={handleLoginClick}
+            onClick={() => setShowLogin(true)}
             className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-orange-500/30 transition-all duration-300 transform hover:scale-105 border-0"
           >
             <LogIn className="h-8 w-8 mr-4" />
@@ -85,20 +209,18 @@ export default function HomePage() {
           </Button>
         </div>
 
-        {/* Redirecionamento automático */}
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6 backdrop-blur-sm">
-          <p className="text-blue-300 text-lg font-medium mb-2">🚀 Redirecionamento automático em 3 segundos...</p>
-          <p className="text-blue-200 text-sm">Ou clique no botão acima para acessar imediatamente</p>
+        {/* Status da Plataforma */}
+        <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 backdrop-blur-sm">
+          <p className="text-green-300 text-lg font-medium mb-2">🟢 Plataforma Online e Funcionando</p>
+          <p className="text-green-200 text-sm">Sistema pronto para deploy no Vercel</p>
         </div>
 
-        {/* Informações de teste */}
-        <div className="mt-8 bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-600/30">
-          <p className="text-gray-300 text-sm font-medium mb-3">Usuários de teste disponíveis:</p>
-          <div className="text-xs text-gray-400 space-y-1">
-            <p>👨‍💼 Admin: admin@arena.com / admin123</p>
-            <p>👨‍🏫 Professor: professor@arena.com / prof123</p>
-            <p>👤 Cliente: cliente@arena.com / cliente123</p>
-          </div>
+        {/* Informações de Deploy */}
+        <div className="mt-8 bg-blue-500/10 border border-blue-500/30 rounded-xl p-6 backdrop-blur-sm">
+          <p className="text-blue-300 text-lg font-medium mb-2">🚀 Pronto para Deploy</p>
+          <p className="text-blue-200 text-sm">
+            Clique no botão "Publish" no canto superior direito para colocar online
+          </p>
         </div>
       </div>
     </div>

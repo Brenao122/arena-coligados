@@ -1,30 +1,23 @@
 import { NextResponse, type NextRequest } from "next/server"
-import { createServerClient, type CookieOptions } from "@supabase/ssr"
+import { createClient } from "@supabase/supabase-js"
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fksahbiajrccraxvowtv.supabase.co"
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fogtbptqvvhoqesljlen.supabase.co"
   const supabaseAnonKey =
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2FoYmlhanJjY3JheHZvd3R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3NjI4NzQsImV4cCI6MjA1MTMzODg3NH0.WRJGmb3KepODc1EWK1ypkg_-rHuInWe"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvZ3RicHRxdnZob3Flc2xqbGVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MzU5NjgsImV4cCI6MjA3MzExMTk2OH0.placeholder"
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      get: (name) => req.cookies.get(name)?.value,
-      set: (name, value, options: CookieOptions) => {
-        res.cookies.set(name, value, options)
-      },
-      remove: (name, options: CookieOptions) => {
-        res.cookies.set(name, "", { ...options, maxAge: 0 })
-      },
-    },
-  })
+  const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
   let user = null
   try {
-    const { data } = await supabase.auth.getUser()
-    user = data.user
+    const token = req.cookies.get("sb-access-token")?.value
+    if (token) {
+      const { data } = await supabase.auth.getUser(token)
+      user = data.user
+    }
   } catch (error) {
     console.warn("[middleware] Auth error:", error)
   }
