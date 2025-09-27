@@ -1,83 +1,61 @@
 "use client"
 
-import type React from "react"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
-type Profile = {
-  id: string
+interface User {
   email: string
-  full_name: string
-  phone: string | null
-  role: "admin" | "professor" | "cliente"
+  name: string
+  role: string
 }
 
-type AuthContextType = {
-  user: any | null
-  profile: Profile | null
+interface AuthContextType {
+  user: User | null
+  login: (email: string, password: string) => Promise<boolean>
+  logout: () => void
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: any }>
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>
-  signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
+// Usuários de teste simples
+const testUsers = [
+  { email: "admin@arena.com", password: "admin123", name: "Administrador", role: "admin" },
+  { email: "professor@arena.com", password: "prof123", name: "Professor", role: "professor" },
+  { email: "cliente@arena.com", password: "cliente123", name: "Cliente", role: "cliente" },
+]
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simular usuário logado para o build
-    const mockUser = {
-      id: "mock-user-id",
-      email: "admin@arena.com",
-      user_metadata: {
-        full_name: "Admin Arena"
-      }
+    // Verificar se há usuário logado no localStorage
+    const savedUser = localStorage.getItem("arena-user")
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
     }
-    
-    const mockProfile = {
-      id: "mock-user-id",
-      email: "admin@arena.com",
-      full_name: "Admin Arena",
-      phone: "(11) 99999-9999",
-      role: "admin" as const
-    }
-
-    setUser(mockUser)
-    setProfile(mockProfile)
     setLoading(false)
   }, [])
 
-  const signIn = async (email: string, password: string) => {
-    // Simular login para o build
-    return { error: null }
+  const login = async (email: string, password: string): Promise<boolean> => {
+    const foundUser = testUsers.find((u) => u.email === email && u.password === password)
+
+    if (foundUser) {
+      const userData = { email: foundUser.email, name: foundUser.name, role: foundUser.role }
+      setUser(userData)
+      localStorage.setItem("arena-user", JSON.stringify(userData))
+      return true
+    }
+
+    return false
   }
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    // Simular cadastro para o build
-    return { error: null }
-  }
-
-  const signOut = async () => {
-    // Simular logout para o build
+  const logout = () => {
     setUser(null)
-    setProfile(null)
+    localStorage.removeItem("arena-user")
   }
 
-  return (
-    <AuthContext.Provider value={{
-      user,
-      profile,
-      loading,
-      signIn,
-      signUp,
-      signOut
-    }}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={{ user, login, logout, loading }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

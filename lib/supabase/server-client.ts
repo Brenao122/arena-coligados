@@ -1,23 +1,22 @@
-// lib/supabase/server-client.ts
-import "server-only";
-import { cookies } from "next/headers";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import "server-only"
+import { createClient } from "@supabase/supabase-js"
 
-export async function getServerClient() {
-  const c = await cookies();
+export function getServerClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fogtbptqvvhoqesljlen.supabase.co"
+  const supabaseServiceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvZ3RicHRxdnZob3Flc2xqbGVuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzUzNTk2OCwiZXhwIjoyMDczMTExOTY4fQ.1pm1pGV66WARqxaxMZmOqoYy8zmRKVYunOqwlFzUOew"
 
-  const cookieStore = {
-    get: (name: string) => c.get(name)?.value,
-    set: (name: string, value: string, options: CookieOptions) =>
-      c.set(name, value, options),
-    remove: (name: string, options: CookieOptions) =>
-      c.set(name, "", { ...options, maxAge: 0 }),
-    getAll: () => c.getAll(),
-  };
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.warn("[v0] Supabase environment variables not found")
+    // Return a basic client for fallback
+    return createClient("https://placeholder.supabase.co", "placeholder-key")
+  }
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: cookieStore }
-  );
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
 }

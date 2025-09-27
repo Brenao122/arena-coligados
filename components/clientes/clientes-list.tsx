@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { supabase } from "@/lib/supabase"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Edit, Trash2, Search, Users, Eye, Calendar } from "lucide-react"
@@ -40,36 +41,38 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
     try {
       setLoading(true)
 
-      // Buscar dados da planilha N8N via API
-      const response = await fetch('/api/sheets/read?sheet=Página1')
-      const result = await response.json()
-      
-      if (!result.ok) {
-        throw new Error(result.error || 'Erro ao buscar dados')
+      // Fetch clients from profiles table
+      const { data: clientesData, error: clientesError } = await supabase
+        .from("profiles")
+        .select(`
+          id, 
+          full_name, 
+          email, 
+          phone, 
+          created_at,
+          user_roles!inner(role)
+        `)
+        .eq("user_roles.role", "cliente")
+        .order("created_at", { ascending: false })
+
+      if (clientesError) {
+        console.error("Error fetching clientes:", clientesError)
+        setClientes([])
+        return
       }
 
-      const dados = result.rows || []
-      
-      // Criar clientes únicos baseados nos dados da planilha
-      const clientesUnicos = dados.reduce((acc: any[], item: any) => {
-        if (item.Nome && item.Email && !acc.find(c => c.email === item.Email)) {
-          acc.push({
-            id: item.Telefone || item.Email,
-            full_name: item.Nome,
-            email: item.Email,
-            phone: item.Telefone || "",
-            created_at: item.Data || new Date().toISOString(),
-            reservas_count: dados.filter(d => d.Email === item.Email).length,
-            ultima_reserva: item.Data,
-            total_gasto: 0
-          })
-        }
-        return acc
-      }, [])
+      // For now, set basic client data without complex reservation stats
+      // This can be enhanced later with actual reservation counting
+      const clientesWithBasicStats = (clientesData || []).map((cliente) => ({
+        ...cliente,
+        reservas_count: 0,
+        ultima_reserva: undefined,
+        total_gasto: 0,
+      }))
 
-      setClientes(clientesUnicos)
+      setClientes(clientesWithBasicStats)
     } catch (error) {
-      console.error('Erro ao buscar clientes:', error)
+      console.error("Error fetching clientes:", error)
       setClientes([])
     } finally {
       setLoading(false)
@@ -80,11 +83,12 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
     if (!confirm("Tem certeza que deseja excluir este cliente?")) return
 
     try {
-      // Para Google Sheets, vamos apenas atualizar o estado local
-      // Em uma implementação completa, você criaria uma função de delete no repo
+      const { error } = await supabase.from("profiles").delete().eq("id", clienteId)
+
+      if (error) throw error
       setClientes((prev) => prev.filter((c) => c.id !== clienteId))
     } catch (error) {
-      console.error('Erro ao excluir cliente:', error)
+      console.error("Error deleting cliente:", error)
     }
   }
 

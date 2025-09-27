@@ -1,33 +1,44 @@
-import { getBrowserClient } from "./supabase/browser-client"
+import { createClient } from "@supabase/supabase-js"
 
-export const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fksahbiajrccraxvowtv.supabase.co"
+export const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fogtbptqvvhoqesljlen.supabase.co"
 export const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrc2FoYmlhanJjY3JheHZvd3R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxMTM1MjQsImV4cCI6MjA3MDY4OTUyNH0.zW0CAWuOkZaRAXVcd0uNRADnf_ADMn9FjtCySFlLKeM"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvZ3RicHRxdnZob3Flc2xqbGVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MzU5NjgsImV4cCI6MjA3MzExMTk2OH0.placeholder"
+
+let supabaseClient: ReturnType<typeof createClient> | null = null
+
+export const getSupabaseClient = () => {
+  if (!supabaseClient) {
+    supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
+  }
+  return supabaseClient
+}
+
+export const supabase = getSupabaseClient()
 
 export const isSupabaseConfigured = () => {
   return !!(supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith("https://"))
 }
 
-export const supabase = getBrowserClient()
-
-export const getSupabaseClient = () => {
-  if (!isSupabaseConfigured()) {
-    return null
-  }
-  return getBrowserClient()
-}
-
 export const getProfile = async (userId: string) => {
   try {
+    console.log("🔍 Buscando perfil para ID:", userId)
     const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single()
 
     if (data) {
+      console.log("✅ Perfil encontrado:", data)
       return { data, error: null }
     }
 
+    console.error("❌ Perfil não encontrado para ID:", userId)
     return { data: null, error: error || { message: "Perfil não encontrado" } }
   } catch (error) {
+    console.error("❌ Erro ao buscar perfil:", error)
     return { data: null, error }
   }
 }

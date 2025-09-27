@@ -2,8 +2,6 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Montserrat, Oswald } from "next/font/google"
 import "./globals.css"
-import { AuthProvider } from "@/hooks/use-auth"
-import { ThemeProvider } from "@/contexts/theme-context"
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -19,7 +17,7 @@ const oswald = Oswald({
   variable: "--font-oswald",
 })
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arenacoligados.vercel.app"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arena-coligados.vercel.app"
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -35,31 +33,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${montserrat.variable} ${oswald.variable}`}>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  const theme = localStorage.getItem('arena-theme') || 'system';
-                  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                  const resolvedTheme = theme === 'system' ? systemTheme : theme;
-                  
-                  document.documentElement.classList.add(resolvedTheme);
-                  document.documentElement.style.colorScheme = resolvedTheme;
-                } catch (e) {
-                  document.documentElement.classList.add('dark');
-                  document.documentElement.style.colorScheme = 'dark';
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body className="font-sans antialiased bg-gray-900 dark:bg-gray-900 light:bg-gray-50 text-white dark:text-white light:text-gray-900 min-h-screen transition-colors duration-300">
-        <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </ThemeProvider>
+      <body className="font-sans antialiased bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white min-h-screen">
+        {children}
       </body>
     </html>
   )

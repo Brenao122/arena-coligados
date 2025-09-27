@@ -18,8 +18,8 @@ export default function ReservasPage() {
     setShowForm(true)
   }
 
-  const handleEditReserva = (reserva: any) => {
-    setEditingReserva(reserva.id)
+  const handleEditReserva = (reservaId: string) => {
+    setEditingReserva(reservaId)
     setShowForm(true)
   }
 
