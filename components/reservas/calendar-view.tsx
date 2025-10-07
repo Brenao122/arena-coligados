@@ -6,21 +6,19 @@ import { Button } from "@/components/ui/button"
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, addWeeks, subWeeks, isSameDay } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
-import { fetchReservasWithSchema } from "@/lib/supabase/schema-detector"
 
 interface Reserva {
   id: string
-  data_inicio: string
-  data_fim: string
-  tipo: string
+  nome: string
+  telefone: string
+  email: string
+  unidade: string
+  modalidade: string
+  data: string
+  horario: string
+  observacoes: string
   status: string
-  valor: number
-  profiles: {
-    full_name: string
-  }
-  quadras: {
-    nome: string
-  }
+  data_cadastro: string
 }
 
 interface CalendarViewProps {
@@ -63,63 +61,56 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
   const fetchReservas = async () => {
     try {
       setLoading(true)
+      console.log("[v0] Buscando reservas do Google Sheets...")
 
-      const query = await fetchReservasWithSchema(weekStart, weekEnd)
-      const { data, error } = await query
+      const response = await fetch("/api/sheets/reservas")
+      if (!response.ok) throw new Error("Erro ao buscar reservas")
 
-      if (error) {
-        console.error("Erro ao buscar reservas:", error)
-        setReservas([])
-        return
-      }
+      const data = await response.json()
+      console.log("[v0] Reservas recebidas:", data.length)
 
-      const transformedReservas = (data || []).map((reserva: any) => {
-        let dataInicio = new Date().toISOString()
-        let dataFim = new Date().toISOString()
-
-        try {
-          if (reserva.duracao) {
-            // TSTZRANGE format
-            const duracaoStr = reserva.duracao.toString()
-            const match =
-              duracaoStr.match(/\["([^"]+)","([^"]+)"\)/) ||
-              duracaoStr.match(/\[([^,]+),([^)]+)\)/) ||
-              duracaoStr.match(/\(([^,]+),([^)]+)\]/)
-
-            if (match) {
-              dataInicio = new Date(match[1].replace(/"/g, "")).toISOString()
-              dataFim = new Date(match[2].replace(/"/g, "")).toISOString()
+      // Transformar dados do Google Sheets para o formato do calendário
+      const transformedReservas = data
+        .map((row: any, index: number) => {
+          try {
+            // Parse da data no formato DD/MM/YYYY ou YYYY-MM-DD
+            let reservaDate: Date
+            if (row.data?.includes("/")) {
+              const [day, month, year] = row.data.split("/")
+              reservaDate = new Date(Number.parseInt(year), Number.parseInt(month) - 1, Number.parseInt(day))
+            } else {
+              reservaDate = new Date(row.data)
             }
-          } else if (reserva.data_inicio && reserva.data_fim) {
-            // Separate columns format
-            dataInicio = new Date(reserva.data_inicio).toISOString()
-            dataFim = new Date(reserva.data_fim).toISOString()
-          }
-        } catch (error) {
-          console.error("Erro ao parsear duracao:", error, reserva.duracao || reserva.data_inicio)
-          dataInicio = new Date().toISOString()
-          dataFim = new Date(Date.now() + 60 * 60 * 1000).toISOString()
-        }
 
-        return {
-          id: reserva.id,
-          data_inicio: dataInicio,
-          data_fim: dataFim,
-          tipo: reserva.tipo || "Locação",
-          status: reserva.status || "confirmada",
-          valor: reserva.valor_total || reserva.valor || 0,
-          profiles: {
-            full_name: reserva.profiles?.full_name || "Cliente não informado",
-          },
-          quadras: {
-            nome: reserva.quadras?.nome || "Quadra não informada",
-          },
-        }
-      })
+            // Verificar se a reserva está na semana atual
+            if (reservaDate < weekStart || reservaDate > weekEnd) {
+              return null
+            }
+
+            return {
+              id: `reserva-${index}`,
+              nome: row.nome || "Cliente não informado",
+              telefone: row.telefone || "",
+              email: row.email || "",
+              unidade: row.unidade || "Unidade não informada",
+              modalidade: row.modalidade || "Modalidade não informada",
+              data: row.data,
+              horario: row.horario || "00:00",
+              observacoes: row.observacoes || "",
+              status: row.status || "Pendente",
+              data_cadastro: row.data_cadastro || new Date().toISOString(),
+            }
+          } catch (error) {
+            console.error("[v0] Erro ao processar reserva:", error, row)
+            return null
+          }
+        })
+        .filter((r: any) => r !== null)
 
       setReservas(transformedReservas)
+      console.log("[v0] Reservas processadas:", transformedReservas.length)
     } catch (error) {
-      console.error("Erro ao conectar com Supabase:", error)
+      console.error("[v0] Erro ao buscar reservas:", error)
       setReservas([])
     } finally {
       setLoading(false)
@@ -128,21 +119,39 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
 
   const getReservasForDayAndTime = (day: Date, time: string) => {
     return reservas.filter((reserva) => {
-      const reservaDate = new Date(reserva.data_inicio)
-      const reservaTime = format(reservaDate, "HH:mm")
-      return isSameDay(reservaDate, day) && reservaTime === time
+      try {
+        // Parse da data da reserva
+        let reservaDate: Date
+        if (reserva.data.includes("/")) {
+          const [dayStr, month, year] = reserva.data.split("/")
+          reservaDate = new Date(Number.parseInt(year), Number.parseInt(month) - 1, Number.parseInt(dayStr))
+        } else {
+          reservaDate = new Date(reserva.data)
+        }
+
+        // Comparar data e horário
+        const reservaTime = reserva.horario.substring(0, 5) // Pegar apenas HH:mm
+        return isSameDay(reservaDate, day) && reservaTime === time
+      } catch (error) {
+        console.error("[v0] Erro ao comparar reserva:", error, reserva)
+        return false
+      }
     })
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    const statusLower = status.toLowerCase()
+    switch (statusLower) {
       case "confirmada":
+      case "confirmado":
         return "bg-green-100 text-green-800 border-green-200"
       case "pendente":
         return "bg-yellow-100 text-yellow-800 border-yellow-200"
       case "cancelada":
+      case "cancelado":
         return "bg-red-100 text-red-800 border-red-200"
       case "concluida":
+      case "concluído":
         return "bg-blue-100 text-blue-800 border-blue-200"
       default:
         return "bg-gray-100 text-gray-800 border-gray-200"
@@ -210,9 +219,9 @@ export function CalendarView({ onCreateReserva }: CalendarViewProps) {
                               key={reserva.id}
                               className={`text-xs p-1 rounded mb-1 border ${getStatusColor(reserva.status)}`}
                             >
-                              <div className="font-medium truncate">{reserva.quadras?.nome}</div>
-                              <div className="truncate">{reserva.profiles?.full_name}</div>
-                              <div className="text-xs opacity-75">{reserva.tipo}</div>
+                              <div className="font-medium truncate">{reserva.unidade}</div>
+                              <div className="truncate">{reserva.nome}</div>
+                              <div className="text-xs opacity-75">{reserva.modalidade}</div>
                             </div>
                           ))}
                         </div>

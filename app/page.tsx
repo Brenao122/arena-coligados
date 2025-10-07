@@ -209,6 +209,24 @@ export default function HomePage() {
           </Button>
         </div>
 
+        <div className="grid md:grid-cols-2 gap-6 mb-8 max-w-3xl mx-auto">
+          <Button
+            onClick={() => (window.location.href = "/aula-experimental")}
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-green-500/30 transition-all duration-300 transform hover:scale-105"
+          >
+            <Calendar className="h-6 w-6 mr-3" />
+            Agendar Aula Experimental
+          </Button>
+
+          <Button
+            onClick={() => (window.location.href = "/reservar-quadra")}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-blue-500/30 transition-all duration-300 transform hover:scale-105"
+          >
+            <Trophy className="h-6 w-6 mr-3" />
+            Reservar Quadra
+          </Button>
+        </div>
+
         {/* Status da Plataforma */}
         <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 backdrop-blur-sm">
           <p className="text-green-300 text-lg font-medium mb-2">🟢 Plataforma Online e Funcionando</p>
