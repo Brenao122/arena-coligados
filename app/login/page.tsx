@@ -1,6 +1,8 @@
 import { LoginFormSimple } from "@/components/auth/login-form-simple"
 import Image from "next/image"
 
+export const dynamic = "force-dynamic"
+
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
