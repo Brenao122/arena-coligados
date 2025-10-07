@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { supabase } from "@/lib/supabase"
 import {
   Bar,
   BarChart,
@@ -28,6 +27,16 @@ interface DailyFinancialData {
   interacoes: number
 }
 
+const mockDailyData: DailyFinancialData[] = [
+  { day: 1, date: "01/01", receita: 850, transacoes: 12, pagamentos: 8, interacoes: 25 },
+  { day: 2, date: "02/01", receita: 920, transacoes: 15, pagamentos: 10, interacoes: 30 },
+  { day: 3, date: "03/01", receita: 780, transacoes: 10, pagamentos: 7, interacoes: 22 },
+  { day: 4, date: "04/01", receita: 1100, transacoes: 18, pagamentos: 12, interacoes: 35 },
+  { day: 5, date: "05/01", receita: 950, transacoes: 14, pagamentos: 9, interacoes: 28 },
+  { day: 6, date: "06/01", receita: 1240, transacoes: 20, pagamentos: 15, interacoes: 42 },
+  { day: 7, date: "07/01", receita: 890, transacoes: 13, pagamentos: 8, interacoes: 26 },
+]
+
 export function FinancialChart() {
   const [dailyData, setDailyData] = useState<DailyFinancialData[]>([])
   const [loading, setLoading] = useState(true)
@@ -49,58 +58,11 @@ export function FinancialChart() {
         return
       }
 
-      // Fallback para Supabase se Google Sheets falhar
-      const { data: pagamentos, error } = await supabase
-        .from("pagamentos")
-        .select(`
-          amount,
-          created_at,
-          reservas:reserva_id (
-            data_inicio,
-            valor_total
-          )
-        `)
-        .eq("status", "aprovado")
-
-      if (error) throw error
-
-      // Processar dados por dia
-      const dailyStats: { [key: string]: DailyFinancialData } = {}
-
-      pagamentos?.forEach((pagamento) => {
-        const date = new Date(pagamento.created_at)
-        const day = date.getDate()
-        const dateStr = date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })
-
-        if (!dailyStats[day]) {
-          dailyStats[day] = {
-            day,
-            date: dateStr,
-            receita: 0,
-            transacoes: 0,
-            pagamentos: 0,
-            interacoes: 0,
-          }
-        }
-
-        dailyStats[day].receita += pagamento.amount
-        dailyStats[day].transacoes += 1
-        dailyStats[day].pagamentos += 1
-        dailyStats[day].interacoes += Math.floor(Math.random() * 10) + 5
-      })
-
-      setDailyData(Object.values(dailyStats).sort((a, b) => a.day - b.day))
+      // Usar dados mock se API falhar
+      setDailyData(mockDailyData)
     } catch (error) {
       console.error("Erro ao buscar dados financeiros:", error)
-      setDailyData([
-        { day: 1, date: "01/01", receita: 850, transacoes: 12, pagamentos: 8, interacoes: 25 },
-        { day: 2, date: "02/01", receita: 920, transacoes: 15, pagamentos: 10, interacoes: 30 },
-        { day: 3, date: "03/01", receita: 780, transacoes: 10, pagamentos: 7, interacoes: 22 },
-        { day: 4, date: "04/01", receita: 1100, transacoes: 18, pagamentos: 12, interacoes: 35 },
-        { day: 5, date: "05/01", receita: 950, transacoes: 14, pagamentos: 9, interacoes: 28 },
-        { day: 6, date: "06/01", receita: 1240, transacoes: 20, pagamentos: 15, interacoes: 42 },
-        { day: 7, date: "07/01", receita: 890, transacoes: 13, pagamentos: 8, interacoes: 26 },
-      ])
+      setDailyData(mockDailyData)
     } finally {
       setLoading(false)
     }

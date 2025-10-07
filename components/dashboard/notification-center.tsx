@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useState, useEffect } from "react"
-import { getBrowserClient } from "@/lib/supabase/browser-client"
 
 interface Notification {
   id: string
@@ -18,6 +17,36 @@ interface Notification {
   created_at: string
   data?: any
 }
+
+const mockNotifications: Notification[] = [
+  {
+    id: "1",
+    title: "Nova Reserva Confirmada",
+    message: "João Silva confirmou reserva para Quadra 1",
+    type: "success",
+    priority: "normal",
+    read: false,
+    created_at: new Date(Date.now() - 5 * 60000).toISOString(),
+  },
+  {
+    id: "2",
+    title: "Pagamento Pendente",
+    message: "Pagamento de R$ 150,00 aguardando confirmação",
+    type: "warning",
+    priority: "high",
+    read: false,
+    created_at: new Date(Date.now() - 15 * 60000).toISOString(),
+  },
+  {
+    id: "3",
+    title: "Manutenção Agendada",
+    message: "Quadra 3 em manutenção amanhã às 14h",
+    type: "info",
+    priority: "normal",
+    read: true,
+    created_at: new Date(Date.now() - 60 * 60000).toISOString(),
+  },
+]
 
 export function NotificationCenter() {
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -31,24 +60,15 @@ export function NotificationCenter() {
 
   const fetchNotifications = async () => {
     try {
-      const supabase = getBrowserClient()
-      const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(20)
+      // Simular delay de rede
+      await new Promise((resolve) => setTimeout(resolve, 500))
 
-      if (error) {
-        console.error("Error fetching notifications:", error)
-        return
-      }
-
-      setNotifications(data || [])
+      setNotifications(mockNotifications)
 
       // Calculate stats
-      const total = data?.length || 0
-      const unread = data?.filter((n) => !n.read).length || 0
-      const urgent = data?.filter((n) => n.priority === "urgent").length || 0
+      const total = mockNotifications.length
+      const unread = mockNotifications.filter((n) => !n.read).length
+      const urgent = mockNotifications.filter((n) => n.priority === "urgent").length
 
       setStats({
         total,
@@ -65,20 +85,12 @@ export function NotificationCenter() {
 
   const markAsRead = async (notificationId: string) => {
     try {
-      const supabase = getBrowserClient()
-      const { error } = await supabase
-        .from("notifications")
-        .update({ read: true, read_at: new Date().toISOString() })
-        .eq("id", notificationId)
-
-      if (!error) {
-        setNotifications((prev) => prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)))
-        setStats((prev) => ({
-          ...prev,
-          unread: prev.unread - 1,
-          read: prev.read + 1,
-        }))
-      }
+      setNotifications((prev) => prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)))
+      setStats((prev) => ({
+        ...prev,
+        unread: prev.unread - 1,
+        read: prev.read + 1,
+      }))
     } catch (error) {
       console.error("Error marking as read:", error)
     }
@@ -86,20 +98,12 @@ export function NotificationCenter() {
 
   const markAllAsRead = async () => {
     try {
-      const supabase = getBrowserClient()
-      const { error } = await supabase
-        .from("notifications")
-        .update({ read: true, read_at: new Date().toISOString() })
-        .eq("read", false)
-
-      if (!error) {
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
-        setStats((prev) => ({
-          ...prev,
-          unread: 0,
-          read: prev.total,
-        }))
-      }
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+      setStats((prev) => ({
+        ...prev,
+        unread: 0,
+        read: prev.total,
+      }))
     } catch (error) {
       console.error("Error marking all as read:", error)
     }
@@ -107,17 +111,12 @@ export function NotificationCenter() {
 
   const deleteNotification = async (notificationId: string) => {
     try {
-      const supabase = getBrowserClient()
-      const { error } = await supabase.from("notifications").delete().eq("id", notificationId)
-
-      if (!error) {
-        setNotifications((prev) => prev.filter((n) => n.id !== notificationId))
-        setStats((prev) => ({
-          ...prev,
-          total: prev.total - 1,
-          unread: prev.unread - (notifications.find((n) => n.id === notificationId)?.read ? 0 : 1),
-        }))
-      }
+      setNotifications((prev) => prev.filter((n) => n.id !== notificationId))
+      setStats((prev) => ({
+        ...prev,
+        total: prev.total - 1,
+        unread: prev.unread - (notifications.find((n) => n.id === notificationId)?.read ? 0 : 1),
+      }))
     } catch (error) {
       console.error("Error deleting notification:", error)
     }

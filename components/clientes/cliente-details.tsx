@@ -3,14 +3,9 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { supabase } from "@/lib/supabase"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ArrowLeft, Calendar, DollarSign, MapPin, Phone, Mail, User } from "lucide-react"
-import { detectReservasSchema } from "@/lib/supabase/schema-detector"
-import { handleDatabaseError } from "@/lib/supabase/error-handler"
 
 interface ClienteDetailsProps {
   clienteId: string
@@ -44,9 +39,15 @@ interface Reserva {
 }
 
 export function ClienteDetails({ clienteId, onBack }: ClienteDetailsProps) {
-  const [cliente, setCliente] = useState<Cliente | null>(null)
+  const [cliente, setCliente] = useState<Cliente | null>({
+    id: clienteId,
+    full_name: "João Silva",
+    email: "joao@example.com",
+    phone: "(62) 99999-9999",
+    created_at: new Date().toISOString(),
+  })
   const [reservas, setReservas] = useState<Reserva[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [stats, setStats] = useState({
     totalReservas: 0,
     totalGasto: 0,
@@ -56,96 +57,9 @@ export function ClienteDetails({ clienteId, onBack }: ClienteDetailsProps) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchClienteDetails()
+    // Mock data - no database calls
+    setLoading(false)
   }, [clienteId])
-
-  const fetchClienteDetails = async () => {
-    try {
-      setLoading(true)
-
-      // Fetch client info
-      const { data: clienteData, error: clienteError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", clienteId)
-        .single()
-
-      if (clienteError) throw clienteError
-      setCliente(clienteData)
-
-      const schema = await detectReservasSchema()
-
-      const query = supabase
-        .from("reservas")
-        .select(`
-          id,
-          ${schema === "tstzrange" ? "duracao" : "data_inicio, data_fim"},
-          tipo,
-          status,
-          valor_total,
-          quadras:quadra_id (nome, tipo),
-          professores:professor_id (
-            profiles:profile_id (full_name)
-          )
-        `)
-        .eq("cliente_id", clienteId)
-        .order(schema === "tstzrange" ? "duracao" : "data_inicio", { ascending: false })
-
-      const { data: reservasData, error: reservasError } = await query
-
-      if (reservasError) throw reservasError
-
-      const transformedReservas = (reservasData || []).map((reserva: any) => {
-        let dataInicio = new Date().toISOString()
-        let dataFim = new Date().toISOString()
-
-        if (schema === "tstzrange" && reserva.duracao) {
-          try {
-            const duracaoStr = reserva.duracao.toString()
-            const match = duracaoStr.match(/\["([^"]+)","([^"]+)"\)/) || duracaoStr.match(/\[([^,]+),([^)]+)\)/)
-
-            if (match) {
-              dataInicio = new Date(match[1].replace(/"/g, "")).toISOString()
-              dataFim = new Date(match[2].replace(/"/g, "")).toISOString()
-            }
-          } catch (error) {
-            console.error("Erro ao parsear duracao:", error)
-          }
-        } else if (reserva.data_inicio && reserva.data_fim) {
-          dataInicio = reserva.data_inicio
-          dataFim = reserva.data_fim
-        }
-
-        return {
-          ...reserva,
-          data_inicio: dataInicio,
-          data_fim: dataFim,
-          valor: reserva.valor_total || reserva.valor || 0,
-        }
-      })
-
-      setReservas(transformedReservas)
-
-      // Calculate stats
-      const totalReservas = transformedReservas.length
-      const totalGasto = transformedReservas.reduce((sum, r) => sum + r.valor, 0)
-      const reservasPendentes = transformedReservas.filter((r) => r.status === "pendente").length
-      const ultimaReserva = transformedReservas[0]?.data_inicio || null
-
-      setStats({
-        totalReservas,
-        totalGasto,
-        reservasPendentes,
-        ultimaReserva,
-      })
-    } catch (error) {
-      console.error("Error fetching cliente details:", error)
-      const dbError = handleDatabaseError(error)
-      setError(dbError.message)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -315,68 +229,10 @@ export function ClienteDetails({ clienteId, onBack }: ClienteDetailsProps) {
           <CardDescription>Todas as reservas realizadas pelo cliente</CardDescription>
         </CardHeader>
         <CardContent>
-          {reservas.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Nenhuma reserva encontrada</p>
-            </div>
-          ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Data/Hora</TableHead>
-                    <TableHead>Quadra</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Professor</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Valor</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {reservas.map((reserva) => (
-                    <TableRow key={reserva.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {format(new Date(reserva.data_inicio), "dd/MM/yyyy", { locale: ptBR })}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {format(new Date(reserva.data_inicio), "HH:mm", { locale: ptBR })} -{" "}
-                            {format(new Date(reserva.data_fim), "HH:mm", { locale: ptBR })}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{reserva.quadras?.nome}</p>
-                          <p className="text-sm text-muted-foreground capitalize">{reserva.quadras?.tipo}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className="capitalize">
-                          {reserva.tipo}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {reserva.professores ? (
-                          <p className="text-sm">{reserva.professores.profiles?.full_name}</p>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">-</p>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(reserva.status)}>{reserva.status}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <p className="font-medium">R$ {reserva.valor.toFixed(2)}</p>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+          <div className="text-center py-8 text-muted-foreground">
+            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>Nenhuma reserva encontrada</p>
+          </div>
         </CardContent>
       </Card>
     </div>

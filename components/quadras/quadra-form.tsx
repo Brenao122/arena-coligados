@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,9 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { supabase } from "@/lib/supabase"
 import { Loader2, X, Upload } from "lucide-react"
-import { isValidUUID, handleDatabaseError } from "@/lib/supabase/error-handler"
 
 interface QuadraFormProps {
   onClose: () => void
@@ -47,39 +44,6 @@ export function QuadraForm({ onClose, onSuccess, quadraId }: QuadraFormProps) {
     { value: "multipla", label: "Múltipla" },
   ]
 
-  useEffect(() => {
-    if (quadraId) {
-      fetchQuadra()
-    }
-  }, [quadraId])
-
-  const fetchQuadra = async () => {
-    if (!quadraId || quadraId === "new" || !isValidUUID(quadraId)) return
-
-    try {
-      const { data, error } = await supabase.from("quadras").select("*").eq("id", quadraId).single()
-
-      if (error) throw error
-
-      setFormData({
-        nome: data.nome,
-        tipo: data.tipo,
-        preco_hora: data.preco_hora.toString(),
-        ativa: data.ativa,
-        descricao: data.descricao || "",
-        imagem_url: data.imagem_url || "",
-      })
-
-      if (data.imagem_url) {
-        setImagePreview(data.imagem_url)
-      }
-    } catch (error) {
-      console.error("Error fetching quadra:", error)
-      const dbError = handleDatabaseError(error)
-      setError(dbError.message)
-    }
-  }
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -92,78 +56,48 @@ export function QuadraForm({ onClose, onSuccess, quadraId }: QuadraFormProps) {
     }
   }
 
-  const uploadImage = async (): Promise<string | null> => {
-    if (!imageFile) return formData.imagem_url || null
-
-    try {
-      const fileExt = imageFile.name.split(".").pop()
-      const fileName = `${Math.random()}.${fileExt}`
-      const filePath = `quadras/${fileName}`
-
-      const { error: uploadError } = await supabase.storage.from("images").upload(filePath, imageFile)
-
-      if (uploadError) {
-        console.error("Erro no upload para Supabase Storage:", uploadError)
-        return `/placeholder.svg?height=400&width=600&query=${encodeURIComponent(formData.nome + " " + formData.tipo)}`
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("images").getPublicUrl(filePath)
-
-      console.log("Upload realizado com sucesso:", publicUrl)
-      return publicUrl
-    } catch (error) {
-      console.error("Error uploading image:", error)
-      return `/placeholder.svg?height=400&width=600&query=${encodeURIComponent(formData.nome + " " + formData.tipo)}`
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
     try {
-      const imageUrl = await uploadImage()
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "quadras",
+          data: {
+            nome: formData.nome,
+            tipo: formData.tipo,
+            preco_hora: formData.preco_hora,
+            ativa: formData.ativa ? "Sim" : "Não",
+            descricao: formData.descricao,
+            data_cadastro: new Date().toISOString(),
+          },
+        }),
+      })
 
-      const quadraData = {
-        nome: formData.nome,
-        tipo: formData.tipo,
-        preco_hora: Number.parseFloat(formData.preco_hora),
-        ativa: formData.ativa,
-        descricao: formData.descricao,
-        imagem_url: imageUrl,
-      }
-
-      if (quadraId && quadraId !== "new" && isValidUUID(quadraId)) {
-        const { error } = await supabase.from("quadras").update(quadraData).eq("id", quadraId)
-        if (error) throw error
-      } else {
-        const { error } = await supabase.from("quadras").insert([quadraData])
-        if (error) {
-          console.warn("Erro ao inserir no Supabase:", error)
-          alert("Quadra cadastrada com sucesso! (Modo demonstração - dados não persistidos)")
-        }
+      if (!response.ok) {
+        throw new Error("Erro ao salvar quadra")
       }
 
       onSuccess()
       onClose()
     } catch (error: any) {
       console.error("Error saving quadra:", error)
-      const dbError = handleDatabaseError(error)
-      setError(dbError.message)
+      setError(error.message || "Erro ao salvar quadra")
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto bg-gray-800 border-gray-700">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>{quadraId ? "Editar Quadra" : "Nova Quadra"}</CardTitle>
-          <Button variant="ghost" size="sm" onClick={onClose}>
+          <CardTitle className="text-white">{quadraId ? "Editar Quadra" : "Nova Quadra"}</CardTitle>
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -178,25 +112,30 @@ export function QuadraForm({ onClose, onSuccess, quadraId }: QuadraFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="nome">Nome da Quadra</Label>
+              <Label htmlFor="nome" className="text-gray-200">
+                Nome da Quadra
+              </Label>
               <Input
                 id="nome"
                 value={formData.nome}
                 onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                 placeholder="Ex: Quadra 1 - Futsal"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="tipo">Tipo</Label>
+              <Label htmlFor="tipo" className="text-gray-200">
+                Tipo
+              </Label>
               <Select value={formData.tipo} onValueChange={(value) => setFormData({ ...formData, tipo: value })}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-gray-700 border-gray-600">
                   {tiposQuadra.map((tipo) => (
-                    <SelectItem key={tipo.value} value={tipo.value}>
+                    <SelectItem key={tipo.value} value={tipo.value} className="text-white hover:bg-gray-600">
                       {tipo.label}
                     </SelectItem>
                   ))}
@@ -207,7 +146,9 @@ export function QuadraForm({ onClose, onSuccess, quadraId }: QuadraFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="preco_hora">Preço por Hora (R$)</Label>
+              <Label htmlFor="preco_hora" className="text-gray-200">
+                Preço por Hora (R$)
+              </Label>
               <Input
                 id="preco_hora"
                 type="number"
@@ -216,39 +157,60 @@ export function QuadraForm({ onClose, onSuccess, quadraId }: QuadraFormProps) {
                 value={formData.preco_hora}
                 onChange={(e) => setFormData({ ...formData, preco_hora: e.target.value })}
                 placeholder="0.00"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ativa">Status</Label>
+              <Label htmlFor="ativa" className="text-gray-200">
+                Status
+              </Label>
               <div className="flex items-center space-x-2 pt-2">
                 <Switch
                   id="ativa"
                   checked={formData.ativa}
                   onCheckedChange={(checked) => setFormData({ ...formData, ativa: checked })}
                 />
-                <Label htmlFor="ativa">{formData.ativa ? "Ativa" : "Inativa"}</Label>
+                <Label htmlFor="ativa" className="text-gray-200">
+                  {formData.ativa ? "Ativa" : "Inativa"}
+                </Label>
               </div>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="descricao">Descrição</Label>
+            <Label htmlFor="descricao" className="text-gray-200">
+              Descrição
+            </Label>
             <Textarea
               id="descricao"
               value={formData.descricao}
               onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
               placeholder="Descrição da quadra, equipamentos disponíveis, etc."
               rows={3}
+              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="imagem">Imagem da Quadra</Label>
+            <Label htmlFor="imagem" className="text-gray-200">
+              Imagem da Quadra
+            </Label>
             <div className="flex items-center gap-4">
-              <Input id="imagem" type="file" accept="image/*" onChange={handleImageChange} className="flex-1" />
-              <Button type="button" variant="outline" size="sm">
+              <Input
+                id="imagem"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="flex-1 bg-gray-700 border-gray-600 text-white"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="border-gray-600 text-gray-300 hover:bg-gray-600 bg-transparent"
+              >
                 <Upload className="h-4 w-4 mr-2" />
                 Upload
               </Button>
@@ -265,10 +227,15 @@ export function QuadraForm({ onClose, onSuccess, quadraId }: QuadraFormProps) {
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1 bg-transparent">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1 bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700"
+            >
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading} className="flex-1 bg-brand-primary hover:bg-orange-600">
+            <Button type="submit" disabled={loading} className="flex-1 bg-orange-500 hover:bg-orange-600 text-white">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -15,11 +15,16 @@ interface HeaderProps {
   chatOpen: boolean
 }
 
+const mockNotifications = [
+  { id: "1", title: "Nova reserva", time: "5 min" },
+  { id: "2", title: "Pagamento aprovado", time: "10 min" },
+]
+
 export function Header({ onChatToggle, chatOpen }: HeaderProps) {
   const { profile } = useAuth()
   const { theme, actualTheme, setTheme } = useTheme()
-  const [notifications, setNotifications] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [notifications, setNotifications] = useState(mockNotifications)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchNotifications = async () => {

@@ -6,13 +6,22 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 
 interface OccupancyData {
   day: string
   ocupacao: number
   total: number
 }
+
+const mockOccupancyData: OccupancyData[] = [
+  { day: "Seg", ocupacao: 75, total: 9 },
+  { day: "Ter", ocupacao: 60, total: 7 },
+  { day: "Qua", ocupacao: 85, total: 10 },
+  { day: "Qui", ocupacao: 70, total: 8 },
+  { day: "Sex", ocupacao: 90, total: 11 },
+  { day: "Sáb", ocupacao: 95, total: 12 },
+  { day: "Dom", ocupacao: 50, total: 6 },
+]
 
 export function OccupancyChart() {
   const [data, setData] = useState<OccupancyData[]>([])
@@ -32,28 +41,11 @@ export function OccupancyChart() {
           return
         }
 
-        // Fallback para Supabase se Google Sheets falhar
-        const { data: reservasData } = await supabase
-          .from("reservas")
-          .select("date, quadra_id")
-          .gte("date", getWeekStart())
-          .lte("date", getWeekEnd())
-
-        // Calcular ocupação por dia da semana
-        const weekData = calculateWeeklyOccupancy(reservasData || [])
-        setData(weekData)
+        setData(mockOccupancyData)
         setCurrentWeek(getCurrentWeekRange())
       } catch (error) {
         console.error("Erro ao buscar dados de ocupação:", error)
-        setData([
-          { day: "Seg", ocupacao: 75, total: 9 },
-          { day: "Ter", ocupacao: 60, total: 7 },
-          { day: "Qua", ocupacao: 85, total: 10 },
-          { day: "Qui", ocupacao: 70, total: 8 },
-          { day: "Sex", ocupacao: 90, total: 11 },
-          { day: "Sáb", ocupacao: 95, total: 12 },
-          { day: "Dom", ocupacao: 50, total: 6 },
-        ])
+        setData(mockOccupancyData)
       } finally {
         setLoading(false)
       }
@@ -62,37 +54,14 @@ export function OccupancyChart() {
     fetchOccupancyData()
   }, [])
 
-  const getWeekStart = () => {
+  const getCurrentWeekRange = () => {
     const now = new Date()
     const dayOfWeek = now.getDay()
     const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
-    return new Date(now.setDate(diff)).toISOString().split("T")[0]
-  }
-
-  const getWeekEnd = () => {
-    const start = new Date(getWeekStart())
-    start.setDate(start.getDate() + 6)
-    return start.toISOString().split("T")[0]
-  }
-
-  const getCurrentWeekRange = () => {
-    const start = new Date(getWeekStart())
-    const end = new Date(getWeekEnd())
+    const start = new Date(now.setDate(diff))
+    const end = new Date(start)
+    end.setDate(end.getDate() + 6)
     return `${start.getDate().toString().padStart(2, "0")}/${(start.getMonth() + 1).toString().padStart(2, "0")} - ${end.getDate().toString().padStart(2, "0")}/${(end.getMonth() + 1).toString().padStart(2, "0")}`
-  }
-
-  const calculateWeeklyOccupancy = (reservas: any[]) => {
-    const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
-    const weekData = days.map((day, index) => {
-      const dayReservas = reservas.filter((r) => new Date(r.date).getDay() === index)
-      const ocupacao = Math.min((dayReservas.length / 12) * 100, 100) // Assumindo 12 slots por dia
-      return {
-        day: day === "Dom" ? "Dom" : days[index],
-        ocupacao: Math.round(ocupacao),
-        total: dayReservas.length,
-      }
-    })
-    return weekData.slice(1).concat(weekData.slice(0, 1)) // Reordenar para começar na segunda
   }
 
   const chartConfig = {

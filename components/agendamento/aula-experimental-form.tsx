@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { supabase } from "@/lib/supabase"
 import { normalizePhone } from "@/lib/normalize-phone"
 import { Loader2, GraduationCap, Users, Clock } from "lucide-react"
 
@@ -77,38 +76,36 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
     setSuccess("")
 
     try {
-      // Gerar ID da turma se for uma aula agendada
-      const turmaId = formData.data_aula ? crypto.randomUUID() : null
-
       const aulaData = {
         aluno_nome: formData.aluno_nome,
         aluno_telefone: normalizePhone(formData.aluno_telefone),
-        aluno_email: formData.aluno_email || null,
-        aluno_idade: formData.aluno_idade ? Number.parseInt(formData.aluno_idade) : null,
+        aluno_email: formData.aluno_email || "",
+        aluno_idade: formData.aluno_idade || "",
         modalidade: formData.modalidade,
         nivel: formData.nivel,
-        melhor_dia: formData.melhor_dia || null,
-        melhor_horario: formData.melhor_horario || null,
-        data_aula: formData.data_aula || null,
-        hora_inicio: formData.hora_inicio || null,
-        hora_fim: formData.hora_fim || null,
-        professor_nome: formData.professor_nome || null,
-        turma_id: turmaId,
-        vagas_ocupadas: 1,
-        max_vagas: 4,
-        status: formData.data_aula ? "agendado" : "pendente",
-        origem: "plataforma",
+        melhor_dia: formData.melhor_dia || "",
+        melhor_horario: formData.melhor_horario || "",
+        data_aula: formData.data_aula || "",
+        hora_inicio: formData.hora_inicio || "",
+        hora_fim: formData.hora_fim || "",
+        professor_nome: formData.professor_nome || "",
         observacoes: formData.observacoes,
-        needs_sync: true, // Marca para sincronização com Google Sheets
+        status: formData.data_aula ? "agendado" : "pendente",
       }
 
-      const { error: supabaseError } = await supabase.from("aulas_experimentais_sheets").insert([aulaData])
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "leads",
+          data: aulaData,
+        }),
+      })
 
-      if (supabaseError) throw supabaseError
+      if (!response.ok) throw new Error("Erro ao enviar dados")
 
-      setSuccess("Aula experimental registrada com sucesso! Será sincronizada com a planilha automaticamente.")
+      setSuccess("Aula experimental registrada com sucesso!")
 
-      // Reset form
       setFormData({
         aluno_nome: "",
         aluno_telefone: "",

@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { supabase } from "@/lib/supabase"
 import { normalizePhone } from "@/lib/normalize-phone"
 import { Loader2, Calendar, Clock, MapPin, DollarSign } from "lucide-react"
 
@@ -66,12 +65,12 @@ export function QuadraAgendamentoForm({ onSuccess, onClose }: QuadraAgendamentoF
 
     try {
       const precoTotal = calcularPreco()
-      const sinalPix = precoTotal * 0.5 // 50% de sinal
+      const sinalPix = precoTotal * 0.5
 
       const agendamentoData = {
         cliente_nome: formData.cliente_nome,
         cliente_telefone: normalizePhone(formData.cliente_telefone),
-        cliente_email: formData.cliente_email || null,
+        cliente_email: formData.cliente_email || "",
         modalidade: formData.modalidade,
         quadra_numero: formData.quadra_numero,
         data_agendamento: formData.data_agendamento,
@@ -81,18 +80,22 @@ export function QuadraAgendamentoForm({ onSuccess, onClose }: QuadraAgendamentoF
         sinal_pix: sinalPix,
         valor_restante: precoTotal - sinalPix,
         status: "pendente",
-        origem: "plataforma",
         observacoes: formData.observacoes,
-        needs_sync: true, // Marca para sincronização com Google Sheets
       }
 
-      const { error: supabaseError } = await supabase.from("quadras_agendamentos_sheets").insert([agendamentoData])
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "Página1",
+          data: agendamentoData,
+        }),
+      })
 
-      if (supabaseError) throw supabaseError
+      if (!response.ok) throw new Error("Erro ao enviar dados")
 
-      setSuccess("Agendamento criado com sucesso! Será sincronizado com a planilha automaticamente.")
+      setSuccess("Agendamento criado com sucesso!")
 
-      // Reset form
       setFormData({
         cliente_nome: "",
         cliente_telefone: "",

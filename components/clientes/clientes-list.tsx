@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { supabase } from "@/lib/supabase"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Edit, Trash2, Search, Users, Eye, Calendar } from "lucide-react"
@@ -29,67 +28,38 @@ interface ClientesListProps {
 }
 
 export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
-  const [clientes, setClientes] = useState<Cliente[]>([])
-  const [loading, setLoading] = useState(true)
+  const [clientes, setClientes] = useState<Cliente[]>([
+    {
+      id: "1",
+      full_name: "João Silva",
+      email: "joao@example.com",
+      phone: "(62) 99999-9999",
+      created_at: new Date().toISOString(),
+      reservas_count: 5,
+      ultima_reserva: new Date().toISOString(),
+      total_gasto: 450.0,
+    },
+    {
+      id: "2",
+      full_name: "Maria Santos",
+      email: "maria@example.com",
+      phone: "(62) 98888-8888",
+      created_at: new Date().toISOString(),
+      reservas_count: 3,
+      ultima_reserva: new Date().toISOString(),
+      total_gasto: 280.0,
+    },
+  ])
+  const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
-    fetchClientes()
+    // Mock data - no database calls
   }, [refresh])
-
-  const fetchClientes = async () => {
-    try {
-      setLoading(true)
-
-      // Fetch clients from profiles table
-      const { data: clientesData, error: clientesError } = await supabase
-        .from("profiles")
-        .select(`
-          id, 
-          full_name, 
-          email, 
-          phone, 
-          created_at,
-          user_roles!inner(role)
-        `)
-        .eq("user_roles.role", "cliente")
-        .order("created_at", { ascending: false })
-
-      if (clientesError) {
-        console.error("Error fetching clientes:", clientesError)
-        setClientes([])
-        return
-      }
-
-      // For now, set basic client data without complex reservation stats
-      // This can be enhanced later with actual reservation counting
-      const clientesWithBasicStats = (clientesData || []).map((cliente) => ({
-        ...cliente,
-        reservas_count: 0,
-        ultima_reserva: undefined,
-        total_gasto: 0,
-      }))
-
-      setClientes(clientesWithBasicStats)
-    } catch (error) {
-      console.error("Error fetching clientes:", error)
-      setClientes([])
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleDelete = async (clienteId: string) => {
     if (!confirm("Tem certeza que deseja excluir este cliente?")) return
-
-    try {
-      const { error } = await supabase.from("profiles").delete().eq("id", clienteId)
-
-      if (error) throw error
-      setClientes((prev) => prev.filter((c) => c.id !== clienteId))
-    } catch (error) {
-      console.error("Error deleting cliente:", error)
-    }
+    setClientes((prev) => prev.filter((c) => c.id !== clienteId))
   }
 
   const filteredClientes = clientes.filter((cliente) => {

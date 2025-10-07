@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { supabase } from "@/lib/supabase"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Search, MessageSquare, Phone, Mail, UserPlus } from "lucide-react"
@@ -28,49 +27,39 @@ interface LeadsListProps {
 }
 
 export function LeadsList({ refresh }: LeadsListProps) {
-  const [leads, setLeads] = useState<Lead[]>([])
-  const [loading, setLoading] = useState(true)
+  const [leads, setLeads] = useState<Lead[]>([
+    {
+      id: "1",
+      name: "João Silva",
+      phone: "(11) 99999-9999",
+      email: "joao@email.com",
+      source: "whatsapp",
+      status: "novo",
+      notes: "Interessado em aula de tênis",
+      created_at: new Date().toISOString(),
+    },
+    {
+      id: "2",
+      name: "Maria Santos",
+      phone: "(11) 98888-8888",
+      email: "maria@email.com",
+      source: "instagram",
+      status: "contatado",
+      notes: "Quer reservar quadra",
+      created_at: new Date().toISOString(),
+    },
+  ])
+  const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [origemFilter, setOrigemFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
 
   useEffect(() => {
-    fetchLeads()
+    // No need to fetch data from Supabase
   }, [refresh])
 
-  const fetchLeads = async () => {
-    try {
-      setLoading(true)
-      const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false })
-
-      if (error) {
-        console.error("Erro ao buscar leads:", error)
-        setLeads([])
-        return
-      }
-
-      setLeads(data || [])
-    } catch (error) {
-      console.error("Erro ao conectar com Supabase:", error)
-      setLeads([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleStatusChange = async (leadId: string, newStatus: string) => {
-    try {
-      const { error } = await supabase.from("leads").update({ status: newStatus }).eq("id", leadId)
-
-      if (error) {
-        console.error("Error updating status:", error)
-        return
-      }
-
-      setLeads((prev) => prev.map((lead) => (lead.id === leadId ? { ...lead, status: newStatus } : lead)))
-    } catch (error) {
-      console.error("Error updating status:", error)
-    }
+    setLeads((prev) => prev.map((lead) => (lead.id === leadId ? { ...lead, status: newStatus } : lead)))
   }
 
   const getStatusColor = (status: string) => {

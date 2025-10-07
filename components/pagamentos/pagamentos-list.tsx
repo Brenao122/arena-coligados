@@ -10,7 +10,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Search, DollarSign, CreditCard, Smartphone } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 
 interface Pagamento {
@@ -39,6 +38,43 @@ interface PagamentosListProps {
   refresh: boolean
 }
 
+const mockPagamentos: Pagamento[] = [
+  {
+    id: "1",
+    reserva_id: "res1",
+    amount: 150.0,
+    method: "pix",
+    status: "aprovado",
+    transaction_id: "TXN001",
+    paid_at: new Date().toISOString(),
+    created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    reservas: {
+      cliente_id: "cli1",
+      quadra_id: "q1",
+      duracao: '["2025-01-10T14:00:00Z","2025-01-10T15:00:00Z")',
+      profiles: { full_name: "João Silva" },
+      quadras: { nome: "Quadra 1" },
+    },
+  },
+  {
+    id: "2",
+    reserva_id: "res2",
+    amount: 120.0,
+    method: "cartao",
+    status: "pendente",
+    transaction_id: "TXN002",
+    paid_at: null,
+    created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    reservas: {
+      cliente_id: "cli2",
+      quadra_id: "q2",
+      duracao: '["2025-01-10T16:00:00Z","2025-01-10T17:00:00Z")',
+      profiles: { full_name: "Maria Santos" },
+      quadras: { nome: "Quadra 2" },
+    },
+  },
+]
+
 export function PagamentosList({ refresh }: PagamentosListProps) {
   const [pagamentos, setPagamentos] = useState<Pagamento[]>([])
   const [loading, setLoading] = useState(true)
@@ -50,22 +86,9 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
   const fetchPagamentos = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from("pagamentos")
-        .select(`
-          *,
-          reservas (
-            cliente_id,
-            quadra_id,
-            duracao,
-            profiles:cliente_id (full_name),
-            quadras:quadra_id (nome)
-          )
-        `)
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-      setPagamentos(data || [])
+      // Simular delay de rede
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      setPagamentos(mockPagamentos)
     } catch (error) {
       console.error("Erro ao buscar pagamentos:", error)
       toast({
@@ -84,22 +107,23 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
 
   const handleStatusChange = async (pagamentoId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from("pagamentos")
-        .update({
-          status: newStatus,
-          paid_at: newStatus === "aprovado" ? new Date().toISOString() : null,
-        })
-        .eq("id", pagamentoId)
-
-      if (error) throw error
+      // Atualizar localmente
+      setPagamentos((prev) =>
+        prev.map((p) =>
+          p.id === pagamentoId
+            ? {
+                ...p,
+                status: newStatus,
+                paid_at: newStatus === "aprovado" ? new Date().toISOString() : null,
+              }
+            : p,
+        ),
+      )
 
       toast({
         title: "Sucesso",
         description: `Pagamento ${newStatus} com sucesso`,
       })
-
-      fetchPagamentos() // Recarregar dados
     } catch (error) {
       console.error("Erro ao atualizar status:", error)
       toast({

@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { detectReservasSchema } from "@/lib/supabase/schema-detector"
-import { getBrowserClient } from "@/lib/supabase/browser-client"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Link from "next/link"
@@ -25,6 +23,39 @@ interface Booking {
   }
 }
 
+const mockBookings: Booking[] = [
+  {
+    id: "1",
+    data_inicio: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+    data_fim: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
+    tipo: "Futebol",
+    status: "confirmada",
+    valor: 150.0,
+    profiles: { full_name: "João Silva" },
+    quadras: { nome: "Quadra 1" },
+  },
+  {
+    id: "2",
+    data_inicio: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+    data_fim: new Date(Date.now() + 5 * 60 * 60 * 1000).toISOString(),
+    tipo: "Vôlei",
+    status: "pendente",
+    valor: 120.0,
+    profiles: { full_name: "Maria Santos" },
+    quadras: { nome: "Quadra 2" },
+  },
+  {
+    id: "3",
+    data_inicio: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
+    data_fim: new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString(),
+    tipo: "Futebol",
+    status: "confirmada",
+    valor: 150.0,
+    profiles: { full_name: "Pedro Costa" },
+    quadras: { nome: "Quadra 1" },
+  },
+]
+
 export function RecentBookings() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
@@ -36,71 +67,9 @@ export function RecentBookings() {
   const fetchRecentBookings = async () => {
     try {
       setLoading(true)
-      const supabase = getBrowserClient()
-
-      const schema = await detectReservasSchema()
-
-      let selectFields = `
-        id,
-        status,
-        tipo,
-        profiles:cliente_id (full_name),
-        quadras:quadra_id (nome),
-        created_at
-      `
-
-      if (schema === "tstzrange") {
-        selectFields += `, duracao, valor_total`
-      } else {
-        selectFields += `, data_inicio, data_fim, valor`
-      }
-
-      const { data, error } = await supabase
-        .from("reservas")
-        .select(selectFields)
-        .order("created_at", { ascending: false })
-        .limit(6)
-
-      if (error) throw error
-
-      const formattedBookings =
-        data?.map((booking) => {
-          let dataInicio = new Date().toISOString()
-          let dataFim = new Date().toISOString()
-          let valor = 0
-
-          try {
-            if (schema === "tstzrange" && booking.duracao) {
-              const duracaoStr = booking.duracao.toString()
-              const match = duracaoStr.match(/\["([^"]+)","([^"]+)"\)/) || duracaoStr.match(/\[([^,]+),([^)]+)\)/)
-
-              if (match) {
-                dataInicio = match[1].replace(/"/g, "")
-                dataFim = match[2].replace(/"/g, "")
-              }
-              valor = booking.valor_total || 0
-            } else if (schema === "separate_columns") {
-              dataInicio = booking.data_inicio || new Date().toISOString()
-              dataFim = booking.data_fim || new Date().toISOString()
-              valor = booking.valor || 0
-            }
-          } catch (error) {
-            console.error("Erro ao parsear dados da reserva:", error)
-          }
-
-          return {
-            id: booking.id,
-            data_inicio: dataInicio,
-            data_fim: dataFim,
-            tipo: booking.tipo || "Reserva",
-            status: booking.status,
-            valor: valor,
-            profiles: { full_name: booking.profiles?.full_name || "Cliente" },
-            quadras: { nome: booking.quadras?.nome || "Quadra" },
-          }
-        }) || []
-
-      setBookings(formattedBookings)
+      // Simular delay de rede
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      setBookings(mockBookings)
     } catch (error) {
       console.error("Erro ao buscar reservas:", error)
     } finally {

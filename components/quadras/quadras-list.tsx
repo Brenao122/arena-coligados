@@ -1,23 +1,21 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Edit, Trash2, Search, MapPin, Plus, Camera } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 
 interface Quadra {
   id: string
-  nome?: string
-  tipo?: string
-  preco_hora?: number
+  nome: string
+  tipo: string
+  preco_hora: number
   ativa: boolean
-  descricao?: string
+  descricao: string
   image_url?: string
-  created_at: string
 }
 
 interface QuadrasListProps {
@@ -26,70 +24,34 @@ interface QuadrasListProps {
 }
 
 export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
-  const [quadras, setQuadras] = useState<Quadra[]>([])
-  const [loading, setLoading] = useState(true)
+  const [quadras] = useState<Quadra[]>([
+    {
+      id: "1",
+      nome: "Quadra 1 - Futsal",
+      tipo: "Futsal",
+      preco_hora: 150.0,
+      ativa: true,
+      descricao: "Quadra coberta com grama sintética",
+      image_url: "/quadra-futsal.jpg",
+    },
+    {
+      id: "2",
+      nome: "Quadra 2 - Beach Tennis",
+      tipo: "Beach Tennis",
+      preco_hora: 120.0,
+      ativa: true,
+      descricao: "Quadra de areia com iluminação",
+      image_url: "/quadra-beach-tennis.jpg",
+    },
+  ])
+  const [loading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [tipoFilter, setTipoFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
 
-  const fetchQuadras = async () => {
-    try {
-      setLoading(true)
-      const { data, error } = await supabase.from("quadras").select("*").order("created_at", { ascending: false })
-
-      if (error) {
-        console.error("Erro ao buscar quadras:", error)
-        setQuadras([])
-        return
-      }
-
-      setQuadras(data || [])
-    } catch (error) {
-      console.error("Erro ao conectar com Supabase:", error)
-      setQuadras([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchQuadras()
-  }, [refresh])
-
-  const handleDelete = async (quadraId: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta quadra?")) return
-
-    try {
-      const { error } = await supabase.from("quadras").delete().eq("id", quadraId)
-      if (error) throw error
-      setQuadras((prev) => prev.filter((q) => q.id !== quadraId))
-    } catch (error) {
-      console.error("Erro ao deletar quadra:", error)
-    }
-  }
-
-  const toggleStatus = async (quadraId: string, currentStatus: boolean) => {
-    try {
-      const { error } = await supabase.from("quadras").update({ ativa: !currentStatus }).eq("id", quadraId)
-      if (error) throw error
-      setQuadras((prev) => prev.map((q) => (q.id === quadraId ? { ...q, ativa: !currentStatus } : q)))
-    } catch (error) {
-      console.error("Erro ao atualizar status:", error)
-    }
-  }
-
-  const handleAddPhotos = (quadraId: string) => {
-    alert(
-      `Funcionalidade de upload de fotos para a quadra ${quadraId} será implementada com a integração do Vercel Blob.`,
-    )
-  }
-
   const filteredQuadras = quadras.filter((quadra) => {
-    const quadraName = quadra.nome || ""
-    const quadraType = quadra.tipo || ""
-
-    const matchesSearch = quadraName.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesTipo = tipoFilter === "all" || quadraType === tipoFilter
+    const matchesSearch = quadra.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesTipo = tipoFilter === "all" || quadra.tipo === tipoFilter
     const matchesStatus = statusFilter === "all" || (statusFilter === "ativa" ? quadra.ativa : !quadra.ativa)
 
     return matchesSearch && matchesTipo && matchesStatus
@@ -152,7 +114,7 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
               <SelectItem value="Futsal">Futsal</SelectItem>
               <SelectItem value="Vôlei">Vôlei</SelectItem>
               <SelectItem value="Basquete">Basquete</SelectItem>
-              <SelectItem value="Futebol Society">Society</SelectItem>
+              <SelectItem value="Society">Society</SelectItem>
               <SelectItem value="Tênis">Tênis</SelectItem>
               <SelectItem value="Beach Tennis">Beach Tennis</SelectItem>
             </SelectContent>
@@ -185,7 +147,7 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
                 <div className="aspect-video relative">
                   <img
                     src={quadra.image_url || "/placeholder.svg?height=200&width=300&query=quadra esportiva"}
-                    alt={quadra.nome || "Quadra"}
+                    alt={quadra.nome}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-2 right-2 flex gap-2">
@@ -197,12 +159,7 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
                     </Badge>
                   </div>
                   <div className="absolute bottom-2 right-2">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleAddPhotos(quadra.id)}
-                      className="bg-black/50 hover:bg-black/70 text-white border-0"
-                    >
+                    <Button size="sm" variant="secondary" className="bg-black/50 hover:bg-black/70 text-white border-0">
                       <Camera className="h-4 w-4" />
                     </Button>
                   </div>
@@ -210,12 +167,12 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
                 <CardContent className="p-4">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-lg text-white">{quadra.nome || "Quadra sem nome"}</h3>
+                      <h3 className="font-semibold text-lg text-white">{quadra.nome}</h3>
                       <Badge variant="outline" className="capitalize border-gray-500 text-gray-300">
-                        {quadra.tipo || "Tipo não definido"}
+                        {quadra.tipo}
                       </Badge>
                     </div>
-                    <p className="text-2xl font-bold text-orange-500">R$ {(quadra.preco_hora || 0).toFixed(2)}/h</p>
+                    <p className="text-2xl font-bold text-orange-500">R$ {quadra.preco_hora.toFixed(2)}/h</p>
                     {quadra.descricao && <p className="text-sm text-gray-400 line-clamp-2">{quadra.descricao}</p>}
                   </div>
                   <div className="flex gap-2 mt-4">
@@ -228,20 +185,7 @@ export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
                       <Edit className="h-4 w-4 mr-2" />
                       Editar
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleStatus(quadra.id, quadra.ativa)}
-                      className="flex-1 border-gray-600 text-white hover:bg-gray-600"
-                    >
-                      {quadra.ativa ? "Desativar" : "Ativar"}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(quadra.id)}
-                      className="border-gray-600 hover:bg-gray-600"
-                    >
+                    <Button variant="outline" size="sm" className="border-gray-600 hover:bg-gray-600 bg-transparent">
                       <Trash2 className="h-4 w-4 text-red-400" />
                     </Button>
                   </div>

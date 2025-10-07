@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { supabase } from "@/lib/supabase"
 import { X } from "lucide-react"
 
 interface LeadFormProps {
@@ -34,22 +33,25 @@ export function LeadForm({ isOpen, onClose, onSuccess }: LeadFormProps) {
     setError("")
 
     try {
-      const { data, error: supabaseError } = await supabase
-        .from("leads")
-        .insert([
-          {
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "leads",
+          data: {
             nome: formData.nome,
             telefone: formData.telefone,
-            email: formData.email || null,
+            email: formData.email || "",
             origem: formData.origem,
             interesse: formData.interesse,
             status: formData.status,
+            data_cadastro: new Date().toISOString(),
           },
-        ])
-        .select()
+        }),
+      })
 
-      if (supabaseError) {
-        throw new Error(supabaseError.message)
+      if (!response.ok) {
+        throw new Error("Erro ao salvar lead")
       }
 
       // Reset form
