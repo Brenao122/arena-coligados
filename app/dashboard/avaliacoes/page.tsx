@@ -1,5 +1,7 @@
 import { SistemaAvaliacao } from "@/components/avaliacoes/sistema-avaliacao"
 
+export const dynamic = "force-dynamic"
+
 export default function AvaliacoesPage() {
   return (
     <div className="space-y-6">

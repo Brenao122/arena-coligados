@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Montserrat, Oswald } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/hooks/use-auth-simple"
+import { ThemeProvider } from "@/contexts/theme-context"
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -35,7 +36,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${montserrat.variable} ${oswald.variable}`}>
       <body className="font-sans antialiased bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white min-h-screen">
-        <AuthProvider>{children}</AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
