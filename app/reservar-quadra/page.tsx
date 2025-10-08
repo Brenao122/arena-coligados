@@ -10,6 +10,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft, CheckCircle2, Loader2, Copy, Clock } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+
+const MODALIDADES_POR_QUADRA: Record<string, string[]> = {
+  "Parque Amazônia-Quadra 01": ["Vôlei", "Futevôlei", "Beach Tennis"],
+  "Parque Amazônia-Quadra 02": ["Vôlei", "Futevôlei", "Beach Tennis"],
+  "Parque Amazônia-Quadra 03": ["Vôlei", "Futevôlei"],
+  "Parque Amazônia-Quadra 04": ["Beach Tennis", "Tênis"],
+  "Parque Amazônia-Quadra 05": ["Vôlei", "Beach Tennis"],
+  "Vila Rosa-Q1": ["Vôlei", "Futevôlei", "Beach Tennis"],
+  "Vila Rosa-Q2": ["Vôlei", "Futevôlei"],
+  "Vila Rosa-Q3": ["Beach Tennis", "Tênis"],
+  "Vila Rosa-Q4": ["Vôlei", "Futevôlei", "Beach Tennis"],
+}
 
 const UNIDADES = {
   "Parque Amazônia": {
@@ -76,6 +89,14 @@ export default function ReservarQuadraPage() {
     quadra: string
     horario: string
   } | null>(null)
+  const [selectedModalidade, setSelectedModalidade] = useState<string>("")
+  const [showModalidadeDialog, setShowModalidadeDialog] = useState(false)
+  const [tempSlot, setTempSlot] = useState<{
+    unidade: string
+    quadra: string
+    horario: string
+  } | null>(null)
+
   const [formData, setFormData] = useState({
     nome: "",
     telefone: "",
@@ -125,7 +146,19 @@ export default function ReservarQuadraPage() {
 
   const handleSlotClick = (unidade: string, quadra: string, horario: string) => {
     if (isHorarioOcupado(unidade, quadra, horario) || isHorarioBloqueado(horario)) return
-    setSelectedSlot({ unidade, quadra, horario })
+
+    // Armazena temporariamente o slot selecionado
+    setTempSlot({ unidade, quadra, horario })
+    setShowModalidadeDialog(true)
+  }
+
+  const handleModalidadeSelect = (modalidade: string) => {
+    if (tempSlot) {
+      setSelectedSlot(tempSlot)
+      setSelectedModalidade(modalidade)
+      setShowModalidadeDialog(false)
+      setTempSlot(null)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -152,7 +185,7 @@ export default function ReservarQuadraPage() {
     setLoading(true)
 
     try {
-      console.log("[v0] Enviando reserva:", { ...formData, ...selectedSlot })
+      console.log("[v0] Enviando reserva:", { ...formData, ...selectedSlot, modalidade: selectedModalidade })
 
       const response = await fetch("/api/sheets/append", {
         method: "POST",
@@ -166,6 +199,7 @@ export default function ReservarQuadraPage() {
             unidade: selectedSlot.unidade,
             quadra: selectedSlot.quadra,
             horario: selectedSlot.horario,
+            modalidade: selectedModalidade,
             status: "Confirmado",
             data_cadastro: new Date().toISOString(),
           },
@@ -302,6 +336,37 @@ export default function ReservarQuadraPage() {
           <p className="text-gray-300">Selecione o horário desejado</p>
         </div>
 
+        <Dialog open={showModalidadeDialog} onOpenChange={setShowModalidadeDialog}>
+          <DialogContent className="bg-slate-900 border-white/20 text-white">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-orange-400">Qual modalidade você vai jogar?</DialogTitle>
+              <DialogDescription className="text-gray-300 text-base">
+                {tempSlot && (
+                  <>
+                    <span className="font-semibold">
+                      {tempSlot.unidade} - {tempSlot.quadra} às {tempSlot.horario}
+                    </span>
+                    <br />
+                    <span className="text-sm">Esta quadra suporta:</span>
+                  </>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-3 py-4">
+              {tempSlot &&
+                MODALIDADES_POR_QUADRA[`${tempSlot.unidade}-${tempSlot.quadra}`]?.map((modalidade) => (
+                  <Button
+                    key={modalidade}
+                    onClick={() => handleModalidadeSelect(modalidade)}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-6 text-lg"
+                  >
+                    {modalidade}
+                  </Button>
+                ))}
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {Object.entries(UNIDADES).map(([unidade, config]) => (
             <Card key={unidade} className="bg-white/10 backdrop-blur-xl border-white/20">
@@ -379,6 +444,8 @@ export default function ReservarQuadraPage() {
               <CardTitle className="text-2xl font-bold text-white">Confirme seus dados</CardTitle>
               <CardDescription className="text-gray-300">
                 Horário selecionado: {selectedSlot.unidade} - {selectedSlot.quadra} às {selectedSlot.horario}
+                <br />
+                <span className="text-orange-400 font-semibold">Modalidade: {selectedModalidade}</span>
               </CardDescription>
             </CardHeader>
             <CardContent>

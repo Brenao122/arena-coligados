@@ -201,6 +201,25 @@ export default function HomePage() {
           </p>
         </div>
 
+        {/* Botões de Ação Principal */}
+        <div className="grid md:grid-cols-2 gap-6 mb-12 max-w-3xl mx-auto">
+          <Button
+            onClick={() => (window.location.href = "/aula-experimental")}
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-green-500/50 transition-all duration-300 transform hover:scale-105 border-0"
+          >
+            <Calendar className="h-6 w-6 mr-3" />
+            Aula Experimental Grátis
+          </Button>
+
+          <Button
+            onClick={() => (window.location.href = "/reservar-quadra")}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-105"
+          >
+            <Trophy className="h-6 w-6 mr-3" />
+            Reservar Quadra
+          </Button>
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
           <div className="bg-white/15 backdrop-blur-md p-6 rounded-2xl border border-white/30 shadow-2xl hover:bg-white/20 transition-all">
@@ -264,24 +283,6 @@ export default function HomePage() {
           >
             <LogIn className="h-8 w-8 mr-4" />
             ACESSAR SISTEMA
-          </Button>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 mb-8 max-w-3xl mx-auto">
-          <Button
-            onClick={() => (window.location.href = "/aula-experimental")}
-            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-green-500/50 transition-all duration-300 transform hover:scale-105"
-          >
-            <Calendar className="h-6 w-6 mr-3" />
-            Aula Experimental Grátis
-          </Button>
-
-          <Button
-            onClick={() => (window.location.href = "/reservar-quadra")}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-105"
-          >
-            <Trophy className="h-6 w-6 mr-3" />
-            Reservar Quadra
           </Button>
         </div>
 

@@ -171,16 +171,38 @@ export default function AulaExperimentalPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="nivel" className="text-white">
-                    Nível de Experiência *
+                    Qual seu nível de experiência?{" "}
+                    <span className="text-sm text-gray-300">(A turma indicada será baseada em sua resposta!)</span>
                   </Label>
                   <Select value={formData.nivel} onValueChange={(value) => setFormData({ ...formData, nivel: value })}>
                     <SelectTrigger className="bg-white/10 border-white/30 text-white">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Iniciante">Iniciante</SelectItem>
-                      <SelectItem value="Intermediário">Intermediário</SelectItem>
-                      <SelectItem value="Avançado">Avançado</SelectItem>
+                      <SelectItem value="Aprendiz">
+                        <div className="flex flex-col">
+                          <span className="font-medium">Aprendiz</span>
+                          <span className="text-xs text-gray-500">Primeiros contatos com a modalidade</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Iniciante">
+                        <div className="flex flex-col">
+                          <span className="font-medium">Iniciante</span>
+                          <span className="text-xs text-gray-500">Leve familiaridade</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Intermediário">
+                        <div className="flex flex-col">
+                          <span className="font-medium">Intermediário</span>
+                          <span className="text-xs text-gray-500">Já tenho bastante convívio com a modalidade</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Avançado">
+                        <div className="flex flex-col">
+                          <span className="font-medium">Avançado</span>
+                          <span className="text-xs text-gray-500">Jogo bem! Quero aprimorar e evoluir</span>
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
