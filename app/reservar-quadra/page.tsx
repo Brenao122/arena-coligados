@@ -24,7 +24,47 @@ const UNIDADES = {
   },
 }
 
-const HORARIOS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"]
+const HORARIOS = [
+  "08:00",
+  "08:30",
+  "09:00",
+  "09:30",
+  "10:00",
+  "10:30",
+  "11:00",
+  "11:30",
+  "12:00",
+  "12:30",
+  "13:00",
+  "13:30",
+  "14:00",
+  "14:30",
+  "15:00",
+  "15:30",
+  "16:00",
+  "16:30",
+  "17:00",
+  "17:30",
+  "18:00",
+  "18:30",
+  "19:00",
+  "19:30",
+  "20:00",
+  "20:30",
+  "21:00",
+]
+
+const isHorarioBloqueado = (horario: string, dataReserva?: Date) => {
+  const data = dataReserva || new Date()
+  const diaSemana = data.getDay() // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+  const isSegundaASexta = diaSemana >= 1 && diaSemana <= 5
+
+  if (isSegundaASexta && (horario === "19:30" || horario === "20:00")) {
+    return true
+  }
+
+  return false
+}
 
 export default function ReservarQuadraPage() {
   const router = useRouter()
@@ -84,7 +124,7 @@ export default function ReservarQuadraPage() {
   }
 
   const handleSlotClick = (unidade: string, quadra: string, horario: string) => {
-    if (isHorarioOcupado(unidade, quadra, horario)) return
+    if (isHorarioOcupado(unidade, quadra, horario) || isHorarioBloqueado(horario)) return
     setSelectedSlot({ unidade, quadra, horario })
   }
 
@@ -290,6 +330,8 @@ export default function ReservarQuadraPage() {
                           <td className="text-white text-sm p-2 border border-white/20 font-medium">{horario}</td>
                           {config.quadras.map((quadra) => {
                             const ocupado = isHorarioOcupado(unidade, quadra, horario)
+                            const bloqueado = isHorarioBloqueado(horario)
+                            const indisponivel = ocupado || bloqueado
                             const selecionado =
                               selectedSlot?.unidade === unidade &&
                               selectedSlot?.quadra === quadra &&
@@ -300,15 +342,23 @@ export default function ReservarQuadraPage() {
                                 <button
                                   type="button"
                                   onClick={() => handleSlotClick(unidade, quadra, horario)}
-                                  disabled={ocupado}
+                                  disabled={indisponivel}
                                   className={cn(
                                     "w-full h-10 rounded text-xs font-medium transition-all",
-                                    ocupado && "bg-red-500/30 text-red-300 cursor-not-allowed",
-                                    !ocupado && !selecionado && "bg-green-500/20 text-green-300 hover:bg-green-500/40",
+                                    indisponivel && "bg-red-500/30 text-red-300 cursor-not-allowed",
+                                    !indisponivel &&
+                                      !selecionado &&
+                                      "bg-green-500/20 text-green-300 hover:bg-green-500/40",
                                     selecionado && "bg-orange-500 text-white ring-2 ring-orange-300",
                                   )}
                                 >
-                                  {ocupado ? "Ocupado" : selecionado ? "Selecionado" : "Disponível"}
+                                  {bloqueado
+                                    ? "Bloqueado"
+                                    : ocupado
+                                      ? "Ocupado"
+                                      : selecionado
+                                        ? "Selecionado"
+                                        : "Disponível"}
                                 </button>
                               </td>
                             )
