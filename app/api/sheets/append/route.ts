@@ -23,6 +23,18 @@ export async function POST(request: Request) {
     console.log("[v0] Appending data to sheet:", sheetName)
     console.log("[v0] Data to append:", JSON.stringify(data))
 
+    if (!process.env.GOOGLE_PRIVATE_KEY) {
+      console.error("[v0] GOOGLE_PRIVATE_KEY não está configurada!")
+      return NextResponse.json(
+        {
+          success: false,
+          error: "GOOGLE_PRIVATE_KEY não configurada",
+          details: "A variável de ambiente GOOGLE_PRIVATE_KEY não foi encontrada",
+        },
+        { status: 500 },
+      )
+    }
+
     // Initialize Google Sheets connection
     const auth = new GoogleAuth({
       credentials: {
@@ -32,20 +44,63 @@ export async function POST(request: Request) {
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     })
 
+    console.log("[v0] Autenticação criada, carregando documento...")
+
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID, auth)
-    await doc.loadInfo()
+
+    try {
+      await doc.loadInfo()
+      console.log("[v0] Documento carregado com sucesso. Título:", doc.title)
+    } catch (loadError) {
+      console.error("[v0] Erro ao carregar documento:", loadError)
+      const errorMessage = loadError instanceof Error ? loadError.message : String(loadError)
+
+      if (errorMessage.includes("permission") || errorMessage.includes("403")) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "PERMISSION_DENIED",
+            details: `A service account ${SERVICE_ACCOUNT_EMAIL} não tem permissão para acessar a planilha. Compartilhe a planilha com este email.`,
+          },
+          { status: 403 },
+        )
+      }
+
+      throw loadError
+    }
 
     // Find the sheet by name
     const sheet = doc.sheetsByTitle[sheetName]
     if (!sheet) {
       console.log("[v0] Abas disponíveis:", Object.keys(doc.sheetsByTitle))
-      return NextResponse.json({ success: false, error: `Aba "${sheetName}" não encontrada` }, { status: 404 })
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Aba "${sheetName}" não encontrada`,
+          availableSheets: Object.keys(doc.sheetsByTitle),
+        },
+        { status: 404 },
+      )
     }
 
-    // Add row to sheet
-    await sheet.addRow(data)
+    console.log("[v0] Aba encontrada, adicionando linha...")
 
-    console.log("[v0] Data appended successfully to:", sheetName)
+    try {
+      await sheet.addRow(data)
+      console.log("[v0] Data appended successfully to:", sheetName)
+    } catch (addError) {
+      console.error("[v0] Erro ao adicionar linha:", addError)
+      const errorMessage = addError instanceof Error ? addError.message : String(addError)
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: "FAILED_TO_ADD_ROW",
+          details: errorMessage,
+        },
+        { status: 500 },
+      )
+    }
 
     return NextResponse.json({
       success: true,

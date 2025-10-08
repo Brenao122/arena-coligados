@@ -106,6 +106,7 @@ export default function ReservarQuadraPage() {
   const [countdown, setCountdown] = useState(20)
   const [canConfirm, setCanConfirm] = useState(false)
   const [pixCopied, setPixCopied] = useState(false)
+  const SERVICE_ACCOUNT_EMAIL = "service-account-email@example.com"
 
   useEffect(() => {
     const fetchHorariosOcupados = async () => {
@@ -210,12 +211,29 @@ export default function ReservarQuadraPage() {
       console.log("[v0] Resposta da API:", result)
 
       if (!response.ok) {
-        if (result.error?.includes("DECODER") || result.error?.includes("unsupported")) {
-          throw new Error(
-            "Erro de configuração do sistema. Por favor, entre em contato com o administrador. (Código: GOOGLE_SHEETS_CONFIG)",
+        if (result.error === "PERMISSION_DENIED") {
+          alert(
+            `❌ Erro de Permissão\n\n${result.details}\n\nPor favor, compartilhe a planilha do Google Sheets com o email:\n${SERVICE_ACCOUNT_EMAIL}`,
           )
+          return
         }
-        throw new Error(result.error || "Erro ao processar reserva")
+
+        if (result.error === "GOOGLE_PRIVATE_KEY não configurada") {
+          alert(
+            `❌ Erro de Configuração\n\nA chave privada do Google não está configurada no servidor.\n\nCódigo: GOOGLE_PRIVATE_KEY_MISSING`,
+          )
+          return
+        }
+
+        if (result.error?.includes("DECODER") || result.error?.includes("unsupported")) {
+          alert(
+            `❌ Erro de Configuração\n\nA chave privada do Google está mal formatada.\n\nCódigo: GOOGLE_SHEETS_CONFIG`,
+          )
+          return
+        }
+
+        alert(`❌ Erro ao processar reserva\n\n${result.details || result.error || "Erro desconhecido"}`)
+        return
       }
 
       setSuccess(true)
