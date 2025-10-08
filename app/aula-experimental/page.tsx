@@ -31,6 +31,8 @@ export default function AulaExperimentalPage() {
     setLoading(true)
 
     try {
+      console.log("[v0] Enviando dados para Google Sheets:", formData)
+
       const response = await fetch("/api/sheets/append", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,13 +52,18 @@ export default function AulaExperimentalPage() {
         }),
       })
 
-      if (!response.ok) throw new Error("Erro ao enviar")
+      const result = await response.json()
+      console.log("[v0] Resposta da API:", result)
+
+      if (!response.ok) {
+        throw new Error(result.error || "Erro ao enviar")
+      }
 
       setSuccess(true)
       setTimeout(() => router.push("/"), 3000)
     } catch (error) {
-      console.error("Erro:", error)
-      alert("Erro ao enviar formulário. Tente novamente.")
+      console.error("[v0] Erro ao enviar formulário:", error)
+      alert(`Erro ao enviar formulário: ${error instanceof Error ? error.message : "Tente novamente."}`)
     } finally {
       setLoading(false)
     }
@@ -152,7 +159,7 @@ export default function AulaExperimentalPage() {
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Futebol">Futebol</SelectItem>
+                      <SelectItem value="Futevôlei">Futevôlei</SelectItem>
                       <SelectItem value="Vôlei">Vôlei</SelectItem>
                       <SelectItem value="Beach Tennis">Beach Tennis</SelectItem>
                       <SelectItem value="Tênis">Tênis</SelectItem>

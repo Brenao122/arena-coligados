@@ -43,7 +43,7 @@ export function ProfessorForm({ onClose, onSuccess, professorId }: ProfessorForm
 
   const especialidadesDisponiveis = [
     "Futsal",
-    "Futebol",
+    "Futevôlei",
     "Vôlei",
     "Basquete",
     "Tênis",

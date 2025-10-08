@@ -99,15 +99,6 @@ export function LoginFormSimple() {
             "Entrar"
           )}
         </Button>
-
-        <div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl backdrop-blur-sm">
-          <p className="text-blue-300 text-sm font-medium text-center mb-2">Usuários de teste:</p>
-          <div className="text-xs text-blue-200 space-y-1">
-            <p>Admin: admin@arena.com / admin123</p>
-            <p>Professor: professor@arena.com / prof123</p>
-            <p>Cliente: cliente@arena.com / cliente123</p>
-          </div>
-        </div>
       </form>
     </div>
   )
