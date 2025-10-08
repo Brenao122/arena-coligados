@@ -14,7 +14,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "sheetName e data são obrigatórios" }, { status: 400 })
     }
 
+    console.log("[v0] === DIAGNÓSTICO DE VARIÁVEIS DE AMBIENTE ===")
+    console.log("[v0] GOOGLE_PRIVATE_KEY existe?", !!process.env.GOOGLE_PRIVATE_KEY)
+    console.log("[v0] GOOGLE_PRIVATE_KEY length:", process.env.GOOGLE_PRIVATE_KEY?.length || 0)
+    console.log("[v0] GOOGLE_PRIVATE_KEY primeiros 50 chars:", process.env.GOOGLE_PRIVATE_KEY?.substring(0, 50))
+    console.log("[v0] SERVICE_ACCOUNT_EMAIL:", SERVICE_ACCOUNT_EMAIL)
+    console.log("[v0] SPREADSHEET_ID:", SPREADSHEET_ID)
     console.log("[v0] Appending data to sheet:", sheetName)
+    console.log("[v0] Data to append:", JSON.stringify(data))
 
     // Initialize Google Sheets connection
     const auth = new GoogleAuth({
@@ -31,6 +38,7 @@ export async function POST(request: Request) {
     // Find the sheet by name
     const sheet = doc.sheetsByTitle[sheetName]
     if (!sheet) {
+      console.log("[v0] Abas disponíveis:", Object.keys(doc.sheetsByTitle))
       return NextResponse.json({ success: false, error: `Aba "${sheetName}" não encontrada` }, { status: 404 })
     }
 
@@ -46,11 +54,16 @@ export async function POST(request: Request) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error("[v0] Error appending data:", error)
+    console.error("[v0] === ERRO DETALHADO ===")
+    console.error("[v0] Error type:", error instanceof Error ? error.constructor.name : typeof error)
+    console.error("[v0] Error message:", error instanceof Error ? error.message : String(error))
+    console.error("[v0] Error stack:", error instanceof Error ? error.stack : "No stack trace")
+
     return NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Erro ao adicionar dados",
+        errorType: error instanceof Error ? error.constructor.name : typeof error,
       },
       { status: 500 },
     )

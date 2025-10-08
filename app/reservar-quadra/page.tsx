@@ -210,14 +210,20 @@ export default function ReservarQuadraPage() {
       console.log("[v0] Resposta da API:", result)
 
       if (!response.ok) {
-        throw new Error(result.error || "Erro ao enviar")
+        if (result.error?.includes("DECODER") || result.error?.includes("unsupported")) {
+          throw new Error(
+            "Erro de configuração do sistema. Por favor, entre em contato com o administrador. (Código: GOOGLE_SHEETS_CONFIG)",
+          )
+        }
+        throw new Error(result.error || "Erro ao processar reserva")
       }
 
       setSuccess(true)
       setTimeout(() => router.push("/"), 3000)
     } catch (error) {
       console.error("[v0] Erro ao enviar formulário:", error)
-      alert(`Erro ao enviar formulário: ${error instanceof Error ? error.message : "Tente novamente."}`)
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido. Tente novamente."
+      alert(`❌ ${errorMessage}`)
     } finally {
       setLoading(false)
     }
