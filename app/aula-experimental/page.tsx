@@ -71,7 +71,7 @@ export default function AulaExperimentalPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-500 via-orange-600 to-blue-600 p-4">
         <Card className="max-w-md w-full bg-white/10 backdrop-blur-xl border-white/20">
           <CardContent className="pt-12 pb-8 text-center">
             <CheckCircle2 className="h-20 w-20 text-green-400 mx-auto mb-6" />
@@ -87,19 +87,19 @@ export default function AulaExperimentalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-500 via-orange-600 to-blue-600 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <Link href="/">
-          <Button variant="ghost" className="mb-6 text-white hover:text-orange-400">
+          <Button variant="ghost" className="mb-6 text-white hover:text-white/80 hover:bg-white/10">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
         </Link>
 
-        <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+        <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-white">Aula Experimental Gratuita</CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardDescription className="text-gray-100">
               Preencha o formulário e agende sua primeira aula gratuita
             </CardDescription>
           </CardHeader>
@@ -113,7 +113,7 @@ export default function AulaExperimentalPage() {
                   id="nome"
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  className="bg-white/10 border-white/30 text-white"
+                  className="bg-white/10 border-white/30 text-white placeholder:text-gray-300"
                   required
                 />
               </div>
@@ -128,7 +128,7 @@ export default function AulaExperimentalPage() {
                     type="tel"
                     value={formData.telefone}
                     onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                    className="bg-white/10 border-white/30 text-white"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-300"
                     required
                   />
                 </div>
@@ -142,7 +142,7 @@ export default function AulaExperimentalPage() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="bg-white/10 border-white/30 text-white"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-300"
                     required
                   />
                 </div>
@@ -172,7 +172,7 @@ export default function AulaExperimentalPage() {
                 <div className="space-y-2">
                   <Label htmlFor="nivel" className="text-white">
                     Qual seu nível de experiência?{" "}
-                    <span className="text-sm text-gray-300">(A turma indicada será baseada em sua resposta!)</span>
+                    <span className="text-sm text-gray-100">(A turma indicada será baseada em sua resposta!)</span>
                   </Label>
                   <Select value={formData.nivel} onValueChange={(value) => setFormData({ ...formData, nivel: value })}>
                     <SelectTrigger className="bg-white/10 border-white/30 text-white">
@@ -216,14 +216,14 @@ export default function AulaExperimentalPage() {
                   id="observacoes"
                   value={formData.observacoes}
                   onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
-                  className="bg-white/10 border-white/30 text-white"
+                  className="bg-white/10 border-white/30 text-white placeholder:text-gray-300"
                   rows={4}
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-6 text-lg"
+                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-6 text-lg shadow-lg"
                 disabled={loading}
               >
                 {loading ? (
