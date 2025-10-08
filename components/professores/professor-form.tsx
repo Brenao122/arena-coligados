@@ -42,13 +42,10 @@ export function ProfessorForm({ onClose, onSuccess, professorId }: ProfessorForm
   })
 
   const especialidadesDisponiveis = [
-    "Futsal",
     "Futevôlei",
     "Vôlei",
-    "Basquete",
-    "Tênis",
     "Beach Tennis",
-    "Padel",
+    "Tênis",
     "Preparação Física",
     "Treinamento Funcional",
   ]

@@ -34,13 +34,10 @@ export function QuadraForm({ onClose, onSuccess, quadraId }: QuadraFormProps) {
   })
 
   const tiposQuadra = [
-    { value: "futsal", label: "Futsal" },
+    { value: "futevolei", label: "Futevôlei" },
     { value: "volei", label: "Vôlei" },
-    { value: "basquete", label: "Basquete" },
-    { value: "society", label: "Society" },
     { value: "tenis", label: "Tênis" },
     { value: "beach_tennis", label: "Beach Tennis" },
-    { value: "padel", label: "Padel" },
     { value: "multipla", label: "Múltipla" },
   ]
 

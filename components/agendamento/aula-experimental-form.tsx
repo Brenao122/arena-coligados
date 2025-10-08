@@ -29,7 +29,7 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
     aluno_email: "",
     aluno_idade: "",
     modalidade: "",
-    nivel: "iniciante",
+    nivel: "aprendiz",
     melhor_dia: "",
     melhor_horario: "",
     data_aula: "",
@@ -43,14 +43,14 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
     { value: "beach_tennis", label: "Beach Tennis" },
     { value: "futevolei", label: "Futevôlei" },
     { value: "volei", label: "Vôlei" },
-    { value: "futsal", label: "Futsal" },
-    { value: "basquete", label: "Basquete" },
+    { value: "tenis", label: "Tênis" },
   ]
 
   const niveis = [
-    { value: "iniciante", label: "Iniciante" },
-    { value: "intermediario", label: "Intermediário" },
-    { value: "avancado", label: "Avançado" },
+    { value: "aprendiz", label: "Aprendiz", descricao: "Primeiros contatos com a modalidade" },
+    { value: "iniciante", label: "Iniciante", descricao: "Leve familiaridade" },
+    { value: "intermediario", label: "Intermediário", descricao: "Já tenho bastante convívio com a modalidade" },
+    { value: "avancado", label: "Avançado", descricao: "Jogo bem! Quero aprimorar e evoluir" },
   ]
 
   const diasSemana = [
@@ -112,7 +112,7 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
         aluno_email: "",
         aluno_idade: "",
         modalidade: "",
-        nivel: "iniciante",
+        nivel: "aprendiz",
         melhor_dia: "",
         melhor_horario: "",
         data_aula: "",
@@ -239,7 +239,10 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="nivel">Nível</Label>
+                <Label htmlFor="nivel">
+                  Qual seu nível de experiência?{" "}
+                  <span className="text-sm text-gray-600">(A turma indicada será baseada em sua resposta!)</span>
+                </Label>
                 <Select value={formData.nivel} onValueChange={(value) => setFormData({ ...formData, nivel: value })}>
                   <SelectTrigger>
                     <SelectValue />
@@ -247,52 +250,19 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
                   <SelectContent>
                     {niveis.map((nivel) => (
                       <SelectItem key={nivel.value} value={nivel.value}>
-                        {nivel.label}
+                        <div className="flex flex-col">
+                          <span className="font-medium">{nivel.label}</span>
+                          <span className="text-xs text-gray-500">{nivel.descricao}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-
-            {/* Preferências de Horário */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="melhor_dia">Melhor Dia (Preferência)</Label>
-                <Select
-                  value={formData.melhor_dia}
-                  onValueChange={(value) => setFormData({ ...formData, melhor_dia: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o dia" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {diasSemana.map((dia) => (
-                      <SelectItem key={dia.value} value={dia.value}>
-                        {dia.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="melhor_horario">Melhor Horário (Preferência)</Label>
-                <Select
-                  value={formData.melhor_horario}
-                  onValueChange={(value) => setFormData({ ...formData, melhor_horario: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o horário" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {horarios.map((horario) => (
-                      <SelectItem key={horario.value} value={horario.value}>
-                        {horario.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {formData.nivel && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {niveis.find((n) => n.value === formData.nivel)?.descricao}
+                  </p>
+                )}
               </div>
             </div>
           </div>

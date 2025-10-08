@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { LogIn, Users, Calendar, Trophy, Star, Eye, EyeOff } from "lucide-react"
+import { LogIn, Users, Calendar, Trophy, Star, Eye, EyeOff, MapPin, Clock } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
@@ -158,8 +158,23 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white flex items-center justify-center">
-      <div className="max-w-4xl mx-auto px-6 text-center">
+    <div className="min-h-screen relative text-white flex items-center justify-center overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/background-beach-volleyball.jpg"
+          alt="Beach Volleyball Background"
+          fill
+          className="object-cover"
+          priority
+          quality={90}
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-gray-900/80 to-slate-800/85 backdrop-blur-[2px]" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center py-12">
         {/* Logo e Título */}
         <div className="mb-12">
           <div className="flex justify-center mb-8">
@@ -173,40 +188,71 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-6xl md:text-8xl font-black mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-orange-300 via-orange-200 to-white bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-orange-300 via-orange-200 to-white bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
               ARENA
             </span>
             <br />
-            <span className="text-orange-400 drop-shadow-[0_0_20px_rgba(251,146,60,0.8)]">COLIGADOS</span>
+            <span className="text-orange-400 drop-shadow-[0_0_30px_rgba(251,146,60,0.9)]">COLIGADOS</span>
           </h1>
 
-          <p className="text-2xl text-gray-200 mb-8 font-light">Sistema de Gestão Esportiva</p>
+          <p className="text-2xl text-gray-100 mb-4 font-light drop-shadow-lg">Gestão Esportiva Completa</p>
+          <p className="text-lg text-gray-200 max-w-2xl mx-auto drop-shadow-md">
+            Quadras de alta qualidade para Beach Tennis, Vôlei, Futevôlei e Tênis
+          </p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/20 shadow-xl">
-            <Users className="h-10 w-10 text-orange-300 mx-auto mb-3" />
+          <div className="bg-white/15 backdrop-blur-md p-6 rounded-2xl border border-white/30 shadow-2xl hover:bg-white/20 transition-all">
+            <MapPin className="h-10 w-10 text-orange-300 mx-auto mb-3 drop-shadow-lg" />
             <div className="text-3xl font-bold text-white mb-1">2</div>
-            <div className="text-gray-200 text-sm">Unidades</div>
+            <div className="text-gray-100 text-sm font-medium">Unidades</div>
+            <div className="text-xs text-gray-200 mt-1">Parque Amazônia e Vila Rosa</div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/20 shadow-xl">
-            <Calendar className="h-10 w-10 text-green-300 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">7</div>
-            <div className="text-gray-200 text-sm">Quadras</div>
+          <div className="bg-white/15 backdrop-blur-md p-6 rounded-2xl border border-white/30 shadow-2xl hover:bg-white/20 transition-all">
+            <Trophy className="h-10 w-10 text-green-300 mx-auto mb-3 drop-shadow-lg" />
+            <div className="text-3xl font-bold text-white mb-1">9</div>
+            <div className="text-gray-100 text-sm font-medium">Quadras</div>
+            <div className="text-xs text-gray-200 mt-1">Equipadas e modernas</div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/20 shadow-xl">
-            <Trophy className="h-10 w-10 text-blue-300 mx-auto mb-3" />
+          <div className="bg-white/15 backdrop-blur-md p-6 rounded-2xl border border-white/30 shadow-2xl hover:bg-white/20 transition-all">
+            <Users className="h-10 w-10 text-blue-300 mx-auto mb-3 drop-shadow-lg" />
             <div className="text-3xl font-bold text-white mb-1">4</div>
-            <div className="text-gray-200 text-sm">Modalidades</div>
+            <div className="text-gray-100 text-sm font-medium">Modalidades</div>
+            <div className="text-xs text-gray-200 mt-1">Beach Tennis, Vôlei, Futevôlei e Tênis</div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-white/20 shadow-xl">
-            <Star className="h-10 w-10 text-yellow-300 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-1">100%</div>
-            <div className="text-gray-200 text-sm">Satisfação</div>
+          <div className="bg-white/15 backdrop-blur-md p-6 rounded-2xl border border-white/30 shadow-2xl hover:bg-white/20 transition-all">
+            <Clock className="h-10 w-10 text-yellow-300 mx-auto mb-3 drop-shadow-lg" />
+            <div className="text-3xl font-bold text-white mb-1">14h</div>
+            <div className="text-gray-100 text-sm font-medium">Funcionamento</div>
+            <div className="text-xs text-gray-200 mt-1">08:00 às 21:00</div>
+          </div>
+        </div>
+
+        {/* Diferenciais */}
+        <div className="mb-12 bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-400/40 rounded-2xl p-8 backdrop-blur-md shadow-2xl">
+          <h2 className="text-2xl font-bold text-orange-200 mb-6 drop-shadow-lg">
+            Por que escolher a Arena Coligados?
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6 text-left">
+            <div>
+              <Star className="h-8 w-8 text-orange-300 mb-3 drop-shadow-lg" />
+              <h3 className="text-lg font-semibold text-white mb-2">Aula Experimental Gratuita</h3>
+              <p className="text-gray-100 text-sm">Conheça nossas instalações e professores sem compromisso</p>
+            </div>
+            <div>
+              <Trophy className="h-8 w-8 text-orange-300 mb-3 drop-shadow-lg" />
+              <h3 className="text-lg font-semibold text-white mb-2">Quadras Profissionais</h3>
+              <p className="text-gray-100 text-sm">Equipamentos de alta qualidade e manutenção constante</p>
+            </div>
+            <div>
+              <Calendar className="h-8 w-8 text-orange-300 mb-3 drop-shadow-lg" />
+              <h3 className="text-lg font-semibold text-white mb-2">Reserva Online Fácil</h3>
+              <p className="text-gray-100 text-sm">Sistema prático de agendamento com pagamento via PIX</p>
+            </div>
           </div>
         </div>
 
@@ -214,7 +260,7 @@ export default function HomePage() {
         <div className="mb-8">
           <Button
             onClick={() => setShowLogin(true)}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-orange-500/30 transition-all duration-300 transform hover:scale-105 border-0"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-orange-500/50 transition-all duration-300 transform hover:scale-105 border-0"
           >
             <LogIn className="h-8 w-8 mr-4" />
             ACESSAR SISTEMA
@@ -224,33 +270,32 @@ export default function HomePage() {
         <div className="grid md:grid-cols-2 gap-6 mb-8 max-w-3xl mx-auto">
           <Button
             onClick={() => (window.location.href = "/aula-experimental")}
-            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-green-500/30 transition-all duration-300 transform hover:scale-105"
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-green-500/50 transition-all duration-300 transform hover:scale-105"
           >
             <Calendar className="h-6 w-6 mr-3" />
-            Agendar Aula Experimental
+            Aula Experimental Grátis
           </Button>
 
           <Button
             onClick={() => (window.location.href = "/reservar-quadra")}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-blue-500/30 transition-all duration-300 transform hover:scale-105"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xl px-8 py-6 rounded-xl shadow-xl hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-105"
           >
             <Trophy className="h-6 w-6 mr-3" />
             Reservar Quadra
           </Button>
         </div>
 
-        {/* Status da Plataforma */}
-        <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 backdrop-blur-sm">
-          <p className="text-green-300 text-lg font-medium mb-2">🟢 Plataforma Online e Funcionando</p>
-          <p className="text-green-200 text-sm">Sistema pronto para deploy no Vercel</p>
-        </div>
-
-        {/* Informações de Deploy */}
-        <div className="mt-8 bg-blue-500/10 border border-blue-500/30 rounded-xl p-6 backdrop-blur-sm">
-          <p className="text-blue-300 text-lg font-medium mb-2">🚀 Pronto para Deploy</p>
-          <p className="text-blue-200 text-sm">
-            Clique no botão "Publish" no canto superior direito para colocar online
-          </p>
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="bg-white/15 backdrop-blur-md p-6 rounded-xl border border-white/30 text-left shadow-xl">
+            <h3 className="text-xl font-bold text-orange-300 mb-3">Unidade Parque Amazônia</h3>
+            <p className="text-gray-100 text-sm mb-2">5 quadras disponíveis</p>
+            <p className="text-2xl font-bold text-white">R$ 80,00/hora</p>
+          </div>
+          <div className="bg-white/15 backdrop-blur-md p-6 rounded-xl border border-white/30 text-left shadow-xl">
+            <h3 className="text-xl font-bold text-orange-300 mb-3">Unidade Vila Rosa</h3>
+            <p className="text-gray-100 text-sm mb-2">4 quadras disponíveis</p>
+            <p className="text-2xl font-bold text-white">R$ 70,00/hora</p>
+          </div>
         </div>
       </div>
     </div>
