@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, CheckCircle2, Loader2, Copy, Clock } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Loader2, Copy, Clock, Calendar } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -79,11 +79,40 @@ const isHorarioBloqueado = (horario: string, dataReserva?: Date) => {
   return false
 }
 
+const getNext7Days = () => {
+  const days = []
+  const today = new Date()
+
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(today)
+    date.setDate(today.getDate() + i)
+    days.push(date)
+  }
+
+  return days
+}
+
+const formatDate = (date: Date) => {
+  const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+  const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+
+  return {
+    diaSemana: dias[date.getDay()],
+    dia: date.getDate(),
+    mes: meses[date.getMonth()],
+    full: date.toISOString().split("T")[0],
+  }
+}
+
 export default function ReservarQuadraPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [horariosOcupados, setHorariosOcupados] = useState<Record<string, string[]>>({})
+
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [availableDays] = useState<Date[]>(getNext7Days())
+
   const [selectedSlot, setSelectedSlot] = useState<{
     unidade: string
     quadra: string
@@ -116,7 +145,7 @@ export default function ReservarQuadraPage() {
           const data = await response.json()
           const ocupados: Record<string, string[]> = {}
           data.reservas?.forEach((reserva: any) => {
-            const key = `${reserva.unidade}-${reserva.quadra}`
+            const key = `${reserva.data}-${reserva.unidade}-${reserva.quadra}`
             if (!ocupados[key]) ocupados[key] = []
             ocupados[key].push(reserva.horario)
           })
@@ -141,14 +170,14 @@ export default function ReservarQuadraPage() {
   }, [showPayment, countdown])
 
   const isHorarioOcupado = (unidade: string, quadra: string, horario: string) => {
-    const key = `${unidade}-${quadra}`
+    const dateStr = selectedDate.toISOString().split("T")[0]
+    const key = `${dateStr}-${unidade}-${quadra}`
     return horariosOcupados[key]?.includes(horario) || false
   }
 
   const handleSlotClick = (unidade: string, quadra: string, horario: string) => {
-    if (isHorarioOcupado(unidade, quadra, horario) || isHorarioBloqueado(horario)) return
+    if (isHorarioOcupado(unidade, quadra, horario) || isHorarioBloqueado(horario, selectedDate)) return
 
-    // Armazena temporariamente o slot selecionado
     setTempSlot({ unidade, quadra, horario })
     setShowModalidadeDialog(true)
   }
@@ -201,6 +230,7 @@ export default function ReservarQuadraPage() {
             quadra: selectedSlot.quadra,
             horario: selectedSlot.horario,
             modalidade: selectedModalidade,
+            data: selectedDate.toISOString().split("T")[0],
             status: "Confirmado",
             data_cadastro: new Date().toISOString(),
           },
@@ -225,9 +255,16 @@ export default function ReservarQuadraPage() {
           return
         }
 
+        if (result.error === "PRIVATE_KEY_FORMAT_ERROR") {
+          alert(
+            `❌ Erro de Configuração\n\nA chave privada do Google está mal formatada.\n\nDetalhes: ${result.details}\n\nCódigo: GOOGLE_SHEETS_CONFIG`,
+          )
+          return
+        }
+
         if (result.error?.includes("DECODER") || result.error?.includes("unsupported")) {
           alert(
-            `❌ Erro de Configuração\n\nA chave privada do Google está mal formatada.\n\nCódigo: GOOGLE_SHEETS_CONFIG`,
+            `❌ Erro de Configuração\n\nA chave privada do Google está mal formatada ou corrompida.\n\nPor favor, verifique se a chave foi copiada corretamente.\n\nCódigo: GOOGLE_SHEETS_CONFIG`,
           )
           return
         }
@@ -357,8 +394,48 @@ export default function ReservarQuadraPage() {
 
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Arena Coligados</h1>
-          <p className="text-gray-300">Selecione o horário desejado</p>
+          <p className="text-gray-300">Selecione a data e o horário desejado</p>
         </div>
+
+        <Card className="bg-white/10 backdrop-blur-xl border-white/20 mb-8 max-w-4xl mx-auto">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-white flex items-center gap-2">
+              <Calendar className="h-6 w-6 text-orange-400" />
+              Selecione a Data
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-7 gap-2">
+              {availableDays.map((date) => {
+                const formatted = formatDate(date)
+                const isSelected = selectedDate.toISOString().split("T")[0] === formatted.full
+                const isToday = new Date().toISOString().split("T")[0] === formatted.full
+
+                return (
+                  <button
+                    key={formatted.full}
+                    onClick={() => {
+                      setSelectedDate(date)
+                      setSelectedSlot(null) // Limpa seleção ao mudar data
+                    }}
+                    className={cn(
+                      "flex flex-col items-center justify-center p-4 rounded-lg transition-all",
+                      "border-2",
+                      isSelected && "bg-orange-500 border-orange-400 text-white",
+                      !isSelected && "bg-white/5 border-white/20 text-gray-300 hover:bg-white/10",
+                      isToday && !isSelected && "border-orange-400/50",
+                    )}
+                  >
+                    <span className="text-xs font-medium mb-1">{formatted.diaSemana}</span>
+                    <span className="text-2xl font-bold">{formatted.dia}</span>
+                    <span className="text-xs">{formatted.mes}</span>
+                    {isToday && <span className="text-xs text-orange-400 mt-1">Hoje</span>}
+                  </button>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
 
         <Dialog open={showModalidadeDialog} onOpenChange={setShowModalidadeDialog}>
           <DialogContent className="bg-slate-900 border-white/20 text-white">
@@ -419,7 +496,7 @@ export default function ReservarQuadraPage() {
                           <td className="text-white text-sm p-2 border border-white/20 font-medium">{horario}</td>
                           {config.quadras.map((quadra) => {
                             const ocupado = isHorarioOcupado(unidade, quadra, horario)
-                            const bloqueado = isHorarioBloqueado(horario)
+                            const bloqueado = isHorarioBloqueado(horario, selectedDate)
                             const indisponivel = ocupado || bloqueado
                             const selecionado =
                               selectedSlot?.unidade === unidade &&
@@ -467,7 +544,10 @@ export default function ReservarQuadraPage() {
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-white">Confirme seus dados</CardTitle>
               <CardDescription className="text-gray-300">
-                Horário selecionado: {selectedSlot.unidade} - {selectedSlot.quadra} às {selectedSlot.horario}
+                Data: {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes} (
+                {formatDate(selectedDate).diaSemana})
+                <br />
+                Horário: {selectedSlot.unidade} - {selectedSlot.quadra} às {selectedSlot.horario}
                 <br />
                 <span className="text-orange-400 font-semibold">Modalidade: {selectedModalidade}</span>
               </CardDescription>

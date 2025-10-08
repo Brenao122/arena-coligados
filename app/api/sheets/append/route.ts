@@ -5,6 +5,27 @@ import { GoogleSpreadsheet } from "google-spreadsheet"
 const SPREADSHEET_ID = "174HlbAsnc30_T2sJeTdU4xqLPQuojm7wWS8YWfhh5Ew"
 const SERVICE_ACCOUNT_EMAIL = "arenasheets@credencial-n8n-471801.iam.gserviceaccount.com"
 
+function formatPrivateKey(key: string): string {
+  // Remove espaços extras e normaliza quebras de linha
+  let formatted = key.trim()
+
+  // Se a chave tem \\n literal (string), substitui por quebra de linha real
+  if (formatted.includes("\\n")) {
+    formatted = formatted.replace(/\\n/g, "\n")
+  }
+
+  // Garante que começa com BEGIN e termina com END
+  if (!formatted.includes("-----BEGIN PRIVATE KEY-----")) {
+    throw new Error("Chave privada não contém o cabeçalho BEGIN PRIVATE KEY")
+  }
+
+  if (!formatted.includes("-----END PRIVATE KEY-----")) {
+    throw new Error("Chave privada não contém o rodapé END PRIVATE KEY")
+  }
+
+  return formatted
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -35,11 +56,27 @@ export async function POST(request: Request) {
       )
     }
 
+    let privateKey: string
+    try {
+      privateKey = formatPrivateKey(process.env.GOOGLE_PRIVATE_KEY)
+      console.log("[v0] Chave privada formatada com sucesso")
+    } catch (formatError) {
+      console.error("[v0] Erro ao formatar chave privada:", formatError)
+      return NextResponse.json(
+        {
+          success: false,
+          error: "PRIVATE_KEY_FORMAT_ERROR",
+          details: formatError instanceof Error ? formatError.message : "Erro ao formatar chave privada",
+        },
+        { status: 500 },
+      )
+    }
+
     // Initialize Google Sheets connection
     const auth = new GoogleAuth({
       credentials: {
         client_email: SERVICE_ACCOUNT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+        private_key: privateKey,
       },
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     })
