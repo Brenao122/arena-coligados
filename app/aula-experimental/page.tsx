@@ -71,15 +71,20 @@ export default function AulaExperimentalPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-500 via-orange-600 to-blue-600 p-4">
-        <Card className="max-w-md w-full bg-white/10 backdrop-blur-xl border-white/20">
+      <div className="min-h-screen flex items-center justify-center p-4 relative">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/background-tennis-aerial.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+        <Card className="max-w-md w-full bg-white/10 backdrop-blur-xl border-white/20 relative z-10 shadow-2xl">
           <CardContent className="pt-12 pb-8 text-center">
             <CheckCircle2 className="h-20 w-20 text-green-400 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-white mb-4">Cadastro Realizado!</h2>
-            <p className="text-gray-300 mb-6">
+            <p className="text-gray-100 mb-6">
               Em breve entraremos em contato para agendar sua aula experimental gratuita.
             </p>
-            <p className="text-sm text-gray-400">Redirecionando...</p>
+            <p className="text-sm text-gray-300">Redirecionando...</p>
           </CardContent>
         </Card>
       </div>
@@ -87,10 +92,16 @@ export default function AulaExperimentalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-500 via-orange-600 to-blue-600 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen py-12 px-4 relative">
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/background-tennis-aerial.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+
+      <div className="max-w-2xl mx-auto relative z-10">
         <Link href="/">
-          <Button variant="ghost" className="mb-6 text-white hover:text-white/80 hover:bg-white/10">
+          <Button variant="ghost" className="mb-6 text-white hover:text-white/80 hover:bg-white/10 backdrop-blur-sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
