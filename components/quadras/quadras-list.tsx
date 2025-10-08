@@ -26,104 +26,109 @@ interface QuadrasListProps {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
+const MOCK_QUADRAS: Quadra[] = [
+  // Unidade Parque Amazônia
+  {
+    id: "1",
+    nome: "Quadra 01 - Parque Amazônia",
+    tipo: "Futevôlei",
+    preco_hora: 80.0,
+    ativa: true,
+    descricao: "Unidade Parque Amazônia",
+    image_url: "/quadra-de-futevolei.jpg",
+  },
+  {
+    id: "2",
+    nome: "Quadra 02 - Parque Amazônia",
+    tipo: "Vôlei",
+    preco_hora: 80.0,
+    ativa: true,
+    descricao: "Unidade Parque Amazônia",
+    image_url: "/quadra-de-volei.jpg",
+  },
+  {
+    id: "3",
+    nome: "Quadra 03 - Parque Amazônia",
+    tipo: "Beach Tennis",
+    preco_hora: 80.0,
+    ativa: true,
+    descricao: "Unidade Parque Amazônia",
+    image_url: "/quadra-de-beach-tennis.jpg",
+  },
+  {
+    id: "4",
+    nome: "Quadra 04 - Parque Amazônia",
+    tipo: "Tênis",
+    preco_hora: 80.0,
+    ativa: true,
+    descricao: "Unidade Parque Amazônia",
+    image_url: "/quadra-de-tenis.jpg",
+  },
+  {
+    id: "5",
+    nome: "Quadra 05 - Parque Amazônia",
+    tipo: "Futevôlei",
+    preco_hora: 80.0,
+    ativa: true,
+    descricao: "Unidade Parque Amazônia",
+    image_url: "/quadra-de-futevolei.jpg",
+  },
+  // Unidade Vila Rosa
+  {
+    id: "6",
+    nome: "Q1 - Vila Rosa",
+    tipo: "Futevôlei",
+    preco_hora: 70.0,
+    ativa: true,
+    descricao: "Unidade Vila Rosa",
+    image_url: "/quadra-de-futevolei.jpg",
+  },
+  {
+    id: "7",
+    nome: "Q2 - Vila Rosa",
+    tipo: "Vôlei",
+    preco_hora: 70.0,
+    ativa: true,
+    descricao: "Unidade Vila Rosa",
+    image_url: "/quadra-de-volei.jpg",
+  },
+  {
+    id: "8",
+    nome: "Q3 - Vila Rosa",
+    tipo: "Beach Tennis",
+    preco_hora: 70.0,
+    ativa: true,
+    descricao: "Unidade Vila Rosa",
+    image_url: "/quadra-de-beach-tennis.jpg",
+  },
+  {
+    id: "9",
+    nome: "Q4 - Vila Rosa",
+    tipo: "Tênis",
+    preco_hora: 70.0,
+    ativa: true,
+    descricao: "Unidade Vila Rosa",
+    image_url: "/quadra-de-tenis.jpg",
+  },
+]
+
 export function QuadrasList({ onEdit, refresh }: QuadrasListProps) {
   const {
     data: quadrasData,
     error,
     isLoading,
   } = useSWR("/api/sheets/quadras", fetcher, {
-    refreshInterval: 30000, // Atualiza a cada 30 segundos
+    refreshInterval: 30000,
+    onError: (err) => {
+      console.error("[v0] Erro ao buscar quadras:", err)
+    },
   })
 
   const [searchTerm, setSearchTerm] = useState("")
   const [tipoFilter, setTipoFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
 
-  const quadras: Quadra[] = quadrasData || [
-    // Unidade Parque Amazônia
-    {
-      id: "1",
-      nome: "Quadra 01 - Parque Amazônia",
-      tipo: "Futevôlei",
-      preco_hora: 80.0,
-      ativa: true,
-      descricao: "Unidade Parque Amazônia",
-      image_url: "/quadra-de-futevolei.jpg",
-    },
-    {
-      id: "2",
-      nome: "Quadra 02 - Parque Amazônia",
-      tipo: "Vôlei",
-      preco_hora: 80.0,
-      ativa: true,
-      descricao: "Unidade Parque Amazônia",
-      image_url: "/quadra-de-volei.jpg",
-    },
-    {
-      id: "3",
-      nome: "Quadra 03 - Parque Amazônia",
-      tipo: "Beach Tennis",
-      preco_hora: 80.0,
-      ativa: true,
-      descricao: "Unidade Parque Amazônia",
-      image_url: "/quadra-de-beach-tennis.jpg",
-    },
-    {
-      id: "4",
-      nome: "Quadra 04 - Parque Amazônia",
-      tipo: "Tênis",
-      preco_hora: 80.0,
-      ativa: true,
-      descricao: "Unidade Parque Amazônia",
-      image_url: "/quadra-de-tenis.jpg",
-    },
-    {
-      id: "5",
-      nome: "Quadra 05 - Parque Amazônia",
-      tipo: "Futevôlei",
-      preco_hora: 80.0,
-      ativa: true,
-      descricao: "Unidade Parque Amazônia",
-      image_url: "/quadra-de-futevolei.jpg",
-    },
-    // Unidade Vila Rosa
-    {
-      id: "6",
-      nome: "Q1 - Vila Rosa",
-      tipo: "Futevôlei",
-      preco_hora: 70.0,
-      ativa: true,
-      descricao: "Unidade Vila Rosa",
-      image_url: "/quadra-de-futevolei.jpg",
-    },
-    {
-      id: "7",
-      nome: "Q2 - Vila Rosa",
-      tipo: "Vôlei",
-      preco_hora: 70.0,
-      ativa: true,
-      descricao: "Unidade Vila Rosa",
-      image_url: "/quadra-de-volei.jpg",
-    },
-    {
-      id: "8",
-      nome: "Q3 - Vila Rosa",
-      tipo: "Beach Tennis",
-      preco_hora: 70.0,
-      ativa: true,
-      descricao: "Unidade Vila Rosa",
-      image_url: "/quadra-de-beach-tennis.jpg",
-    },
-    {
-      id: "9",
-      nome: "Q4 - Vila Rosa",
-      tipo: "Tênis",
-      preco_hora: 70.0,
-      ativa: true,
-      descricao: "Unidade Vila Rosa",
-      image_url: "/quadra-de-tenis.jpg",
-    },
-  ]
+  const quadras: Quadra[] = quadrasData && !error ? quadrasData : MOCK_QUADRAS
 
   const filteredQuadras = quadras.filter((quadra) => {
     const matchesSearch = quadra.nome.toLowerCase().includes(searchTerm.toLowerCase())
