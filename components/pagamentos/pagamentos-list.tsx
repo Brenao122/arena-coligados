@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import useSWR from "swr"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -76,12 +77,48 @@ const mockPagamentos: Pagamento[] = [
 ]
 
 export function PagamentosList({ refresh }: PagamentosListProps) {
+  const { data: pagamentosData, error } = useSWR("/api/sheets/pagamentos", (url) => fetch(url).then((r) => r.json()), {
+    refreshInterval: 30000, // Atualiza a cada 30 segundos
+  })
+
   const [pagamentos, setPagamentos] = useState<Pagamento[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [metodoFilter, setMetodoFilter] = useState("all")
   const { toast } = useToast()
+
+  useEffect(() => {
+    if (pagamentosData && Array.isArray(pagamentosData) && pagamentosData.length > 0) {
+      const mappedPagamentos = pagamentosData.map((row: any, index: number) => ({
+        id: row.id || `pag-${index}`,
+        reserva_id: row.reserva_id || "",
+        amount: Number.parseFloat(row.valor || row.amount || "0"),
+        method: row.metodo || row.method || "pix",
+        status: row.status || "pendente",
+        transaction_id: row.transaction_id || row.id_transacao || null,
+        paid_at: row.paid_at || row.data_pagamento || null,
+        created_at: row.created_at || row.data_criacao || new Date().toISOString(),
+        reservas: {
+          cliente_id: row.cliente_id || "",
+          quadra_id: row.quadra_id || "",
+          duracao: row.duracao || "",
+          profiles: {
+            full_name: row.cliente_nome || row.nome_cliente || "Cliente",
+          },
+          quadras: {
+            nome: row.quadra_nome || row.nome_quadra || "Quadra",
+          },
+        },
+      }))
+      setPagamentos(mappedPagamentos)
+      setLoading(false)
+    } else if (!pagamentosData) {
+      // Usar dados mock se não houver dados do Google Sheets
+      setPagamentos(mockPagamentos)
+      setLoading(false)
+    }
+  }, [pagamentosData])
 
   const fetchPagamentos = async () => {
     try {
@@ -102,7 +139,9 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
   }
 
   useEffect(() => {
-    fetchPagamentos()
+    if (!pagamentosData) {
+      fetchPagamentos()
+    }
   }, [refresh])
 
   const handleStatusChange = async (pagamentoId: string, newStatus: string) => {

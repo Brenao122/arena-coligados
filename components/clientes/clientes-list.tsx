@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import useSWR from "swr"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -28,30 +29,29 @@ interface ClientesListProps {
 }
 
 export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
-  const [clientes, setClientes] = useState<Cliente[]>([
-    {
-      id: "1",
-      full_name: "João Silva",
-      email: "joao@example.com",
-      phone: "(62) 99999-9999",
-      created_at: new Date().toISOString(),
-      reservas_count: 5,
-      ultima_reserva: new Date().toISOString(),
-      total_gasto: 450.0,
-    },
-    {
-      id: "2",
-      full_name: "Maria Santos",
-      email: "maria@example.com",
-      phone: "(62) 98888-8888",
-      created_at: new Date().toISOString(),
-      reservas_count: 3,
-      ultima_reserva: new Date().toISOString(),
-      total_gasto: 280.0,
-    },
-  ])
+  const { data: clientesData, error } = useSWR("/api/sheets/clientes", (url) => fetch(url).then((r) => r.json()), {
+    refreshInterval: 30000, // Atualiza a cada 30 segundos
+  })
+
+  const [clientes, setClientes] = useState<Cliente[]>([])
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
+
+  useEffect(() => {
+    if (clientesData && Array.isArray(clientesData) && clientesData.length > 0) {
+      const mappedClientes = clientesData.map((row: any, index: number) => ({
+        id: row.id || `cliente-${index}`,
+        full_name: row.nome || row.full_name || "Nome não informado",
+        email: row.email || "email@example.com",
+        phone: row.telefone || row.phone || "",
+        created_at: row.created_at || row.data_cadastro || new Date().toISOString(),
+        reservas_count: Number.parseInt(row.reservas_count || row.total_reservas || "0"),
+        ultima_reserva: row.ultima_reserva || null,
+        total_gasto: Number.parseFloat(row.total_gasto || "0"),
+      }))
+      setClientes(mappedClientes)
+    }
+  }, [clientesData])
 
   useEffect(() => {
     // Mock data - no database calls
@@ -71,7 +71,7 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
     return matchesSearch
   })
 
-  if (loading) {
+  if (loading || error) {
     return (
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader>

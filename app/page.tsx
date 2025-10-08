@@ -15,15 +15,18 @@ export default function HomePage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setSuccessMessage("")
+    setErrorMessage("")
 
     // Simular login
     setTimeout(() => {
       if (email === "admin@arena.com" && password === "admin123") {
-        // Salvar no localStorage
         localStorage.setItem(
           "arena-user",
           JSON.stringify({
@@ -32,8 +35,10 @@ export default function HomePage() {
             role: "admin",
           }),
         )
-        alert("Login realizado com sucesso! Redirecionando...")
-        window.location.href = "/dashboard"
+        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
+        setTimeout(() => {
+          window.location.href = "/dashboard"
+        }, 1500)
       } else if (email === "professor@arena.com" && password === "prof123") {
         localStorage.setItem(
           "arena-user",
@@ -43,8 +48,10 @@ export default function HomePage() {
             role: "professor",
           }),
         )
-        alert("Login realizado com sucesso! Redirecionando...")
-        window.location.href = "/dashboard"
+        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
+        setTimeout(() => {
+          window.location.href = "/dashboard"
+        }, 1500)
       } else if (email === "cliente@arena.com" && password === "cliente123") {
         localStorage.setItem(
           "arena-user",
@@ -54,10 +61,12 @@ export default function HomePage() {
             role: "cliente",
           }),
         )
-        alert("Login realizado com sucesso! Redirecionando...")
-        window.location.href = "/dashboard"
+        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
+        setTimeout(() => {
+          window.location.href = "/dashboard"
+        }, 1500)
       } else {
-        alert("Credenciais inválidas!")
+        setErrorMessage("Email ou senha incorretos!")
       }
       setLoading(false)
     }, 1000)
@@ -80,6 +89,18 @@ export default function HomePage() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
+            {successMessage && (
+              <div className="bg-green-500/20 border border-green-500/50 rounded-lg p-4 text-center">
+                <p className="text-green-300 font-medium">{successMessage}</p>
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-center">
+                <p className="text-red-300 font-medium">{errorMessage}</p>
+              </div>
+            )}
+
             <div>
               <Label htmlFor="email" className="text-gray-200">
                 Email
@@ -90,7 +111,7 @@ export default function HomePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                placeholder="admin@arena.com"
+                placeholder="seu@email.com"
                 required
               />
             </div>
@@ -106,7 +127,7 @@ export default function HomePage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 pr-10"
-                  placeholder="admin123"
+                  placeholder="••••••••"
                   required
                 />
                 <button
@@ -127,15 +148,6 @@ export default function HomePage() {
               {loading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
-
-          <div className="mt-6 p-4 bg-gray-800/50 rounded-lg">
-            <p className="text-sm text-gray-300 mb-2">Usuários de teste:</p>
-            <div className="text-xs text-gray-400 space-y-1">
-              <p>👨‍💼 Admin: admin@arena.com / admin123</p>
-              <p>👨‍🏫 Professor: professor@arena.com / prof123</p>
-              <p>👤 Cliente: cliente@arena.com / cliente123</p>
-            </div>
-          </div>
 
           <button onClick={() => setShowLogin(false)} className="w-full mt-4 text-gray-400 hover:text-white text-sm">
             ← Voltar para página inicial

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import useSWR from "swr"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -26,7 +27,15 @@ interface ProfessoresListProps {
 }
 
 export function ProfessoresList({ onEdit, refresh }: ProfessoresListProps) {
-  const [professores] = useState<Professor[]>([
+  const { data: professoresData, error } = useSWR(
+    "/api/sheets/professores",
+    (url) => fetch(url).then((r) => r.json()),
+    {
+      refreshInterval: 30000, // Atualiza a cada 30 segundos
+    },
+  )
+
+  const [professores, setProfessores] = useState<Professor[]>([
     {
       id: "1",
       nome: "Carlos Silva",
@@ -43,7 +52,7 @@ export function ProfessoresList({ onEdit, refresh }: ProfessoresListProps) {
       nome: "Ana Santos",
       email: "ana@arena.com",
       telefone: "(11) 98888-8888",
-      especialidades: ["Futsal", "Futebol"],
+      especialidades: ["Futsal", "Futevôlei"],
       preco_aula: 120.0,
       ativo: true,
       rating: 4.9,
@@ -54,6 +63,27 @@ export function ProfessoresList({ onEdit, refresh }: ProfessoresListProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [especialidadeFilter, setEspecialidadeFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
+
+  useEffect(() => {
+    if (professoresData && Array.isArray(professoresData) && professoresData.length > 0) {
+      const mappedProfessores = professoresData.map((row: any, index: number) => ({
+        id: row.id || `prof-${index}`,
+        nome: row.nome || "Nome não informado",
+        email: row.email || "email@example.com",
+        telefone: row.telefone || row.phone || "",
+        especialidades: row.especialidades
+          ? typeof row.especialidades === "string"
+            ? row.especialidades.split(",").map((e: string) => e.trim())
+            : row.especialidades
+          : [],
+        preco_aula: Number.parseFloat(row.preco_aula || row.valor_hora || "0"),
+        ativo: row.ativo === "true" || row.ativo === true || row.status === "ativo",
+        rating: Number.parseFloat(row.rating || row.avaliacao || "0"),
+        total_avaliacoes: Number.parseInt(row.total_avaliacoes || "0"),
+      }))
+      setProfessores(mappedProfessores)
+    }
+  }, [professoresData])
 
   const getAllEspecialidades = () => {
     const especialidades = new Set<string>()
