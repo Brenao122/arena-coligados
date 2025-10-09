@@ -10,7 +10,7 @@ export default function LoginPage() {
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-11%20at%2022.27.16-0QPOwwmNw3jfubVRs8DJkiW87DX0AW.jpeg"
+              src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
               alt="Arena Coligados Logo"
               width={80}
               height={80}
