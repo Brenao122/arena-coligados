@@ -6,53 +6,52 @@ const SPREADSHEET_ID = "174HlbAsnc30_T2sJeTdU4xqLPQuojm7wWS8YWfhh5Ew"
 const SERVICE_ACCOUNT_EMAIL = "arenasheets@credencial-n8n-471801.iam.gserviceaccount.com"
 
 function formatPrivateKey(key: string): string {
+  console.log("[v0] === FORMATANDO CHAVE PRIVADA ===")
+  console.log("[v0] Tamanho original:", key.length)
+  console.log("[v0] Primeiros 50 caracteres:", key.substring(0, 50))
+
   let formatted = key.trim()
 
-  // Se a chave está em Base64, decodifica primeiro
-  if (!formatted.includes("BEGIN PRIVATE KEY")) {
+  const isBase64 = !formatted.includes("BEGIN PRIVATE KEY") && !formatted.includes("\\n") && formatted.length > 100
+
+  if (isBase64) {
     try {
+      console.log("[v0] Detectado formato Base64, decodificando...")
       formatted = Buffer.from(formatted, "base64").toString("utf-8")
-      console.log("[v0] Chave decodificada de Base64")
+      console.log("[v0] Chave decodificada de Base64 com sucesso")
+      console.log("[v0] Tamanho após decodificação:", formatted.length)
     } catch (e) {
-      console.log("[v0] Chave não está em Base64, continuando...")
+      console.error("[v0] ERRO ao decodificar Base64:", e)
+      throw new Error("Falha ao decodificar chave Base64")
     }
   }
 
-  // Remove aspas duplas se existirem
-  if (formatted.startsWith('"') && formatted.endsWith('"')) {
-    formatted = formatted.slice(1, -1)
-  }
+  // Remove aspas
+  formatted = formatted.replace(/^["']|["']$/g, "")
 
-  // Remove aspas simples se existirem
-  if (formatted.startsWith("'") && formatted.endsWith("'")) {
-    formatted = formatted.slice(1, -1)
-  }
+  formatted = formatted.replace(/\\\\n/g, "\n").replace(/\\n/g, "\n").replace(/\r\n/g, "\n").replace(/\r/g, "\n")
 
-  // Primeiro, normaliza todos os tipos de quebra de linha para um padrão
-  formatted = formatted
-    .replace(/\\\\n/g, "|||NEWLINE|||") // Marca \\n
-    .replace(/\\n/g, "|||NEWLINE|||") // Marca \n literal
-    .replace(/\r\n/g, "|||NEWLINE|||") // Marca \r\n (Windows)
-    .replace(/\r/g, "|||NEWLINE|||") // Marca \r (Mac antigo)
-    .replace(/\n/g, "|||NEWLINE|||") // Marca \n real
-    .replace(/\|{3}NEWLINE\|{3}/g, "\n") // Substitui todos por \n real
-
-  // Garante que começa com BEGIN e termina com END
+  // Valida estrutura
   if (!formatted.includes("-----BEGIN PRIVATE KEY-----")) {
+    console.error("[v0] ERRO: Chave não contém BEGIN PRIVATE KEY")
+    console.error("[v0] Conteúdo atual:", formatted.substring(0, 200))
     throw new Error("Chave privada não contém o cabeçalho BEGIN PRIVATE KEY")
   }
 
   if (!formatted.includes("-----END PRIVATE KEY-----")) {
+    console.error("[v0] ERRO: Chave não contém END PRIVATE KEY")
     throw new Error("Chave privada não contém o rodapé END PRIVATE KEY")
   }
 
-  // Garante que a chave termina com quebra de linha
+  // Garante quebra de linha no final
   if (!formatted.endsWith("\n")) {
     formatted += "\n"
   }
 
-  console.log("[v0] Chave formatada - tem quebras de linha?", formatted.includes("\n"))
-  console.log("[v0] Chave formatada - número de linhas:", formatted.split("\n").length)
+  console.log("[v0] Chave formatada com sucesso")
+  console.log("[v0] Número de linhas:", formatted.split("\n").length)
+  console.log("[v0] Tem BEGIN?", formatted.includes("-----BEGIN PRIVATE KEY-----"))
+  console.log("[v0] Tem END?", formatted.includes("-----END PRIVATE KEY-----"))
 
   return formatted
 }
@@ -68,22 +67,21 @@ export async function POST(request: Request) {
 
     console.log("[v0] === DIAGNÓSTICO DE VARIÁVEIS DE AMBIENTE ===")
     console.log("[v0] GOOGLE_PRIVATE_KEY_BASE64 existe?", !!process.env.GOOGLE_PRIVATE_KEY_BASE64)
+    console.log("[v0] GOOGLE_PRIVATE_KEY_BASE64 tamanho:", process.env.GOOGLE_PRIVATE_KEY_BASE64?.length || 0)
     console.log("[v0] GOOGLE_PRIVATE_KEY existe?", !!process.env.GOOGLE_PRIVATE_KEY)
+    console.log("[v0] GOOGLE_PRIVATE_KEY tamanho:", process.env.GOOGLE_PRIVATE_KEY?.length || 0)
     console.log("[v0] SERVICE_ACCOUNT_EMAIL:", SERVICE_ACCOUNT_EMAIL)
     console.log("[v0] SPREADSHEET_ID:", SPREADSHEET_ID)
-    console.log("[v0] Appending data to sheet:", sheetName)
-    console.log("[v0] Data to append:", JSON.stringify(data))
 
-    // Prioriza Base64, depois tenta a versão normal
     const rawPrivateKey = process.env.GOOGLE_PRIVATE_KEY_BASE64 || process.env.GOOGLE_PRIVATE_KEY
 
     if (!rawPrivateKey) {
-      console.error("[v0] Nenhuma chave privada configurada!")
+      console.error("[v0] ERRO: Nenhuma chave privada configurada!")
       return NextResponse.json(
         {
           success: false,
           error: "GOOGLE_PRIVATE_KEY não configurada",
-          details: "Configure GOOGLE_PRIVATE_KEY_BASE64 ou GOOGLE_PRIVATE_KEY",
+          details: "Configure GOOGLE_PRIVATE_KEY_BASE64 ou GOOGLE_PRIVATE_KEY no Vercel",
         },
         { status: 500 },
       )
@@ -93,14 +91,12 @@ export async function POST(request: Request) {
       "[v0] Usando variável:",
       process.env.GOOGLE_PRIVATE_KEY_BASE64 ? "GOOGLE_PRIVATE_KEY_BASE64" : "GOOGLE_PRIVATE_KEY",
     )
-    console.log("[v0] Tamanho da chave:", rawPrivateKey.length)
 
     let privateKey: string
     try {
       privateKey = formatPrivateKey(rawPrivateKey)
-      console.log("[v0] Chave privada formatada com sucesso")
     } catch (formatError) {
-      console.error("[v0] Erro ao formatar chave privada:", formatError)
+      console.error("[v0] ERRO CRÍTICO ao formatar chave:", formatError)
       return NextResponse.json(
         {
           success: false,
@@ -111,24 +107,39 @@ export async function POST(request: Request) {
       )
     }
 
-    // Initialize Google Sheets connection
-    const auth = new GoogleAuth({
-      credentials: {
-        client_email: SERVICE_ACCOUNT_EMAIL,
-        private_key: privateKey,
-      },
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    })
+    console.log("[v0] Criando GoogleAuth...")
+    let auth: GoogleAuth
+    try {
+      auth = new GoogleAuth({
+        credentials: {
+          client_email: SERVICE_ACCOUNT_EMAIL,
+          private_key: privateKey,
+        },
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      })
+      console.log("[v0] GoogleAuth criado com sucesso")
+    } catch (authError) {
+      console.error("[v0] ERRO ao criar GoogleAuth:", authError)
+      const errorMessage = authError instanceof Error ? authError.message : String(authError)
+      return NextResponse.json(
+        {
+          success: false,
+          error: errorMessage,
+          errorType: "AUTH_CREATION_ERROR",
+          hint: "A chave privada pode estar mal formatada ou corrompida",
+        },
+        { status: 500 },
+      )
+    }
 
-    console.log("[v0] Autenticação criada, carregando documento...")
-
+    console.log("[v0] Carregando documento...")
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID, auth)
 
     try {
       await doc.loadInfo()
       console.log("[v0] Documento carregado com sucesso. Título:", doc.title)
     } catch (loadError) {
-      console.error("[v0] Erro ao carregar documento:", loadError)
+      console.error("[v0] ERRO ao carregar documento:", loadError)
       const errorMessage = loadError instanceof Error ? loadError.message : String(loadError)
 
       if (errorMessage.includes("permission") || errorMessage.includes("403")) {
@@ -136,7 +147,7 @@ export async function POST(request: Request) {
           {
             success: false,
             error: "PERMISSION_DENIED",
-            details: `A service account ${SERVICE_ACCOUNT_EMAIL} não tem permissão para acessar a planilha. Compartilhe a planilha com este email.`,
+            details: `A service account ${SERVICE_ACCOUNT_EMAIL} não tem permissão. Compartilhe a planilha com este email.`,
           },
           { status: 403 },
         )
@@ -145,7 +156,6 @@ export async function POST(request: Request) {
       throw loadError
     }
 
-    // Find the sheet by name
     const sheet = doc.sheetsByTitle[sheetName]
     if (!sheet) {
       console.log("[v0] Abas disponíveis:", Object.keys(doc.sheetsByTitle))
@@ -159,24 +169,9 @@ export async function POST(request: Request) {
       )
     }
 
-    console.log("[v0] Aba encontrada, adicionando linha...")
-
-    try {
-      await sheet.addRow(data)
-      console.log("[v0] Data appended successfully to:", sheetName)
-    } catch (addError) {
-      console.error("[v0] Erro ao adicionar linha:", addError)
-      const errorMessage = addError instanceof Error ? addError.message : String(addError)
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: "FAILED_TO_ADD_ROW",
-          details: errorMessage,
-        },
-        { status: 500 },
-      )
-    }
+    console.log("[v0] Adicionando linha...")
+    await sheet.addRow(data)
+    console.log("[v0] Linha adicionada com sucesso!")
 
     return NextResponse.json({
       success: true,
@@ -185,10 +180,10 @@ export async function POST(request: Request) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error("[v0] === ERRO DETALHADO ===")
-    console.error("[v0] Error type:", error instanceof Error ? error.constructor.name : typeof error)
-    console.error("[v0] Error message:", error instanceof Error ? error.message : String(error))
-    console.error("[v0] Error stack:", error instanceof Error ? error.stack : "No stack trace")
+    console.error("[v0] === ERRO FINAL ===")
+    console.error("[v0] Tipo:", error instanceof Error ? error.constructor.name : typeof error)
+    console.error("[v0] Mensagem:", error instanceof Error ? error.message : String(error))
+    console.error("[v0] Stack:", error instanceof Error ? error.stack : "No stack")
 
     return NextResponse.json(
       {
