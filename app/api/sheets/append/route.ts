@@ -6,10 +6,19 @@ const SPREADSHEET_ID = "174HlbAsnc30_T2sJeTdU4xqLPQuojm7wWS8YWfhh5Ew"
 const SERVICE_ACCOUNT_EMAIL = "arenasheets@credencial-n8n-471801.iam.gserviceaccount.com"
 
 function formatPrivateKey(key: string): string {
-  // Remove espaços extras
   let formatted = key.trim()
 
-  // Remove aspas duplas se existirem (caso o usuário tenha colado com aspas)
+  // Se a chave está em Base64, decodifica primeiro
+  if (!formatted.includes("BEGIN PRIVATE KEY")) {
+    try {
+      formatted = Buffer.from(formatted, "base64").toString("utf-8")
+      console.log("[v0] Chave decodificada de Base64")
+    } catch (e) {
+      console.log("[v0] Chave não está em Base64, continuando...")
+    }
+  }
+
+  // Remove aspas duplas se existirem
   if (formatted.startsWith('"') && formatted.endsWith('"')) {
     formatted = formatted.slice(1, -1)
   }
@@ -19,11 +28,14 @@ function formatPrivateKey(key: string): string {
     formatted = formatted.slice(1, -1)
   }
 
-  // Substitui TODAS as variações de quebras de linha por \n real
-  // Isso trata: \\n, \n (string literal), e mantém \n real
+  // Primeiro, normaliza todos os tipos de quebra de linha para um padrão
   formatted = formatted
-    .replace(/\\\\n/g, "\n") // Substitui \\n (barra dupla) por quebra real
-    .replace(/\\n/g, "\n") // Substitui \n (string literal) por quebra real
+    .replace(/\\\\n/g, "|||NEWLINE|||") // Marca \\n
+    .replace(/\\n/g, "|||NEWLINE|||") // Marca \n literal
+    .replace(/\r\n/g, "|||NEWLINE|||") // Marca \r\n (Windows)
+    .replace(/\r/g, "|||NEWLINE|||") // Marca \r (Mac antigo)
+    .replace(/\n/g, "|||NEWLINE|||") // Marca \n real
+    .replace(/\|{3}NEWLINE\|{3}/g, "\n") // Substitui todos por \n real
 
   // Garante que começa com BEGIN e termina com END
   if (!formatted.includes("-----BEGIN PRIVATE KEY-----")) {
@@ -38,6 +50,9 @@ function formatPrivateKey(key: string): string {
   if (!formatted.endsWith("\n")) {
     formatted += "\n"
   }
+
+  console.log("[v0] Chave formatada - tem quebras de linha?", formatted.includes("\n"))
+  console.log("[v0] Chave formatada - número de linhas:", formatted.split("\n").length)
 
   return formatted
 }

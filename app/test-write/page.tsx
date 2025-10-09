@@ -100,6 +100,16 @@ export default function TestWritePage() {
               <summary className="cursor-pointer font-bold">Ver resposta completa (JSON)</summary>
               <pre className="mt-2 p-4 bg-muted rounded text-xs overflow-auto">{JSON.stringify(result, null, 2)}</pre>
             </details>
+
+            <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded">
+              <p className="text-sm font-semibold mb-2">📋 Para ver logs detalhados:</p>
+              <ol className="text-sm space-y-1 list-decimal list-inside">
+                <li>Acesse o Vercel Dashboard</li>
+                <li>Clique em "Deployments" → deployment mais recente</li>
+                <li>Clique em "Runtime Logs"</li>
+                <li>Procure por logs que começam com "[v0]"</li>
+              </ol>
+            </div>
           </Card>
         )}
       </div>
