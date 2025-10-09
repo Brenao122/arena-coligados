@@ -1,5 +1,6 @@
 "use client"
 
+// Google Sheets integration configured with Base64 private key
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"

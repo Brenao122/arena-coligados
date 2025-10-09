@@ -67,29 +67,37 @@ export async function POST(request: Request) {
     }
 
     console.log("[v0] === DIAGNÓSTICO DE VARIÁVEIS DE AMBIENTE ===")
+    console.log("[v0] GOOGLE_PRIVATE_KEY_BASE64 existe?", !!process.env.GOOGLE_PRIVATE_KEY_BASE64)
     console.log("[v0] GOOGLE_PRIVATE_KEY existe?", !!process.env.GOOGLE_PRIVATE_KEY)
-    console.log("[v0] GOOGLE_PRIVATE_KEY length:", process.env.GOOGLE_PRIVATE_KEY?.length || 0)
-    console.log("[v0] GOOGLE_PRIVATE_KEY primeiros 50 chars:", process.env.GOOGLE_PRIVATE_KEY?.substring(0, 50))
     console.log("[v0] SERVICE_ACCOUNT_EMAIL:", SERVICE_ACCOUNT_EMAIL)
     console.log("[v0] SPREADSHEET_ID:", SPREADSHEET_ID)
     console.log("[v0] Appending data to sheet:", sheetName)
     console.log("[v0] Data to append:", JSON.stringify(data))
 
-    if (!process.env.GOOGLE_PRIVATE_KEY) {
-      console.error("[v0] GOOGLE_PRIVATE_KEY não está configurada!")
+    // Prioriza Base64, depois tenta a versão normal
+    const rawPrivateKey = process.env.GOOGLE_PRIVATE_KEY_BASE64 || process.env.GOOGLE_PRIVATE_KEY
+
+    if (!rawPrivateKey) {
+      console.error("[v0] Nenhuma chave privada configurada!")
       return NextResponse.json(
         {
           success: false,
           error: "GOOGLE_PRIVATE_KEY não configurada",
-          details: "A variável de ambiente GOOGLE_PRIVATE_KEY não foi encontrada",
+          details: "Configure GOOGLE_PRIVATE_KEY_BASE64 ou GOOGLE_PRIVATE_KEY",
         },
         { status: 500 },
       )
     }
 
+    console.log(
+      "[v0] Usando variável:",
+      process.env.GOOGLE_PRIVATE_KEY_BASE64 ? "GOOGLE_PRIVATE_KEY_BASE64" : "GOOGLE_PRIVATE_KEY",
+    )
+    console.log("[v0] Tamanho da chave:", rawPrivateKey.length)
+
     let privateKey: string
     try {
-      privateKey = formatPrivateKey(process.env.GOOGLE_PRIVATE_KEY)
+      privateKey = formatPrivateKey(rawPrivateKey)
       console.log("[v0] Chave privada formatada com sucesso")
     } catch (formatError) {
       console.error("[v0] Erro ao formatar chave privada:", formatError)
