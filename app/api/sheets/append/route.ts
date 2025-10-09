@@ -6,13 +6,24 @@ const SPREADSHEET_ID = "174HlbAsnc30_T2sJeTdU4xqLPQuojm7wWS8YWfhh5Ew"
 const SERVICE_ACCOUNT_EMAIL = "arenasheets@credencial-n8n-471801.iam.gserviceaccount.com"
 
 function formatPrivateKey(key: string): string {
-  // Remove espaços extras e normaliza quebras de linha
+  // Remove espaços extras
   let formatted = key.trim()
 
-  // Se a chave tem \\n literal (string), substitui por quebra de linha real
-  if (formatted.includes("\\n")) {
-    formatted = formatted.replace(/\\n/g, "\n")
+  // Remove aspas duplas se existirem (caso o usuário tenha colado com aspas)
+  if (formatted.startsWith('"') && formatted.endsWith('"')) {
+    formatted = formatted.slice(1, -1)
   }
+
+  // Remove aspas simples se existirem
+  if (formatted.startsWith("'") && formatted.endsWith("'")) {
+    formatted = formatted.slice(1, -1)
+  }
+
+  // Substitui TODAS as variações de quebras de linha por \n real
+  // Isso trata: \\n, \n (string literal), e mantém \n real
+  formatted = formatted
+    .replace(/\\\\n/g, "\n") // Substitui \\n (barra dupla) por quebra real
+    .replace(/\\n/g, "\n") // Substitui \n (string literal) por quebra real
 
   // Garante que começa com BEGIN e termina com END
   if (!formatted.includes("-----BEGIN PRIVATE KEY-----")) {
@@ -21,6 +32,11 @@ function formatPrivateKey(key: string): string {
 
   if (!formatted.includes("-----END PRIVATE KEY-----")) {
     throw new Error("Chave privada não contém o rodapé END PRIVATE KEY")
+  }
+
+  // Garante que a chave termina com quebra de linha
+  if (!formatted.endsWith("\n")) {
+    formatted += "\n"
   }
 
   return formatted
