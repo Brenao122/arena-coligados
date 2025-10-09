@@ -13,6 +13,7 @@ import Link from "next/link"
 export default function FixGoogleKeyPage() {
   const [rawKey, setRawKey] = useState("")
   const [formattedKey, setFormattedKey] = useState("")
+  const [base64Key, setBase64Key] = useState("")
   const [validation, setValidation] = useState<{
     hasBegin: boolean
     hasEnd: boolean
@@ -20,6 +21,7 @@ export default function FixGoogleKeyPage() {
     isValid: boolean
   } | null>(null)
   const [copied, setCopied] = useState(false)
+  const [copiedBase64, setCopiedBase64] = useState(false)
 
   const validateAndFormat = (key: string) => {
     const trimmed = key.trim()
@@ -39,8 +41,12 @@ export default function FixGoogleKeyPage() {
       // Formata a chave substituindo quebras de linha reais por \\n
       const formatted = trimmed.replace(/\n/g, "\\n")
       setFormattedKey(formatted)
+
+      const base64 = Buffer.from(trimmed).toString("base64")
+      setBase64Key(base64)
     } else {
       setFormattedKey("")
+      setBase64Key("")
     }
   }
 
@@ -54,6 +60,12 @@ export default function FixGoogleKeyPage() {
     navigator.clipboard.writeText(formattedKey)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const copyBase64ToClipboard = () => {
+    navigator.clipboard.writeText(base64Key)
+    setCopiedBase64(true)
+    setTimeout(() => setCopiedBase64(false), 2000)
   }
 
   return (
@@ -79,6 +91,7 @@ export default function FixGoogleKeyPage() {
               <li>Abra o arquivo JSON da sua Service Account do Google</li>
               <li>Copie APENAS o valor da chave "private_key" (incluindo as aspas e quebras de linha)</li>
               <li>Cole no campo abaixo</li>
+              <li>Escolha entre o formato normal ou Base64 (recomendado)</li>
               <li>Copie a chave formatada</li>
               <li>Cole no Vercel como variável de ambiente GOOGLE_PRIVATE_KEY</li>
             </ol>
@@ -130,7 +143,7 @@ export default function FixGoogleKeyPage() {
                 <Alert className="mt-4 bg-green-900/20 border-green-700">
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
                   <AlertDescription className="text-green-300">
-                    Chave válida! Copie a versão formatada abaixo.
+                    Chave válida! Escolha um formato abaixo para copiar.
                   </AlertDescription>
                 </Alert>
               ) : (
@@ -144,10 +157,53 @@ export default function FixGoogleKeyPage() {
             </Card>
           )}
 
-          {/* Chave formatada */}
+          {base64Key && validation?.isValid && (
+            <Card className="p-6 bg-slate-800/50 border-green-700 border-2">
+              <div className="flex items-center gap-2 mb-4">
+                <h2 className="text-xl font-semibold text-white">3A. Formato Base64 (RECOMENDADO)</h2>
+                <span className="px-2 py-1 bg-green-600 text-white text-xs rounded">Melhor opção</span>
+              </div>
+              <p className="text-slate-300 text-sm mb-4">
+                Este formato elimina completamente problemas com quebras de linha e caracteres especiais.
+              </p>
+              <div className="relative">
+                <Textarea
+                  value={base64Key}
+                  readOnly
+                  className="min-h-[100px] bg-slate-900 border-slate-600 text-white font-mono text-sm pr-12"
+                />
+                <Button
+                  onClick={copyBase64ToClipboard}
+                  className="absolute top-2 right-2 bg-green-600 hover:bg-green-700"
+                  size="sm"
+                >
+                  {copiedBase64 ? (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                      Copiado!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copiar Base64
+                    </>
+                  )}
+                </Button>
+              </div>
+              <Alert className="mt-4 bg-green-900/20 border-green-700">
+                <AlertDescription className="text-green-300">
+                  <strong>Use este formato!</strong> Vá no Vercel → Settings → Environment Variables → Edite
+                  GOOGLE_PRIVATE_KEY → Cole este valor → Save → Redeploy
+                </AlertDescription>
+              </Alert>
+            </Card>
+          )}
+
+          {/* Chave formatada (formato alternativo) */}
           {formattedKey && validation?.isValid && (
             <Card className="p-6 bg-slate-800/50 border-slate-700">
-              <h2 className="text-xl font-semibold text-white mb-4">3. Chave formatada para o Vercel</h2>
+              <h2 className="text-xl font-semibold text-white mb-4">3B. Formato com \n (alternativo)</h2>
+              <p className="text-slate-300 text-sm mb-4">Use apenas se o formato Base64 não funcionar.</p>
               <div className="relative">
                 <Textarea
                   value={formattedKey}
@@ -172,12 +228,6 @@ export default function FixGoogleKeyPage() {
                   )}
                 </Button>
               </div>
-              <Alert className="mt-4 bg-blue-900/20 border-blue-700">
-                <AlertDescription className="text-blue-300">
-                  Agora vá no Vercel → Settings → Environment Variables → Edite GOOGLE_PRIVATE_KEY → Cole este valor →
-                  Save → Redeploy
-                </AlertDescription>
-              </Alert>
             </Card>
           )}
         </div>
