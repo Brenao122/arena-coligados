@@ -17,7 +17,7 @@ export default function TestWritePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sheetName: "Reservas",
+          sheetName: "reservas",
           data: {
             Data: new Date().toLocaleDateString("pt-BR"),
             Horário: "08:00",
