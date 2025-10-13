@@ -30,7 +30,25 @@ export async function POST(request: Request) {
       )
     }
 
-    const formattedPrivateKey = privateKey.replace(/\\n/g, "\n")
+    let formattedPrivateKey = privateKey
+
+    // Se a chave não tem quebras de linha, adicionar no formato PEM correto
+    if (!privateKey.includes("\n")) {
+      // Remover os marcadores BEGIN e END temporariamente
+      const keyContent = privateKey
+        .replace("-----BEGIN PRIVATE KEY-----", "")
+        .replace("-----END PRIVATE KEY-----", "")
+        .trim()
+
+      // Adicionar quebras de linha a cada 64 caracteres (padrão PEM)
+      const formattedContent = keyContent.match(/.{1,64}/g)?.join("\n") || keyContent
+
+      // Reconstruir a chave com os marcadores e quebras de linha
+      formattedPrivateKey = `-----BEGIN PRIVATE KEY-----\n${formattedContent}\n-----END PRIVATE KEY-----`
+    } else {
+      // Se já tem \n como string literal, substituir por quebras de linha reais
+      formattedPrivateKey = privateKey.replace(/\\n/g, "\n")
+    }
 
     const auth = new GoogleAuth({
       credentials: {
