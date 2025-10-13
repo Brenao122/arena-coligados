@@ -67,20 +67,20 @@ export function QuadraAgendamentoForm({ onSuccess, onClose }: QuadraAgendamentoF
       const precoTotal = calcularPreco()
       const sinalPix = precoTotal * 0.5
 
+      const dataInicio = `${formData.data_agendamento} ${formData.hora_inicio}`
+      const dataFim = `${formData.data_agendamento} ${formData.hora_fim}`
+
       const agendamentoData = {
-        cliente_nome: formData.cliente_nome,
-        cliente_telefone: normalizePhone(formData.cliente_telefone),
-        cliente_email: formData.cliente_email || "",
-        modalidade: formData.modalidade,
-        quadra_numero: formData.quadra_numero,
-        data_agendamento: formData.data_agendamento,
-        hora_inicio: formData.hora_inicio,
-        hora_fim: formData.hora_fim,
-        preco_total: precoTotal,
-        sinal_pix: sinalPix,
-        valor_restante: precoTotal - sinalPix,
+        whatsapp_number: normalizePhone(formData.cliente_telefone),
+        nome: formData.cliente_nome,
+        esporte: formData.modalidade,
+        quadra_id: `Quadra ${formData.quadra_numero}`,
+        data_inicio: dataInicio,
+        data_fim: dataFim,
+        valor_total: precoTotal.toFixed(2),
+        observacoes: `Email: ${formData.cliente_email || "N/A"} | Sinal PIX: R$ ${sinalPix.toFixed(2)} | ${formData.observacoes}`,
+        created_at: new Date().toISOString(),
         status: "pendente",
-        observacoes: formData.observacoes,
       }
 
       const response = await fetch("/api/sheets/append", {

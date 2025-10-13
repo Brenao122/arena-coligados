@@ -218,22 +218,28 @@ export default function ReservarQuadraPage() {
     try {
       console.log("[v0] Enviando reserva:", { ...formData, ...selectedSlot, modalidade: selectedModalidade })
 
+      const dataInicio = `${selectedDate.toISOString().split("T")[0]} ${selectedSlot.horario}`
+      const horaFim = HORARIOS[HORARIOS.indexOf(selectedSlot.horario) + 1] || selectedSlot.horario
+      const dataFim = `${selectedDate.toISOString().split("T")[0]} ${horaFim}`
+      const preco = UNIDADES[selectedSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
+
       const response = await fetch("/api/sheets/append", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sheetName: "reservas",
           data: {
+            whatsapp_number: formData.telefone,
             nome: formData.nome,
-            telefone: formData.telefone,
-            email: formData.email,
+            esporte: selectedModalidade,
             unidade: selectedSlot.unidade,
-            quadra: selectedSlot.quadra,
-            horario: selectedSlot.horario,
-            modalidade: selectedModalidade,
-            data: selectedDate.toISOString().split("T")[0],
+            quadra_id: `${selectedSlot.unidade}-${selectedSlot.quadra}`,
+            data_inicio: dataInicio,
+            data_fim: dataFim,
+            valor_total: preco,
+            observacoes: `Email: ${formData.email}`,
+            created_at: new Date().toISOString(),
             status: "Confirmado",
-            data_cadastro: new Date().toISOString(),
           },
         }),
       })
