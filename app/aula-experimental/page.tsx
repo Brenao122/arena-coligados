@@ -37,7 +37,7 @@ export default function AulaExperimentalPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sheetName: "leads",
+          sheetName: "leads-aulas",
           data: {
             nome: formData.nome,
             telefone: formData.telefone,

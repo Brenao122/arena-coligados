@@ -222,7 +222,7 @@ export default function ReservarQuadraPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sheetName: "Página1",
+          sheetName: "reservas",
           data: {
             nome: formData.nome,
             telefone: formData.telefone,

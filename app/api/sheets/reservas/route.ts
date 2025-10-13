@@ -3,7 +3,7 @@ import { readSheetData } from "@/lib/integrations/google-sheets-complete"
 
 export async function GET() {
   try {
-    const data = await readSheetData("Página1")
+    const data = await readSheetData("reservas")
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Erro ao buscar reservas:", error)

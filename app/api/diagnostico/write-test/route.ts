@@ -25,11 +25,11 @@ export async function POST() {
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID, auth)
     await doc.loadInfo()
 
-    const sheet = doc.sheetsByTitle["Página1"]
+    const sheet = doc.sheetsByTitle["reservas"]
     if (!sheet) {
       return NextResponse.json({
         success: false,
-        error: 'Aba "Página1" não encontrada',
+        error: 'Aba "reservas" não encontrada',
       })
     }
 

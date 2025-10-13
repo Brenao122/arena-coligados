@@ -58,7 +58,7 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sheetName: "Página1",
+          sheetName: "reservas",
           data: {
             cliente_nome: formData.cliente_nome,
             cliente_telefone: formData.cliente_telefone,
