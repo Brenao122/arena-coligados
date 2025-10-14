@@ -287,38 +287,51 @@ export default function ReservarQuadraPage() {
       const preco = UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
       const valorTotal = (Number.parseFloat(preco) * selectedSlots.length).toFixed(2)
 
+      const dadosReserva = {
+        whatsapp_number: formData.telefone,
+        nome: formData.nome,
+        Unidade: firstSlot.unidade,
+        esporte: selectedModalidade,
+        quadra_id: `${firstSlot.unidade}-${firstSlot.quadra}`,
+        data: dataReserva,
+        horarios: horariosString,
+        valor_total: valorTotal,
+        observacoes: `Email: ${formData.email}`,
+        status: "Confirmado",
+      }
+
+      console.log("[v0] ===== INICIANDO ENVIO DE RESERVA =====")
+      console.log("[v0] Dados da reserva:", JSON.stringify(dadosReserva, null, 2))
+      console.log("[v0] Nome da aba:", "reservas")
+
       // Enviar uma única reserva com todos os horários
       const response = await fetch("/api/sheets/append", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sheetName: "reservas",
-          data: {
-            whatsapp_number: formData.telefone,
-            nome: formData.nome,
-            Unidade: firstSlot.unidade,
-            esporte: selectedModalidade,
-            quadra_id: `${firstSlot.unidade}-${firstSlot.quadra}`,
-            data: dataReserva,
-            horarios: horariosString,
-            valor_total: valorTotal,
-            observacoes: `Email: ${formData.email}`,
-            status: "Confirmado",
-          },
+          data: dadosReserva,
         }),
       })
 
+      console.log("[v0] Status da resposta:", response.status, response.statusText)
+
       const result = await response.json()
+      console.log("[v0] Resposta completa da API:", JSON.stringify(result, null, 2))
 
       if (!response.ok) {
+        console.error("[v0] ❌ ERRO na resposta da API")
+        console.error("[v0] Detalhes do erro:", result)
         alert(`Erro ao processar reserva: ${result.error || result.details || "Erro desconhecido"}`)
         return
       }
 
+      console.log("[v0] ✅ Reserva confirmada com sucesso!")
       setSuccess(true)
       setTimeout(() => router.push("/"), 3000)
     } catch (error) {
-      console.error("[v0] Erro ao enviar formulário:", error)
+      console.error("[v0] ❌ ERRO CRÍTICO ao enviar formulário:", error)
+      console.error("[v0] Stack trace:", error instanceof Error ? error.stack : "N/A")
       const errorMessage = error instanceof Error ? error.message : "Erro desconhecido. Tente novamente."
       alert(`❌ ${errorMessage}`)
     } finally {
