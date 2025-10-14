@@ -302,14 +302,14 @@ export default function ReservarQuadraPage() {
 
       console.log("[v0] ===== INICIANDO ENVIO DE RESERVA =====")
       console.log("[v0] Dados da reserva:", JSON.stringify(dadosReserva, null, 2))
-      console.log("[v0] Nome da aba:", "reservas")
+      console.log("[v0] Nome da aba:", "leads - quadra")
 
       // Enviar uma única reserva com todos os horários
       const response = await fetch("/api/sheets/append", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sheetName: "reservas",
+          sheetName: "leads - quadra",
           data: dadosReserva,
         }),
       })
