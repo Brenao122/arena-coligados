@@ -255,40 +255,63 @@ export default function ReservarQuadraPage() {
     setLoading(true)
 
     try {
-      const promises = selectedSlots.map(async (slot) => {
-        const dataInicio = `${selectedDate.toISOString().split("T")[0]} ${slot.horario}`
-        const horaFim = HORARIOS[HORARIOS.indexOf(slot.horario) + 1] || slot.horario
-        const dataFim = `${selectedDate.toISOString().split("T")[0]} ${horaFim}`
-        const preco = UNIDADES[slot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
+      const horariosFormatados = selectedSlots.map((slot) => slot.horario).sort()
 
-        return fetch("/api/sheets/append", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sheetName: "reservas",
-            data: {
-              whatsapp_number: formData.telefone,
-              nome: formData.nome,
-              esporte: selectedModalidade,
-              unidade: slot.unidade,
-              quadra_id: `${slot.unidade}-${slot.quadra}`,
-              data_inicio: dataInicio,
-              data_fim: dataFim,
-              valor_total: preco,
-              observacoes: `Email: ${formData.email}`,
-              created_at: new Date().toISOString(),
-              status: "Confirmado",
-            },
-          }),
+      // Formatar horários: se consecutivos, usar intervalo (08:30 - 10:00), senão listar (08:30, 09:00, 10:00)
+      let horariosString = ""
+      if (horariosFormatados.length === 1) {
+        horariosString = horariosFormatados[0]
+      } else {
+        // Verificar se são consecutivos
+        const saoConsecutivos = horariosFormatados.every((horario, index) => {
+          if (index === 0) return true
+          const indexAnterior = HORARIOS.indexOf(horariosFormatados[index - 1])
+          const indexAtual = HORARIOS.indexOf(horario)
+          return indexAtual === indexAnterior + 1
         })
+
+        if (saoConsecutivos) {
+          // Formato de intervalo: "08:30 - 10:00"
+          const primeiroHorario = horariosFormatados[0]
+          const ultimoIndex = HORARIOS.indexOf(horariosFormatados[horariosFormatados.length - 1])
+          const horarioFim = HORARIOS[ultimoIndex + 1] || horariosFormatados[horariosFormatados.length - 1]
+          horariosString = `${primeiroHorario} - ${horarioFim}`
+        } else {
+          // Formato de lista: "08:30, 09:00, 10:00"
+          horariosString = horariosFormatados.join(", ")
+        }
+      }
+
+      const firstSlot = selectedSlots[0]
+      const dataReserva = selectedDate.toISOString().split("T")[0]
+      const preco = UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
+      const valorTotal = (Number.parseFloat(preco) * selectedSlots.length).toFixed(2)
+
+      // Enviar uma única reserva com todos os horários
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "reservas",
+          data: {
+            whatsapp_number: formData.telefone,
+            nome: formData.nome,
+            Unidade: firstSlot.unidade,
+            esporte: selectedModalidade,
+            quadra_id: `${firstSlot.unidade}-${firstSlot.quadra}`,
+            data: dataReserva,
+            horarios: horariosString,
+            valor_total: valorTotal,
+            observacoes: `Email: ${formData.email}`,
+            status: "Confirmado",
+          },
+        }),
       })
 
-      const responses = await Promise.all(promises)
-      const results = await Promise.all(responses.map((r) => r.json()))
+      const result = await response.json()
 
-      const failed = results.find((result, index) => !responses[index].ok)
-      if (failed) {
-        alert(`Erro ao processar reserva: ${failed.error || failed.details || "Erro desconhecido"}`)
+      if (!response.ok) {
+        alert(`Erro ao processar reserva: ${result.error || result.details || "Erro desconhecido"}`)
         return
       }
 
