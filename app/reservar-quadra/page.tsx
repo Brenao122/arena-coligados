@@ -339,6 +339,16 @@ export default function ReservarQuadraPage() {
     }
   }
 
+  const handleTesteSemPagamento = async () => {
+    if (selectedSlots.length === 0) {
+      alert("Por favor, selecione pelo menos um horário")
+      return
+    }
+
+    console.log("[v0] 🧪 TESTE: Enviando dados sem esperar pagamento")
+    await handleConfirmReservation()
+  }
+
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4">
@@ -668,6 +678,15 @@ export default function ReservarQuadraPage() {
                   disabled={loading}
                 >
                   Prosseguir para Pagamento
+                </Button>
+
+                <Button
+                  type="button"
+                  onClick={handleTesteSemPagamento}
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 text-sm"
+                  disabled={loading}
+                >
+                  🧪 TESTE: Enviar Direto (Sem Pagamento)
                 </Button>
               </form>
             </CardContent>
