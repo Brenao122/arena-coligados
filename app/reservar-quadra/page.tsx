@@ -114,11 +114,13 @@ export default function ReservarQuadraPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [availableDays] = useState<Date[]>(getNext7Days())
 
-  const [selectedSlot, setSelectedSlot] = useState<{
-    unidade: string
-    quadra: string
-    horario: string
-  } | null>(null)
+  const [selectedSlots, setSelectedSlots] = useState<
+    Array<{
+      unidade: string
+      quadra: string
+      horario: string
+    }>
+  >([])
   const [selectedModalidade, setSelectedModalidade] = useState<string>("")
   const [showModalidadeDialog, setShowModalidadeDialog] = useState(false)
   const [tempSlot, setTempSlot] = useState<{
@@ -176,33 +178,70 @@ export default function ReservarQuadraPage() {
     return horariosOcupados[key]?.includes(horario) || false
   }
 
+  const isSlotSelected = (unidade: string, quadra: string, horario: string) => {
+    return selectedSlots.some((slot) => slot.unidade === unidade && slot.quadra === quadra && slot.horario === horario)
+  }
+
   const handleSlotClick = (unidade: string, quadra: string, horario: string) => {
     if (isHorarioOcupado(unidade, quadra, horario) || isHorarioBloqueado(horario, selectedDate)) return
 
-    setTempSlot({ unidade, quadra, horario })
-    setShowModalidadeDialog(true)
+    const isSelected = isSlotSelected(unidade, quadra, horario)
+
+    if (isSelected) {
+      setSelectedSlots(
+        selectedSlots.filter(
+          (slot) => !(slot.unidade === unidade && slot.quadra === quadra && slot.horario === horario),
+        ),
+      )
+    } else {
+      if (selectedSlots.length > 0) {
+        const firstSlot = selectedSlots[0]
+        if (firstSlot.unidade !== unidade || firstSlot.quadra !== quadra) {
+          alert("Por favor, selecione horários da mesma quadra")
+          return
+        }
+      }
+
+      setTempSlot({ unidade, quadra, horario })
+
+      if (selectedModalidade) {
+        setSelectedSlots([...selectedSlots, { unidade, quadra, horario }])
+      } else {
+        setShowModalidadeDialog(true)
+      }
+    }
   }
 
   const handleModalidadeSelect = (modalidade: string) => {
     if (tempSlot) {
-      setSelectedSlot(tempSlot)
+      setSelectedSlots([...selectedSlots, tempSlot])
       setSelectedModalidade(modalidade)
       setShowModalidadeDialog(false)
       setTempSlot(null)
     }
   }
 
+  const calcularValorTotal = () => {
+    if (selectedSlots.length === 0) return "0,00"
+    const firstSlot = selectedSlots[0]
+    const precoUnitario = Number.parseFloat(
+      UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".") || "0",
+    )
+    const total = precoUnitario * selectedSlots.length
+    return total.toFixed(2).replace(".", ",")
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!selectedSlot) {
-      alert("Por favor, selecione um horário")
+    if (selectedSlots.length === 0) {
+      alert("Por favor, selecione pelo menos um horário")
       return
     }
     setShowPayment(true)
   }
 
   const handleCopyPix = () => {
-    const pixKey = UNIDADES[selectedSlot?.unidade as keyof typeof UNIDADES]?.pix
+    const pixKey = UNIDADES[selectedSlots[0]?.unidade as keyof typeof UNIDADES]?.pix
     if (pixKey) {
       navigator.clipboard.writeText(pixKey)
       setPixCopied(true)
@@ -211,72 +250,45 @@ export default function ReservarQuadraPage() {
   }
 
   const handleConfirmReservation = async () => {
-    if (!selectedSlot) return
+    if (selectedSlots.length === 0) return
 
     setLoading(true)
 
     try {
-      console.log("[v0] Enviando reserva:", { ...formData, ...selectedSlot, modalidade: selectedModalidade })
+      const promises = selectedSlots.map(async (slot) => {
+        const dataInicio = `${selectedDate.toISOString().split("T")[0]} ${slot.horario}`
+        const horaFim = HORARIOS[HORARIOS.indexOf(slot.horario) + 1] || slot.horario
+        const dataFim = `${selectedDate.toISOString().split("T")[0]} ${horaFim}`
+        const preco = UNIDADES[slot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
 
-      const dataInicio = `${selectedDate.toISOString().split("T")[0]} ${selectedSlot.horario}`
-      const horaFim = HORARIOS[HORARIOS.indexOf(selectedSlot.horario) + 1] || selectedSlot.horario
-      const dataFim = `${selectedDate.toISOString().split("T")[0]} ${horaFim}`
-      const preco = UNIDADES[selectedSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
-
-      const response = await fetch("/api/sheets/append", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sheetName: "reservas",
-          data: {
-            whatsapp_number: formData.telefone,
-            nome: formData.nome,
-            esporte: selectedModalidade,
-            unidade: selectedSlot.unidade,
-            quadra_id: `${selectedSlot.unidade}-${selectedSlot.quadra}`,
-            data_inicio: dataInicio,
-            data_fim: dataFim,
-            valor_total: preco,
-            observacoes: `Email: ${formData.email}`,
-            created_at: new Date().toISOString(),
-            status: "Confirmado",
-          },
-        }),
+        return fetch("/api/sheets/append", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sheetName: "reservas",
+            data: {
+              whatsapp_number: formData.telefone,
+              nome: formData.nome,
+              esporte: selectedModalidade,
+              unidade: slot.unidade,
+              quadra_id: `${slot.unidade}-${slot.quadra}`,
+              data_inicio: dataInicio,
+              data_fim: dataFim,
+              valor_total: preco,
+              observacoes: `Email: ${formData.email}`,
+              created_at: new Date().toISOString(),
+              status: "Confirmado",
+            },
+          }),
+        })
       })
 
-      const result = await response.json()
-      console.log("[v0] Resposta da API:", result)
+      const responses = await Promise.all(promises)
+      const results = await Promise.all(responses.map((r) => r.json()))
 
-      if (!response.ok) {
-        if (result.error === "PERMISSION_DENIED") {
-          alert(
-            `❌ Erro de Permissão\n\n${result.details}\n\nPor favor, compartilhe a planilha do Google Sheets com o email:\n${SERVICE_ACCOUNT_EMAIL}`,
-          )
-          return
-        }
-
-        if (result.error === "GOOGLE_PRIVATE_KEY não configurada") {
-          alert(
-            `❌ Erro de Configuração\n\nA chave privada do Google não está configurada no servidor.\n\nCódigo: GOOGLE_PRIVATE_KEY_MISSING`,
-          )
-          return
-        }
-
-        if (result.error === "PRIVATE_KEY_FORMAT_ERROR") {
-          alert(
-            `❌ Erro de Configuração\n\nA chave privada do Google está mal formatada.\n\nDetalhes: ${result.details}\n\nCódigo: GOOGLE_SHEETS_CONFIG`,
-          )
-          return
-        }
-
-        if (result.error?.includes("DECODER") || result.error?.includes("unsupported")) {
-          alert(
-            `❌ Erro de Configuração\n\nA chave privada do Google está mal formatada ou corrompida.\n\nPor favor, verifique se a chave foi copiada corretamente.\n\nCódigo: GOOGLE_SHEETS_CONFIG`,
-          )
-          return
-        }
-
-        alert(`❌ Erro ao processar reserva\n\n${result.details || result.error || "Erro desconhecido"}`)
+      const failed = results.find((result, index) => !responses[index].ok)
+      if (failed) {
+        alert(`Erro ao processar reserva: ${failed.error || failed.details || "Erro desconhecido"}`)
         return
       }
 
@@ -306,9 +318,10 @@ export default function ReservarQuadraPage() {
     )
   }
 
-  if (showPayment && selectedSlot) {
-    const pixKey = UNIDADES[selectedSlot.unidade as keyof typeof UNIDADES]?.pix
-    const preco = UNIDADES[selectedSlot.unidade as keyof typeof UNIDADES]?.preco
+  if (showPayment && selectedSlots.length > 0) {
+    const firstSlot = selectedSlots[0]
+    const pixKey = UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.pix
+    const valorTotal = calcularValorTotal()
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4">
@@ -316,15 +329,19 @@ export default function ReservarQuadraPage() {
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold text-white mb-2">Pagamento via PIX</CardTitle>
             <CardDescription className="text-gray-300 text-lg">
-              {selectedSlot.unidade} - {selectedSlot.quadra}
+              {firstSlot.unidade} - {firstSlot.quadra}
               <br />
-              {selectedSlot.horario}
+              {selectedSlots.map((slot) => slot.horario).join(", ")}
+              <br />
+              <span className="text-orange-400 font-semibold">
+                {selectedSlots.length} {selectedSlots.length === 1 ? "hora" : "horas"}
+              </span>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="bg-white/5 rounded-lg p-6 text-center border border-white/20">
               <p className="text-gray-300 mb-2">Valor a pagar:</p>
-              <p className="text-4xl font-bold text-green-400">R$ {preco}</p>
+              <p className="text-4xl font-bold text-green-400">R$ {valorTotal}</p>
             </div>
 
             <div className="bg-white/5 rounded-lg p-6 border border-white/20">
@@ -423,7 +440,8 @@ export default function ReservarQuadraPage() {
                     key={formatted.full}
                     onClick={() => {
                       setSelectedDate(date)
-                      setSelectedSlot(null) // Limpa seleção ao mudar data
+                      setSelectedSlots([])
+                      setSelectedModalidade("")
                     }}
                     className={cn(
                       "flex flex-col items-center justify-center p-4 rounded-lg transition-all",
@@ -505,10 +523,7 @@ export default function ReservarQuadraPage() {
                             const ocupado = isHorarioOcupado(unidade, quadra, horario)
                             const bloqueado = isHorarioBloqueado(horario, selectedDate)
                             const indisponivel = ocupado || bloqueado
-                            const selecionado =
-                              selectedSlot?.unidade === unidade &&
-                              selectedSlot?.quadra === quadra &&
-                              selectedSlot?.horario === horario
+                            const selecionado = isSlotSelected(unidade, quadra, horario)
 
                             return (
                               <td key={quadra} className="p-1 border border-white/20">
@@ -546,7 +561,7 @@ export default function ReservarQuadraPage() {
           ))}
         </div>
 
-        {selectedSlot && (
+        {selectedSlots.length > 0 && (
           <Card className="bg-white/10 backdrop-blur-xl border-white/20 max-w-2xl mx-auto">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-white">Confirme seus dados</CardTitle>
@@ -554,9 +569,16 @@ export default function ReservarQuadraPage() {
                 Data: {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes} (
                 {formatDate(selectedDate).diaSemana})
                 <br />
-                Horário: {selectedSlot.unidade} - {selectedSlot.quadra} às {selectedSlot.horario}
+                Horários: {selectedSlots[0].unidade} - {selectedSlots[0].quadra}
+                <br />
+                <span className="text-orange-400 font-semibold">
+                  {selectedSlots.map((slot) => slot.horario).join(", ")} ({selectedSlots.length}{" "}
+                  {selectedSlots.length === 1 ? "hora" : "horas"})
+                </span>
                 <br />
                 <span className="text-orange-400 font-semibold">Modalidade: {selectedModalidade}</span>
+                <br />
+                <span className="text-green-400 font-bold text-lg">Valor Total: R$ {calcularValorTotal()}</span>
               </CardDescription>
             </CardHeader>
             <CardContent>
