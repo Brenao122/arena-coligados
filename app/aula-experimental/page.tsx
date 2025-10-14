@@ -39,15 +39,16 @@ export default function AulaExperimentalPage() {
         body: JSON.stringify({
           sheetName: "leads-aulas",
           data: {
+            cliente_id: "", // Será preenchido posteriormente se necessário
+            whatsapp_number: formData.telefone,
             nome: formData.nome,
-            telefone: formData.telefone,
-            email: formData.email,
-            modalidade: formData.modalidade,
-            nivel: formData.nivel,
+            idade: "", // Não coletado neste formulário
+            tipo: "Aula Experimental", // Tipo fixo para este formulário
+            esporte: formData.modalidade,
+            tipo_aula: formData.nivel,
             observacoes: formData.observacoes,
-            origem: "Site - Aula Experimental",
+            created_at: new Date().toISOString(),
             status: "novo",
-            data_cadastro: new Date().toISOString(),
           },
         }),
       })
