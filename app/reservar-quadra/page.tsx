@@ -287,12 +287,22 @@ export default function ReservarQuadraPage() {
       const preco = UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
       const valorTotal = (Number.parseFloat(preco) * selectedSlots.length).toFixed(2)
 
+      const extrairNumeroQuadra = (quadra: string): string => {
+        // Extrair apenas os números da string (ex: "Q1" -> "1", "Quadra 01" -> "01")
+        const match = quadra.match(/\d+/)
+        if (match) {
+          const numero = match[0].padStart(2, "0") // Garantir 2 dígitos (ex: "1" -> "01")
+          return `Quadra ${numero}`
+        }
+        return quadra // Fallback caso não encontre número
+      }
+
       const dadosReserva = {
         whatsapp_number: formData.telefone,
         nome: formData.nome,
         Unidade: firstSlot.unidade,
         esporte: selectedModalidade,
-        quadra_id: `${firstSlot.unidade}-${firstSlot.quadra}`,
+        quadra_id: extrairNumeroQuadra(firstSlot.quadra),
         data: dataReserva,
         horarios: horariosString,
         valor_total: valorTotal,
@@ -337,16 +347,6 @@ export default function ReservarQuadraPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleTesteSemPagamento = async () => {
-    if (selectedSlots.length === 0) {
-      alert("Por favor, selecione pelo menos um horário")
-      return
-    }
-
-    console.log("[v0] 🧪 TESTE: Enviando dados sem esperar pagamento")
-    await handleConfirmReservation()
   }
 
   if (success) {
@@ -678,15 +678,6 @@ export default function ReservarQuadraPage() {
                   disabled={loading}
                 >
                   Prosseguir para Pagamento
-                </Button>
-
-                <Button
-                  type="button"
-                  onClick={handleTesteSemPagamento}
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 text-sm"
-                  disabled={loading}
-                >
-                  🧪 TESTE: Enviar Direto (Sem Pagamento)
                 </Button>
               </form>
             </CardContent>
