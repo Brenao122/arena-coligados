@@ -19,6 +19,7 @@ export default function AulaExperimentalPage() {
 
   const [formData, setFormData] = useState({
     nome: "",
+    idade: "", // Adicionado campo idade
     telefone: "",
     email: "",
     modalidade: "",
@@ -39,11 +40,11 @@ export default function AulaExperimentalPage() {
         body: JSON.stringify({
           sheetName: "leads-aulas",
           data: {
-            cliente_id: "", // Será preenchido posteriormente se necessário
+            cliente_id: "",
             whatsapp_number: formData.telefone,
             nome: formData.nome,
-            idade: "", // Não coletado neste formulário
-            tipo: "Aula Experimental", // Tipo fixo para este formulário
+            idade: formData.idade, // Enviando idade para a planilha
+            tipo: "Aula Experimental",
             esporte: formData.modalidade,
             tipo_aula: formData.nivel,
             observacoes: formData.observacoes,
@@ -126,6 +127,23 @@ export default function AulaExperimentalPage() {
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                   className="bg-white/10 border-white/30 text-white placeholder:text-gray-300"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="idade" className="text-white">
+                  Idade *
+                </Label>
+                <Input
+                  id="idade"
+                  type="number"
+                  min="5"
+                  max="100"
+                  value={formData.idade}
+                  onChange={(e) => setFormData({ ...formData, idade: e.target.value })}
+                  className="bg-white/10 border-white/30 text-white placeholder:text-gray-300"
+                  placeholder="Ex: 25"
                   required
                 />
               </div>
