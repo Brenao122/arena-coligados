@@ -34,12 +34,16 @@ export async function POST(request: NextRequest) {
       description: description || "Reserva de Quadra",
       externalReference: body.externalReference,
       // Dados do cliente (Asaas cria automaticamente se não existir)
-      customer: customer.name,
+      customer: customer.cpfCnpj, // Usar CPF como identificador único
       name: customer.name,
-      cpfCnpj: customer.cpfCnpj,
       email: customer.email,
       phone: customer.phone,
       mobilePhone: customer.mobilePhone || customer.phone,
+      cpfCnpj: customer.cpfCnpj,
+      postalCode: customer.postalCode || "00000000",
+      address: customer.address || "Não informado",
+      addressNumber: customer.addressNumber || "S/N",
+      province: customer.province || "Centro",
     }
 
     console.log("[v0] Payload da cobrança:", JSON.stringify(paymentPayload, null, 2))
