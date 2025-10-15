@@ -25,10 +25,70 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Chave API Asaas não configurada" }, { status: 500 })
     }
 
-    console.log("[v0] Chave API encontrada, criando cobrança...")
+    console.log("[v0] Chave API encontrada, criando cliente primeiro...")
+
+    const cpfCnpjLimpo = customer.cpfCnpj.replace(/[^\d]/g, "")
+
+    const customerPayload = {
+      name: customer.name,
+      cpfCnpj: cpfCnpjLimpo,
+      email: customer.email || `cliente${cpfCnpjLimpo}@temp.com`,
+      phone: customer.phone?.replace(/[^\d]/g, "") || "62000000000",
+      mobilePhone: customer.phone?.replace(/[^\d]/g, "") || "62000000000",
+    }
+
+    console.log("[v0] Payload do cliente:", JSON.stringify(customerPayload, null, 2))
+
+    const customerResponse = await fetch("https://api.asaas.com/v3/customers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        access_token: asaasApiKey,
+      },
+      body: JSON.stringify(customerPayload),
+    })
+
+    const customerResponseText = await customerResponse.text()
+    console.log("[v0] Resposta cliente Asaas (status " + customerResponse.status + "):", customerResponseText)
+
+    let customerId
+    if (customerResponse.ok) {
+      const customerData = JSON.parse(customerResponseText)
+      customerId = customerData.id
+      console.log("[v0] Cliente criado/encontrado:", customerId)
+    } else {
+      // Se der erro 400, pode ser que o cliente já existe, tentar buscar
+      const errorData = JSON.parse(customerResponseText)
+      console.log("[v0] Erro ao criar cliente, tentando buscar existente...")
+
+      const searchResponse = await fetch(`https://api.asaas.com/v3/customers?cpfCnpj=${cpfCnpjLimpo}`, {
+        method: "GET",
+        headers: {
+          access_token: asaasApiKey,
+        },
+      })
+
+      if (searchResponse.ok) {
+        const searchData = await searchResponse.json()
+        if (searchData.data && searchData.data.length > 0) {
+          customerId = searchData.data[0].id
+          console.log("[v0] Cliente existente encontrado:", customerId)
+        }
+      }
+
+      if (!customerId) {
+        console.error("[v0] Erro ao criar/buscar cliente:", errorData)
+        return NextResponse.json(
+          { error: "Erro ao criar cliente", details: errorData },
+          { status: customerResponse.status },
+        )
+      }
+    }
+
+    console.log("[v0] Criando cobrança para cliente:", customerId)
 
     const paymentPayload = {
-      customer: customer.cpfCnpj, // Usa CPF como identificador único
+      customer: customerId, // Usa o ID do cliente criado/encontrado
       billingType: "PIX",
       value: valorTeste, // TESTE: R$ 3,00 fixo - Mudar para 'value' em produção
       dueDate: dueDate || new Date().toISOString().split("T")[0],
