@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
 
     // Validação
     if (!customer?.name || !customer?.cpfCnpj || !valorTeste) {
+      console.error("[v0] Dados incompletos:", { customer, value: valorTeste })
       return NextResponse.json(
         { error: "Dados incompletos. Nome, CPF/CNPJ e valor são obrigatórios." },
         { status: 400 },
@@ -24,6 +25,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Chave API Asaas não configurada" }, { status: 500 })
     }
 
+    console.log("[v0] Chave API encontrada, criando cobrança...")
+
+    const paymentPayload = {
+      billingType: "PIX",
+      value: valorTeste, // TESTE: R$ 3,00 fixo - Mudar para 'value' em produção
+      dueDate: dueDate || new Date().toISOString().split("T")[0],
+      description: description || "Reserva de Quadra",
+      externalReference: body.externalReference,
+      // Dados do cliente (Asaas cria automaticamente se não existir)
+      customer: customer.name,
+      name: customer.name,
+      cpfCnpj: customer.cpfCnpj,
+      email: customer.email,
+      phone: customer.phone,
+      mobilePhone: customer.mobilePhone || customer.phone,
+    }
+
+    console.log("[v0] Payload da cobrança:", JSON.stringify(paymentPayload, null, 2))
+
     // Criar cobrança PIX no Asaas
     const paymentResponse = await fetch("https://api.asaas.com/v3/payments", {
       method: "POST",
@@ -31,18 +51,19 @@ export async function POST(request: NextRequest) {
         "Content-Type": "application/json",
         access_token: asaasApiKey,
       },
-      body: JSON.stringify({
-        customer: customer.id, // ID do cliente no Asaas (se já existir)
-        billingType: "PIX",
-        value: valorTeste, // TESTE: R$ 3,00 fixo - Mudar para 'value' em produção
-        dueDate: dueDate || new Date().toISOString().split("T")[0],
-        description: description || "Reserva de Quadra",
-        externalReference: body.externalReference, // Referência externa para identificar a reserva
-      }),
+      body: JSON.stringify(paymentPayload),
     })
 
+    const responseText = await paymentResponse.text()
+    console.log("[v0] Resposta Asaas (status " + paymentResponse.status + "):", responseText)
+
     if (!paymentResponse.ok) {
-      const errorData = await paymentResponse.json()
+      let errorData
+      try {
+        errorData = JSON.parse(responseText)
+      } catch {
+        errorData = { message: responseText }
+      }
       console.error("[v0] Erro ao criar cobrança Asaas:", errorData)
       return NextResponse.json(
         { error: "Erro ao criar cobrança", details: errorData },
@@ -50,7 +71,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const paymentData = await paymentResponse.json()
+    const paymentData = JSON.parse(responseText)
     console.log("[v0] Cobrança criada com sucesso:", paymentData.id)
 
     // Buscar QR Code PIX
@@ -94,6 +115,6 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error("[v0] Erro ao processar pagamento:", error)
-    return NextResponse.json({ error: "Erro interno ao processar pagamento" }, { status: 500 })
+    return NextResponse.json({ error: "Erro interno ao processar pagamento", details: String(error) }, { status: 500 })
   }
 }
