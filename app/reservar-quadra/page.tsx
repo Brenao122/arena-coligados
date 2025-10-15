@@ -282,20 +282,19 @@ export default function ReservarQuadraPage() {
         }
       }
 
+      const extrairNumeroQuadra = (quadra: string): string => {
+        const match = quadra.match(/\d+/)
+        if (match) {
+          const numero = match[0].padStart(2, "0")
+          return `Quadra ${numero}`
+        }
+        return quadra
+      }
+
       const firstSlot = selectedSlots[0]
       const dataReserva = selectedDate.toISOString().split("T")[0]
       const preco = UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
       const valorTotal = (Number.parseFloat(preco) * selectedSlots.length).toFixed(2)
-
-      const extrairNumeroQuadra = (quadra: string): string => {
-        // Extrair apenas os números da string (ex: "Q1" -> "1", "Quadra 01" -> "01")
-        const match = quadra.match(/\d+/)
-        if (match) {
-          const numero = match[0].padStart(2, "0") // Garantir 2 dígitos (ex: "1" -> "01")
-          return `Quadra ${numero}`
-        }
-        return quadra // Fallback caso não encontre número
-      }
 
       const dadosReserva = {
         whatsapp_number: formData.telefone,
