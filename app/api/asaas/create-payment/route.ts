@@ -33,18 +33,52 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "CPF inválido. Deve conter 11 dígitos." }, { status: 400 })
     }
 
-    console.log("[v0] Usando CPF do cliente:", cpfCnpjLimpo)
+    console.log("[v0] Criando/buscando cliente no Asaas com CPF:", cpfCnpjLimpo)
 
-    const paymentPayload = {
-      billingType: "PIX",
-      value: valorTeste, // TESTE - Mudar para 'value' em produção
-      dueDate: dueDate || new Date().toISOString().split("T")[0],
-      description: description || "Reserva de Quadra",
-      // Dados do cliente diretamente no payload (não aninhados)
+    const customerPayload = {
       name: customer.name,
       cpfCnpj: cpfCnpjLimpo,
-      email: customer.email || undefined,
+      email: customer.email || `cliente${cpfCnpjLimpo}@temp.com`,
       mobilePhone: customer.phone ? customer.phone.replace(/[^\d]/g, "") : undefined,
+    }
+
+    console.log("[v0] Payload do cliente:", JSON.stringify(customerPayload, null, 2))
+
+    const customerResponse = await fetch("https://api.asaas.com/v3/customers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        access_token: asaasApiKey,
+      },
+      body: JSON.stringify(customerPayload),
+    })
+
+    const customerResponseText = await customerResponse.text()
+    console.log("[v0] Resposta criação cliente (status " + customerResponse.status + "):", customerResponseText)
+
+    if (!customerResponse.ok) {
+      let errorData
+      try {
+        errorData = JSON.parse(customerResponseText)
+      } catch {
+        errorData = { message: customerResponseText }
+      }
+      console.error("[v0] Erro ao criar cliente:", JSON.stringify(errorData, null, 2))
+      return NextResponse.json(
+        { error: "Erro ao criar cliente", details: errorData },
+        { status: customerResponse.status },
+      )
+    }
+
+    const customerData = JSON.parse(customerResponseText)
+    console.log("[v0] Cliente criado/encontrado com ID:", customerData.id)
+
+    const paymentPayload = {
+      customer: customerData.id, // Usar o ID do cliente criado
+      billingType: "PIX",
+      value: valorTeste,
+      dueDate: dueDate || new Date().toISOString().split("T")[0],
+      description: description || "Reserva de Quadra",
     }
 
     console.log("[v0] Payload da cobrança:", JSON.stringify(paymentPayload, null, 2))
