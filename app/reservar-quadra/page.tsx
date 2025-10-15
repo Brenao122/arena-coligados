@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, CheckCircle2, Loader2, Copy, Clock, Calendar } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Loader2, Copy, Calendar } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -135,6 +135,13 @@ export default function ReservarQuadraPage() {
     email: "",
   })
   const [showPayment, setShowPayment] = useState(false)
+  const [paymentData, setPaymentData] = useState<{
+    paymentId: string
+    qrCodeBase64: string
+    pixPayload: string
+    expirationDate: string
+  } | null>(null)
+  const [checkingPayment, setCheckingPayment] = useState(false)
   const [countdown, setCountdown] = useState(20)
   const [canConfirm, setCanConfirm] = useState(false)
   const [pixCopied, setPixCopied] = useState(false)
@@ -171,6 +178,30 @@ export default function ReservarQuadraPage() {
       setCanConfirm(true)
     }
   }, [showPayment, countdown])
+
+  useEffect(() => {
+    if (showPayment && paymentData?.paymentId && !checkingPayment) {
+      const checkInterval = setInterval(async () => {
+        try {
+          setCheckingPayment(true)
+          const response = await fetch(`/api/asaas/check-payment?paymentId=${paymentData.paymentId}`)
+          const result = await response.json()
+
+          if (result.success && (result.payment.status === "RECEIVED" || result.payment.status === "CONFIRMED")) {
+            console.log("[v0] Pagamento confirmado automaticamente!")
+            clearInterval(checkInterval)
+            await handleConfirmReservation()
+          }
+        } catch (error) {
+          console.error("[v0] Erro ao verificar pagamento:", error)
+        } finally {
+          setCheckingPayment(false)
+        }
+      }, 5000) // Verifica a cada 5 segundos
+
+      return () => clearInterval(checkInterval)
+    }
+  }, [showPayment, paymentData, checkingPayment])
 
   const isHorarioOcupado = (unidade: string, quadra: string, horario: string) => {
     const dateStr = selectedDate.toISOString().split("T")[0]
@@ -237,13 +268,60 @@ export default function ReservarQuadraPage() {
       alert("Por favor, selecione pelo menos um horário")
       return
     }
-    setShowPayment(true)
+
+    setLoading(true)
+    try {
+      const firstSlot = selectedSlots[0]
+      const valorTotal = calcularValorTotal().replace(",", ".")
+      const dataReserva = selectedDate.toISOString().split("T")[0]
+
+      console.log("[v0] Criando cobrança PIX no Asaas...")
+
+      const response = await fetch("/api/asaas/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: {
+            name: formData.nome,
+            cpfCnpj: formData.telefone.replace(/\D/g, ""), // Remove caracteres não numéricos
+            email: formData.email,
+          },
+          value: Number.parseFloat(valorTotal),
+          description: `Reserva ${firstSlot.unidade} - ${firstSlot.quadra} - ${selectedModalidade}`,
+          dueDate: dataReserva,
+          externalReference: `${dataReserva}-${firstSlot.unidade}-${firstSlot.quadra}-${Date.now()}`,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        console.error("[v0] Erro ao criar cobrança:", result)
+        alert(`Erro ao gerar pagamento: ${result.error || "Tente novamente"}`)
+        return
+      }
+
+      console.log("[v0] Cobrança criada com sucesso:", result.payment.id)
+
+      setPaymentData({
+        paymentId: result.payment.id,
+        qrCodeBase64: result.pix.qrCode,
+        pixPayload: result.pix.payload,
+        expirationDate: result.pix.expirationDate,
+      })
+
+      setShowPayment(true)
+    } catch (error) {
+      console.error("[v0] Erro ao criar pagamento:", error)
+      alert("Erro ao processar pagamento. Tente novamente.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleCopyPix = () => {
-    const pixKey = UNIDADES[selectedSlots[0]?.unidade as keyof typeof UNIDADES]?.pix
-    if (pixKey) {
-      navigator.clipboard.writeText(pixKey)
+    if (paymentData?.pixPayload) {
+      navigator.clipboard.writeText(paymentData.pixPayload)
       setPixCopied(true)
       setTimeout(() => setPixCopied(false), 2000)
     }
@@ -305,15 +383,13 @@ export default function ReservarQuadraPage() {
         data: dataReserva,
         horarios: horariosString,
         valor_total: valorTotal,
-        observacoes: `Email: ${formData.email}`,
+        observacoes: `Email: ${formData.email}${paymentData ? ` | Pagamento ID: ${paymentData.paymentId}` : ""}`,
         status: "Confirmado",
       }
 
       console.log("[v0] ===== INICIANDO ENVIO DE RESERVA =====")
       console.log("[v0] Dados da reserva:", JSON.stringify(dadosReserva, null, 2))
-      console.log("[v0] Nome da aba:", "leads - quadra")
 
-      // Enviar uma única reserva com todos os horários
       const response = await fetch("/api/sheets/append", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -330,8 +406,7 @@ export default function ReservarQuadraPage() {
 
       if (!response.ok) {
         console.error("[v0] ❌ ERRO na resposta da API")
-        console.error("[v0] Detalhes do erro:", result)
-        alert(`Erro ao processar reserva: ${result.error || result.details || "Erro desconhecido"}`)
+        alert(`Erro ao processar reserva: ${result.error || "Erro desconhecido"}`)
         return
       }
 
@@ -339,10 +414,8 @@ export default function ReservarQuadraPage() {
       setSuccess(true)
       setTimeout(() => router.push("/"), 3000)
     } catch (error) {
-      console.error("[v0] ❌ ERRO CRÍTICO ao enviar formulário:", error)
-      console.error("[v0] Stack trace:", error instanceof Error ? error.stack : "N/A")
-      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido. Tente novamente."
-      alert(`❌ ${errorMessage}`)
+      console.error("[v0] ❌ ERRO ao enviar formulário:", error)
+      alert(`❌ ${error instanceof Error ? error.message : "Erro desconhecido"}`)
     } finally {
       setLoading(false)
     }
@@ -365,7 +438,6 @@ export default function ReservarQuadraPage() {
 
   if (showPayment && selectedSlots.length > 0) {
     const firstSlot = selectedSlots[0]
-    const pixKey = UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.pix
     const valorTotal = calcularValorTotal()
 
     return (
@@ -389,60 +461,87 @@ export default function ReservarQuadraPage() {
               <p className="text-4xl font-bold text-green-400">R$ {valorTotal}</p>
             </div>
 
-            <div className="bg-white/5 rounded-lg p-6 border border-white/20">
-              <p className="text-gray-300 mb-3 text-center">Chave PIX:</p>
-              <div className="flex items-center gap-2">
-                <Input
-                  value={pixKey}
-                  readOnly
-                  className="bg-white/10 border-white/30 text-white text-center text-xl font-mono"
-                />
-                <Button
-                  onClick={handleCopyPix}
-                  variant="outline"
-                  size="icon"
-                  className="bg-white/10 border-white/30 hover:bg-white/20"
-                >
-                  <Copy className="h-4 w-4 text-white" />
-                </Button>
-              </div>
-              {pixCopied && <p className="text-green-400 text-sm text-center mt-2">Chave copiada!</p>}
-            </div>
+            {paymentData && (
+              <>
+                <div className="bg-white rounded-lg p-4 flex items-center justify-center">
+                  <img
+                    src={`data:image/png;base64,${paymentData.qrCodeBase64}`}
+                    alt="QR Code PIX"
+                    className="w-64 h-64"
+                  />
+                </div>
 
-            <div className="bg-orange-500/20 rounded-lg p-6 text-center border border-orange-500/30">
-              <Clock className="h-12 w-12 text-orange-400 mx-auto mb-3" />
-              <p className="text-white text-lg mb-2">Aguarde para confirmar</p>
-              <p className="text-5xl font-bold text-orange-400">{countdown}s</p>
-            </div>
+                <div className="bg-white/5 rounded-lg p-4 border border-white/20">
+                  <p className="text-gray-300 mb-3 text-center font-medium">Ou copie o código PIX:</p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={paymentData.pixPayload}
+                      readOnly
+                      className="bg-white/10 border-white/30 text-white text-xs font-mono"
+                    />
+                    <Button
+                      onClick={handleCopyPix}
+                      variant="outline"
+                      size="icon"
+                      className="bg-orange-500 hover:bg-orange-600 border-orange-400 text-white shrink-0"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  {pixCopied && (
+                    <p className="text-green-400 text-sm text-center mt-2 font-medium">✓ Código copiado!</p>
+                  )}
+                  <p className="text-xs text-gray-400 text-center mt-3">
+                    Cole este código no seu aplicativo de pagamento
+                  </p>
+                </div>
+                {/* </CHANGE> */}
+
+                <div className="bg-blue-500/20 rounded-lg p-4 text-center border border-blue-500/30">
+                  <p className="text-blue-300 text-sm">
+                    {checkingPayment ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin inline mr-2" />
+                        Verificando pagamento...
+                      </>
+                    ) : (
+                      "Aguardando confirmação do pagamento..."
+                    )}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    O pagamento será confirmado automaticamente após a aprovação
+                  </p>
+                </div>
+              </>
+            )}
 
             <div className="space-y-3">
               <Button
                 onClick={handleConfirmReservation}
-                disabled={!canConfirm || loading}
-                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-6 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-6 text-lg"
               >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Confirmando...
                   </>
-                ) : canConfirm ? (
-                  "Confirmar Pagamento"
                 ) : (
-                  `Aguarde ${countdown}s para confirmar`
+                  "Já paguei - Confirmar Manualmente"
                 )}
               </Button>
 
               <Button
                 onClick={() => {
                   setShowPayment(false)
+                  setPaymentData(null)
                   setCountdown(20)
                   setCanConfirm(false)
                 }}
                 variant="outline"
                 className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20"
               >
-                Voltar
+                Cancelar
               </Button>
             </div>
           </CardContent>
