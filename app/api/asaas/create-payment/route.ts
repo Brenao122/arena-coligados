@@ -33,8 +33,6 @@ export async function POST(request: NextRequest) {
       dueDate: dueDate || new Date().toISOString().split("T")[0],
       description: description || "Reserva de Quadra",
       externalReference: body.externalReference,
-      // Dados do cliente (Asaas cria automaticamente se não existir)
-      customer: customer.cpfCnpj, // Usar CPF como identificador único
       name: customer.name,
       email: customer.email,
       phone: customer.phone,
