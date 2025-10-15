@@ -28,13 +28,28 @@ export async function POST(request: NextRequest) {
     console.log("[v0] Chave API encontrada, criando cliente primeiro...")
 
     const cpfCnpjLimpo = customer.cpfCnpj.replace(/[^\d]/g, "")
+    const telefoneLimpo = customer.phone?.replace(/[^\d]/g, "") || ""
 
-    const customerPayload = {
+    // Validar CPF/CNPJ (deve ter 11 ou 14 dígitos)
+    if (cpfCnpjLimpo.length !== 11 && cpfCnpjLimpo.length !== 14) {
+      console.error("[v0] CPF/CNPJ inválido:", cpfCnpjLimpo)
+      return NextResponse.json({ error: "CPF/CNPJ inválido. Deve ter 11 (CPF) ou 14 (CNPJ) dígitos." }, { status: 400 })
+    }
+
+    // Payload mínimo para criar cliente (apenas campos obrigatórios)
+    const customerPayload: any = {
       name: customer.name,
       cpfCnpj: cpfCnpjLimpo,
-      email: customer.email || `cliente${cpfCnpjLimpo}@temp.com`,
-      phone: customer.phone?.replace(/[^\d]/g, "") || "62000000000",
-      mobilePhone: customer.phone?.replace(/[^\d]/g, "") || "62000000000",
+    }
+
+    // Adicionar email apenas se fornecido e válido
+    if (customer.email && customer.email.includes("@")) {
+      customerPayload.email = customer.email
+    }
+
+    // Adicionar telefone apenas se fornecido e válido (mínimo 10 dígitos)
+    if (telefoneLimpo.length >= 10) {
+      customerPayload.mobilePhone = telefoneLimpo
     }
 
     console.log("[v0] Payload do cliente:", JSON.stringify(customerPayload, null, 2))
