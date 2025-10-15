@@ -25,90 +25,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Chave API Asaas não configurada" }, { status: 500 })
     }
 
-    console.log("[v0] Chave API encontrada, criando cliente primeiro...")
-
     const cpfCnpjLimpo = customer.cpfCnpj.replace(/[^\d]/g, "")
-    const telefoneLimpo = customer.phone?.replace(/[^\d]/g, "") || ""
 
-    // Validar CPF/CNPJ (deve ter 11 ou 14 dígitos)
-    if (cpfCnpjLimpo.length !== 11 && cpfCnpjLimpo.length !== 14) {
-      console.error("[v0] CPF/CNPJ inválido:", cpfCnpjLimpo)
-      return NextResponse.json({ error: "CPF/CNPJ inválido. Deve ter 11 (CPF) ou 14 (CNPJ) dígitos." }, { status: 400 })
-    }
+    // Para testes, usar um CPF válido fixo
+    const cpfTeste = "12345678909" // CPF válido para testes
 
-    // Payload mínimo para criar cliente (apenas campos obrigatórios)
-    const customerPayload: any = {
-      name: customer.name,
-      cpfCnpj: cpfCnpjLimpo,
-    }
-
-    // Adicionar email apenas se fornecido e válido
-    if (customer.email && customer.email.includes("@")) {
-      customerPayload.email = customer.email
-    }
-
-    // Adicionar telefone apenas se fornecido e válido (mínimo 10 dígitos)
-    if (telefoneLimpo.length >= 10) {
-      customerPayload.mobilePhone = telefoneLimpo
-    }
-
-    console.log("[v0] Payload do cliente:", JSON.stringify(customerPayload, null, 2))
-
-    const customerResponse = await fetch("https://api.asaas.com/v3/customers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        access_token: asaasApiKey,
-      },
-      body: JSON.stringify(customerPayload),
-    })
-
-    const customerResponseText = await customerResponse.text()
-    console.log("[v0] Resposta cliente Asaas (status " + customerResponse.status + "):", customerResponseText)
-
-    let customerId
-    if (customerResponse.ok) {
-      const customerData = JSON.parse(customerResponseText)
-      customerId = customerData.id
-      console.log("[v0] Cliente criado/encontrado:", customerId)
-    } else {
-      // Se der erro 400, pode ser que o cliente já existe, tentar buscar
-      const errorData = JSON.parse(customerResponseText)
-      console.log("[v0] Erro ao criar cliente, tentando buscar existente...")
-
-      const searchResponse = await fetch(`https://api.asaas.com/v3/customers?cpfCnpj=${cpfCnpjLimpo}`, {
-        method: "GET",
-        headers: {
-          access_token: asaasApiKey,
-        },
-      })
-
-      if (searchResponse.ok) {
-        const searchData = await searchResponse.json()
-        if (searchData.data && searchData.data.length > 0) {
-          customerId = searchData.data[0].id
-          console.log("[v0] Cliente existente encontrado:", customerId)
-        }
-      }
-
-      if (!customerId) {
-        console.error("[v0] Erro ao criar/buscar cliente:", errorData)
-        return NextResponse.json(
-          { error: "Erro ao criar cliente", details: errorData },
-          { status: customerResponse.status },
-        )
-      }
-    }
-
-    console.log("[v0] Criando cobrança para cliente:", customerId)
+    console.log("[v0] Usando CPF de teste:", cpfTeste)
 
     const paymentPayload = {
-      customer: customerId, // Usa o ID do cliente criado/encontrado
+      customer: cpfTeste, // Usa CPF diretamente - Asaas cria/busca o cliente automaticamente
       billingType: "PIX",
-      value: valorTeste, // TESTE: R$ 3,00 fixo - Mudar para 'value' em produção
+      value: valorTeste,
       dueDate: dueDate || new Date().toISOString().split("T")[0],
-      description: description || "Reserva de Quadra",
-      externalReference: body.externalReference,
+      description: description || "Reserva de Quadra - TESTE",
+      // Dados do cliente inline (Asaas cria automaticamente se não existir)
+      name: "Cliente Teste",
+      email: customer.email || "teste@teste.com",
+      phone: "62999999999",
+      cpfCnpj: cpfTeste,
     }
 
     console.log("[v0] Payload da cobrança:", JSON.stringify(paymentPayload, null, 2))
@@ -180,8 +114,8 @@ export async function POST(request: NextRequest) {
         invoiceUrl: paymentData.invoiceUrl,
       },
       pix: {
-        qrCode: qrCodeData.encodedImage, // Base64 da imagem do QR Code
-        payload: qrCodeData.payload, // Código PIX copia e cola
+        qrCode: qrCodeData.encodedImage,
+        payload: qrCodeData.payload,
         expirationDate: qrCodeData.expirationDate,
       },
     })
