@@ -242,7 +242,6 @@ export default function ReservarQuadraPage() {
       isHorarioPassado(horario, selectedDate)
     )
       return
-    // </CHANGE>
 
     const isSelected = isSlotSelected(unidade, quadra, horario)
 
@@ -689,15 +688,13 @@ export default function ReservarQuadraPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {HORARIOS.map((horario) => (
+                      {HORARIOS.filter((horario) => !isHorarioPassado(horario, selectedDate)).map((horario) => (
                         <tr key={horario}>
                           <td className="text-white text-sm p-2 border border-white/20 font-medium">{horario}</td>
                           {config.quadras.map((quadra) => {
                             const ocupado = isHorarioOcupado(unidade, quadra, horario)
                             const bloqueado = isHorarioBloqueado(horario, selectedDate)
-                            const passado = isHorarioPassado(horario, selectedDate)
-                            const indisponivel = ocupado || bloqueado || passado
-                            // </CHANGE>
+                            const indisponivel = ocupado || bloqueado
                             const selecionado = isSlotSelected(unidade, quadra, horario)
 
                             return (
@@ -715,16 +712,13 @@ export default function ReservarQuadraPage() {
                                     selecionado && "bg-orange-500 text-white ring-2 ring-orange-300",
                                   )}
                                 >
-                                  {passado
-                                    ? "Passado"
-                                    : bloqueado
-                                      ? "Bloqueado"
-                                      : ocupado
-                                        ? "Ocupado"
-                                        : selecionado
-                                          ? "Selecionado"
-                                          : "Disponível"}
-                                  {/* </CHANGE> */}
+                                  {bloqueado
+                                    ? "Bloqueado"
+                                    : ocupado
+                                      ? "Ocupado"
+                                      : selecionado
+                                        ? "Selecionado"
+                                        : "Disponível"}
                                 </button>
                               </td>
                             )
