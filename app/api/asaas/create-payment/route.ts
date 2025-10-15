@@ -36,16 +36,15 @@ export async function POST(request: NextRequest) {
     console.log("[v0] Usando CPF do cliente:", cpfCnpjLimpo)
 
     const paymentPayload = {
-      customer: cpfCnpjLimpo, // Usa CPF do cliente - Asaas cria/busca automaticamente
       billingType: "PIX",
       value: valorTeste, // TESTE - Mudar para 'value' em produção
       dueDate: dueDate || new Date().toISOString().split("T")[0],
       description: description || "Reserva de Quadra",
-      // Dados do cliente inline (Asaas cria automaticamente se não existir)
+      // Dados do cliente diretamente no payload (não aninhados)
       name: customer.name,
-      email: customer.email || undefined,
-      phone: customer.phone || undefined,
       cpfCnpj: cpfCnpjLimpo,
+      email: customer.email || undefined,
+      mobilePhone: customer.phone ? customer.phone.replace(/[^\d]/g, "") : undefined,
     }
 
     console.log("[v0] Payload da cobrança:", JSON.stringify(paymentPayload, null, 2))
