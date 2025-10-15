@@ -133,6 +133,7 @@ export default function ReservarQuadraPage() {
     nome: "",
     telefone: "",
     email: "",
+    cpf: "",
   })
   const [showPayment, setShowPayment] = useState(false)
   const [paymentData, setPaymentData] = useState<{
@@ -283,8 +284,9 @@ export default function ReservarQuadraPage() {
         body: JSON.stringify({
           customer: {
             name: formData.nome,
-            cpfCnpj: formData.telefone.replace(/\D/g, ""), // Remove caracteres não numéricos
+            cpfCnpj: formData.cpf,
             email: formData.email,
+            phone: formData.telefone.replace(/\D/g, ""),
           },
           value: Number.parseFloat(valorTotal),
           description: `Reserva ${firstSlot.unidade} - ${firstSlot.quadra} - ${selectedModalidade}`,
@@ -738,6 +740,30 @@ export default function ReservarQuadraPage() {
                     className="bg-white/10 border-white/30 text-white"
                     required
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="cpf" className="text-white">
+                    CPF *
+                  </Label>
+                  <Input
+                    id="cpf"
+                    type="text"
+                    value={formData.cpf}
+                    onChange={(e) => {
+                      // Remove caracteres não numéricos
+                      const cpfLimpo = e.target.value.replace(/\D/g, "")
+                      // Limita a 11 dígitos
+                      if (cpfLimpo.length <= 11) {
+                        setFormData({ ...formData, cpf: cpfLimpo })
+                      }
+                    }}
+                    placeholder="Apenas números (11 dígitos)"
+                    className="bg-white/10 border-white/30 text-white"
+                    maxLength={11}
+                    required
+                  />
+                  <p className="text-xs text-gray-400">Digite apenas os números do CPF (sem pontos ou traços)</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

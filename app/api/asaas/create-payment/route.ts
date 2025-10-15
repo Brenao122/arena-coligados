@@ -27,22 +27,25 @@ export async function POST(request: NextRequest) {
 
     const cpfCnpjLimpo = customer.cpfCnpj.replace(/[^\d]/g, "")
 
-    // Para testes, usar um CPF válido fixo
-    const cpfTeste = "12345678909" // CPF válido para testes
+    // Validação básica do CPF (11 dígitos)
+    if (cpfCnpjLimpo.length !== 11) {
+      console.error("[v0] CPF inválido:", cpfCnpjLimpo)
+      return NextResponse.json({ error: "CPF inválido. Deve conter 11 dígitos." }, { status: 400 })
+    }
 
-    console.log("[v0] Usando CPF de teste:", cpfTeste)
+    console.log("[v0] Usando CPF do cliente:", cpfCnpjLimpo)
 
     const paymentPayload = {
-      customer: cpfTeste, // Usa CPF diretamente - Asaas cria/busca o cliente automaticamente
+      customer: cpfCnpjLimpo, // Usa CPF do cliente - Asaas cria/busca automaticamente
       billingType: "PIX",
-      value: valorTeste,
+      value: valorTeste, // TESTE - Mudar para 'value' em produção
       dueDate: dueDate || new Date().toISOString().split("T")[0],
-      description: description || "Reserva de Quadra - TESTE",
+      description: description || "Reserva de Quadra",
       // Dados do cliente inline (Asaas cria automaticamente se não existir)
-      name: "Cliente Teste",
-      email: customer.email || "teste@teste.com",
-      phone: "62999999999",
-      cpfCnpj: cpfTeste,
+      name: customer.name,
+      email: customer.email || undefined,
+      phone: customer.phone || undefined,
+      cpfCnpj: cpfCnpjLimpo,
     }
 
     console.log("[v0] Payload da cobrança:", JSON.stringify(paymentPayload, null, 2))
