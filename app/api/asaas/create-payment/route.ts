@@ -1,17 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { ASAAS_PAYMENT_VALUE, ASAAS_API_URL } from "@/lib/asaas-config"
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { customer, value, description, dueDate } = body
 
-    const valorTeste = 5.0 // VALOR DE TESTE - Mudar para 'value' em produção
+    const valorCobranca = ASAAS_PAYMENT_VALUE
 
-    console.log("[v0] Criando cobrança Asaas:", { customer, value: valorTeste, description })
+    console.log("[v0] Criando cobrança Asaas:", { customer, value: valorCobranca, description })
 
     // Validação
-    if (!customer?.name || !customer?.cpfCnpj || !valorTeste) {
-      console.error("[v0] Dados incompletos:", { customer, value: valorTeste })
+    if (!customer?.name || !customer?.cpfCnpj || !valorCobranca) {
+      console.error("[v0] Dados incompletos:", { customer, value: valorCobranca })
       return NextResponse.json(
         { error: "Dados incompletos. Nome, CPF/CNPJ e valor são obrigatórios." },
         { status: 400 },
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     console.log("[v0] Payload do cliente:", JSON.stringify(customerPayload, null, 2))
 
-    const customerResponse = await fetch("https://api.asaas.com/v3/customers", {
+    const customerResponse = await fetch(`${ASAAS_API_URL}/customers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,15 +76,14 @@ export async function POST(request: NextRequest) {
     const paymentPayload = {
       customer: customerData.id, // Usar o ID do cliente criado
       billingType: "PIX",
-      value: valorTeste,
+      value: valorCobranca,
       dueDate: dueDate || new Date().toISOString().split("T")[0],
       description: description || "Reserva de Quadra",
     }
 
     console.log("[v0] Payload da cobrança:", JSON.stringify(paymentPayload, null, 2))
 
-    // Criar cobrança PIX no Asaas
-    const paymentResponse = await fetch("https://api.asaas.com/v3/payments", {
+    const paymentResponse = await fetch(`${ASAAS_API_URL}/payments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,8 +115,7 @@ export async function POST(request: NextRequest) {
     const paymentData = JSON.parse(responseText)
     console.log("[v0] Cobrança criada com sucesso:", paymentData.id)
 
-    // Buscar QR Code PIX
-    const qrCodeResponse = await fetch(`https://api.asaas.com/v3/payments/${paymentData.id}/pixQrCode`, {
+    const qrCodeResponse = await fetch(`${ASAAS_API_URL}/payments/${paymentData.id}/pixQrCode`, {
       method: "GET",
       headers: {
         access_token: asaasApiKey,
