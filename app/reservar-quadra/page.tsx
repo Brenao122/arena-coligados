@@ -80,6 +80,16 @@ const isHorarioBloqueado = (horario: string, dataReserva?: Date) => {
   return false
 }
 
+const isHorarioPassado = (horario: string, dataReserva: Date) => {
+  const agora = new Date()
+  const [hora, minuto] = horario.split(":").map(Number)
+
+  const dataHoraSelecionada = new Date(dataReserva)
+  dataHoraSelecionada.setHours(hora, minuto, 0, 0)
+
+  return dataHoraSelecionada < agora
+}
+
 const getNext7Days = () => {
   const days = []
   const today = new Date()
@@ -226,7 +236,13 @@ export default function ReservarQuadraPage() {
   }
 
   const handleSlotClick = (unidade: string, quadra: string, horario: string) => {
-    if (isHorarioOcupado(unidade, quadra, horario) || isHorarioBloqueado(horario, selectedDate)) return
+    if (
+      isHorarioOcupado(unidade, quadra, horario) ||
+      isHorarioBloqueado(horario, selectedDate) ||
+      isHorarioPassado(horario, selectedDate)
+    )
+      return
+    // </CHANGE>
 
     const isSelected = isSlotSelected(unidade, quadra, horario)
 
@@ -679,7 +695,9 @@ export default function ReservarQuadraPage() {
                           {config.quadras.map((quadra) => {
                             const ocupado = isHorarioOcupado(unidade, quadra, horario)
                             const bloqueado = isHorarioBloqueado(horario, selectedDate)
-                            const indisponivel = ocupado || bloqueado
+                            const passado = isHorarioPassado(horario, selectedDate)
+                            const indisponivel = ocupado || bloqueado || passado
+                            // </CHANGE>
                             const selecionado = isSlotSelected(unidade, quadra, horario)
 
                             return (
@@ -697,13 +715,16 @@ export default function ReservarQuadraPage() {
                                     selecionado && "bg-orange-500 text-white ring-2 ring-orange-300",
                                   )}
                                 >
-                                  {bloqueado
-                                    ? "Bloqueado"
-                                    : ocupado
-                                      ? "Ocupado"
-                                      : selecionado
-                                        ? "Selecionado"
-                                        : "Disponível"}
+                                  {passado
+                                    ? "Passado"
+                                    : bloqueado
+                                      ? "Bloqueado"
+                                      : ocupado
+                                        ? "Ocupado"
+                                        : selecionado
+                                          ? "Selecionado"
+                                          : "Disponível"}
+                                  {/* </CHANGE> */}
                                 </button>
                               </td>
                             )
