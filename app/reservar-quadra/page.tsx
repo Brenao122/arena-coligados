@@ -151,16 +151,27 @@ export default function ReservarQuadraPage() {
   useEffect(() => {
     const fetchHorariosOcupados = async () => {
       try {
+        console.log("[v0] Buscando horários ocupados...")
         const response = await fetch("/api/sheets/reservas")
         if (response.ok) {
           const data = await response.json()
+          console.log("[v0] Dados recebidos:", data)
+
           const ocupados: Record<string, string[]> = {}
+
           data.reservas?.forEach((reserva: any) => {
-            const key = `${reserva.data}-${reserva.unidade}-${reserva.quadra}`
-            if (!ocupados[key]) ocupados[key] = []
-            ocupados[key].push(reserva.horario)
+            // Para cada horário da reserva, marcar como ocupado
+            reserva.horarios?.forEach((horario: string) => {
+              const key = `${reserva.data}-${reserva.unidade}-${reserva.quadra}`
+              if (!ocupados[key]) ocupados[key] = []
+              ocupados[key].push(horario)
+            })
           })
+
+          console.log("[v0] Horários ocupados processados:", ocupados)
           setHorariosOcupados(ocupados)
+        } else {
+          console.error("[v0] Erro na resposta:", response.status)
         }
       } catch (error) {
         console.error("[v0] Erro ao buscar horários:", error)
