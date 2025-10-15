@@ -7,31 +7,41 @@ const SERVICE_ACCOUNT_EMAIL =
 const PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n")
 
 if (!PRIVATE_KEY) {
-  console.error("[v0] ERRO: GOOGLE_PRIVATE_KEY não configurada!")
+  console.error("[v0] ❌ ERRO CRÍTICO: GOOGLE_PRIVATE_KEY não configurada!")
+  console.error("[v0] Adicione a variável GOOGLE_PRIVATE_KEY nas configurações do projeto")
 }
 
 if (!SERVICE_ACCOUNT_EMAIL) {
-  console.error("[v0] ERRO: GOOGLE_SERVICE_ACCOUNT_EMAIL não configurada!")
+  console.error("[v0] ❌ ERRO CRÍTICO: GOOGLE_SERVICE_ACCOUNT_EMAIL não configurada!")
 }
 
-const serviceAccountAuth = new JWT({
-  email: SERVICE_ACCOUNT_EMAIL,
-  key: PRIVATE_KEY,
-  scopes: ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.file"],
-})
+let serviceAccountAuth: JWT | null = null
+
+if (PRIVATE_KEY && SERVICE_ACCOUNT_EMAIL) {
+  serviceAccountAuth = new JWT({
+    email: SERVICE_ACCOUNT_EMAIL,
+    key: PRIVATE_KEY,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.file"],
+  })
+}
 
 let doc: GoogleSpreadsheet | null = null
 
 async function initializeSheet() {
+  if (!serviceAccountAuth) {
+    throw new Error(
+      "Credenciais do Google Sheets não configuradas. Adicione GOOGLE_PRIVATE_KEY e GOOGLE_SERVICE_ACCOUNT_EMAIL nas variáveis de ambiente.",
+    )
+  }
+
   if (!doc) {
     console.log("[v0] Inicializando Google Sheets...")
     console.log("[v0] Spreadsheet ID:", SPREADSHEET_ID)
     console.log("[v0] Service Account:", SERVICE_ACCOUNT_EMAIL)
-    console.log("[v0] Private Key configurada:", !!PRIVATE_KEY)
 
     doc = new GoogleSpreadsheet(SPREADSHEET_ID, serviceAccountAuth)
     await doc.loadInfo()
-    console.log("[v0] Google Sheets conectado:", doc.title)
+    console.log("[v0] ✅ Google Sheets conectado:", doc.title)
   }
   return doc
 }
