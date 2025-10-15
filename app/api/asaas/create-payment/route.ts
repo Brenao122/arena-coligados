@@ -28,20 +28,12 @@ export async function POST(request: NextRequest) {
     console.log("[v0] Chave API encontrada, criando cobrança...")
 
     const paymentPayload = {
+      customer: customer.cpfCnpj, // Usa CPF como identificador único
       billingType: "PIX",
       value: valorTeste, // TESTE: R$ 3,00 fixo - Mudar para 'value' em produção
       dueDate: dueDate || new Date().toISOString().split("T")[0],
       description: description || "Reserva de Quadra",
       externalReference: body.externalReference,
-      name: customer.name,
-      email: customer.email,
-      phone: customer.phone,
-      mobilePhone: customer.mobilePhone || customer.phone,
-      cpfCnpj: customer.cpfCnpj,
-      postalCode: customer.postalCode || "00000000",
-      address: customer.address || "Não informado",
-      addressNumber: customer.addressNumber || "S/N",
-      province: customer.province || "Centro",
     }
 
     console.log("[v0] Payload da cobrança:", JSON.stringify(paymentPayload, null, 2))
@@ -66,7 +58,10 @@ export async function POST(request: NextRequest) {
       } catch {
         errorData = { message: responseText }
       }
-      console.error("[v0] Erro ao criar cobrança Asaas:", errorData)
+      console.error("[v0] Erro detalhado Asaas:", JSON.stringify(errorData, null, 2))
+      if (errorData.errors) {
+        console.error("[v0] Array de erros:", JSON.stringify(errorData.errors, null, 2))
+      }
       return NextResponse.json(
         { error: "Erro ao criar cobrança", details: errorData },
         { status: paymentResponse.status },
