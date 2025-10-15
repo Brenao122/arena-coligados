@@ -5,8 +5,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { customer, value, description, dueDate } = body
 
-    // TODO: Remover esta linha e usar o valor real quando for para produção
-    const valorTeste = 3.0 // VALOR DE TESTE - Mudar para 'value' em produção
+    const valorTeste = 5.0 // VALOR DE TESTE - Mudar para 'value' em produção
 
     console.log("[v0] Criando cobrança Asaas:", { customer, value: valorTeste, description })
 
