@@ -23,6 +23,14 @@ function getAsaasApiKey(unidade?: string): string {
   return process.env.ASAAS_API_KEY || ""
 }
 
+function getAsaasBaseUrl(apiKey: string): string {
+  const isProduction = apiKey.startsWith("$aact_prod_")
+  const baseUrl = isProduction ? "https://api.asaas.com" : "https://sandbox.asaas.com"
+  console.log("[v0] Ambiente detectado:", isProduction ? "PRODUÇÃO" : "SANDBOX")
+  console.log("[v0] URL base:", baseUrl)
+  return baseUrl
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -59,13 +67,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("[v0] ✓ Chave API encontrada:", apiKey.substring(0, 10) + "..." + apiKey.substring(apiKey.length - 5))
+    console.log("[v0] ✓ Chave API encontrada:", apiKey.substring(0, 15) + "..." + apiKey.substring(apiKey.length - 5))
+
+    const baseUrl = getAsaasBaseUrl(apiKey)
 
     // Criar cliente no Asaas
     console.log("[v0] Criando cliente no Asaas...")
-    console.log("[v0] URL:", "https://sandbox.asaas.com/api/v3/customers")
+    console.log("[v0] URL:", `${baseUrl}/api/v3/customers`)
 
-    const customerResponse = await fetch("https://sandbox.asaas.com/api/v3/customers", {
+    const customerResponse = await fetch(`${baseUrl}/api/v3/customers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +102,7 @@ export async function POST(request: NextRequest) {
     console.log("[v0] ✓ Cliente criado:", customerData.id)
 
     console.log("[v0] Criando cobrança PIX com valor de reserva (50%)...")
-    const paymentResponse = await fetch("https://sandbox.asaas.com/api/v3/payments", {
+    const paymentResponse = await fetch(`${baseUrl}/api/v3/payments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -119,7 +129,7 @@ export async function POST(request: NextRequest) {
 
     // Gerar QR Code PIX
     console.log("[v0] Gerando QR Code PIX...")
-    const pixResponse = await fetch(`https://sandbox.asaas.com/api/v3/payments/${paymentData.id}/pixQrCode`, {
+    const pixResponse = await fetch(`${baseUrl}/api/v3/payments/${paymentData.id}/pixQrCode`, {
       headers: {
         access_token: apiKey,
       },
