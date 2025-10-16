@@ -769,7 +769,13 @@ export default function ReservarQuadraPage() {
                 <br />
                 <span className="text-orange-400 font-semibold">Modalidade: {selectedModalidade}</span>
                 <br />
-                <span className="text-green-400 font-bold text-lg">Valor Total: R$ {calcularValorTotal()}</span>
+                <span className="text-green-400 font-bold text-lg">
+                  Valor da Reserva (50%): R$ {calcularValorReserva()}
+                </span>
+                <br />
+                <span className="text-gray-400 text-sm">
+                  (Valor total: R$ {calcularValorTotal()} - Restante no local)
+                </span>
               </CardDescription>
             </CardHeader>
             <CardContent>
