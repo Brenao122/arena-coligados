@@ -4,18 +4,21 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const paymentId = searchParams.get("paymentId")
+    const unidade = searchParams.get("unidade")
 
     if (!paymentId) {
       return NextResponse.json({ error: "paymentId é obrigatório" }, { status: 400 })
     }
 
-    const asaasApiKey = process.env.ASAAS_API_KEY
+    const asaasApiKey =
+      unidade === "Vila Rosa" ? process.env.ASAAS_API_KEY_VILA_ROSA : process.env.ASAAS_API_KEY_PARQUE_AMAZONIA
+
     if (!asaasApiKey) {
-      console.error("[v0] ASAAS_API_KEY não configurada")
-      return NextResponse.json({ error: "Chave API Asaas não configurada" }, { status: 500 })
+      console.error(`[v0] Chave API não configurada para unidade: ${unidade}`)
+      return NextResponse.json({ error: `Chave API Asaas não configurada para ${unidade}` }, { status: 500 })
     }
 
-    console.log("[v0] Verificando status do pagamento:", paymentId)
+    console.log(`[v0] Verificando status do pagamento: ${paymentId} (${unidade})`)
 
     // Buscar status do pagamento no Asaas
     const response = await fetch(`https://api.asaas.com/v3/payments/${paymentId}`, {
