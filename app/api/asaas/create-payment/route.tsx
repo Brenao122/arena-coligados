@@ -31,10 +31,15 @@ export async function POST(request: NextRequest) {
     console.log("[v0] ===== CRIANDO COBRANÇA PIX =====")
     console.log("[v0] Unidade:", unidade)
     console.log("[v0] Valor recebido:", value)
+    console.log("[v0] Dados do cliente:", {
+      name: customer.name,
+      cpfCnpj: customer.cpfCnpj,
+      email: customer.email,
+      phone: customer.phone,
+    })
 
     const valorReserva = value / 2
     console.log("[v0] Valor da reserva (50%):", valorReserva)
-    // </CHANGE>
 
     // Validação do valor mínimo do Asaas (R$ 5,00)
     if (valorReserva < 5) {
@@ -54,10 +59,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("[v0] ✓ Chave API encontrada para:", unidade)
+    console.log("[v0] ✓ Chave API encontrada:", apiKey.substring(0, 10) + "..." + apiKey.substring(apiKey.length - 5))
 
     // Criar cliente no Asaas
     console.log("[v0] Criando cliente no Asaas...")
+    console.log("[v0] URL:", "https://sandbox.asaas.com/api/v3/customers")
+
     const customerResponse = await fetch("https://sandbox.asaas.com/api/v3/customers", {
       method: "POST",
       headers: {
@@ -72,9 +79,12 @@ export async function POST(request: NextRequest) {
       }),
     })
 
+    console.log("[v0] Status da resposta:", customerResponse.status)
+
     if (!customerResponse.ok) {
       const errorData = await customerResponse.json()
-      console.error("[v0] ❌ Erro ao criar cliente:", errorData)
+      console.error("[v0] ❌ Erro ao criar cliente - Status:", customerResponse.status)
+      console.error("[v0] ❌ Detalhes do erro:", JSON.stringify(errorData, null, 2))
       return NextResponse.json({ error: "Erro ao criar cliente", details: errorData }, { status: 400 })
     }
 
@@ -91,13 +101,12 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         customer: customerData.id,
         billingType: "PIX",
-        value: valorReserva, // Usando 50% do valor
+        value: valorReserva,
         dueDate: dueDate,
         description: `${description} (Reserva - 50%)`,
         externalReference: externalReference,
       }),
     })
-    // </CHANGE>
 
     if (!paymentResponse.ok) {
       const errorData = await paymentResponse.json()
