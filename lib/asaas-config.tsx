@@ -17,12 +17,11 @@ export const ASAAS_API_URL = "https://api.asaas.com/v3"
 // Para trocar as chaves: vá em "Vars" no sidebar e altere as variáveis correspondentes
 
 export const ASAAS_API_KEYS = {
-  "Parque Amazônia": process.env.ASAAS_API_KEY_PARQUE_AMAZONIA || process.env.ASAAS_API_KEY,
-  "Vila Rosa": process.env.ASAAS_API_KEY_VILA_ROSA || process.env.ASAAS_API_KEY,
+  "Parque Amazônia": process.env.ASAAS_API_KEY_PARQUE_AMAZONIA,
+  "Vila Rosa": process.env.ASAAS_API_KEY_VILA_ROSA,
 }
 
 // Função para obter a chave API correta baseada na unidade
 export function getAsaasApiKey(unidade: string): string | undefined {
   return ASAAS_API_KEYS[unidade as keyof typeof ASAAS_API_KEYS]
 }
-// </CHANGE>

@@ -5,7 +5,6 @@ function getAsaasApiKey(unidade?: string): string {
   console.log("[v0] Variáveis disponíveis:", {
     parqueAmazonia: !!process.env.ASAAS_API_KEY_PARQUE_AMAZONIA,
     vilaRosa: !!process.env.ASAAS_API_KEY_VILA_ROSA,
-    padrao: !!process.env.ASAAS_API_KEY,
   })
 
   if (unidade === "Parque Amazônia" && process.env.ASAAS_API_KEY_PARQUE_AMAZONIA) {
@@ -18,9 +17,8 @@ function getAsaasApiKey(unidade?: string): string {
     return process.env.ASAAS_API_KEY_VILA_ROSA
   }
 
-  // Fallback para a chave padrão
-  console.log("[v0] Usando chave padrão (fallback)")
-  return process.env.ASAAS_API_KEY || ""
+  console.error("[v0] ❌ Nenhuma chave configurada para unidade:", unidade)
+  return ""
 }
 
 function getAsaasBaseUrl(apiKey: string): string {
