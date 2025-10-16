@@ -67,9 +67,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("[v0] ✓ Chave API encontrada:", apiKey.substring(0, 15) + "..." + apiKey.substring(apiKey.length - 5))
+    const cleanApiKey = apiKey.trim()
+    console.log(
+      "[v0] ✓ Chave API (limpa):",
+      cleanApiKey.substring(0, 15) + "..." + cleanApiKey.substring(cleanApiKey.length - 5),
+    )
 
-    const baseUrl = getAsaasBaseUrl(apiKey)
+    const baseUrl = getAsaasBaseUrl(cleanApiKey)
 
     // Criar cliente no Asaas
     console.log("[v0] Criando cliente no Asaas...")
@@ -81,7 +85,7 @@ export async function POST(request: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          access_token: apiKey,
+          "$asaas-api-key": cleanApiKey,
         },
         body: JSON.stringify({
           name: customer.name,
@@ -144,7 +148,7 @@ export async function POST(request: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          access_token: apiKey,
+          "$asaas-api-key": cleanApiKey,
         },
         body: JSON.stringify({
           customer: customerData.id,
@@ -165,6 +169,9 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       )
     }
+
+    console.log("[v0] Status da resposta:", paymentResponse.status)
+    console.log("[v0] Headers da resposta:", Object.fromEntries(paymentResponse.headers.entries()))
 
     if (!paymentResponse.ok) {
       let errorData
@@ -187,7 +194,7 @@ export async function POST(request: NextRequest) {
     try {
       pixResponse = await fetch(`${baseUrl}/api/v3/payments/${paymentData.id}/pixQrCode`, {
         headers: {
-          access_token: apiKey,
+          "$asaas-api-key": cleanApiKey,
         },
       })
     } catch (fetchError) {
@@ -200,6 +207,9 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       )
     }
+
+    console.log("[v0] Status da resposta:", pixResponse.status)
+    console.log("[v0] Headers da resposta:", Object.fromEntries(pixResponse.headers.entries()))
 
     if (!pixResponse.ok) {
       let errorData
