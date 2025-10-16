@@ -66,10 +66,12 @@ export async function POST(request: NextRequest) {
     }
 
     const cleanApiKey = apiKey.trim().replace(/\s+/g, "")
-    console.log("[v0] Comprimento da chave:", cleanApiKey.length)
-    console.log("[v0] Primeiros 20 chars:", cleanApiKey.substring(0, 20))
-    console.log("[v0] Últimos 10 chars:", cleanApiKey.substring(cleanApiKey.length - 10))
-    console.log("[v0] Chave começa com $aact_:", cleanApiKey.startsWith("$aact_"))
+    console.log("[v0] 🔑 DEBUG DA CHAVE API:")
+    console.log("[v0] - Comprimento:", cleanApiKey.length)
+    console.log("[v0] - Primeiros 30 chars:", cleanApiKey.substring(0, 30))
+    console.log("[v0] - Últimos 20 chars:", cleanApiKey.substring(cleanApiKey.length - 20))
+    console.log("[v0] - Começa com $aact_prod_:", cleanApiKey.startsWith("$aact_prod_"))
+    console.log("[v0] - Começa com $aact_:", cleanApiKey.startsWith("$aact_"))
 
     // Validar formato básico da chave
     if (!cleanApiKey.startsWith("$aact_")) {
@@ -85,7 +87,10 @@ export async function POST(request: NextRequest) {
 
     const baseUrl = getAsaasBaseUrl(cleanApiKey)
 
-    console.log("[v0] Testando autenticação...")
+    console.log("[v0] 🔐 Testando autenticação com Asaas...")
+    console.log("[v0] - URL:", `${baseUrl}/api/v3/customers?limit=1`)
+    console.log("[v0] - Header access_token (primeiros 30):", cleanApiKey.substring(0, 30))
+
     try {
       const testResponse = await fetch(`${baseUrl}/api/v3/customers?limit=1`, {
         method: "GET",
@@ -95,17 +100,20 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      console.log("[v0] Status do teste de autenticação:", testResponse.status)
+      console.log("[v0] - Status da resposta:", testResponse.status)
+      console.log("[v0] - Status text:", testResponse.statusText)
+
       const testText = await testResponse.text()
-      console.log("[v0] Resposta do teste (primeiros 200 chars):", testText.substring(0, 200))
+      console.log("[v0] - Resposta (primeiros 300 chars):", testText.substring(0, 300))
 
       if (!testResponse.ok) {
-        console.error("[v0] ❌ Falha na autenticação")
+        console.error("[v0] ❌ Falha na autenticação - Status:", testResponse.status)
         return NextResponse.json(
           {
             error: "Falha na autenticação com o servidor de pagamentos",
             details: {
               status: testResponse.status,
+              statusText: testResponse.statusText,
               message: "Verifique se a chave API está correta",
               response: testText.substring(0, 200),
             },
@@ -114,7 +122,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      console.log("[v0] ✓ Autenticação bem-sucedida")
+      console.log("[v0] ✓ Autenticação bem-sucedida!")
     } catch (testError) {
       console.error("[v0] ❌ Erro ao testar autenticação:", testError)
       return NextResponse.json(
