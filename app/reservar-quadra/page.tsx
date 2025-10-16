@@ -289,6 +289,13 @@ export default function ReservarQuadraPage() {
     return total.toFixed(2).replace(".", ",")
   }
 
+  const calcularValorReserva = () => {
+    if (selectedSlots.length === 0) return "0,00"
+    const valorTotal = calcularValorTotal().replace(",", ".")
+    const valorReserva = Number.parseFloat(valorTotal) / 2
+    return valorReserva.toFixed(2).replace(".", ",")
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (selectedSlots.length === 0) {
@@ -318,6 +325,7 @@ export default function ReservarQuadraPage() {
           description: `Reserva ${firstSlot.unidade} - ${firstSlot.quadra} - ${selectedModalidade}`,
           dueDate: dataReserva,
           externalReference: `${dataReserva}-${firstSlot.unidade}-${firstSlot.quadra}-${Date.now()}`,
+          unidade: firstSlot.unidade, // Enviando a unidade
         }),
       })
 
@@ -467,6 +475,7 @@ export default function ReservarQuadraPage() {
   if (showPayment && selectedSlots.length > 0) {
     const firstSlot = selectedSlots[0]
     const valorTotal = calcularValorTotal()
+    const valorReserva = calcularValorReserva() // Usar valor da reserva (50%)
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4">
@@ -484,9 +493,16 @@ export default function ReservarQuadraPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-white/5 rounded-lg p-6 text-center border border-white/20">
-              <p className="text-gray-300 mb-2">Valor a pagar:</p>
-              <p className="text-4xl font-bold text-green-400">R$ {valorTotal}</p>
+            <div className="bg-white/5 rounded-lg p-6 text-center border border-white/20 space-y-3">
+              <div>
+                <p className="text-gray-400 text-sm mb-1">Valor total:</p>
+                <p className="text-2xl font-semibold text-gray-300">R$ {valorTotal}</p>
+              </div>
+              <div className="border-t border-white/20 pt-3">
+                <p className="text-gray-300 mb-2">Valor da reserva (50%):</p>
+                <p className="text-4xl font-bold text-green-400">R$ {valorReserva}</p>
+                <p className="text-xs text-gray-400 mt-2">Restante será pago no local</p>
+              </div>
             </div>
 
             {paymentData && (
@@ -688,13 +704,14 @@ export default function ReservarQuadraPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {HORARIOS.filter((horario) => !isHorarioPassado(horario, selectedDate)).map((horario) => (
+                      {HORARIOS.map((horario) => (
                         <tr key={horario}>
                           <td className="text-white text-sm p-2 border border-white/20 font-medium">{horario}</td>
                           {config.quadras.map((quadra) => {
                             const ocupado = isHorarioOcupado(unidade, quadra, horario)
                             const bloqueado = isHorarioBloqueado(horario, selectedDate)
-                            const indisponivel = ocupado || bloqueado
+                            const passado = isHorarioPassado(horario, selectedDate)
+                            const indisponivel = ocupado || bloqueado || passado
                             const selecionado = isSlotSelected(unidade, quadra, horario)
 
                             return (
@@ -712,13 +729,15 @@ export default function ReservarQuadraPage() {
                                     selecionado && "bg-orange-500 text-white ring-2 ring-orange-300",
                                   )}
                                 >
-                                  {bloqueado
-                                    ? "Bloqueado"
-                                    : ocupado
-                                      ? "Ocupado"
-                                      : selecionado
-                                        ? "Selecionado"
-                                        : "Disponível"}
+                                  {passado
+                                    ? "Passado"
+                                    : bloqueado
+                                      ? "Bloqueado"
+                                      : ocupado
+                                        ? "Ocupado"
+                                        : selecionado
+                                          ? "Selecionado"
+                                          : "Disponível"}
                                 </button>
                               </td>
                             )
