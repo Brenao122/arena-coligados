@@ -23,7 +23,7 @@ function getAsaasApiKey(unidade?: string): string {
 
 function getAsaasBaseUrl(apiKey: string): string {
   const isProduction = apiKey.startsWith("$aact_prod_")
-  const baseUrl = isProduction ? "https://api.asaas.com" : "https://sandbox.asaas.com"
+  const baseUrl = isProduction ? "https://api.asaas.com/v3" : "https://sandbox.asaas.com/api/v3"
   console.log("[v0] Ambiente detectado:", isProduction ? "PRODUÇÃO" : "SANDBOX")
   console.log("[v0] URL base:", baseUrl)
   return baseUrl
@@ -88,11 +88,11 @@ export async function POST(request: NextRequest) {
     const baseUrl = getAsaasBaseUrl(cleanApiKey)
 
     console.log("[v0] 🔐 Testando autenticação com Asaas...")
-    console.log("[v0] - URL:", `${baseUrl}/api/v3/customers?limit=1`)
+    console.log("[v0] - URL:", `${baseUrl}/customers?limit=1`)
     console.log("[v0] - Header access_token (primeiros 30):", cleanApiKey.substring(0, 30))
 
     try {
-      const testResponse = await fetch(`${baseUrl}/api/v3/customers?limit=1`, {
+      const testResponse = await fetch(`${baseUrl}/customers?limit=1`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -136,11 +136,11 @@ export async function POST(request: NextRequest) {
 
     // Criar cliente no Asaas
     console.log("[v0] Criando cliente no Asaas...")
-    console.log("[v0] URL:", `${baseUrl}/api/v3/customers`)
+    console.log("[v0] URL:", `${baseUrl}/customers`)
 
     let customerResponse
     try {
-      customerResponse = await fetch(`${baseUrl}/api/v3/customers`, {
+      customerResponse = await fetch(`${baseUrl}/customers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
     console.log("[v0] Criando cobrança PIX com valor de reserva (50%)...")
     let paymentResponse
     try {
-      paymentResponse = await fetch(`${baseUrl}/api/v3/payments`, {
+      paymentResponse = await fetch(`${baseUrl}/payments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -251,7 +251,7 @@ export async function POST(request: NextRequest) {
     console.log("[v0] Gerando QR Code PIX...")
     let pixResponse
     try {
-      pixResponse = await fetch(`${baseUrl}/api/v3/payments/${paymentData.id}/pixQrCode`, {
+      pixResponse = await fetch(`${baseUrl}/payments/${paymentData.id}/pixQrCode`, {
         headers: {
           access_token: cleanApiKey,
         },
