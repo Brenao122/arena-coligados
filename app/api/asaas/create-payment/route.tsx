@@ -102,20 +102,38 @@ export async function POST(request: NextRequest) {
     }
 
     console.log("[v0] Status da resposta:", customerResponse.status)
+    console.log("[v0] Headers da resposta:", Object.fromEntries(customerResponse.headers.entries()))
+
+    const responseText = await customerResponse.text()
+    console.log("[v0] Resposta bruta (primeiros 500 chars):", responseText.substring(0, 500))
 
     if (!customerResponse.ok) {
       let errorData
       try {
-        errorData = await customerResponse.json()
+        errorData = JSON.parse(responseText)
       } catch {
-        errorData = { message: "Resposta inválida do servidor" }
+        console.error("[v0] ❌ Resposta não é JSON válido")
+        errorData = { message: "Resposta inválida do servidor", rawResponse: responseText.substring(0, 200) }
       }
       console.error("[v0] ❌ Erro ao criar cliente - Status:", customerResponse.status)
       console.error("[v0] ❌ Detalhes do erro:", JSON.stringify(errorData, null, 2))
       return NextResponse.json({ error: "Erro ao criar cliente", details: errorData }, { status: 400 })
     }
 
-    const customerData = await customerResponse.json()
+    let customerData
+    try {
+      customerData = JSON.parse(responseText)
+    } catch (parseError) {
+      console.error("[v0] ❌ Erro ao fazer parse da resposta:", parseError)
+      return NextResponse.json(
+        {
+          error: "Erro ao processar resposta do servidor",
+          details: { message: "Resposta inválida", rawResponse: responseText.substring(0, 200) },
+        },
+        { status: 500 },
+      )
+    }
+
     console.log("[v0] ✓ Cliente criado:", customerData.id)
 
     // Criar cobrança PIX
