@@ -206,7 +206,10 @@ export default function ReservarQuadraPage() {
       const checkInterval = setInterval(async () => {
         try {
           setCheckingPayment(true)
-          const response = await fetch(`/api/asaas/check-payment?paymentId=${paymentData.paymentId}`)
+          const firstSlot = selectedSlots[0]
+          const response = await fetch(
+            `/api/asaas/check-payment?paymentId=${paymentData.paymentId}&unidade=${encodeURIComponent(firstSlot.unidade)}`,
+          )
           const result = await response.json()
 
           if (result.success && (result.payment.status === "RECEIVED" || result.payment.status === "CONFIRMED")) {
