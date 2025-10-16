@@ -67,13 +67,66 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const cleanApiKey = apiKey.trim()
-    console.log(
-      "[v0] ✓ Chave API (limpa):",
-      cleanApiKey.substring(0, 15) + "..." + cleanApiKey.substring(cleanApiKey.length - 5),
-    )
+    const cleanApiKey = apiKey.trim().replace(/\s+/g, "")
+    console.log("[v0] Comprimento da chave:", cleanApiKey.length)
+    console.log("[v0] Primeiros 20 chars:", cleanApiKey.substring(0, 20))
+    console.log("[v0] Últimos 10 chars:", cleanApiKey.substring(cleanApiKey.length - 10))
+    console.log("[v0] Chave começa com $aact_:", cleanApiKey.startsWith("$aact_"))
+
+    // Validar formato básico da chave
+    if (!cleanApiKey.startsWith("$aact_")) {
+      console.error("[v0] ❌ Formato de chave inválido - deve começar com $aact_")
+      return NextResponse.json(
+        {
+          error: "Chave API em formato inválido",
+          details: { message: "A chave deve começar com $aact_" },
+        },
+        { status: 500 },
+      )
+    }
 
     const baseUrl = getAsaasBaseUrl(cleanApiKey)
+
+    console.log("[v0] Testando autenticação...")
+    try {
+      const testResponse = await fetch(`${baseUrl}/api/v3/customers?limit=1`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          access_token: cleanApiKey,
+        },
+      })
+
+      console.log("[v0] Status do teste de autenticação:", testResponse.status)
+      const testText = await testResponse.text()
+      console.log("[v0] Resposta do teste (primeiros 200 chars):", testText.substring(0, 200))
+
+      if (!testResponse.ok) {
+        console.error("[v0] ❌ Falha na autenticação")
+        return NextResponse.json(
+          {
+            error: "Falha na autenticação com o servidor de pagamentos",
+            details: {
+              status: testResponse.status,
+              message: "Verifique se a chave API está correta",
+              response: testText.substring(0, 200),
+            },
+          },
+          { status: 401 },
+        )
+      }
+
+      console.log("[v0] ✓ Autenticação bem-sucedida")
+    } catch (testError) {
+      console.error("[v0] ❌ Erro ao testar autenticação:", testError)
+      return NextResponse.json(
+        {
+          error: "Erro de conexão ao testar autenticação",
+          details: { message: testError instanceof Error ? testError.message : "Erro desconhecido" },
+        },
+        { status: 500 },
+      )
+    }
 
     // Criar cliente no Asaas
     console.log("[v0] Criando cliente no Asaas...")
@@ -85,7 +138,7 @@ export async function POST(request: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "$asaas-api-key": cleanApiKey,
+          access_token: cleanApiKey,
         },
         body: JSON.stringify({
           name: customer.name,
@@ -148,7 +201,7 @@ export async function POST(request: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "$asaas-api-key": cleanApiKey,
+          access_token: cleanApiKey,
         },
         body: JSON.stringify({
           customer: customerData.id,
@@ -194,7 +247,7 @@ export async function POST(request: NextRequest) {
     try {
       pixResponse = await fetch(`${baseUrl}/api/v3/payments/${paymentData.id}/pixQrCode`, {
         headers: {
-          "$asaas-api-key": cleanApiKey,
+          access_token: cleanApiKey,
         },
       })
     } catch (fetchError) {
