@@ -135,69 +135,97 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar cliente no Asaas
-    console.log("[v0] Criando cliente no Asaas...")
-    console.log("[v0] URL:", `${baseUrl}/customers`)
+    console.log("[v0] Verificando se cliente já existe...")
+    console.log("[v0] URL busca:", `${baseUrl}/customers?cpfCnpj=${customer.cpfCnpj}`)
 
-    let customerResponse
+    let customerData
     try {
-      customerResponse = await fetch(`${baseUrl}/customers`, {
-        method: "POST",
+      const searchResponse = await fetch(`${baseUrl}/customers?cpfCnpj=${customer.cpfCnpj}`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           access_token: cleanApiKey,
         },
-        body: JSON.stringify({
-          name: customer.name,
-          cpfCnpj: customer.cpfCnpj,
-          email: customer.email,
-          phone: customer.phone,
-        }),
       })
-    } catch (fetchError) {
-      console.error("[v0] ❌ Erro de rede ao criar cliente:", fetchError)
-      return NextResponse.json(
-        {
-          error: "Erro de conexão com o servidor de pagamentos",
-          details: { message: fetchError instanceof Error ? fetchError.message : "Erro desconhecido" },
-        },
-        { status: 500 },
-      )
-    }
 
-    console.log("[v0] Status da resposta:", customerResponse.status)
-    console.log("[v0] Headers da resposta:", Object.fromEntries(customerResponse.headers.entries()))
+      if (searchResponse.ok) {
+        const searchData = await searchResponse.json()
+        console.log("[v0] Resultado da busca:", searchData)
 
-    const responseText = await customerResponse.text()
-    console.log("[v0] Resposta bruta (primeiros 500 chars):", responseText.substring(0, 500))
-
-    if (!customerResponse.ok) {
-      let errorData
-      try {
-        errorData = JSON.parse(responseText)
-      } catch {
-        console.error("[v0] ❌ Resposta não é JSON válido")
-        errorData = { message: "Resposta inválida do servidor", rawResponse: responseText.substring(0, 200) }
+        if (searchData.data && searchData.data.length > 0) {
+          customerData = searchData.data[0]
+          console.log("[v0] ✓ Cliente já existe:", customerData.id)
+        }
       }
-      console.error("[v0] ❌ Erro ao criar cliente - Status:", customerResponse.status)
-      console.error("[v0] ❌ Detalhes do erro:", JSON.stringify(errorData, null, 2))
-      return NextResponse.json({ error: "Erro ao criar cliente", details: errorData }, { status: 400 })
+    } catch (searchError) {
+      console.log("[v0] Erro ao buscar cliente (continuando para criar):", searchError)
     }
 
-    let customerData
-    try {
-      customerData = JSON.parse(responseText)
-    } catch (parseError) {
-      console.error("[v0] ❌ Erro ao fazer parse da resposta:", parseError)
-      return NextResponse.json(
-        {
-          error: "Erro ao processar resposta do servidor",
-          details: { message: "Resposta inválida", rawResponse: responseText.substring(0, 200) },
-        },
-        { status: 500 },
-      )
-    }
+    // Se não encontrou, criar novo cliente
+    if (!customerData) {
+      console.log("[v0] Cliente não existe, criando novo...")
+      console.log("[v0] URL:", `${baseUrl}/customers`)
 
-    console.log("[v0] ✓ Cliente criado:", customerData.id)
+      let customerResponse
+      try {
+        customerResponse = await fetch(`${baseUrl}/customers`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            access_token: cleanApiKey,
+          },
+          body: JSON.stringify({
+            name: customer.name,
+            cpfCnpj: customer.cpfCnpj,
+            email: customer.email,
+            phone: customer.phone,
+          }),
+        })
+      } catch (fetchError) {
+        console.error("[v0] ❌ Erro de rede ao criar cliente:", fetchError)
+        return NextResponse.json(
+          {
+            error: "Erro de conexão com o servidor de pagamentos",
+            details: { message: fetchError instanceof Error ? fetchError.message : "Erro desconhecido" },
+          },
+          { status: 500 },
+        )
+      }
+
+      console.log("[v0] Status da resposta:", customerResponse.status)
+      console.log("[v0] Headers da resposta:", Object.fromEntries(customerResponse.headers.entries()))
+
+      const responseText = await customerResponse.text()
+      console.log("[v0] Resposta bruta (primeiros 500 chars):", responseText.substring(0, 500))
+
+      if (!customerResponse.ok) {
+        let errorData
+        try {
+          errorData = JSON.parse(responseText)
+        } catch {
+          console.error("[v0] ❌ Resposta não é JSON válido")
+          errorData = { message: "Resposta inválida do servidor", rawResponse: responseText.substring(0, 200) }
+        }
+        console.error("[v0] ❌ Erro ao criar cliente - Status:", customerResponse.status)
+        console.error("[v0] ❌ Detalhes do erro:", JSON.stringify(errorData, null, 2))
+        return NextResponse.json({ error: "Erro ao criar cliente", details: errorData }, { status: 400 })
+      }
+
+      try {
+        customerData = JSON.parse(responseText)
+      } catch (parseError) {
+        console.error("[v0] ❌ Erro ao fazer parse da resposta:", parseError)
+        return NextResponse.json(
+          {
+            error: "Erro ao processar resposta do servidor",
+            details: { message: "Resposta inválida", rawResponse: responseText.substring(0, 200) },
+          },
+          { status: 500 },
+        )
+      }
+
+      console.log("[v0] ✓ Cliente criado:", customerData.id)
+    }
 
     // Criar cobrança PIX
     console.log("[v0] Criando cobrança PIX com valor de reserva (50%)...")
