@@ -77,15 +77,21 @@ export default function TesteNextfitPage() {
 
       const response = await fetch(`https://integracao.nextfit.com.br/api/v1${endpoint.path}`, {
         headers: {
+          // Tenta primeiro com Bearer token
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
+          Accept: "application/json",
+          // Adiciona a chave também como header direto (algumas APIs usam assim)
+          "X-API-Key": apiKey,
         },
       })
 
       console.log("[v0] Status da resposta:", response.status)
 
       if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`)
+        const errorText = await response.text()
+        console.error("[v0] Erro da API:", errorText)
+        throw new Error(`Erro ${response.status}: ${response.statusText}. Detalhes: ${errorText}`)
       }
 
       const data = await response.json()
@@ -98,6 +104,12 @@ export default function TesteNextfitPage() {
     } catch (err: any) {
       console.error("[v0] Erro ao testar endpoint:", err)
       setError(`Erro ao testar ${endpoint.name}: ${err.message}`)
+
+      if (err.message.includes("401")) {
+        setError(
+          `Erro 401 (Não Autorizado): Verifique se a chave API está correta. A API do Nextfit pode exigir um formato específico de autenticação. Consulte a documentação do Nextfit sobre como gerar e usar a chave API.`,
+        )
+      }
     } finally {
       setLoading(false)
     }
@@ -220,6 +232,26 @@ export default function TesteNextfitPage() {
               </li>
               <li>Fazer polling periódico (consultar a cada X minutos) para detectar novos registros</li>
             </ul>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-amber-50 border-amber-200">
+          <CardHeader>
+            <CardTitle className="text-amber-900">🔑 Sobre Autenticação</CardTitle>
+          </CardHeader>
+          <CardContent className="text-amber-800 space-y-2">
+            <p>
+              <strong>Se você está recebendo erro 401:</strong>
+            </p>
+            <ul className="list-disc list-inside space-y-1 ml-4">
+              <li>Verifique se a chave API está correta no painel do Nextfit</li>
+              <li>Confirme se a chave API tem permissões para acessar os endpoints</li>
+              <li>Consulte a documentação do Nextfit sobre o formato correto da autenticação</li>
+              <li>Verifique se há algum IP whitelist configurado no Nextfit</li>
+            </ul>
+            <p className="mt-4">
+              <strong>Formato testado:</strong> Bearer Token e X-API-Key header
+            </p>
           </CardContent>
         </Card>
       </div>
