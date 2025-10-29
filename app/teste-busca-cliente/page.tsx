@@ -7,42 +7,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 
 export default function TesteBuscaClientePage() {
-  const [codigoCliente, setCodigoCliente] = useState("25839871")
+  const [codigoCliente, setCodigoCliente] = useState("26613961")
   const [resultado, setResultado] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [metodo, setMetodo] = useState("")
 
-  const testarMetodo1 = async () => {
+  const testarMetodo = async (metodoNome: string) => {
     setLoading(true)
-    setMetodo("Método 1: /api/v1/Pessoa/{id}")
+    setMetodo(metodoNome)
     try {
-      const response = await fetch(`/api/nextfit/pessoa/${codigoCliente}`)
-      const data = await response.json()
-      setResultado(data)
-    } catch (error) {
-      setResultado({ erro: String(error) })
-    }
-    setLoading(false)
-  }
-
-  const testarMetodo2 = async () => {
-    setLoading(true)
-    setMetodo("Método 2: /api/v1/Pessoa/GetClientes com filtro")
-    try {
-      const response = await fetch(`/api/nextfit/pessoa-filtro?codigoCliente=${codigoCliente}`)
-      const data = await response.json()
-      setResultado(data)
-    } catch (error) {
-      setResultado({ erro: String(error) })
-    }
-    setLoading(false)
-  }
-
-  const testarMetodo3 = async () => {
-    setLoading(true)
-    setMetodo("Método 3: Buscar todos e filtrar")
-    try {
-      const response = await fetch(`/api/nextfit/pessoa-todos?codigoCliente=${codigoCliente}`)
+      const response = await fetch(`/api/nextfit/teste-cliente?metodo=${metodoNome}&id=${codigoCliente}`)
       const data = await response.json()
       setResultado(data)
     } catch (error) {
@@ -67,7 +41,7 @@ export default function TesteBuscaClientePage() {
               id="codigoCliente"
               value={codigoCliente}
               onChange={(e) => setCodigoCliente(e.target.value)}
-              placeholder="Ex: 25839871"
+              placeholder="Ex: 26613961"
             />
             <p className="text-sm text-muted-foreground">Use o codigoCliente que você pegou da Venda</p>
           </div>
@@ -75,16 +49,48 @@ export default function TesteBuscaClientePage() {
           <div className="space-y-3">
             <h3 className="font-semibold">Testar Métodos:</h3>
 
-            <Button onClick={testarMetodo1} disabled={loading} className="w-full bg-transparent" variant="outline">
+            <Button onClick={() => testarMetodo("pessoa-id")} disabled={loading} className="w-full" variant="outline">
               Método 1: GET /api/v1/Pessoa/{"{id}"}
             </Button>
 
-            <Button onClick={testarMetodo2} disabled={loading} className="w-full bg-transparent" variant="outline">
-              Método 2: GET /api/v1/Pessoa/GetClientes?codigoCliente={"{id}"}
+            <Button onClick={() => testarMetodo("cliente-id")} disabled={loading} className="w-full" variant="outline">
+              Método 2: GET /api/v1/Cliente/{"{id}"}
             </Button>
 
-            <Button onClick={testarMetodo3} disabled={loading} className="w-full bg-transparent" variant="outline">
-              Método 3: Buscar todos e filtrar localmente
+            <Button
+              onClick={() => testarMetodo("pessoa-filtro")}
+              disabled={loading}
+              className="w-full"
+              variant="outline"
+            >
+              Método 3: GET /api/v1/Pessoa/GetClientes?codigoCliente={"{id}"}
+            </Button>
+
+            <Button
+              onClick={() => testarMetodo("pessoa-filtro-id")}
+              disabled={loading}
+              className="w-full"
+              variant="outline"
+            >
+              Método 4: GET /api/v1/Pessoa/GetClientes?id={"{id}"}
+            </Button>
+
+            <Button
+              onClick={() => testarMetodo("pessoa-buscar")}
+              disabled={loading}
+              className="w-full"
+              variant="outline"
+            >
+              Método 5: GET /api/v1/Pessoa/Buscar?codigo={"{id}"}
+            </Button>
+
+            <Button
+              onClick={() => testarMetodo("todos-filtrar")}
+              disabled={loading}
+              className="w-full"
+              variant="secondary"
+            >
+              Método 6: Buscar TODOS e filtrar localmente
             </Button>
           </div>
 
