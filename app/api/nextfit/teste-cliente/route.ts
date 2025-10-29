@@ -21,6 +21,28 @@ export async function GET(request: NextRequest) {
     let url = ""
 
     switch (metodo) {
+      case "buscar-todos":
+        url = `${NEXTFIT_API_URL}/Pessoa/GetClientes`
+        const responseTodos = await fetch(url, { headers })
+
+        const contentTypeTodos = responseTodos.headers.get("content-type")
+        if (!contentTypeTodos?.includes("application/json")) {
+          const text = await responseTodos.text()
+          return NextResponse.json({
+            sucesso: false,
+            erro: "API retornou HTML ao invés de JSON",
+            resposta: text.substring(0, 200),
+          })
+        }
+
+        const dataTodos = await responseTodos.json()
+
+        return NextResponse.json({
+          sucesso: true,
+          clientes: dataTodos.items || [],
+          total: dataTodos.items?.length || 0,
+        })
+
       case "pessoa-id":
         url = `${NEXTFIT_API_URL}/Pessoa/${id}`
         break
