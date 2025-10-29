@@ -44,6 +44,27 @@ export default function SyncSheetsPage() {
     }
   }
 
+  const popularComTeste = async () => {
+    setLoading(true)
+    setResultado(null)
+
+    try {
+      const response = await fetch("/api/popular-sheets-teste", {
+        method: "POST",
+      })
+
+      const data = await response.json()
+      setResultado(data)
+    } catch (error: any) {
+      setResultado({
+        sucesso: false,
+        erro: error.message,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="container mx-auto p-8 max-w-4xl">
       <h1 className="text-3xl font-bold mb-2">Sincronizar Nextfit → Google Sheets</h1>
@@ -79,6 +100,21 @@ export default function SyncSheetsPage() {
           )}
         </AlertDescription>
       </Alert>
+
+      <Card className="p-6 mb-6 bg-yellow-50 dark:bg-yellow-950 border-yellow-200">
+        <h2 className="text-xl font-semibold mb-4">⚠️ Problema com API do Nextfit</h2>
+        <p className="text-sm mb-4">
+          A API do Nextfit está retornando HTML ao invés de JSON. Isso indica que o token pode estar incorreto.
+        </p>
+        <p className="text-sm font-semibold mb-2">Solução temporária:</p>
+        <p className="text-sm mb-4">
+          Vou popular a planilha com dados de teste para você testar o fluxo N8N → Sheets → WhatsApp enquanto resolve o
+          problema do token.
+        </p>
+        <Button onClick={popularComTeste} disabled={loading} variant="outline" className="w-full bg-transparent">
+          {loading ? "Populando..." : "Popular com Dados de Teste"}
+        </Button>
+      </Card>
 
       <Card className="p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">Como funciona:</h2>
