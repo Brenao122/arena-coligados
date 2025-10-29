@@ -3,10 +3,25 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ExternalLink } from "lucide-react"
 
 export default function SyncSheetsPage() {
   const [resultado, setResultado] = useState<any>(null)
   const [loading, setLoading] = useState(false)
+  const [sheetInfo, setSheetInfo] = useState<any>(null)
+
+  const buscarInfoPlanilha = async () => {
+    try {
+      const response = await fetch("/api/sheets-info")
+      const data = await response.json()
+      setSheetInfo(data)
+    } catch (error: any) {
+      setSheetInfo({
+        erro: error.message,
+      })
+    }
+  }
 
   const sincronizar = async () => {
     setLoading(true)
@@ -35,6 +50,35 @@ export default function SyncSheetsPage() {
       <p className="text-muted-foreground mb-8">
         Sincroniza todos os clientes e vendas do Nextfit para o Google Sheets
       </p>
+
+      <Alert className="mb-6">
+        <AlertDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold mb-1">Planilha Configurada:</p>
+              <p className="text-sm text-muted-foreground">
+                ID: {process.env.NEXT_PUBLIC_GOOGLE_SHEETS_ID || "Não configurado"}
+              </p>
+              {sheetInfo?.url && (
+                <a
+                  href={sheetInfo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-1"
+                >
+                  Abrir planilha <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+            <Button onClick={buscarInfoPlanilha} variant="outline" size="sm">
+              Verificar Planilha
+            </Button>
+          </div>
+          {sheetInfo && (
+            <pre className="mt-4 bg-muted p-3 rounded text-xs overflow-auto">{JSON.stringify(sheetInfo, null, 2)}</pre>
+          )}
+        </AlertDescription>
+      </Alert>
 
       <Card className="p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">Como funciona:</h2>
