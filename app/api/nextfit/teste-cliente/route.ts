@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 const NEXTFIT_API_URL = "https://app.nextfit.com.br/api/v1"
-const NEXTFIT_TOKEN = process.env.NEXTFIT_API_TOKEN
+const NEXTFIT_TOKEN = process.env.NEXTFIT_API_KEY
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
