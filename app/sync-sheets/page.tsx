@@ -4,13 +4,15 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ExternalLink, Clock, CheckCircle2, XCircle } from "lucide-react"
+import { ExternalLink, Clock, CheckCircle2, XCircle, AlertTriangle } from "lucide-react"
 
 export default function SyncSheetsPage() {
   const [resultado, setResultado] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [sheetInfo, setSheetInfo] = useState<any>(null)
   const [ultimaSync, setUltimaSync] = useState<string | null>(null)
+  const [diagnostico, setDiagnostico] = useState<any>(null)
+  const [loadingDiag, setLoadingDiag] = useState(false)
 
   useEffect(() => {
     buscarInfoPlanilha()
@@ -81,6 +83,23 @@ export default function SyncSheetsPage() {
     }
   }
 
+  const executarDiagnostico = async () => {
+    setLoadingDiag(true)
+    setDiagnostico(null)
+
+    try {
+      const response = await fetch("/api/diagnostico-nextfit")
+      const data = await response.json()
+      setDiagnostico(data)
+    } catch (error: any) {
+      setDiagnostico({
+        erro: error.message,
+      })
+    } finally {
+      setLoadingDiag(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -136,15 +155,33 @@ export default function SyncSheetsPage() {
           </AlertDescription>
         </Alert>
 
-        <Card className="bg-slate-800/50 border-slate-700 p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">🔍 Diagnóstico da API</h2>
-          <p className="text-slate-300 mb-4">
-            Se a sincronização não estiver funcionando, use o diagnóstico para descobrir o problema com o token do
-            Nextfit.
-          </p>
-          <Button onClick={() => (window.location.href = "/diagnostico-nextfit")} variant="outline" className="w-full">
-            Abrir Diagnóstico
-          </Button>
+        <Card className="bg-amber-900/20 border-amber-700/50 p-6">
+          <div className="flex items-start gap-3 mb-4">
+            <AlertTriangle className="w-6 h-6 text-amber-400 flex-shrink-0" />
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold text-white mb-2">🔍 Diagnóstico da API Nextfit</h2>
+              <p className="text-slate-300 text-sm mb-4">
+                Se a sincronização não funcionar, execute o diagnóstico para descobrir o problema com o token.
+              </p>
+              <Button
+                onClick={executarDiagnostico}
+                disabled={loadingDiag}
+                variant="outline"
+                className="w-full bg-transparent"
+              >
+                {loadingDiag ? "Executando Diagnóstico..." : "Executar Diagnóstico"}
+              </Button>
+            </div>
+          </div>
+
+          {diagnostico && (
+            <div className="mt-4 bg-slate-900 p-4 rounded-lg">
+              <h3 className="text-sm font-semibold text-white mb-2">Resultado do Diagnóstico:</h3>
+              <pre className="text-xs text-slate-300 overflow-auto max-h-96">
+                {JSON.stringify(diagnostico, null, 2)}
+              </pre>
+            </div>
+          )}
         </Card>
 
         <Card className="bg-slate-800/50 border-slate-700 p-6">
