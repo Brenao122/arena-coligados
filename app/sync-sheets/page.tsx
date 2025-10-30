@@ -110,14 +110,30 @@ export default function SyncSheetsPage() {
           </p>
         </div>
 
+        <Card className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-700/50 p-6">
+          <div className="flex items-start gap-4">
+            <Clock className="w-8 h-8 text-purple-400 flex-shrink-0" />
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold text-white mb-2">⚙️ Configuração Necessária</h2>
+              <p className="text-slate-300 mb-3">
+                Para ativar a sincronização automática a cada 2 minutos, adicione esta variável de ambiente:
+              </p>
+              <div className="bg-slate-900 p-3 rounded-lg mb-3">
+                <p className="text-sm font-mono text-green-400">CRON_SECRET=qualquer-string-secreta-aqui</p>
+              </div>
+              <p className="text-xs text-slate-400">
+                Após adicionar, o Vercel Cron Job vai sincronizar automaticamente a cada 2 minutos
+              </p>
+            </div>
+          </div>
+        </Card>
+
         <Card className="bg-gradient-to-r from-green-900/30 to-emerald-900/30 border-green-700/50 p-6">
           <div className="flex items-start gap-4">
             <Clock className="w-8 h-8 text-green-400 flex-shrink-0" />
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-white mb-2">Sincronização Automática Ativa</h2>
-              <p className="text-slate-300 mb-3">
-                Os dados são sincronizados automaticamente a cada 2 minutos via Vercel Cron Job
-              </p>
+              <h2 className="text-xl font-semibold text-white mb-2">Sincronização Automática</h2>
+              <p className="text-slate-300 mb-3">Configurado para rodar a cada 2 minutos via Vercel Cron Job</p>
               {ultimaSync && (
                 <div className="flex items-center gap-2 text-sm text-green-400">
                   <CheckCircle2 className="w-4 h-4" />
@@ -159,17 +175,29 @@ export default function SyncSheetsPage() {
           <div className="flex items-start gap-3 mb-4">
             <AlertTriangle className="w-6 h-6 text-amber-400 flex-shrink-0" />
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-white mb-2">🔍 Diagnóstico da API Nextfit</h2>
+              <h2 className="text-xl font-semibold text-white mb-2">Problema com API do Nextfit</h2>
               <p className="text-slate-300 text-sm mb-4">
-                Se a sincronização não funcionar, execute o diagnóstico para descobrir o problema com o token.
+                A API do Nextfit está retornando HTML ao invés de JSON. Isso indica que o token NEXTFIT_API_KEY pode
+                estar incorreto.
               </p>
+
+              <div className="bg-slate-900 p-4 rounded-lg mb-4">
+                <h3 className="text-sm font-semibold text-white mb-2">Como verificar o token:</h3>
+                <ol className="list-decimal list-inside space-y-1 text-sm text-slate-300">
+                  <li>Acesse o Nextfit e faça login</li>
+                  <li>Vá em Configurações → API ou Integrações</li>
+                  <li>Copie o token de API</li>
+                  <li>Atualize a variável NEXTFIT_API_KEY nas variáveis de ambiente</li>
+                </ol>
+              </div>
+
               <Button
                 onClick={executarDiagnostico}
                 disabled={loadingDiag}
                 variant="outline"
                 className="w-full bg-transparent"
               >
-                {loadingDiag ? "Executando Diagnóstico..." : "Executar Diagnóstico"}
+                {loadingDiag ? "Executando Diagnóstico..." : "Executar Diagnóstico do Token"}
               </Button>
             </div>
           </div>
