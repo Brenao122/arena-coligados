@@ -13,6 +13,8 @@ export default function SyncSheetsPage() {
   const [ultimaSync, setUltimaSync] = useState<string | null>(null)
   const [diagnostico, setDiagnostico] = useState<any>(null)
   const [loadingDiag, setLoadingDiag] = useState(false)
+  const [testeToken, setTesteToken] = useState<any>(null)
+  const [loadingTeste, setLoadingTeste] = useState(false)
 
   useEffect(() => {
     buscarInfoPlanilha()
@@ -97,6 +99,24 @@ export default function SyncSheetsPage() {
       })
     } finally {
       setLoadingDiag(false)
+    }
+  }
+
+  const testarTokenSimples = async () => {
+    setLoadingTeste(true)
+    setTesteToken(null)
+
+    try {
+      const response = await fetch("/api/nextfit/buscar-cliente-simples")
+      const data = await response.json()
+      setTesteToken(data)
+    } catch (error: any) {
+      setTesteToken({
+        sucesso: false,
+        erro: error.message,
+      })
+    } finally {
+      setLoadingTeste(false)
     }
   }
 
@@ -191,20 +211,73 @@ export default function SyncSheetsPage() {
                 </ol>
               </div>
 
-              <Button
-                onClick={executarDiagnostico}
-                disabled={loadingDiag}
-                variant="outline"
-                className="w-full bg-transparent"
-              >
-                {loadingDiag ? "Executando Diagnóstico..." : "Executar Diagnóstico do Token"}
-              </Button>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={testarTokenSimples}
+                  disabled={loadingTeste}
+                  variant="outline"
+                  className="bg-transparent"
+                >
+                  {loadingTeste ? "Testando..." : "Teste Rápido"}
+                </Button>
+
+                <Button
+                  onClick={executarDiagnostico}
+                  disabled={loadingDiag}
+                  variant="outline"
+                  className="bg-transparent"
+                >
+                  {loadingDiag ? "Executando..." : "Diagnóstico Completo"}
+                </Button>
+              </div>
             </div>
           </div>
 
+          {testeToken && (
+            <div className="mt-4 bg-slate-900 p-4 rounded-lg">
+              <h3 className="text-sm font-semibold text-white mb-2">Resultado do Teste Rápido:</h3>
+              {testeToken.sucesso ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-green-400">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span className="font-semibold">Token está funcionando!</span>
+                  </div>
+                  <p className="text-sm text-slate-300">
+                    Total de clientes encontrados: {testeToken.totalClientes || 0}
+                  </p>
+                  {testeToken.primeiros5 && testeToken.primeiros5.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-xs text-slate-400 mb-1">Primeiros 5 clientes:</p>
+                      <pre className="text-xs text-slate-300 overflow-auto max-h-40">
+                        {JSON.stringify(testeToken.primeiros5, null, 2)}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-red-400">
+                    <XCircle className="w-4 h-4" />
+                    <span className="font-semibold">Token não está funcionando</span>
+                  </div>
+                  <p className="text-sm text-slate-300">Erro: {testeToken.erro}</p>
+                  <div className="mt-3 p-3 bg-red-900/20 border border-red-700/50 rounded">
+                    <p className="text-xs text-red-300 font-semibold mb-1">O que fazer:</p>
+                    <ol className="list-decimal list-inside space-y-1 text-xs text-red-200">
+                      <li>Verifique se o token NEXTFIT_API_KEY está correto</li>
+                      <li>Acesse o painel do Nextfit e gere um novo token</li>
+                      <li>Atualize a variável de ambiente no Vercel</li>
+                      <li>Aguarde o deploy e teste novamente</li>
+                    </ol>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {diagnostico && (
             <div className="mt-4 bg-slate-900 p-4 rounded-lg">
-              <h3 className="text-sm font-semibold text-white mb-2">Resultado do Diagnóstico:</h3>
+              <h3 className="text-sm font-semibold text-white mb-2">Resultado do Diagnóstico Completo:</h3>
               <pre className="text-xs text-slate-300 overflow-auto max-h-96">
                 {JSON.stringify(diagnostico, null, 2)}
               </pre>
