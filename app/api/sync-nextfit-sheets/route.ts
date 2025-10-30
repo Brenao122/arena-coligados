@@ -3,6 +3,9 @@ import { NextResponse } from "next/server"
 
 export async function POST() {
   try {
+    console.log("[v0] Iniciando sincronização Nextfit → Sheets")
+    console.log("[v0] Token configurado:", !!process.env.NEXTFIT_API_KEY)
+
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -17,8 +20,19 @@ export async function POST() {
     const clientesResponse = await fetch("https://app.nextfit.com.br/api/v1/Pessoa/GetClientes", {
       headers: {
         Authorization: `Bearer ${process.env.NEXTFIT_API_KEY}`,
+        "Content-Type": "application/json",
       },
     })
+
+    console.log("[v0] Status clientes:", clientesResponse.status)
+    console.log("[v0] Content-Type:", clientesResponse.headers.get("content-type"))
+
+    const contentType = clientesResponse.headers.get("content-type")
+    if (!contentType?.includes("application/json")) {
+      const text = await clientesResponse.text()
+      console.log("[v0] Resposta não é JSON:", text.substring(0, 200))
+      throw new Error(`API retornou HTML ao invés de JSON. Status: ${clientesResponse.status}`)
+    }
 
     if (!clientesResponse.ok) {
       throw new Error(`Erro ao buscar clientes: ${clientesResponse.status}`)
@@ -27,11 +41,23 @@ export async function POST() {
     const clientesData = await clientesResponse.json()
     const clientes = clientesData.items || []
 
+    console.log("[v0] Total de clientes:", clientes.length)
+
     const vendasResponse = await fetch("https://app.nextfit.com.br/api/v1/Venda", {
       headers: {
         Authorization: `Bearer ${process.env.NEXTFIT_API_KEY}`,
+        "Content-Type": "application/json",
       },
     })
+
+    console.log("[v0] Status vendas:", vendasResponse.status)
+
+    const vendasContentType = vendasResponse.headers.get("content-type")
+    if (!vendasContentType?.includes("application/json")) {
+      const text = await vendasResponse.text()
+      console.log("[v0] Resposta vendas não é JSON:", text.substring(0, 200))
+      throw new Error(`API de vendas retornou HTML ao invés de JSON. Status: ${vendasResponse.status}`)
+    }
 
     if (!vendasResponse.ok) {
       throw new Error(`Erro ao buscar vendas: ${vendasResponse.status}`)
@@ -39,6 +65,8 @@ export async function POST() {
 
     const vendasData = await vendasResponse.json()
     const vendas = vendasData.items || []
+
+    console.log("[v0] Total de vendas:", vendas.length)
 
     const vendasPorCliente = new Map()
     vendas.forEach((venda: any) => {
@@ -58,7 +86,6 @@ export async function POST() {
       const vendasCliente = vendasPorCliente.get(cliente.codigo) || []
 
       if (vendasCliente.length > 0) {
-        // Se tem vendas, criar uma linha para cada venda
         vendasCliente.forEach((venda: any) => {
           rows.push([
             cliente.codigo?.toString() || "",
@@ -72,7 +99,6 @@ export async function POST() {
           ])
         })
       } else {
-        // Se não tem vendas, criar linha só com dados do cliente
         rows.push([
           cliente.codigo?.toString() || "",
           cliente.nome || "",
@@ -99,6 +125,8 @@ export async function POST() {
         values: rows,
       },
     })
+
+    console.log("[v0] Sincronização concluída com sucesso")
 
     return NextResponse.json({
       sucesso: true,
