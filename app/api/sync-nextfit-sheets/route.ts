@@ -17,9 +17,9 @@ export async function POST() {
     const sheets = google.sheets({ version: "v4", auth })
     const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID
 
-    const clientesResponse = await fetch("https://app.nextfit.com.br/api/v1/Pessoa/GetClientes", {
+    const clientesResponse = await fetch("https://integracao.nextfit.com.br/api/v1/Pessoa/GetClientes", {
       headers: {
-        Authorization: `Bearer ${process.env.NEXTFIT_API_KEY}`,
+        "x-api-key": process.env.NEXTFIT_API_KEY!,
         "Content-Type": "application/json",
       },
     })
@@ -43,9 +43,9 @@ export async function POST() {
 
     console.log("[v0] Total de clientes:", clientes.length)
 
-    const vendasResponse = await fetch("https://app.nextfit.com.br/api/v1/Venda", {
+    const vendasResponse = await fetch("https://integracao.nextfit.com.br/api/v1/Venda", {
       headers: {
-        Authorization: `Bearer ${process.env.NEXTFIT_API_KEY}`,
+        "x-api-key": process.env.NEXTFIT_API_KEY!,
         "Content-Type": "application/json",
       },
     })
