@@ -1,8 +1,14 @@
 import { google } from "googleapis"
 import { NextResponse } from "next/server"
 
+/**
+ * Endpoint de sincronização Nextfit → Google Sheets
+ * Última atualização: 2025-10-31
+ * Busca clientes e vendas do Nextfit e sincroniza com Google Sheets
+ */
 export async function POST() {
   try {
+    const startTime = Date.now()
     console.log("[v0] Iniciando sincronização Nextfit → Sheets")
     console.log("[v0] Token configurado:", !!process.env.NEXTFIT_API_KEY)
 
@@ -127,12 +133,15 @@ export async function POST() {
     })
 
     console.log("[v0] Sincronização concluída com sucesso")
+    const executionTime = Date.now() - startTime
+    console.log(`[v0] Tempo de execução: ${executionTime}ms`)
 
     return NextResponse.json({
       sucesso: true,
       totalClientes: clientes.length,
       totalVendas: vendas.length,
       totalLinhas: rows.length - 1,
+      tempoExecucao: `${executionTime}ms`,
       mensagem: "Dados sincronizados com sucesso!",
     })
   } catch (error: any) {
