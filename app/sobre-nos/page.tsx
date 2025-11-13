@@ -12,9 +12,12 @@ export default function SobreNosPage() {
 
       <main
         id="main-content"
-        className="min-h-screen bg-sand pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6"
+        className="min-h-screen bg-sand pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 relative overflow-hidden"
       >
-        <div className="max-w-6xl mx-auto">
+        <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-[#FF6B47] to-[#FFD966] rounded-full opacity-20 blur-[140px] animate-blob"></div>
+        <div className="absolute bottom-40 left-10 w-80 h-80 bg-gradient-to-br from-[#10b981] to-[#FFD966] rounded-full opacity-20 blur-[120px] animate-blob animation-delay-2000"></div>
+        
+        <div className="max-w-6xl mx-auto relative z-10">
           <header className="text-center mb-12 sm:mb-16 md:mb-20 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-[#FFD966]/10 rounded-full blur-3xl -z-10" />
             
@@ -49,7 +52,7 @@ export default function SobreNosPage() {
           </div>
 
           <section aria-labelledby="mvv-heading" className="mb-16 sm:mb-20 md:mb-24">
-            <h2 id="mvv-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-center text-foreground mb-8 sm:mb-10 md:mb-12">
+            <h2 id="mvv-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-center text-gray-900 mb-8 sm:mb-10 md:mb-12">
               MVV - Missão, Visão e Valores
             </h2>
             <div className="grid md:grid-cols-3 gap-6 sm:gap-8" role="list">
@@ -60,8 +63,8 @@ export default function SobreNosPage() {
                 <div className="p-6 sm:p-8 md:p-10">
                   <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
                   <Target className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mb-4 sm:mb-6 relative z-10" aria-hidden="true" />
-                  <h3 className="text-2xl sm:text-3xl font-black text-foreground mb-3 sm:mb-4 uppercase relative z-10">Missão</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-medium relative z-10">
+                  <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-3 sm:mb-4 uppercase relative z-10">Missão</h3>
+                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium relative z-10">
                     Proporcionar experiências esportivas de qualidade, promovendo saúde, lazer e conexões através do
                     esporte.
                   </p>
@@ -75,8 +78,8 @@ export default function SobreNosPage() {
                 <div className="p-6 sm:p-8 md:p-10">
                   <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
                   <Eye className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-green-600 mb-4 sm:mb-6 relative z-10" aria-hidden="true" />
-                  <h3 className="text-2xl sm:text-3xl font-black text-foreground mb-3 sm:mb-4 uppercase relative z-10">Visão</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-medium relative z-10">
+                  <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-3 sm:mb-4 uppercase relative z-10">Visão</h3>
+                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium relative z-10">
                     Ser referência em gestão esportiva, expandindo nossa família para todo o Brasil.
                   </p>
                 </div>
@@ -89,8 +92,8 @@ export default function SobreNosPage() {
                 <div className="p-6 sm:p-8 md:p-10">
                   <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
                   <Heart className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-red-500 mb-4 sm:mb-6 relative z-10 fill-current" aria-hidden="true" />
-                  <h3 className="text-2xl sm:text-3xl font-black text-foreground mb-3 sm:mb-4 uppercase relative z-10">Valores</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-medium relative z-10">
+                  <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-3 sm:mb-4 uppercase relative z-10">Valores</h3>
+                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium relative z-10">
                     Amizade, respeito, excelência e compromisso com a comunidade esportiva.
                   </p>
                 </div>
@@ -99,7 +102,7 @@ export default function SobreNosPage() {
           </section>
 
           <section aria-labelledby="unidades-heading" className="mb-24">
-            <h2 id="unidades-heading" className="text-instagram-title text-center text-foreground mb-12 uppercase">
+            <h2 id="unidades-heading" className="text-3xl sm:text-4xl md:text-5xl font-black text-center text-gray-900 mb-12 uppercase">
               Nossas Unidades
             </h2>
             <div className="grid md:grid-cols-2 gap-8" role="list">
@@ -137,10 +140,10 @@ export default function SobreNosPage() {
               <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#FF6B47]/10 rounded-full blur-3xl" />
               
               <Users className="h-20 w-20 text-[#FF6B47] mx-auto mb-8 relative z-10" aria-hidden="true" />
-              <h2 id="team-heading" className="text-instagram-title text-foreground mb-6 uppercase relative z-10">
+              <h2 id="team-heading" className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-6 uppercase relative z-10">
                 Nosso Time
               </h2>
-              <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto font-bold relative z-10 uppercase tracking-wide">
+              <p className="text-xl text-gray-700 mb-12 max-w-3xl mx-auto font-bold relative z-10 uppercase tracking-wide">
                 Uma equipe de 12 colaboradores dedicados e centenas de clientes que se tornaram verdadeiros amigos
               </p>
               <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto" role="list">
