@@ -1,6 +1,5 @@
 "use client"
 
-import type { Metadata } from "next"
 import { Navbar } from "@/components/layout/navbar"
 import { NossaHistoria } from "@/components/home/nossa-historia"
 import { MapPin, Users, Trophy, Target, Heart, Eye } from 'lucide-react'
@@ -13,118 +12,142 @@ export default function SobreNosPage() {
 
       <main
         id="main-content"
-        className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white pt-32 pb-20"
+        className="min-h-screen bg-background pt-32 pb-20"
       >
         <div className="max-w-6xl mx-auto px-6">
-          {/* Hero Section */}
-          <header className="text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <Image
-                src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
-                alt="Logo Arena Coligados"
-                width={100}
-                height={100}
-                className="rounded-full ring-4 ring-orange-500/50 shadow-2xl"
-              />
+          <header className="text-center mb-20 relative">
+            {/* Yellow circle decoration */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-[#FFD966]/20 rounded-full blur-3xl -z-10" />
+            
+            <div className="flex justify-center mb-8">
+              <div className="relative">
+                <div className="absolute inset-0 bg-[#FF6B47] rounded-full blur-2xl opacity-40 animate-pulse-glow" />
+                <Image
+                  src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
+                  alt="Logo Arena Coligados"
+                  width={120}
+                  height={120}
+                  className="rounded-full ring-8 ring-[#FF6B47] shadow-2xl relative z-10"
+                />
+              </div>
             </div>
-            <h1 className="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-orange-400 to-green-400 bg-clip-text text-transparent">
+            <h1 className="text-instagram-title text-foreground mb-6 uppercase">
               Sobre Nós
             </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Mais que uma arena esportiva, somos uma família unida pelo esporte e amizade
+            <p className="text-instagram-subtitle text-muted-foreground uppercase tracking-wider">
+              Mais que uma arena, somos família
             </p>
           </header>
 
-          {/* Nossa História */}
           <NossaHistoria />
 
-          <section aria-labelledby="mvv-heading" className="mt-16">
+          <section aria-labelledby="mvv-heading" className="mt-20">
             <h2 id="mvv-heading" className="sr-only">
               Missão, Visão e Valores
             </h2>
             <div className="grid md:grid-cols-3 gap-8" role="list">
               <article
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-xl"
+                className="card-instagram relative overflow-hidden group"
                 role="listitem"
               >
-                <Target className="h-12 w-12 text-orange-400 mb-4" aria-hidden="true" />
-                <h3 className="text-2xl font-bold text-white mb-3">Missão</h3>
-                <p className="text-gray-300 leading-relaxed">
-                  Proporcionar experiências esportivas de qualidade, promovendo saúde, lazer e conexões através do
-                  esporte.
-                </p>
+                <div className="p-10">
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
+                  <Target className="h-16 w-16 text-[#FF6B47] mb-6 relative z-10" aria-hidden="true" />
+                  <h3 className="text-3xl font-black text-foreground mb-4 uppercase relative z-10">Missão</h3>
+                  <p className="text-muted-foreground leading-relaxed font-medium relative z-10">
+                    Proporcionar experiências esportivas de qualidade, promovendo saúde, lazer e conexões através do
+                    esporte.
+                  </p>
+                </div>
               </article>
 
               <article
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-xl"
+                className="card-instagram relative overflow-hidden group"
                 role="listitem"
               >
-                <Eye className="h-12 w-12 text-green-400 mb-4" aria-hidden="true" />
-                <h3 className="text-2xl font-bold text-white mb-3">Visão</h3>
-                <p className="text-gray-300 leading-relaxed">
-                  Ser referência em gestão esportiva, expandindo nossa família para todo o Brasil.
-                </p>
+                <div className="p-10">
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
+                  <Eye className="h-16 w-16 text-green-600 mb-6 relative z-10" aria-hidden="true" />
+                  <h3 className="text-3xl font-black text-foreground mb-4 uppercase relative z-10">Visão</h3>
+                  <p className="text-muted-foreground leading-relaxed font-medium relative z-10">
+                    Ser referência em gestão esportiva, expandindo nossa família para todo o Brasil.
+                  </p>
+                </div>
               </article>
 
               <article
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-xl"
+                className="card-instagram relative overflow-hidden group"
                 role="listitem"
               >
-                <Heart className="h-12 w-12 text-red-400 mb-4" aria-hidden="true" />
-                <h3 className="text-2xl font-bold text-white mb-3">Valores</h3>
-                <p className="text-gray-300 leading-relaxed">
-                  Amizade, respeito, excelência e compromisso com a comunidade esportiva.
-                </p>
+                <div className="p-10">
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
+                  <Heart className="h-16 w-16 text-red-500 mb-6 relative z-10" aria-hidden="true" />
+                  <h3 className="text-3xl font-black text-foreground mb-4 uppercase relative z-10">Valores</h3>
+                  <p className="text-muted-foreground leading-relaxed font-medium relative z-10">
+                    Amizade, respeito, excelência e compromisso com a comunidade esportiva.
+                  </p>
+                </div>
               </article>
             </div>
           </section>
 
-          <section aria-labelledby="unidades-heading" className="mt-16">
-            <h2 id="unidades-heading" className="text-4xl font-bold text-center text-orange-400 mb-10">
+          <section aria-labelledby="unidades-heading" className="mt-20">
+            <h2 id="unidades-heading" className="text-instagram-title text-center text-foreground mb-12 uppercase">
               Nossas Unidades
             </h2>
             <div className="grid md:grid-cols-2 gap-8" role="list">
               <article
-                className="bg-gradient-to-br from-orange-500/20 to-orange-600/20 border border-orange-400/40 rounded-2xl p-8 backdrop-blur-md"
+                className="card-instagram group hover:scale-105 transition-all"
                 role="listitem"
               >
-                <MapPin className="h-10 w-10 text-orange-400 mb-4" aria-hidden="true" />
-                <h3 className="text-2xl font-bold text-white mb-2">Parque Amazônia</h3>
-                <p className="text-gray-300 mb-4">5 quadras profissionais de Beach Tennis, Vôlei e Futevôlei</p>
-                <address className="text-sm text-gray-400 not-italic">Parque Amazônia, Goiânia - GO</address>
+                <div className="section-coral relative overflow-hidden">
+                  <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl" />
+                  <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
+                  <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Parque Amazônia</h3>
+                  <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">5 quadras profissionais de Beach Tennis, Vôlei e Futevôlei</p>
+                  <address className="text-sm text-white/80 not-italic font-medium relative z-10">Parque Amazônia, Goiânia - GO</address>
+                </div>
               </article>
 
               <article
-                className="bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-400/40 rounded-2xl p-8 backdrop-blur-md"
+                className="card-instagram group hover:scale-105 transition-all"
                 role="listitem"
               >
-                <MapPin className="h-10 w-10 text-green-400 mb-4" aria-hidden="true" />
-                <h3 className="text-2xl font-bold text-white mb-2">Vila Rosa</h3>
-                <p className="text-gray-300 mb-4">4 quadras equipadas com infraestrutura completa</p>
-                <address className="text-sm text-gray-400 not-italic">Setor Vila Rosa, Goiânia - GO</address>
+                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-10 relative overflow-hidden">
+                  <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl" />
+                  <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
+                  <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Vila Rosa</h3>
+                  <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">4 quadras equipadas com infraestrutura completa</p>
+                  <address className="text-sm text-white/80 not-italic font-medium relative z-10">Setor Vila Rosa, Goiânia - GO</address>
+                </div>
               </article>
             </div>
           </section>
 
-          <section aria-labelledby="team-heading" className="mt-16 text-center">
-            <Users className="h-16 w-16 text-orange-400 mx-auto mb-6" aria-hidden="true" />
-            <h2 id="team-heading" className="text-4xl font-bold text-white mb-4">
-              Nosso Time
-            </h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Uma equipe de 12 colaboradores dedicados e centenas de clientes que se tornaram verdadeiros amigos
-            </p>
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto" role="list">
-              <article className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20" role="listitem">
-                <Trophy className="h-8 w-8 text-orange-400 mx-auto mb-3" aria-hidden="true" />
-                <h3 className="text-lg font-bold text-white mb-2">Gustavo Oliveira</h3>
-                <p className="text-gray-400 text-sm">Co-fundador & Diretor</p>
-              </article>
-              <article className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20" role="listitem">
-                <Trophy className="h-8 w-8 text-green-400 mx-auto mb-3" aria-hidden="true" />
-                <h3 className="text-lg font-bold text-white mb-2">Rafael Henrique</h3>
-                <p className="text-gray-400 text-sm">Co-fundador & Diretor</p>
-              </article>
+          <section aria-labelledby="team-heading" className="mt-20 text-center">
+            <div className="card-instagram p-16 relative overflow-hidden">
+              <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966]/20 rounded-full blur-3xl" />
+              <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#FF6B47]/10 rounded-full blur-3xl" />
+              
+              <Users className="h-20 w-20 text-[#FF6B47] mx-auto mb-8 relative z-10" aria-hidden="true" />
+              <h2 id="team-heading" className="text-instagram-title text-foreground mb-6 uppercase relative z-10">
+                Nosso Time
+              </h2>
+              <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto font-medium relative z-10">
+                Uma equipe de 12 colaboradores dedicados e centenas de clientes que se tornaram verdadeiros amigos
+              </p>
+              <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto" role="list">
+                <article className="bg-gradient-to-br from-[#FF6B47]/10 to-transparent rounded-3xl p-8 border-2 border-[#FF6B47]/20 relative z-10" role="listitem">
+                  <Trophy className="h-12 w-12 text-[#FF6B47] mx-auto mb-4" aria-hidden="true" />
+                  <h3 className="text-2xl font-black text-foreground mb-2 uppercase">Gustavo Oliveira</h3>
+                  <p className="text-muted-foreground font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
+                </article>
+                <article className="bg-gradient-to-br from-green-500/10 to-transparent rounded-3xl p-8 border-2 border-green-500/20 relative z-10" role="listitem">
+                  <Trophy className="h-12 w-12 text-green-600 mx-auto mb-4" aria-hidden="true" />
+                  <h3 className="text-2xl font-black text-foreground mb-2 uppercase">Rafael Henrique</h3>
+                  <p className="text-muted-foreground font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
+                </article>
+              </div>
             </div>
           </section>
         </div>

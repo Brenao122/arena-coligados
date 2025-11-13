@@ -1,7 +1,7 @@
 "use client"
 
 import { Navbar } from "@/components/layout/navbar"
-import { Download, Palette, ImageIcon, FileText, BarChart3, ExternalLink } from "lucide-react"
+import { Download, Palette, ImageIcon, FileText, BarChart3, ExternalLink } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
@@ -50,7 +50,7 @@ export default function MidiaKitClientPage() {
                 <ExternalLink className="h-4 w-4 ml-2" aria-hidden="true" />
               </Button>
               <Button
-                onClick={() => window.open("https://www.instagram.com/arenacoligados/", "_blank")}
+                onClick={() => window.open("https://drive.google.com/file/d/1vaavzxMbSAJVu7WD5geE3Gairi1p82D_/view?usp=sharing", "_blank")}
                 className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-lg px-8 py-6 rounded-xl shadow-xl hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-green-300"
                 aria-label="Ver apresentação Arena Coligado Bambu"
               >

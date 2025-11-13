@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, Suspense, lazy } from "react"
 import { Button } from "@/components/ui/button"
-import { Calendar, Trophy, MapPin, Clock, ExternalLink } from "lucide-react"
+import { Calendar, Trophy, MapPin, Clock, ExternalLink, Waves } from 'lucide-react'
 import Image from "next/image"
 import { WelcomePopup } from "@/components/home/welcome-popup"
 import { Navbar } from "@/components/layout/navbar"
@@ -89,89 +89,96 @@ export default function HomePageClient() {
 
       <main id="main-content">
         <section
-          className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+          className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 hero-sand"
           aria-label="Hero principal"
         >
+          {/* Yellow organic circle decorations */}
+          <div className="circle-decoration w-96 h-96 -top-20 -left-20 animate-float-instagram" />
+          <div className="circle-decoration w-64 h-64 -bottom-32 -right-32 animate-float-instagram" style={{ animationDelay: '2s' }} />
+          
           <div className="absolute inset-0 z-0" aria-hidden="true">
             <Image
               src="/background-beach-volleyball.jpg"
               alt=""
               fill
-              className="object-cover brightness-50 scale-110"
-              style={{ transform: "translateY(calc(var(--scroll) * 0.3))" }}
+              className="object-cover brightness-[0.35] scale-110 mix-blend-multiply"
               priority
               quality={85}
               sizes="100vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
           </div>
 
-          <div className="relative z-10 max-w-6xl mx-auto px-6 text-center py-20">
+          <div className="relative z-10 max-w-7xl mx-auto px-6 text-center py-20">
             <div className="animate-fade-in-up mb-8" style={{ animationDelay: "0.1s" }}>
-              <Image
-                src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
-                alt="Logo Arena Coligados"
-                width={140}
-                height={140}
-                className="rounded-full ring-4 ring-orange-500/70 shadow-2xl mx-auto hover:scale-110 transition-transform duration-500 hover:ring-orange-400"
-                priority
-              />
+              <div className="inline-block p-2 bg-white rounded-full animate-pulse-glow">
+                <Image
+                  src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
+                  alt="Logo Arena Coligados"
+                  width={140}
+                  height={140}
+                  className="rounded-full"
+                  priority
+                />
+              </div>
             </div>
 
             <h1
-              className="text-7xl md:text-9xl font-black mb-6 leading-none animate-fade-in-up"
+              className="text-instagram-hero mb-6 animate-fade-in-up drop-shadow-[0_0_50px_rgba(255,107,71,0.8)]"
               style={{ animationDelay: "0.2s" }}
             >
-              <span className="text-gradient-hero drop-shadow-[0_0_40px_rgba(249,115,22,0.6)]">ARENA</span>
+              <span className="bg-gradient-to-r from-white via-[#FFD966] to-white bg-clip-text text-transparent">
+                ARENA
+              </span>
               <br />
-              <span className="text-gradient-primary text-6xl md:text-8xl drop-shadow-[0_0_30px_rgba(249,115,22,0.8)]">
+              <span className="bg-gradient-to-r from-[#FF6B47] to-[#FF8566] bg-clip-text text-transparent">
                 COLIGADOS
               </span>
             </h1>
 
-            <p
-              className="text-2xl md:text-3xl text-white/90 mb-3 font-bold drop-shadow-lg animate-fade-in-up"
+            <div
+              className="inline-block bg-[#FFD966] text-gray-900 px-8 py-4 rounded-full mb-6 animate-fade-in-up shadow-2xl"
               style={{ animationDelay: "0.3s" }}
             >
-              Sua Segunda Casa no Esporte
-            </p>
+              <p className="text-2xl md:text-3xl font-black uppercase tracking-wider">
+                Sua Segunda Casa no Esporte
+              </p>
+            </div>
+
             <p
-              className="text-lg text-white/80 mb-12 max-w-2xl mx-auto animate-fade-in-up"
+              className="text-lg text-white/90 mb-12 font-bold uppercase tracking-widest animate-fade-in-up"
               style={{ animationDelay: "0.4s" }}
             >
               Beach Tennis • Vôlei • Futevôlei • Tênis
             </p>
 
             <div
-              className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fade-in-up"
+              className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-fade-in-up"
               style={{ animationDelay: "0.5s" }}
               role="group"
               aria-label="Ações principais"
             >
               <Button
                 onClick={() => window.open("https://links.nextfit.bio/eFiVtHg", "_blank")}
-                className="btn-secondary text-xl px-10 py-7 group hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-green-300"
+                className="btn-secondary text-xl group focus:ring-4 focus:ring-yellow-300"
                 aria-label="Agendar aula experimental gratuita"
               >
-                <Calendar className="h-6 w-6 mr-3 group-hover:rotate-12 transition-transform" aria-hidden="true" />
+                <Waves className="h-6 w-6 mr-3 group-hover:animate-bounce" aria-hidden="true" />
                 Aula Grátis
-                <ExternalLink className="h-5 w-5 ml-2" aria-hidden="true" />
               </Button>
 
               <Button
                 onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                className="btn-primary text-xl px-10 py-7 group hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-orange-300"
+                className="btn-primary text-xl group focus:ring-4 focus:ring-orange-300"
                 aria-label="Alugar quadra esportiva"
               >
-                <Trophy className="h-12 w-12 mr-3 group-hover:scale-110 transition-transform" aria-hidden="true" />
+                <Trophy className="h-6 w-6 mr-3 group-hover:scale-110 transition-transform" aria-hidden="true" />
                 Alugue sua Quadra
-                <ExternalLink className="h-5 w-5 ml-2" aria-hidden="true" />
               </Button>
             </div>
 
             <Link
               href="/sobre-nos"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors group animate-fade-in-up focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg px-3 py-2"
+              className="inline-flex items-center gap-2 text-white hover:text-[#FFD966] transition-colors group animate-fade-in-up focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg px-3 py-2 font-bold uppercase tracking-wide"
               style={{ animationDelay: "0.6s" }}
             >
               <span>Conheça Nossa História</span>
@@ -180,13 +187,17 @@ export default function HomePageClient() {
           </div>
         </section>
 
-        <section className="bg-gradient-to-b from-black/80 to-slate-900 py-20" aria-labelledby="instagram-heading">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="section-coral py-24 relative overflow-hidden" aria-labelledby="instagram-heading">
+          {/* Decorative circles */}
+          <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966] rounded-full opacity-30 blur-3xl" />
+          <div className="absolute bottom-10 left-10 w-96 h-96 bg-white rounded-full opacity-10 blur-3xl" />
+          
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
             <div className="text-center mb-16">
-              <h2 id="instagram-heading" className="text-5xl md:text-6xl font-black text-gradient-primary mb-4">
-                Viva a Experiência
+              <h2 id="instagram-heading" className="text-instagram-title text-white mb-4 drop-shadow-lg">
+                VIVA A EXPERIÊNCIA
               </h2>
-              <p className="text-xl text-white/70">Momentos que viram memórias</p>
+              <p className="text-instagram-subtitle text-white/90 tracking-wider">Momentos que viram memórias</p>
             </div>
 
             <Suspense fallback={<InstagramLoadingSkeleton />}>
@@ -195,136 +206,155 @@ export default function HomePageClient() {
           </div>
         </section>
 
-        <section className="bg-slate-900 py-20" aria-labelledby="stats-heading">
-          <div className="max-w-6xl mx-auto px-6">
+        <section className="bg-background py-24 relative" aria-labelledby="stats-heading">
+          {/* Yellow decorative circle */}
+          <div className="absolute top-20 left-1/4 w-80 h-80 bg-[#FFD966]/20 rounded-full blur-3xl animate-float-instagram" />
+          
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
             <h2 id="stats-heading" className="sr-only">
               Estatísticas da Arena Coligados
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6" role="list">
               <ScrollReveal delay={0.1}>
                 <div
-                  className="card-premium p-8 text-center hover:bg-orange-500/20 group hover:scale-105 transition-all duration-300"
+                  className="card-instagram p-10 text-center group relative overflow-hidden"
                   role="listitem"
                 >
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B47]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <MapPin
-                    className="h-12 w-12 text-orange-400 mx-auto mb-4 group-hover:scale-110 transition-transform"
+                    className="h-16 w-16 text-[#FF6B47] mx-auto mb-4 group-hover:scale-110 transition-transform relative z-10"
                     aria-hidden="true"
                   />
-                  <div className="text-4xl font-black text-white mb-2" aria-label="2 unidades">
+                  <div className="text-6xl font-black text-foreground mb-2 relative z-10" aria-label="2 unidades">
                     2
                   </div>
-                  <div className="text-white/80 font-medium">Unidades</div>
+                  <div className="text-muted-foreground font-bold uppercase tracking-wider text-sm relative z-10">Unidades</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
                 <div
-                  className="card-premium p-8 text-center hover:bg-green-500/20 group hover:scale-105 transition-all duration-300"
+                  className="card-instagram p-10 text-center group relative overflow-hidden"
                   role="listitem"
                 >
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFD966]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Trophy
-                    className="h-12 w-12 text-green-400 mx-auto mb-4 group-hover:scale-110 transition-transform"
+                    className="h-16 w-16 text-[#FFD966] mx-auto mb-4 group-hover:scale-110 transition-transform relative z-10"
                     aria-hidden="true"
                   />
-                  <div className="text-4xl font-black text-white mb-2" aria-label="9 quadras">
+                  <div className="text-6xl font-black text-foreground mb-2 relative z-10" aria-label="9 quadras">
                     9
                   </div>
-                  <div className="text-white/80 font-medium">Quadras</div>
+                  <div className="text-muted-foreground font-bold uppercase tracking-wider text-sm relative z-10">Quadras</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.3}>
                 <div
-                  className="card-premium p-8 text-center hover:bg-blue-500/20 group hover:scale-105 transition-all duration-300"
+                  className="card-instagram p-10 text-center group relative overflow-hidden"
                   role="listitem"
                 >
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Trophy
-                    className="h-12 w-12 text-blue-400 mx-auto mb-4 group-hover:scale-110 transition-transform"
+                    className="h-16 w-16 text-green-600 mx-auto mb-4 group-hover:scale-110 transition-transform relative z-10"
                     aria-hidden="true"
                   />
-                  <div className="text-4xl font-black text-white mb-2" aria-label="4 modalidades">
+                  <div className="text-6xl font-black text-foreground mb-2 relative z-10" aria-label="4 modalidades">
                     4
                   </div>
-                  <div className="text-white/80 font-medium">Modalidades</div>
+                  <div className="text-muted-foreground font-bold uppercase tracking-wider text-sm relative z-10">Modalidades</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.4}>
                 <div
-                  className="card-premium p-8 text-center hover:bg-yellow-500/20 group hover:scale-105 transition-all duration-300"
+                  className="card-instagram p-10 text-center group relative overflow-hidden"
                   role="listitem"
                 >
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B47]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Clock
-                    className="h-12 w-12 text-yellow-400 mx-auto mb-4 group-hover:scale-110 transition-transform"
+                    className="h-16 w-16 text-[#FF6B47] mx-auto mb-4 group-hover:scale-110 transition-transform relative z-10"
                     aria-hidden="true"
                   />
-                  <div className="text-4xl font-black text-white mb-2" aria-label="14 horas diárias">
+                  <div className="text-6xl font-black text-foreground mb-2 relative z-10" aria-label="14 horas diárias">
                     14h
                   </div>
-                  <div className="text-white/80 font-medium">Diárias</div>
+                  <div className="text-muted-foreground font-bold uppercase tracking-wider text-sm relative z-10">Diárias</div>
                 </div>
               </ScrollReveal>
             </div>
           </div>
         </section>
 
-        <section className="bg-gradient-to-b from-slate-900 to-black py-20" aria-labelledby="pricing-heading">
-          <div className="max-w-6xl mx-auto px-6">
+        <section className="bg-accent/30 py-24 relative overflow-hidden" aria-labelledby="pricing-heading">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#FFD966]/20 rounded-full blur-3xl" />
+          
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
             <div className="text-center mb-16">
-              <h2 id="pricing-heading" className="text-5xl md:text-6xl font-black text-gradient-primary mb-4">
-                Planos
+              <h2 id="pricing-heading" className="text-instagram-title text-foreground mb-4">
+                PLANOS
               </h2>
-              <p className="text-xl text-white/70">Escolha sua unidade</p>
+              <p className="text-instagram-subtitle text-muted-foreground">Escolha sua unidade</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto" role="list">
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto" role="list">
               <ScrollReveal delay={0.1}>
                 <article
-                  className="card-premium p-10 hover:border-orange-500/70 group hover:scale-105 transition-all duration-300"
+                  className="card-instagram group hover:scale-105 transition-all duration-300"
                   role="listitem"
                 >
-                  <MapPin
-                    className="h-12 w-12 text-orange-400 mb-6 group-hover:scale-110 transition-transform"
-                    aria-hidden="true"
-                  />
-                  <h3 className="text-3xl font-black text-white mb-3">Parque Amazônia</h3>
-                  <p className="text-white/60 mb-6">5 quadras profissionais</p>
-                  <div className="text-5xl font-black text-gradient-primary mb-8">
-                    <span aria-label="80 reais por hora">R$ 80</span>
-                    <span className="text-2xl text-white/60">/hora</span>
+                  <div className="section-coral relative">
+                    {/* Yellow circle decoration */}
+                    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#FFD966] rounded-full opacity-40 blur-2xl" />
+                    
+                    <MapPin
+                      className="h-16 w-16 text-white mb-6 relative z-10"
+                      aria-hidden="true"
+                    />
+                    <h3 className="text-5xl font-black text-white mb-3 uppercase relative z-10">Parque Amazônia</h3>
+                    <p className="text-white/90 mb-6 font-bold uppercase text-sm tracking-wider relative z-10">5 quadras profissionais</p>
+                    <div className="mb-8 relative z-10">
+                      <span className="text-7xl font-black text-white" aria-label="80 reais por hora">R$ 80</span>
+                      <span className="text-3xl text-white/80 font-bold">/hora</span>
+                    </div>
+                    <Button
+                      onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
+                      className="w-full btn-secondary hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-yellow-300 relative z-10"
+                      aria-label="Reservar quadra no Parque Amazônia"
+                    >
+                      Reservar Agora
+                    </Button>
                   </div>
-                  <Button
-                    onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                    className="w-full btn-primary hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-orange-300"
-                    aria-label="Reservar quadra no Parque Amazônia"
-                  >
-                    Reservar Agora
-                  </Button>
                 </article>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
                 <article
-                  className="card-premium p-10 hover:border-green-500/70 group hover:scale-105 transition-all duration-300"
+                  className="card-instagram group hover:scale-105 transition-all duration-300"
                   role="listitem"
                 >
-                  <MapPin
-                    className="h-12 w-12 text-green-400 mb-6 group-hover:scale-110 transition-transform"
-                    aria-hidden="true"
-                  />
-                  <h3 className="text-3xl font-black text-white mb-3">Vila Rosa</h3>
-                  <p className="text-white/60 mb-6">4 quadras equipadas</p>
-                  <div className="text-5xl font-black text-gradient-primary mb-8">
-                    <span aria-label="70 reais por hora">R$ 70</span>
-                    <span className="text-2xl text-white/60">/hora</span>
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-12 relative">
+                    {/* Yellow circle decoration */}
+                    <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#FFD966] rounded-full opacity-40 blur-2xl" />
+                    
+                    <MapPin
+                      className="h-16 w-16 text-white mb-6 relative z-10"
+                      aria-hidden="true"
+                    />
+                    <h3 className="text-5xl font-black text-white mb-3 uppercase relative z-10">Vila Rosa</h3>
+                    <p className="text-white/90 mb-6 font-bold uppercase text-sm tracking-wider relative z-10">4 quadras equipadas</p>
+                    <div className="mb-8 relative z-10">
+                      <span className="text-7xl font-black text-white" aria-label="70 reais por hora">R$ 70</span>
+                      <span className="text-3xl text-white/80 font-bold">/hora</span>
+                    </div>
+                    <Button
+                      onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
+                      className="w-full btn-secondary hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-yellow-300 relative z-10"
+                      aria-label="Reservar quadra na Vila Rosa"
+                    >
+                      Reservar Agora
+                    </Button>
                   </div>
-                  <Button
-                    onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                    className="w-full btn-secondary hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-green-300"
-                    aria-label="Reservar quadra na Vila Rosa"
-                  >
-                    Reservar Agora
-                  </Button>
                 </article>
               </ScrollReveal>
             </div>
@@ -339,14 +369,14 @@ function InstagramLoadingSkeleton() {
   return (
     <div className="max-w-4xl mx-auto animate-pulse" role="status" aria-label="Carregando feed do Instagram">
       <div className="flex justify-center mb-8">
-        <div className="bg-gray-800 rounded-xl w-full max-w-md h-64"></div>
+        <div className="bg-white/20 rounded-3xl w-full max-w-md h-64"></div>
       </div>
       <div className="flex justify-center">
-        <div className="bg-gray-800 rounded-xl w-full max-w-md aspect-square"></div>
+        <div className="bg-white/20 rounded-3xl w-full max-w-md aspect-square"></div>
       </div>
       <div className="flex justify-center gap-2 mt-8">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-2 w-2 bg-gray-700 rounded-full"></div>
+          <div key={i} className="h-3 w-3 bg-white/30 rounded-full"></div>
         ))}
       </div>
       <span className="sr-only">Carregando posts do Instagram...</span>

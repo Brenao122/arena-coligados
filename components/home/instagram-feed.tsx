@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Instagram } from 'lucide-react'
+import Image from "next/image"
 
 export default function InstagramFeed() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -50,31 +51,83 @@ export default function InstagramFeed() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Centered Instagram Profile Widget */}
-      <div className="flex justify-center mb-8">
-        <div className="instagram-embed-wrapper max-w-md w-full">
-          <blockquote
-            className="instagram-media"
-            data-instgrm-permalink="https://www.instagram.com/arenacoligados/"
-            data-instgrm-version="14"
-            style={{
-              background: "#FFF",
-              border: 0,
-              borderRadius: "12px",
-              boxShadow: "0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15)",
-              margin: "0 auto",
-              maxWidth: "500px",
-              minWidth: "326px",
-              padding: 0,
-              width: "100%",
-            }}
+    <div className="max-w-6xl mx-auto">
+      {/* Instagram Profile Header */}
+      <div className="flex flex-col items-center mb-12">
+        <a
+          href="https://www.instagram.com/arenacoligados/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col items-center gap-4 hover:scale-105 transition-all duration-300"
+        >
+          <div className="relative">
+            <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-1">
+              <div className="w-full h-full rounded-full bg-slate-900 p-1 flex items-center justify-center">
+                <Image
+                  src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
+                  alt="Arena Coligados"
+                  width={120}
+                  height={120}
+                  className="rounded-full"
+                />
+              </div>
+            </div>
+            <Instagram className="absolute -bottom-2 -right-2 w-8 h-8 text-pink-500 bg-slate-900 rounded-full p-1" />
+          </div>
+          <div className="text-center">
+            <h3 className="text-2xl font-bold text-white group-hover:text-orange-400 transition-colors">
+              @arenacoligados
+            </h3>
+            <p className="text-white/60">4.277 seguidores • 248 posts</p>
+          </div>
+        </a>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
+        {[
+          {
+            query: "beach tennis players playing at arena coligados sand court",
+            alt: "Jogadores de beach tennis na Arena Coligados",
+          },
+          {
+            query: "volleyball game at sand court arena coligados sunset",
+            alt: "Jogo de vôlei ao pôr do sol",
+          },
+          {
+            query: "footvolley players at beach arena evening lights",
+            alt: "Partida de futevôlei à noite",
+          },
+          {
+            query: "beach tennis tournament arena coligados crowds",
+            alt: "Torneio de beach tennis",
+          },
+          {
+            query: "group of friends playing volleyball sand court",
+            alt: "Grupo de amigos jogando vôlei",
+          },
+          {
+            query: "aerial view arena coligados beach sports courts",
+            alt: "Vista aérea da Arena Coligados",
+          },
+        ].map((item, index) => (
+          <a
+            key={index}
+            href="https://www.instagram.com/arenacoligados/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative aspect-square group overflow-hidden rounded-xl hover:scale-105 transition-all duration-300"
           >
-            <a href="https://www.instagram.com/arenacoligados/" target="_blank" rel="noopener noreferrer">
-              Ver perfil no Instagram
-            </a>
-          </blockquote>
-        </div>
+            <Image
+              src={`/.jpg?key=r6lac&height=400&width=400&query=${encodeURIComponent(item.query)}`}
+              alt={item.alt}
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+              <Instagram className="w-6 h-6 text-white" />
+            </div>
+          </a>
+        ))}
       </div>
 
       {/* Carousel */}
@@ -153,11 +206,12 @@ export default function InstagramFeed() {
       </div>
 
       {/* CTA Button */}
-      <div className="text-center mt-12">
+      <div className="text-center">
         <Button
           onClick={() => window.open("https://www.instagram.com/arenacoligados/", "_blank")}
           className="btn-primary group hover:scale-105 transition-all duration-300 text-lg px-8 py-6"
         >
+          <Instagram className="h-5 w-5 mr-2" />
           Ver Mais no Instagram
           <ExternalLink className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
         </Button>
