@@ -1,50 +1,37 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Instagram, Play } from 'lucide-react'
+import { ExternalLink, Instagram } from 'lucide-react'
 import Image from "next/image"
 
 export default function InstagramFeed() {
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [embedsLoaded, setEmbedsLoaded] = useState(false)
 
-  const posts = [
-    {
-      url: "https://www.instagram.com/arenacoligados/",
-      thumbnail: "/beach-tennis-tournament-arena-coligados-orange-bac.jpg",
-      caption: "Torneio de Beach Tennis 2024",
-      type: "image"
-    },
-    {
-      url: "https://www.instagram.com/arenacoligados/",
-      thumbnail: "/volleyball-game-at-sunset-arena-coligados-sand-cou.jpg",
-      caption: "Vôlei ao Pôr do Sol",
-      type: "reel"
-    },
-    {
-      url: "https://www.instagram.com/arenacoligados/",
-      thumbnail: "/footvolley-match-night-lights-arena-coligados.jpg",
-      caption: "Futevôlei à Noite",
-      type: "image"
-    },
-    {
-      url: "https://www.instagram.com/arenacoligados/",
-      thumbnail: "/group-friends-playing-beach-sports-arena-orange-ba.jpg",
-      caption: "Momentos Inesquecíveis",
-      type: "image"
-    },
-    {
-      url: "https://www.instagram.com/arenacoligados/",
-      thumbnail: "/aerial-view-beach-sports-arena-sand-courts.jpg",
-      caption: "Vista Aérea da Arena",
-      type: "reel"
-    },
-    {
-      url: "https://www.instagram.com/arenacoligados/",
-      thumbnail: "/beach-tennis-players-action-shot-orange-uniform.jpg",
-      caption: "Beach Tennis em Ação",
-      type: "image"
-    },
+  useEffect(() => {
+    // Load Instagram embed script
+    const script = document.createElement('script')
+    script.src = '//www.instagram.com/embed.js'
+    script.async = true
+    document.body.appendChild(script)
+
+    // Process embeds after script loads
+    script.onload = () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process()
+        setEmbedsLoaded(true)
+      }
+    }
+
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
+
+  const instagramPosts = [
+    "https://www.instagram.com/p/DDWQvQbxVzH/", // Replace with real post URLs
+    "https://www.instagram.com/p/DDWQvQbxVzH/", // Replace with real post URLs
+    "https://www.instagram.com/p/DDWQvQbxVzH/", // Replace with real post URLs
   ]
 
   return (
@@ -89,7 +76,7 @@ export default function InstagramFeed() {
         <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white uppercase tracking-wide px-4 drop-shadow-lg mb-4">
           Confira Nossos Posts
         </h3>
-        <p className="text-white/70 text-base md:text-lg font-medium">Clique nas fotos para visitar nosso Instagram</p>
+        <p className="text-white text-base md:text-lg font-bold">Nossos últimos posts do Instagram</p>
         <div className="flex items-center justify-center gap-4 mt-6">
           <div className="h-1 w-16 md:w-24 bg-gradient-to-r from-transparent via-orange-400 to-transparent"></div>
           <div className="h-2 w-2 rounded-full bg-yellow-400"></div>
@@ -97,39 +84,32 @@ export default function InstagramFeed() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 lg:gap-7 mb-12 md:mb-20 px-2 md:px-4">
-        {posts.map((post, index) => (
-          <a
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20 px-2 md:px-4">
+        {instagramPosts.map((postUrl, index) => (
+          <div
             key={index}
-            href={post.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative aspect-square group overflow-hidden rounded-3xl hover:scale-[1.05] transition-all duration-500 shadow-xl hover:shadow-2xl hover:shadow-orange-500/40 ring-2 ring-white/10 hover:ring-orange-500/50"
-            style={{ animationDelay: `${index * 100}ms` }}
+            className="instagram-embed-wrapper w-full"
+            style={{ minHeight: '500px' }}
           >
-            <Image
-              src={post.thumbnail || "/placeholder.svg"}
-              alt={post.caption}
-              fill
-              className="object-cover group-hover:scale-110 transition-transform duration-700"
-              sizes="(max-width: 768px) 50vw, 33vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-orange-600/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center gap-3 md:gap-4 p-4 md:p-6">
-              {post.type === "reel" && (
-                <Play className="w-10 h-10 md:w-16 md:h-16 text-white fill-white animate-bounce drop-shadow-2xl" />
-              )}
-              <Instagram className="w-8 h-8 md:w-12 md:h-12 text-white drop-shadow-2xl" />
-              <p className="text-white font-bold text-center text-xs md:text-sm lg:text-base uppercase tracking-wider drop-shadow-lg">{post.caption}</p>
-              <div className="mt-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs md:text-sm font-semibold">
-                Ver no Instagram
-              </div>
-            </div>
-            {post.type === "reel" && (
-              <div className="absolute top-3 right-3 md:top-4 md:right-4 bg-black/80 backdrop-blur-md rounded-full p-2 md:p-2.5 ring-2 ring-white/30">
-                <Play className="w-3 h-3 md:w-5 md:h-5 text-white fill-white" />
-              </div>
-            )}
-          </a>
+            <blockquote
+              className="instagram-media"
+              data-instgrm-permalink={postUrl}
+              data-instgrm-version="14"
+              style={{
+                background: '#FFF',
+                border: 0,
+                borderRadius: '24px',
+                boxShadow: '0 10px 40px rgba(255, 107, 71, 0.3)',
+                margin: '0',
+                padding: 0,
+                width: '100%',
+              }}
+            >
+              <a href={postUrl} target="_blank" rel="noopener noreferrer">
+                Ver post no Instagram
+              </a>
+            </blockquote>
+          </div>
         ))}
       </div>
 

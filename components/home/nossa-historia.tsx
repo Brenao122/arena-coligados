@@ -8,10 +8,10 @@ export function NossaHistoria() {
       {/* Header with decorative elements */}
       <div className="text-center mb-12 relative">
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#FFD966]/10 rounded-full blur-3xl -z-10" />
-        <h2 className="text-instagram-title text-foreground mb-4 uppercase">Nossa História</h2>
+        <h2 className="text-instagram-title text-gray-900 mb-4 uppercase">Nossa História</h2>
         <div className="flex items-center justify-center gap-4 text-[#FF6B47] font-black uppercase tracking-wider">
           <Heart className="h-6 w-6 fill-current" aria-hidden="true" />
-          <span className="text-lg">Arena Coligados é FAMÍLIA</span>
+          <span className="text-lg text-gray-900">Arena Coligados é FAMÍLIA</span>
           <Heart className="h-6 w-6 fill-current" aria-hidden="true" />
         </div>
       </div>
@@ -23,19 +23,19 @@ export function NossaHistoria() {
         
         <div className="p-10 md:p-14 relative z-10">
           <div className="prose prose-lg max-w-none">
-            <p className="text-foreground leading-relaxed mb-6 font-medium text-lg">
+            <p className="text-gray-900 leading-relaxed mb-6 font-medium text-lg">
               O nome <strong className="text-[#FF6B47] font-black">Coligados</strong> nasceu de um grupo de amigos que se conhecem
               desde 2011. Mesmo com o passar dos anos, as mudanças da vida, o trabalho e a chegada dos filhos, esse grupo
               continua unido, mantendo viva a amizade que os conecta. Sempre que possível, estão juntos — em viagens,
               encontros e, claro, nos campos e quadras.
             </p>
 
-            <p className="text-muted-foreground leading-relaxed mb-6 font-medium">
+            <p className="text-gray-700 leading-relaxed mb-6 font-medium">
               Desse vínculo surgiu também um time de futebol amador que se tornou referência na várzea goiana, acumulando
               conquistas e reforçando o espírito de união que caracteriza os Coligados.
             </p>
 
-            <p className="text-foreground leading-relaxed mb-6 font-medium">
+            <p className="text-gray-900 leading-relaxed mb-6 font-medium">
               Inspirados por essa trajetória de parceria, amizade e respeito, os irmãos{" "}
               <strong className="text-[#FF6B47] font-black">Gustavo Oliveira</strong> e{" "}
               <strong className="text-[#FF6B47] font-black">Rafael Henrique</strong> — integrantes do grupo desde o início —
@@ -44,12 +44,12 @@ export function NossaHistoria() {
               convivência e a amizade.
             </p>
 
-            <p className="text-muted-foreground leading-relaxed mb-6 font-medium">
+            <p className="text-gray-700 leading-relaxed mb-6 font-medium">
               Desde então, a Família Coligados só cresce. Hoje, contamos com uma equipe formada por cerca de 12
               colaboradores e centenas de clientes que se tornaram verdadeiros amigos.
             </p>
 
-            <p className="text-foreground leading-relaxed mb-6 font-medium">
+            <p className="text-gray-900 leading-relaxed mb-6 font-medium">
               Com a primeira unidade inaugurada no <strong className="text-[#FF6B47] font-black">Parque Amazônia</strong>, a Arena
               rapidamente se consolidou e, em menos de dois anos, expandiu suas atividades para uma segunda unidade,
               localizada no <strong className="text-[#FF6B47] font-black">Setor Vila Rosa</strong>. E essa é apenas parte da nossa
@@ -87,7 +87,7 @@ export function NossaHistoria() {
       {/* Final quote */}
       <div className="section-coral-light relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFD966]/30 rounded-full blur-3xl" />
-        <p className="text-foreground text-xl md:text-2xl font-black leading-relaxed text-center relative z-10 uppercase">
+        <p className="text-gray-900 text-xl md:text-2xl font-black leading-relaxed text-center relative z-10 uppercase">
           Em pouco tempo, a Arena conquistou seu espaço e consolidou uma comunidade fiel de atletas e amigos,
           mantendo vivo o propósito que nos originou: ser mais que uma arena esportiva — ser um ponto de encontro
           entre pessoas e valores.
