@@ -1,11 +1,9 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { LogIn, Calendar, Trophy, Eye, EyeOff, MapPin, Clock, ExternalLink, Play } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Calendar, Trophy, MapPin, Clock, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { WelcomePopup } from "@/components/home/welcome-popup"
 import { Navbar } from "@/components/layout/navbar"
@@ -76,84 +74,7 @@ export default function HomePage() {
   if (showLogin) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white flex items-center justify-center p-6">
-        <div className="max-w-md w-full">
-          <div className="text-center mb-8">
-            <Image
-              src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
-              alt="Arena Coligados Logo"
-              width={80}
-              height={80}
-              className="rounded-full ring-4 ring-orange-500/50 shadow-2xl mx-auto mb-4"
-            />
-            <h1 className="text-3xl font-bold text-orange-400">Arena Coligados</h1>
-            <p className="text-gray-300">Faça login para continuar</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-6">
-            {successMessage && (
-              <div className="bg-green-500/20 border border-green-500/50 rounded-lg p-4 text-center">
-                <p className="text-green-300 font-medium">{successMessage}</p>
-              </div>
-            )}
-
-            {errorMessage && (
-              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-center">
-                <p className="text-red-300 font-medium">{errorMessage}</p>
-              </div>
-            )}
-
-            <div>
-              <Label htmlFor="email" className="text-gray-200">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                placeholder="seu@email.com"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="password" className="text-gray-200">
-                Senha
-              </Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 pr-10"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3"
-            >
-              {loading ? "Entrando..." : "Entrar"}
-            </Button>
-          </form>
-
-          <button onClick={() => setShowLogin(false)} className="w-full mt-4 text-gray-400 hover:text-white text-sm">
-            ← Voltar para página inicial
-          </button>
-        </div>
+        {/* ... existing login form ... */}
       </div>
     )
   }
@@ -169,24 +90,28 @@ export default function HomePage() {
             src="/background-beach-volleyball.jpg"
             alt="Arena Coligados"
             fill
-            className="object-cover brightness-50"
+            className="object-cover brightness-50 scale-110"
+            style={{ transform: "translateY(calc(var(--scroll) * 0.3))" }}
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 text-center py-20">
-          <div className="animate-float mb-8">
+          <div className="animate-fade-in-up mb-8" style={{ animationDelay: "0.1s" }}>
             <Image
               src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
               alt="Arena Coligados"
               width={140}
               height={140}
-              className="rounded-full ring-4 ring-orange-500/70 shadow-2xl mx-auto animate-glow"
+              className="rounded-full ring-4 ring-orange-500/70 shadow-2xl mx-auto hover:scale-110 transition-transform duration-500 hover:ring-orange-400"
             />
           </div>
 
-          <h1 className="text-7xl md:text-9xl font-black mb-6 leading-none">
+          <h1
+            className="text-7xl md:text-9xl font-black mb-6 leading-none animate-fade-in-up"
+            style={{ animationDelay: "0.2s" }}
+          >
             <span className="text-gradient-hero drop-shadow-[0_0_40px_rgba(249,115,22,0.6)]">ARENA</span>
             <br />
             <span className="text-gradient-primary text-6xl md:text-8xl drop-shadow-[0_0_30px_rgba(249,115,22,0.8)]">
@@ -194,15 +119,26 @@ export default function HomePage() {
             </span>
           </h1>
 
-          <p className="text-2xl md:text-3xl text-white/90 mb-3 font-bold drop-shadow-lg">
+          <p
+            className="text-2xl md:text-3xl text-white/90 mb-3 font-bold drop-shadow-lg animate-fade-in-up"
+            style={{ animationDelay: "0.3s" }}
+          >
             Sua Segunda Casa no Esporte
           </p>
-          <p className="text-lg text-white/80 mb-12 max-w-2xl mx-auto">Beach Tennis • Vôlei • Futevôlei • Tênis</p>
+          <p
+            className="text-lg text-white/80 mb-12 max-w-2xl mx-auto animate-fade-in-up"
+            style={{ animationDelay: "0.4s" }}
+          >
+            Beach Tennis • Vôlei • Futevôlei • Tênis
+          </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fade-in-up"
+            style={{ animationDelay: "0.5s" }}
+          >
             <Button
               onClick={() => window.open("https://links.nextfit.bio/eFiVtHg", "_blank")}
-              className="btn-secondary text-xl px-10 py-7 group"
+              className="btn-secondary text-xl px-10 py-7 group hover:scale-105 transition-all duration-300"
             >
               <Calendar className="h-6 w-6 mr-3 group-hover:rotate-12 transition-transform" />
               Aula Grátis
@@ -211,7 +147,7 @@ export default function HomePage() {
 
             <Button
               onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-              className="btn-primary text-xl px-10 py-7 group"
+              className="btn-primary text-xl px-10 py-7 group hover:scale-105 transition-all duration-300"
             >
               <Trophy className="h-6 w-6 mr-3 group-hover:scale-110 transition-transform" />
               Alugue sua Quadra
@@ -221,7 +157,8 @@ export default function HomePage() {
 
           <Link
             href="/sobre-nos"
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors group"
+            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors group animate-fade-in-up"
+            style={{ animationDelay: "0.6s" }}
           >
             <span>Conheça Nossa História</span>
             <ExternalLink className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -236,29 +173,13 @@ export default function HomePage() {
             <p className="text-xl text-white/70">Momentos que viram memórias</p>
           </div>
 
-          {/* Grid tipo Instagram */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div
-                key={i}
-                className="relative aspect-square group overflow-hidden rounded-xl hover:scale-105 transition-transform duration-500 cursor-pointer"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-green-500/20 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Play className="h-12 w-12 text-white drop-shadow-lg" />
-                </div>
-                <Image
-                  src={`/beach-sports-volleyball-tennis-court-.jpg?key=vhe4n&height=400&width=400&query=beach+sports+volleyball+tennis+court+${i}`}
-                  alt={`Arena moment ${i}`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ))}
-          </div>
+          <InstagramFeed />
 
-          <div className="text-center">
-            <Button className="btn-primary group">
+          <div className="text-center mt-8">
+            <Button
+              onClick={() => window.open("https://www.instagram.com/arenacoligados/", "_blank")}
+              className="btn-primary group hover:scale-105 transition-all duration-300"
+            >
               Ver Mais no Instagram
               <ExternalLink className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
@@ -266,38 +187,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats vibrantes */}
       <section className="bg-slate-900 py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="card-premium p-8 text-center hover:bg-orange-500/20 group">
-              <MapPin className="h-12 w-12 text-orange-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-              <div className="text-4xl font-black text-white mb-2">2</div>
-              <div className="text-white/80 font-medium">Unidades</div>
-            </div>
+            <ScrollReveal delay={0.1}>
+              <div className="card-premium p-8 text-center hover:bg-orange-500/20 group hover:scale-105 transition-all duration-300">
+                <MapPin className="h-12 w-12 text-orange-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                <div className="text-4xl font-black text-white mb-2">2</div>
+                <div className="text-white/80 font-medium">Unidades</div>
+              </div>
+            </ScrollReveal>
 
-            <div className="card-premium p-8 text-center hover:bg-green-500/20 group">
-              <Trophy className="h-12 w-12 text-green-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-              <div className="text-4xl font-black text-white mb-2">9</div>
-              <div className="text-white/80 font-medium">Quadras</div>
-            </div>
+            <ScrollReveal delay={0.2}>
+              <div className="card-premium p-8 text-center hover:bg-green-500/20 group hover:scale-105 transition-all duration-300">
+                <Trophy className="h-12 w-12 text-green-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                <div className="text-4xl font-black text-white mb-2">9</div>
+                <div className="text-white/80 font-medium">Quadras</div>
+              </div>
+            </ScrollReveal>
 
-            <div className="card-premium p-8 text-center hover:bg-blue-500/20 group">
-              <Trophy className="h-12 w-12 text-blue-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-              <div className="text-4xl font-black text-white mb-2">4</div>
-              <div className="text-white/80 font-medium">Modalidades</div>
-            </div>
+            <ScrollReveal delay={0.3}>
+              <div className="card-premium p-8 text-center hover:bg-blue-500/20 group hover:scale-105 transition-all duration-300">
+                <Trophy className="h-12 w-12 text-blue-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                <div className="text-4xl font-black text-white mb-2">4</div>
+                <div className="text-white/80 font-medium">Modalidades</div>
+              </div>
+            </ScrollReveal>
 
-            <div className="card-premium p-8 text-center hover:bg-yellow-500/20 group">
-              <Clock className="h-12 w-12 text-yellow-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-              <div className="text-4xl font-black text-white mb-2">14h</div>
-              <div className="text-white/80 font-medium">Diárias</div>
-            </div>
+            <ScrollReveal delay={0.4}>
+              <div className="card-premium p-8 text-center hover:bg-yellow-500/20 group hover:scale-105 transition-all duration-300">
+                <Clock className="h-12 w-12 text-yellow-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                <div className="text-4xl font-black text-white mb-2">14h</div>
+                <div className="text-white/80 font-medium">Diárias</div>
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
-      {/* Preços */}
       <section className="bg-gradient-to-b from-slate-900 to-black py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -306,61 +233,146 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="card-premium p-10 hover:border-orange-500/70 group">
-              <MapPin className="h-12 w-12 text-orange-400 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="text-3xl font-black text-white mb-3">Parque Amazônia</h3>
-              <p className="text-white/60 mb-6">5 quadras profissionais</p>
-              <div className="text-5xl font-black text-gradient-primary mb-8">
-                R$ 80<span className="text-2xl text-white/60">/hora</span>
+            <ScrollReveal delay={0.1}>
+              <div className="card-premium p-10 hover:border-orange-500/70 group hover:scale-105 transition-all duration-300">
+                <MapPin className="h-12 w-12 text-orange-400 mb-6 group-hover:scale-110 transition-transform" />
+                <h3 className="text-3xl font-black text-white mb-3">Parque Amazônia</h3>
+                <p className="text-white/60 mb-6">5 quadras profissionais</p>
+                <div className="text-5xl font-black text-gradient-primary mb-8">
+                  R$ 80<span className="text-2xl text-white/60">/hora</span>
+                </div>
+                <Button
+                  onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
+                  className="w-full btn-primary hover:scale-105 transition-all duration-300"
+                >
+                  Reservar Agora
+                </Button>
               </div>
-              <Button
-                onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                className="w-full btn-primary"
-              >
-                Reservar Agora
-              </Button>
-            </div>
+            </ScrollReveal>
 
-            <div className="card-premium p-10 hover:border-green-500/70 group">
-              <MapPin className="h-12 w-12 text-green-400 mb-6 group-hover:scale-110 transition-transform" />
-              <h3 className="text-3xl font-black text-white mb-3">Vila Rosa</h3>
-              <p className="text-white/60 mb-6">4 quadras equipadas</p>
-              <div className="text-5xl font-black text-gradient-primary mb-8">
-                R$ 70<span className="text-2xl text-white/60">/hora</span>
+            <ScrollReveal delay={0.2}>
+              <div className="card-premium p-10 hover:border-green-500/70 group hover:scale-105 transition-all duration-300">
+                <MapPin className="h-12 w-12 text-green-400 mb-6 group-hover:scale-110 transition-transform" />
+                <h3 className="text-3xl font-black text-white mb-3">Vila Rosa</h3>
+                <p className="text-white/60 mb-6">4 quadras equipadas</p>
+                <div className="text-5xl font-black text-gradient-primary mb-8">
+                  R$ 70<span className="text-2xl text-white/60">/hora</span>
+                </div>
+                <Button
+                  onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
+                  className="w-full btn-secondary hover:scale-105 transition-all duration-300"
+                >
+                  Reservar Agora
+                </Button>
               </div>
-              <Button
-                onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                className="w-full btn-secondary"
-              >
-                Reservar Agora
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Final */}
-      <section className="bg-gradient-to-r from-orange-600 via-orange-500 to-green-500 py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-5xl md:text-6xl font-black text-white mb-6">Pronto para Jogar?</h2>
-          <p className="text-2xl text-white/90 mb-10">Faça sua aula experimental gratuita hoje</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={() => window.open("https://links.nextfit.bio/eFiVtHg", "_blank")}
-              className="bg-white text-orange-600 hover:bg-gray-100 text-xl px-12 py-7 rounded-2xl shadow-2xl font-black"
-            >
-              Começar Agora
-            </Button>
-            <Button
-              onClick={() => setShowLogin(true)}
-              className="bg-black/30 backdrop-blur-md text-white hover:bg-black/50 text-xl px-12 py-7 rounded-2xl border-2 border-white/30"
-            >
-              <LogIn className="h-6 w-6 mr-3" />
-              Login Sistema
-            </Button>
+            </ScrollReveal>
           </div>
         </div>
       </section>
     </>
   )
+}
+
+function ScrollReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1 },
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+      style={{ transitionDelay: `${delay * 100}ms` }}
+    >
+      {children}
+    </div>
+  )
+}
+
+function InstagramFeed() {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Load Instagram embed script
+    const script = document.createElement("script")
+    script.src = "https://www.instagram.com/embed.js"
+    script.async = true
+    script.onload = () => {
+      setLoading(false)
+      if (window.instgrm) {
+        window.instgrm.Embeds.process()
+      }
+    }
+    document.body.appendChild(script)
+
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Instagram post embeds - replace with real URLs from @arenacoligados */}
+      <div className="instagram-embed-wrapper">
+        <blockquote
+          className="instagram-media"
+          data-instgrm-permalink="https://www.instagram.com/arenacoligados/"
+          data-instgrm-version="14"
+          style={{
+            background: "#FFF",
+            border: 0,
+            borderRadius: "3px",
+            margin: "1px",
+            maxWidth: "100%",
+            minWidth: "326px",
+            padding: 0,
+            width: "calc(100% - 2px)",
+          }}
+        >
+          <a href="https://www.instagram.com/arenacoligados/" target="_blank" rel="noopener noreferrer">
+            Ver no Instagram
+          </a>
+        </blockquote>
+      </div>
+
+      {loading && (
+        <>
+          <div className="animate-pulse bg-gray-800 rounded-xl aspect-square"></div>
+          <div className="animate-pulse bg-gray-800 rounded-xl aspect-square"></div>
+          <div className="animate-pulse bg-gray-800 rounded-xl aspect-square hidden lg:block"></div>
+        </>
+      )}
+    </div>
+  )
+}
+
+// TypeScript declaration for Instagram embed
+declare global {
+  interface Window {
+    instgrm?: {
+      Embeds: {
+        process: () => void
+      }
+    }
+  }
 }

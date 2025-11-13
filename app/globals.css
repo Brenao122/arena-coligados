@@ -255,3 +255,38 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
+
+/* Adding fade-in-up animation for hero elements */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+/* Smooth parallax scroll effect */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+/* Instagram embed styling */
+.instagram-embed-wrapper {
+  @apply rounded-xl overflow-hidden shadow-2xl hover:shadow-orange-500/20 transition-shadow duration-300;
+}
+
+.instagram-media {
+  @apply rounded-xl;
+}
