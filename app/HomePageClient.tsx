@@ -89,36 +89,43 @@ export default function HomePageClient() {
 
       <main id="main-content">
         <section
-          className="relative min-h-screen flex items-center justify-center pt-28 bg-white"
+          className="relative min-h-screen flex items-center justify-center pt-24 sm:pt-28 md:pt-32 overflow-hidden px-4 sm:px-6"
           aria-label="Hero principal"
         >
-          <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 text-center py-16 sm:py-24 md:py-32">
-            <div className="animate-fade-in-luxury mb-8 md:mb-12">
+          <div className="decorative-circle decorative-circle-yellow w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 top-10 sm:top-20 -right-10 sm:-right-20"></div>
+          <div className="decorative-circle decorative-circle-coral w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bottom-20 sm:bottom-40 -left-10 sm:-left-20"></div>
+          
+          <div className="relative z-10 max-w-6xl mx-auto text-center py-16 sm:py-24 md:py-32">
+            <div className="animate-bounce mb-8 sm:mb-12">
               <Image
                 src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
                 alt="Logo Arena Coligados"
                 width={100}
                 height={100}
-                className="rounded-full mx-auto shadow-sm md:w-[120px] md:h-[120px]"
+                className="rounded-full mx-auto shadow-2xl shadow-[#FF6B47]/50 border-4 border-white sm:w-[120px] sm:h-[120px]"
                 priority
-                sizes="(max-width: 768px) 100px, 120px"
+                sizes="(max-width: 640px) 100px, 120px"
               />
             </div>
 
-            <h1 className="text-luxury-hero mb-6 md:mb-8 animate-fade-in-luxury">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-6 sm:mb-8 drop-shadow-2xl bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent animate-gradient">
               Arena<br />Coligados
             </h1>
 
-            <div className="divider-luxury mb-6 md:mb-8"></div>
+            <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+              <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FF6B47] to-transparent"></div>
+              <div className="h-2 w-2 rounded-full bg-[#FFD966]"></div>
+              <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FFD966] to-transparent"></div>
+            </div>
 
-            <p className="text-luxury-subtitle mb-12 md:mb-16 animate-fade-in-luxury">
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wider text-gray-700 mb-12 sm:mb-16 px-4">
               Beach Tennis • Vôlei • Futevôlei
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 md:mb-20 animate-fade-in-luxury px-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-16 sm:mb-20 px-4">
               <Button
                 onClick={() => window.open("https://links.nextfit.bio/eFiVtHg", "_blank")}
-                className="btn-primary w-full sm:w-auto"
+                className="btn-primary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
                 aria-label="Agendar aula experimental"
               >
                 Aula Experimental
@@ -126,7 +133,7 @@ export default function HomePageClient() {
 
               <Button
                 onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                className="btn-secondary w-full sm:w-auto"
+                className="btn-secondary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
                 aria-label="Reservar quadra"
               >
                 Reservar Quadra
@@ -135,28 +142,21 @@ export default function HomePageClient() {
 
             <Link
               href="/sobre-nos"
-              className="inline-flex items-center gap-2 text-gray-500 hover:text-[#FF6B47] transition-colors text-xs sm:text-sm uppercase tracking-widest"
+              className="inline-flex items-center gap-2 text-[#FF6B47] hover:text-[#FF5533] transition-colors font-bold text-xs sm:text-sm uppercase tracking-widest"
             >
               <span>Conheça Nossa História</span>
-              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+              <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
             </Link>
           </div>
         </section>
 
-        <section className="section-accent" aria-labelledby="instagram-heading">
+        <section className="section-coral py-16 sm:py-20 md:py-24" aria-labelledby="instagram-heading">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-12 md:mb-20">
-              <div className="inline-block mb-4 md:mb-6">
-                <span className="accent-dot mr-2 md:mr-3"></span>
-                <span className="text-luxury-subtitle">Momentos</span>
-                <span className="accent-dot ml-2 md:ml-3"></span>
-              </div>
-              
-              <h2 id="instagram-heading" className="text-luxury-title mb-4 md:mb-6">
+            <div className="text-center mb-12 sm:mb-16 md:mb-20">
+              <h2 id="instagram-heading" className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-4 sm:mb-6 bg-gradient-to-r from-white via-yellow-100 to-white bg-clip-text text-transparent">
                 Viva a Experiência
               </h2>
-              
-              <p className="text-luxury-body">Siga @arenacoligados no Instagram</p>
+              <p className="text-base sm:text-lg md:text-xl text-white/90 font-medium">Momentos que viram memórias</p>
             </div>
 
             <Suspense fallback={<InstagramLoadingSkeleton />}>
@@ -165,75 +165,75 @@ export default function HomePageClient() {
           </div>
         </section>
 
-        <section className="section-minimal" aria-labelledby="stats-heading">
+        <section className="section-vibrant py-16 sm:py-20 md:py-24" aria-labelledby="stats-heading">
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-12 md:mb-20">
-              <h2 id="stats-heading" className="text-luxury-title mb-4 md:mb-6">
+            <div className="text-center mb-12 sm:mb-16 md:mb-20">
+              <h2 id="stats-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-gray-900">
                 Em Números
               </h2>
               <div className="divider-luxury"></div>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12" role="list">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 md:gap-12" role="list">
               <ScrollReveal delay={0.1}>
                 <div className="text-center" role="listitem">
-                  <MapPin className="h-8 w-8 md:h-10 md:w-10 text-[#FF6B47] mx-auto mb-4 md:mb-6" aria-hidden="true" />
-                  <div className="text-4xl md:text-6xl font-light text-gray-900 mb-2 md:mb-4" aria-label="2 unidades">02</div>
-                  <div className="text-xs md:text-sm uppercase tracking-widest text-gray-500">Unidades</div>
+                  <MapPin className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
+                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="2 unidades">02</div>
+                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Unidades</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
                 <div className="text-center" role="listitem">
-                  <Trophy className="h-8 w-8 md:h-10 md:w-10 text-[#FF6B47] mx-auto mb-4 md:mb-6" aria-hidden="true" />
-                  <div className="text-4xl md:text-6xl font-light text-gray-900 mb-2 md:mb-4" aria-label="9 quadras">09</div>
-                  <div className="text-xs md:text-sm uppercase tracking-widest text-gray-500">Quadras</div>
+                  <Trophy className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
+                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="9 quadras">09</div>
+                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Quadras</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.3}>
                 <div className="text-center" role="listitem">
-                  <Trophy className="h-8 w-8 md:h-10 md:w-10 text-[#FF6B47] mx-auto mb-4 md:mb-6" aria-hidden="true" />
-                  <div className="text-4xl md:text-6xl font-light text-gray-900 mb-2 md:mb-4" aria-label="4 modalidades">04</div>
-                  <div className="text-xs md:text-sm uppercase tracking-widest text-gray-500">Modalidades</div>
+                  <Trophy className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
+                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="4 modalidades">04</div>
+                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Modalidades</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.4}>
                 <div className="text-center" role="listitem">
-                  <Clock className="h-8 w-8 md:h-10 md:w-10 text-[#FF6B47] mx-auto mb-4 md:mb-6" aria-hidden="true" />
-                  <div className="text-4xl md:text-6xl font-light text-gray-900 mb-2 md:mb-4" aria-label="14 horas">14h</div>
-                  <div className="text-xs md:text-sm uppercase tracking-widest text-gray-500">Diárias</div>
+                  <Clock className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
+                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="14 horas">14h</div>
+                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Diárias</div>
                 </div>
               </ScrollReveal>
             </div>
           </div>
         </section>
 
-        <section className="section-accent" aria-labelledby="pricing-heading">
+        <section className="section-coral py-16 sm:py-20 md:py-24" aria-labelledby="pricing-heading">
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-12 md:mb-20">
-              <h2 id="pricing-heading" className="text-luxury-title mb-4 md:mb-6">
+            <div className="text-center mb-12 sm:mb-16 md:mb-20">
+              <h2 id="pricing-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-white">
                 Planos
               </h2>
-              <p className="text-luxury-body">Escolha sua unidade preferida</p>
+              <p className="text-base sm:text-lg text-white/90 font-medium">Escolha sua unidade preferida</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8" role="list">
+            <div className="grid md:grid-cols-2 gap-6 sm:gap-8" role="list">
               <ScrollReveal delay={0.1}>
-                <article className="card-luxury text-center" role="listitem">
-                  <MapPin className="h-10 w-10 md:h-12 md:w-12 text-[#FF6B47] mx-auto mb-6 md:mb-8" aria-hidden="true" />
-                  <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 md:mb-3 uppercase tracking-wider">
+                <article className="card-luxury text-center p-8 sm:p-10 md:p-12" role="listitem">
+                  <MapPin className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wider">
                     Parque Amazônia
                   </h3>
-                  <p className="text-xs md:text-sm text-gray-500 mb-6 md:mb-8 uppercase tracking-widest">5 Quadras</p>
-                  <div className="mb-8 md:mb-10">
-                    <span className="text-4xl md:text-6xl font-light text-[#FF6B47]">R$ 80</span>
-                    <span className="text-lg md:text-xl text-gray-500 font-light">/hora</span>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">5 Quadras</p>
+                  <div className="mb-8 sm:mb-10">
+                    <span className="text-5xl sm:text-6xl md:text-7xl font-light text-[#FF6B47]">R$ 80</span>
+                    <span className="text-xl sm:text-2xl text-gray-500 font-light">/hora</span>
                   </div>
                   <Button
                     onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                    className="btn-primary w-full"
+                    className="btn-primary w-full text-base sm:text-lg py-5 sm:py-6"
                   >
                     Reservar
                   </Button>
@@ -241,19 +241,19 @@ export default function HomePageClient() {
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
-                <article className="card-luxury text-center" role="listitem">
-                  <MapPin className="h-10 w-10 md:h-12 md:w-12 text-[#FF6B47] mx-auto mb-6 md:mb-8" aria-hidden="true" />
-                  <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 md:mb-3 uppercase tracking-wider">
+                <article className="card-luxury text-center p-8 sm:p-10 md:p-12" role="listitem">
+                  <MapPin className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wider">
                     Vila Rosa
                   </h3>
-                  <p className="text-xs md:text-sm text-gray-500 mb-6 md:mb-8 uppercase tracking-widest">4 Quadras</p>
-                  <div className="mb-8 md:mb-10">
-                    <span className="text-4xl md:text-6xl font-light text-[#FF6B47]">R$ 70</span>
-                    <span className="text-lg md:text-xl text-gray-500 font-light">/hora</span>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">4 Quadras</p>
+                  <div className="mb-8 sm:mb-10">
+                    <span className="text-5xl sm:text-6xl md:text-7xl font-light text-[#FF6B47]">R$ 70</span>
+                    <span className="text-xl sm:text-2xl text-gray-500 font-light">/hora</span>
                   </div>
                   <Button
                     onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                    className="btn-primary w-full"
+                    className="btn-primary w-full text-base sm:text-lg py-5 sm:py-6"
                   >
                     Reservar
                   </Button>

@@ -3,23 +3,19 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Luxury minimalist color palette - cleaner, more sophisticated */
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.15 0.01 30);
+  --background: oklch(0.98 0.02 50);
+  --foreground: oklch(0.20 0.02 30);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.01 30);
+  --card-foreground: oklch(0.20 0.02 30);
   
-  /* Primary: Refined coral/orange */
-  --primary: oklch(0.65 0.16 35);
+  --primary: oklch(0.65 0.20 35); /* Coral vibrante #FF6B47 */
   --primary-foreground: oklch(1 0 0);
   
-  /* Secondary: Soft yellow accent */
-  --secondary: oklch(0.88 0.12 85);
-  --secondary-foreground: oklch(0.15 0.01 30);
+  --secondary: oklch(0.85 0.15 85); /* Amarelo #FFD966 */
+  --secondary-foreground: oklch(0.20 0.02 30);
   
-  /* Accent: Ultra-light sand */
-  --accent: oklch(0.97 0.02 70);
-  --accent-foreground: oklch(0.15 0.01 30);
+  --accent: oklch(0.92 0.08 130); /* Verde fresco */
+  --accent-foreground: oklch(0.20 0.02 30);
   
   --muted: oklch(0.96 0.01 40);
   --muted-foreground: oklch(0.55 0.01 30);
@@ -126,28 +122,66 @@
     @apply border-border outline-ring/50;
   }
   body {
-    /* Cleaner, minimal background - pure white with subtle texture */
-    @apply bg-white text-foreground antialiased;
+    @apply bg-gradient-to-br from-[#FFF5E6] via-[#FFEBE0] to-[#FFF5E6] text-foreground antialiased;
     background-image: 
-      url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FF6B47' fill-opacity='0.02'%3E%3Ccircle cx='60' cy='60' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f5d5ae' fill-opacity='0.25'%3E%3Ccircle cx='40' cy='40' r='2'/%3E%3Ccircle cx='20' cy='60' r='1.5'/%3E%3Ccircle cx='60' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
   }
 }
 
 @layer components {
-  /* Made buttons fully responsive with smaller padding on mobile */
   .btn-primary {
-    @apply bg-[#FF6B47] hover:bg-[#FF5533]
-           text-white font-semibold px-6 py-3 md:px-8 md:py-4 rounded-2xl shadow-sm hover:shadow-md
-           transition-all duration-300 border-0 uppercase tracking-widest text-xs md:text-sm;
+    @apply bg-gradient-to-r from-[#FF6B47] to-[#FF8566] hover:from-[#FF5533] hover:to-[#FF6B47]
+           text-white font-black px-8 py-4 rounded-full shadow-lg shadow-[#FF6B47]/30 hover:shadow-xl hover:shadow-[#FF6B47]/50
+           transition-all duration-300 border-2 border-[#FF6B47] uppercase tracking-widest text-sm
+           hover:scale-105 transform;
   }
 
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50
-           text-[#FF6B47] font-semibold px-6 py-3 md:px-8 md:py-4 rounded-2xl shadow-sm hover:shadow-md
-           transition-all duration-300 border border-[#FF6B47]/20 uppercase tracking-widest text-xs md:text-sm;
+    @apply bg-white hover:bg-gradient-to-r hover:from-[#FFD966]/20 hover:to-[#FF6B47]/20
+           text-[#FF6B47] font-black px-8 py-4 rounded-full shadow-lg hover:shadow-xl
+           transition-all duration-300 border-2 border-[#FF6B47] uppercase tracking-widest text-sm
+           hover:scale-105 transform;
   }
 
-  /* Made cards responsive with smaller padding on mobile */
+  .card-vibrant {
+    @apply bg-white rounded-[2rem] shadow-lg hover:shadow-2xl hover:shadow-[#FF6B47]/20
+           transition-all duration-500 border-2 border-[#FFD966]/30
+           p-10 relative overflow-hidden;
+  }
+
+  .card-vibrant::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255, 217, 102, 0.3) 0%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  .section-vibrant {
+    @apply bg-gradient-to-b from-[#FFF5E6] via-white to-[#FFF5E6] py-32 relative;
+  }
+
+  .section-coral {
+    @apply bg-gradient-to-br from-[#FF6B47]/10 via-[#FFD966]/10 to-[#FF6B47]/10 py-32;
+  }
+
+  .text-vibrant-hero {
+    @apply font-black text-6xl md:text-8xl lg:text-9xl uppercase leading-none tracking-tight 
+           bg-gradient-to-r from-[#FF6B47] via-[#FF8566] to-[#FFD966] bg-clip-text text-transparent;
+  }
+
+  .text-vibrant-title {
+    @apply font-black text-4xl md:text-6xl uppercase leading-tight tracking-tight text-gray-900;
+  }
+
+  .text-vibrant-subtitle {
+    @apply font-bold text-xl md:text-2xl tracking-wide uppercase text-[#FF6B47];
+  }
+
   .card-luxury {
     @apply bg-white rounded-2xl md:rounded-3xl shadow-sm hover:shadow-lg
            transition-all duration-500 border border-gray-100
@@ -179,6 +213,29 @@
   .text-luxury-body {
     @apply font-light text-sm sm:text-base md:text-lg leading-relaxed text-gray-600;
   }
+}
+
+.decorative-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: float-circle 8s ease-in-out infinite;
+}
+
+.decorative-circle-yellow {
+  background: radial-gradient(circle, #FFD966 0%, transparent 70%);
+}
+
+.decorative-circle-coral {
+  background: radial-gradient(circle, #FF6B47 0%, transparent 70%);
+}
+
+@keyframes float-circle {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.1); }
+  66% { transform: translate(-30px, 30px) scale(0.9); }
 }
 
 /* Subtle, elegant animations */

@@ -12,55 +12,56 @@ export default function SobreNosPage() {
 
       <main
         id="main-content"
-        className="min-h-screen bg-sand pt-32 pb-20"
+        className="min-h-screen bg-sand pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6"
       >
-        <div className="max-w-6xl mx-auto px-6">
-          <header className="text-center mb-20 relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#FFD966]/10 rounded-full blur-3xl -z-10" />
+        <div className="max-w-6xl mx-auto">
+          <header className="text-center mb-12 sm:mb-16 md:mb-20 relative">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-[#FFD966]/10 rounded-full blur-3xl -z-10" />
             
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-6 sm:mb-8">
               <div className="relative">
                 <div className="absolute inset-0 bg-[#FF6B47] rounded-full blur-2xl opacity-40 animate-pulse-glow" />
                 <Image
                   src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
                   alt="Logo Arena Coligados"
-                  width={140}
-                  height={140}
-                  className="rounded-full ring-8 ring-[#FF6B47] shadow-2xl relative z-10"
+                  width={120}
+                  height={120}
+                  className="rounded-full ring-4 sm:ring-8 ring-[#FF6B47] shadow-2xl relative z-10 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px]"
                   priority
+                  sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, 140px"
                 />
               </div>
             </div>
-            <h1 className="text-instagram-title text-foreground mb-6 uppercase">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase tracking-tight text-foreground mb-4 sm:mb-6 bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent">
               Sobre Nós
             </h1>
-            <div className="flex items-center justify-center gap-3 text-[#FF6B47]">
-              <Heart className="h-8 w-8 fill-current" aria-hidden="true" />
-              <p className="text-instagram-subtitle uppercase tracking-wider font-black">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-[#FF6B47]">
+              <Heart className="h-6 w-6 sm:h-8 sm:w-8 fill-current" aria-hidden="true" />
+              <p className="text-base sm:text-lg md:text-xl uppercase tracking-wider font-black px-4">
                 Mais que uma arena, somos família
               </p>
-              <Heart className="h-8 w-8 fill-current" aria-hidden="true" />
+              <Heart className="h-6 w-6 sm:h-8 sm:w-8 fill-current hidden sm:block" aria-hidden="true" />
             </div>
           </header>
 
-          <div className="mb-24">
+          <div className="mb-16 sm:mb-20 md:mb-24">
             <NossaHistoria />
           </div>
 
-          <section aria-labelledby="mvv-heading" className="mb-24">
-            <h2 id="mvv-heading" className="text-instagram-title text-center text-foreground mb-12 uppercase">
+          <section aria-labelledby="mvv-heading" className="mb-16 sm:mb-20 md:mb-24">
+            <h2 id="mvv-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-center text-foreground mb-8 sm:mb-10 md:mb-12">
               MVV - Missão, Visão e Valores
             </h2>
-            <div className="grid md:grid-cols-3 gap-8" role="list">
+            <div className="grid md:grid-cols-3 gap-6 sm:gap-8" role="list">
               <article
                 className="card-instagram relative overflow-hidden group hover:scale-105 transition-all"
                 role="listitem"
               >
-                <div className="p-10">
-                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
-                  <Target className="h-16 w-16 text-[#FF6B47] mb-6 relative z-10" aria-hidden="true" />
-                  <h3 className="text-3xl font-black text-foreground mb-4 uppercase relative z-10">Missão</h3>
-                  <p className="text-muted-foreground leading-relaxed font-medium relative z-10">
+                <div className="p-6 sm:p-8 md:p-10">
+                  <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
+                  <Target className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mb-4 sm:mb-6 relative z-10" aria-hidden="true" />
+                  <h3 className="text-2xl sm:text-3xl font-black text-foreground mb-3 sm:mb-4 uppercase relative z-10">Missão</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-medium relative z-10">
                     Proporcionar experiências esportivas de qualidade, promovendo saúde, lazer e conexões através do
                     esporte.
                   </p>
@@ -71,11 +72,11 @@ export default function SobreNosPage() {
                 className="card-instagram relative overflow-hidden group hover:scale-105 transition-all"
                 role="listitem"
               >
-                <div className="p-10">
-                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
-                  <Eye className="h-16 w-16 text-green-600 mb-6 relative z-10" aria-hidden="true" />
-                  <h3 className="text-3xl font-black text-foreground mb-4 uppercase relative z-10">Visão</h3>
-                  <p className="text-muted-foreground leading-relaxed font-medium relative z-10">
+                <div className="p-6 sm:p-8 md:p-10">
+                  <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
+                  <Eye className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-green-600 mb-4 sm:mb-6 relative z-10" aria-hidden="true" />
+                  <h3 className="text-2xl sm:text-3xl font-black text-foreground mb-3 sm:mb-4 uppercase relative z-10">Visão</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-medium relative z-10">
                     Ser referência em gestão esportiva, expandindo nossa família para todo o Brasil.
                   </p>
                 </div>
@@ -85,11 +86,11 @@ export default function SobreNosPage() {
                 className="card-instagram relative overflow-hidden group hover:scale-105 transition-all"
                 role="listitem"
               >
-                <div className="p-10">
-                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
-                  <Heart className="h-16 w-16 text-red-500 mb-6 relative z-10 fill-current" aria-hidden="true" />
-                  <h3 className="text-3xl font-black text-foreground mb-4 uppercase relative z-10">Valores</h3>
-                  <p className="text-muted-foreground leading-relaxed font-medium relative z-10">
+                <div className="p-6 sm:p-8 md:p-10">
+                  <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
+                  <Heart className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-red-500 mb-4 sm:mb-6 relative z-10 fill-current" aria-hidden="true" />
+                  <h3 className="text-2xl sm:text-3xl font-black text-foreground mb-3 sm:mb-4 uppercase relative z-10">Valores</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-medium relative z-10">
                     Amizade, respeito, excelência e compromisso com a comunidade esportiva.
                   </p>
                 </div>

@@ -19,37 +19,36 @@ export function Navbar() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b-4 border-[#FFD966] shadow-lg">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-28">
-          <Link href="/" className="flex items-center gap-4 group">
+        <div className="flex items-center justify-between h-24">
+          <Link href="/" className="flex items-center gap-3 group">
             <Image
               src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
               alt="Arena Coligados"
               width={50}
               height={50}
-              className="rounded-full transition-transform duration-300 group-hover:scale-105"
+              className="rounded-full transition-transform duration-300 group-hover:scale-110 shadow-lg shadow-[#FF6B47]/30"
               priority
-              sizes="50px"
             />
             <div>
-              <h1 className="text-xl font-semibold uppercase tracking-wider text-gray-900">
+              <h1 className="text-xl font-black uppercase tracking-wider bg-gradient-to-r from-[#FF6B47] to-[#FFD966] bg-clip-text text-transparent">
                 Arena Coligados
               </h1>
-              <p className="text-xs text-gray-500 uppercase tracking-widest font-light">Gestão Esportiva</p>
+              <p className="text-xs text-gray-600 uppercase tracking-widest font-bold">Gestão Esportiva</p>
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center gap-12">
+          <div className="hidden md:flex items-center gap-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "text-sm font-medium uppercase tracking-widest transition-colors",
+                  "text-sm font-black uppercase tracking-wider transition-all hover:scale-110",
                   pathname === item.href 
-                    ? "text-[#FF6B47]" 
-                    : "text-gray-600 hover:text-[#FF6B47]",
+                    ? "text-[#FF6B47] drop-shadow-lg" 
+                    : "text-gray-700 hover:text-[#FF6B47]",
                 )}
                 prefetch={true}
               >
@@ -77,7 +76,7 @@ export function Navbar() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t-2 border-[#FFD966]">
+        <div className="md:hidden bg-gradient-to-b from-white to-[#FFF5E6] border-t-4 border-[#FFD966] shadow-2xl">
           <div className="px-4 py-6 space-y-4">
             {navigation.map((item) => (
               <Link
