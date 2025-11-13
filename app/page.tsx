@@ -12,6 +12,8 @@ import Image from "next/image"
 import { WelcomePopup } from "@/components/home/welcome-popup"
 import { NossaHistoria } from "@/components/home/nossa-historia"
 
+console.log("[v0] HomePage carregada - componentes importados")
+
 export default function HomePage() {
   const [showLogin, setShowLogin] = useState(false)
   const [email, setEmail] = useState("")
@@ -20,6 +22,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
+
+  console.log("[v0] HomePage renderizando - showLogin:", showLogin)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
