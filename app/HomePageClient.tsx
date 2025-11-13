@@ -89,115 +89,74 @@ export default function HomePageClient() {
 
       <main id="main-content">
         <section
-          className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 hero-sand"
+          className="relative min-h-screen flex items-center justify-center pt-28 bg-white"
           aria-label="Hero principal"
         >
-          {/* Yellow organic circle decorations */}
-          <div className="circle-decoration w-96 h-96 -top-20 -left-20 animate-float-instagram" />
-          <div className="circle-decoration w-64 h-64 -bottom-32 -right-32 animate-float-instagram" style={{ animationDelay: '2s' }} />
-          
-          <div className="absolute inset-0 z-0" aria-hidden="true">
-            <Image
-              src="/background-beach-volleyball.jpg"
-              alt=""
-              fill
-              className="object-cover brightness-[0.35] scale-110 mix-blend-multiply"
-              priority
-              quality={85}
-              sizes="100vw"
-            />
-          </div>
-
-          <div className="relative z-10 max-w-7xl mx-auto px-6 text-center py-20">
-            <div className="animate-fade-in-up mb-8" style={{ animationDelay: "0.1s" }}>
-              <div className="inline-block p-2 bg-white rounded-full animate-pulse-glow">
-                <Image
-                  src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
-                  alt="Logo Arena Coligados"
-                  width={140}
-                  height={140}
-                  className="rounded-full"
-                  priority
-                />
-              </div>
+          <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 text-center py-16 sm:py-24 md:py-32">
+            <div className="animate-fade-in-luxury mb-8 md:mb-12">
+              <Image
+                src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
+                alt="Logo Arena Coligados"
+                width={100}
+                height={100}
+                className="rounded-full mx-auto shadow-sm md:w-[120px] md:h-[120px]"
+                priority
+                sizes="(max-width: 768px) 100px, 120px"
+              />
             </div>
 
-            <h1
-              className="text-instagram-hero mb-6 animate-fade-in-up drop-shadow-[0_0_50px_rgba(255,107,71,0.8)]"
-              style={{ animationDelay: "0.2s" }}
-            >
-              <span className="bg-gradient-to-r from-white via-[#FFD966] to-white bg-clip-text text-transparent">
-                ARENA
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-[#FF6B47] to-[#FF8566] bg-clip-text text-transparent">
-                COLIGADOS
-              </span>
+            <h1 className="text-luxury-hero mb-6 md:mb-8 animate-fade-in-luxury">
+              Arena<br />Coligados
             </h1>
 
-            <div
-              className="inline-block bg-[#FFD966] text-gray-900 px-8 py-4 rounded-full mb-6 animate-fade-in-up shadow-2xl"
-              style={{ animationDelay: "0.3s" }}
-            >
-              <p className="text-2xl md:text-3xl font-black uppercase tracking-wider">
-                Sua Segunda Casa no Esporte
-              </p>
-            </div>
+            <div className="divider-luxury mb-6 md:mb-8"></div>
 
-            <p
-              className="text-lg text-white/90 mb-12 font-bold uppercase tracking-widest animate-fade-in-up"
-              style={{ animationDelay: "0.4s" }}
-            >
-              Beach Tennis • Vôlei • Futevôlei • Tênis
+            <p className="text-luxury-subtitle mb-12 md:mb-16 animate-fade-in-luxury">
+              Beach Tennis • Vôlei • Futevôlei
             </p>
 
-            <div
-              className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-fade-in-up"
-              style={{ animationDelay: "0.5s" }}
-              role="group"
-              aria-label="Ações principais"
-            >
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 md:mb-20 animate-fade-in-luxury px-4">
               <Button
                 onClick={() => window.open("https://links.nextfit.bio/eFiVtHg", "_blank")}
-                className="btn-secondary text-xl group focus:ring-4 focus:ring-yellow-300"
-                aria-label="Agendar aula experimental gratuita"
+                className="btn-primary w-full sm:w-auto"
+                aria-label="Agendar aula experimental"
               >
-                <Waves className="h-6 w-6 mr-3 group-hover:animate-bounce" aria-hidden="true" />
-                Aula Grátis
+                Aula Experimental
               </Button>
 
               <Button
                 onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                className="btn-primary text-xl group focus:ring-4 focus:ring-orange-300"
-                aria-label="Alugar quadra esportiva"
+                className="btn-secondary w-full sm:w-auto"
+                aria-label="Reservar quadra"
               >
-                <Trophy className="h-6 w-6 mr-3 group-hover:scale-110 transition-transform" aria-hidden="true" />
-                Alugue sua Quadra
+                Reservar Quadra
               </Button>
             </div>
 
             <Link
               href="/sobre-nos"
-              className="inline-flex items-center gap-2 text-white hover:text-[#FFD966] transition-colors group animate-fade-in-up focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg px-3 py-2 font-bold uppercase tracking-wide"
-              style={{ animationDelay: "0.6s" }}
+              className="inline-flex items-center gap-2 text-gray-500 hover:text-[#FF6B47] transition-colors text-xs sm:text-sm uppercase tracking-widest"
             >
               <span>Conheça Nossa História</span>
-              <ExternalLink className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
             </Link>
           </div>
         </section>
 
-        <section className="section-coral py-24 relative overflow-hidden" aria-labelledby="instagram-heading">
-          {/* Decorative circles */}
-          <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966] rounded-full opacity-30 blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-96 h-96 bg-white rounded-full opacity-10 blur-3xl" />
-          
-          <div className="max-w-7xl mx-auto px-6 relative z-10">
-            <div className="text-center mb-16">
-              <h2 id="instagram-heading" className="text-instagram-title text-white mb-4 drop-shadow-lg">
-                VIVA A EXPERIÊNCIA
+        <section className="section-accent" aria-labelledby="instagram-heading">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-12 md:mb-20">
+              <div className="inline-block mb-4 md:mb-6">
+                <span className="accent-dot mr-2 md:mr-3"></span>
+                <span className="text-luxury-subtitle">Momentos</span>
+                <span className="accent-dot ml-2 md:ml-3"></span>
+              </div>
+              
+              <h2 id="instagram-heading" className="text-luxury-title mb-4 md:mb-6">
+                Viva a Experiência
               </h2>
-              <p className="text-instagram-subtitle text-white/90 tracking-wider">Momentos que viram memórias</p>
+              
+              <p className="text-luxury-body">Siga @arenacoligados no Instagram</p>
             </div>
 
             <Suspense fallback={<InstagramLoadingSkeleton />}>
@@ -206,155 +165,98 @@ export default function HomePageClient() {
           </div>
         </section>
 
-        <section className="bg-background py-24 relative" aria-labelledby="stats-heading">
-          {/* Yellow decorative circle */}
-          <div className="absolute top-20 left-1/4 w-80 h-80 bg-[#FFD966]/20 rounded-full blur-3xl animate-float-instagram" />
-          
-          <div className="max-w-6xl mx-auto px-6 relative z-10">
-            <h2 id="stats-heading" className="sr-only">
-              Estatísticas da Arena Coligados
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6" role="list">
+        <section className="section-minimal" aria-labelledby="stats-heading">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-12 md:mb-20">
+              <h2 id="stats-heading" className="text-luxury-title mb-4 md:mb-6">
+                Em Números
+              </h2>
+              <div className="divider-luxury"></div>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12" role="list">
               <ScrollReveal delay={0.1}>
-                <div
-                  className="card-instagram p-10 text-center group relative overflow-hidden"
-                  role="listitem"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B47]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <MapPin
-                    className="h-16 w-16 text-[#FF6B47] mx-auto mb-4 group-hover:scale-110 transition-transform relative z-10"
-                    aria-hidden="true"
-                  />
-                  <div className="text-6xl font-black text-foreground mb-2 relative z-10" aria-label="2 unidades">
-                    2
-                  </div>
-                  <div className="text-muted-foreground font-bold uppercase tracking-wider text-sm relative z-10">Unidades</div>
+                <div className="text-center" role="listitem">
+                  <MapPin className="h-8 w-8 md:h-10 md:w-10 text-[#FF6B47] mx-auto mb-4 md:mb-6" aria-hidden="true" />
+                  <div className="text-4xl md:text-6xl font-light text-gray-900 mb-2 md:mb-4" aria-label="2 unidades">02</div>
+                  <div className="text-xs md:text-sm uppercase tracking-widest text-gray-500">Unidades</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
-                <div
-                  className="card-instagram p-10 text-center group relative overflow-hidden"
-                  role="listitem"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFD966]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <Trophy
-                    className="h-16 w-16 text-[#FFD966] mx-auto mb-4 group-hover:scale-110 transition-transform relative z-10"
-                    aria-hidden="true"
-                  />
-                  <div className="text-6xl font-black text-foreground mb-2 relative z-10" aria-label="9 quadras">
-                    9
-                  </div>
-                  <div className="text-muted-foreground font-bold uppercase tracking-wider text-sm relative z-10">Quadras</div>
+                <div className="text-center" role="listitem">
+                  <Trophy className="h-8 w-8 md:h-10 md:w-10 text-[#FF6B47] mx-auto mb-4 md:mb-6" aria-hidden="true" />
+                  <div className="text-4xl md:text-6xl font-light text-gray-900 mb-2 md:mb-4" aria-label="9 quadras">09</div>
+                  <div className="text-xs md:text-sm uppercase tracking-widest text-gray-500">Quadras</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.3}>
-                <div
-                  className="card-instagram p-10 text-center group relative overflow-hidden"
-                  role="listitem"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <Trophy
-                    className="h-16 w-16 text-green-600 mx-auto mb-4 group-hover:scale-110 transition-transform relative z-10"
-                    aria-hidden="true"
-                  />
-                  <div className="text-6xl font-black text-foreground mb-2 relative z-10" aria-label="4 modalidades">
-                    4
-                  </div>
-                  <div className="text-muted-foreground font-bold uppercase tracking-wider text-sm relative z-10">Modalidades</div>
+                <div className="text-center" role="listitem">
+                  <Trophy className="h-8 w-8 md:h-10 md:w-10 text-[#FF6B47] mx-auto mb-4 md:mb-6" aria-hidden="true" />
+                  <div className="text-4xl md:text-6xl font-light text-gray-900 mb-2 md:mb-4" aria-label="4 modalidades">04</div>
+                  <div className="text-xs md:text-sm uppercase tracking-widest text-gray-500">Modalidades</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.4}>
-                <div
-                  className="card-instagram p-10 text-center group relative overflow-hidden"
-                  role="listitem"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B47]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <Clock
-                    className="h-16 w-16 text-[#FF6B47] mx-auto mb-4 group-hover:scale-110 transition-transform relative z-10"
-                    aria-hidden="true"
-                  />
-                  <div className="text-6xl font-black text-foreground mb-2 relative z-10" aria-label="14 horas diárias">
-                    14h
-                  </div>
-                  <div className="text-muted-foreground font-bold uppercase tracking-wider text-sm relative z-10">Diárias</div>
+                <div className="text-center" role="listitem">
+                  <Clock className="h-8 w-8 md:h-10 md:w-10 text-[#FF6B47] mx-auto mb-4 md:mb-6" aria-hidden="true" />
+                  <div className="text-4xl md:text-6xl font-light text-gray-900 mb-2 md:mb-4" aria-label="14 horas">14h</div>
+                  <div className="text-xs md:text-sm uppercase tracking-widest text-gray-500">Diárias</div>
                 </div>
               </ScrollReveal>
             </div>
           </div>
         </section>
 
-        <section className="bg-accent/30 py-24 relative overflow-hidden" aria-labelledby="pricing-heading">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#FFD966]/20 rounded-full blur-3xl" />
-          
-          <div className="max-w-6xl mx-auto px-6 relative z-10">
-            <div className="text-center mb-16">
-              <h2 id="pricing-heading" className="text-instagram-title text-foreground mb-4">
-                PLANOS
+        <section className="section-accent" aria-labelledby="pricing-heading">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-12 md:mb-20">
+              <h2 id="pricing-heading" className="text-luxury-title mb-4 md:mb-6">
+                Planos
               </h2>
-              <p className="text-instagram-subtitle text-muted-foreground">Escolha sua unidade</p>
+              <p className="text-luxury-body">Escolha sua unidade preferida</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto" role="list">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8" role="list">
               <ScrollReveal delay={0.1}>
-                <article
-                  className="card-instagram group hover:scale-105 transition-all duration-300"
-                  role="listitem"
-                >
-                  <div className="section-coral relative">
-                    {/* Yellow circle decoration */}
-                    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#FFD966] rounded-full opacity-40 blur-2xl" />
-                    
-                    <MapPin
-                      className="h-16 w-16 text-white mb-6 relative z-10"
-                      aria-hidden="true"
-                    />
-                    <h3 className="text-5xl font-black text-white mb-3 uppercase relative z-10">Parque Amazônia</h3>
-                    <p className="text-white/90 mb-6 font-bold uppercase text-sm tracking-wider relative z-10">5 quadras profissionais</p>
-                    <div className="mb-8 relative z-10">
-                      <span className="text-7xl font-black text-white" aria-label="80 reais por hora">R$ 80</span>
-                      <span className="text-3xl text-white/80 font-bold">/hora</span>
-                    </div>
-                    <Button
-                      onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                      className="w-full btn-secondary hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-yellow-300 relative z-10"
-                      aria-label="Reservar quadra no Parque Amazônia"
-                    >
-                      Reservar Agora
-                    </Button>
+                <article className="card-luxury text-center" role="listitem">
+                  <MapPin className="h-10 w-10 md:h-12 md:w-12 text-[#FF6B47] mx-auto mb-6 md:mb-8" aria-hidden="true" />
+                  <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 md:mb-3 uppercase tracking-wider">
+                    Parque Amazônia
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-500 mb-6 md:mb-8 uppercase tracking-widest">5 Quadras</p>
+                  <div className="mb-8 md:mb-10">
+                    <span className="text-4xl md:text-6xl font-light text-[#FF6B47]">R$ 80</span>
+                    <span className="text-lg md:text-xl text-gray-500 font-light">/hora</span>
                   </div>
+                  <Button
+                    onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
+                    className="btn-primary w-full"
+                  >
+                    Reservar
+                  </Button>
                 </article>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
-                <article
-                  className="card-instagram group hover:scale-105 transition-all duration-300"
-                  role="listitem"
-                >
-                  <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-12 relative">
-                    {/* Yellow circle decoration */}
-                    <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#FFD966] rounded-full opacity-40 blur-2xl" />
-                    
-                    <MapPin
-                      className="h-16 w-16 text-white mb-6 relative z-10"
-                      aria-hidden="true"
-                    />
-                    <h3 className="text-5xl font-black text-white mb-3 uppercase relative z-10">Vila Rosa</h3>
-                    <p className="text-white/90 mb-6 font-bold uppercase text-sm tracking-wider relative z-10">4 quadras equipadas</p>
-                    <div className="mb-8 relative z-10">
-                      <span className="text-7xl font-black text-white" aria-label="70 reais por hora">R$ 70</span>
-                      <span className="text-3xl text-white/80 font-bold">/hora</span>
-                    </div>
-                    <Button
-                      onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                      className="w-full btn-secondary hover:scale-105 transition-all duration-300 focus:ring-4 focus:ring-yellow-300 relative z-10"
-                      aria-label="Reservar quadra na Vila Rosa"
-                    >
-                      Reservar Agora
-                    </Button>
+                <article className="card-luxury text-center" role="listitem">
+                  <MapPin className="h-10 w-10 md:h-12 md:w-12 text-[#FF6B47] mx-auto mb-6 md:mb-8" aria-hidden="true" />
+                  <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 md:mb-3 uppercase tracking-wider">
+                    Vila Rosa
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-500 mb-6 md:mb-8 uppercase tracking-widest">4 Quadras</p>
+                  <div className="mb-8 md:mb-10">
+                    <span className="text-4xl md:text-6xl font-light text-[#FF6B47]">R$ 70</span>
+                    <span className="text-lg md:text-xl text-gray-500 font-light">/hora</span>
                   </div>
+                  <Button
+                    onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
+                    className="btn-primary w-full"
+                  >
+                    Reservar
+                  </Button>
                 </article>
               </ScrollReveal>
             </div>

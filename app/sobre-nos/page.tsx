@@ -12,12 +12,11 @@ export default function SobreNosPage() {
 
       <main
         id="main-content"
-        className="min-h-screen bg-background pt-32 pb-20"
+        className="min-h-screen bg-sand pt-32 pb-20"
       >
         <div className="max-w-6xl mx-auto px-6">
           <header className="text-center mb-20 relative">
-            {/* Yellow circle decoration */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-[#FFD966]/20 rounded-full blur-3xl -z-10" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#FFD966]/10 rounded-full blur-3xl -z-10" />
             
             <div className="flex justify-center mb-8">
               <div className="relative">
@@ -25,29 +24,36 @@ export default function SobreNosPage() {
                 <Image
                   src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
                   alt="Logo Arena Coligados"
-                  width={120}
-                  height={120}
+                  width={140}
+                  height={140}
                   className="rounded-full ring-8 ring-[#FF6B47] shadow-2xl relative z-10"
+                  priority
                 />
               </div>
             </div>
             <h1 className="text-instagram-title text-foreground mb-6 uppercase">
               Sobre Nós
             </h1>
-            <p className="text-instagram-subtitle text-muted-foreground uppercase tracking-wider">
-              Mais que uma arena, somos família
-            </p>
+            <div className="flex items-center justify-center gap-3 text-[#FF6B47]">
+              <Heart className="h-8 w-8 fill-current" aria-hidden="true" />
+              <p className="text-instagram-subtitle uppercase tracking-wider font-black">
+                Mais que uma arena, somos família
+              </p>
+              <Heart className="h-8 w-8 fill-current" aria-hidden="true" />
+            </div>
           </header>
 
-          <NossaHistoria />
+          <div className="mb-24">
+            <NossaHistoria />
+          </div>
 
-          <section aria-labelledby="mvv-heading" className="mt-20">
-            <h2 id="mvv-heading" className="sr-only">
-              Missão, Visão e Valores
+          <section aria-labelledby="mvv-heading" className="mb-24">
+            <h2 id="mvv-heading" className="text-instagram-title text-center text-foreground mb-12 uppercase">
+              MVV - Missão, Visão e Valores
             </h2>
             <div className="grid md:grid-cols-3 gap-8" role="list">
               <article
-                className="card-instagram relative overflow-hidden group"
+                className="card-instagram relative overflow-hidden group hover:scale-105 transition-all"
                 role="listitem"
               >
                 <div className="p-10">
@@ -62,7 +68,7 @@ export default function SobreNosPage() {
               </article>
 
               <article
-                className="card-instagram relative overflow-hidden group"
+                className="card-instagram relative overflow-hidden group hover:scale-105 transition-all"
                 role="listitem"
               >
                 <div className="p-10">
@@ -76,12 +82,12 @@ export default function SobreNosPage() {
               </article>
 
               <article
-                className="card-instagram relative overflow-hidden group"
+                className="card-instagram relative overflow-hidden group hover:scale-105 transition-all"
                 role="listitem"
               >
                 <div className="p-10">
                   <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
-                  <Heart className="h-16 w-16 text-red-500 mb-6 relative z-10" aria-hidden="true" />
+                  <Heart className="h-16 w-16 text-red-500 mb-6 relative z-10 fill-current" aria-hidden="true" />
                   <h3 className="text-3xl font-black text-foreground mb-4 uppercase relative z-10">Valores</h3>
                   <p className="text-muted-foreground leading-relaxed font-medium relative z-10">
                     Amizade, respeito, excelência e compromisso com a comunidade esportiva.
@@ -91,17 +97,17 @@ export default function SobreNosPage() {
             </div>
           </section>
 
-          <section aria-labelledby="unidades-heading" className="mt-20">
+          <section aria-labelledby="unidades-heading" className="mb-24">
             <h2 id="unidades-heading" className="text-instagram-title text-center text-foreground mb-12 uppercase">
               Nossas Unidades
             </h2>
             <div className="grid md:grid-cols-2 gap-8" role="list">
               <article
-                className="card-instagram group hover:scale-105 transition-all"
+                className="card-instagram group hover:scale-105 transition-all cursor-pointer"
                 role="listitem"
               >
-                <div className="section-coral relative overflow-hidden">
-                  <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl" />
+                <div className="section-coral relative overflow-hidden h-full">
+                  <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Parque Amazônia</h3>
                   <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">5 quadras profissionais de Beach Tennis, Vôlei e Futevôlei</p>
@@ -110,11 +116,11 @@ export default function SobreNosPage() {
               </article>
 
               <article
-                className="card-instagram group hover:scale-105 transition-all"
+                className="card-instagram group hover:scale-105 transition-all cursor-pointer"
                 role="listitem"
               >
-                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-10 relative overflow-hidden">
-                  <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl" />
+                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-10 relative overflow-hidden h-full">
+                  <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Vila Rosa</h3>
                   <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">4 quadras equipadas com infraestrutura completa</p>
@@ -124,8 +130,8 @@ export default function SobreNosPage() {
             </div>
           </section>
 
-          <section aria-labelledby="team-heading" className="mt-20 text-center">
-            <div className="card-instagram p-16 relative overflow-hidden">
+          <section aria-labelledby="team-heading" className="text-center">
+            <div className="card-instagram p-12 md:p-16 relative overflow-hidden">
               <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966]/20 rounded-full blur-3xl" />
               <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#FF6B47]/10 rounded-full blur-3xl" />
               
@@ -133,16 +139,16 @@ export default function SobreNosPage() {
               <h2 id="team-heading" className="text-instagram-title text-foreground mb-6 uppercase relative z-10">
                 Nosso Time
               </h2>
-              <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto font-medium relative z-10">
+              <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto font-bold relative z-10 uppercase tracking-wide">
                 Uma equipe de 12 colaboradores dedicados e centenas de clientes que se tornaram verdadeiros amigos
               </p>
               <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto" role="list">
-                <article className="bg-gradient-to-br from-[#FF6B47]/10 to-transparent rounded-3xl p-8 border-2 border-[#FF6B47]/20 relative z-10" role="listitem">
+                <article className="section-coral-light group hover:scale-105 transition-all relative z-10" role="listitem">
                   <Trophy className="h-12 w-12 text-[#FF6B47] mx-auto mb-4" aria-hidden="true" />
                   <h3 className="text-2xl font-black text-foreground mb-2 uppercase">Gustavo Oliveira</h3>
                   <p className="text-muted-foreground font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
                 </article>
-                <article className="bg-gradient-to-br from-green-500/10 to-transparent rounded-3xl p-8 border-2 border-green-500/20 relative z-10" role="listitem">
+                <article className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-3xl p-8 border-2 border-green-500/30 group hover:scale-105 transition-all relative z-10" role="listitem">
                   <Trophy className="h-12 w-12 text-green-600 mx-auto mb-4" aria-hidden="true" />
                   <h3 className="text-2xl font-black text-foreground mb-2 uppercase">Rafael Henrique</h3>
                   <p className="text-muted-foreground font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>

@@ -3,28 +3,26 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color palette to match Arena Coligados Instagram - coral/orange, yellow, sand beige */
-  --background: oklch(0.98 0.01 40);
-  --foreground: oklch(0.25 0.02 30);
+  /* Luxury minimalist color palette - cleaner, more sophisticated */
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.15 0.01 30);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.25 0.02 30);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0.02 30);
+  --card-foreground: oklch(0.15 0.01 30);
   
-  /* Primary: Coral/Orange like Instagram posts */
-  --primary: oklch(0.68 0.18 35);
+  /* Primary: Refined coral/orange */
+  --primary: oklch(0.65 0.16 35);
   --primary-foreground: oklch(1 0 0);
   
-  /* Secondary: Yellow accent circles */
-  --secondary: oklch(0.85 0.15 85);
-  --secondary-foreground: oklch(0.25 0.02 30);
+  /* Secondary: Soft yellow accent */
+  --secondary: oklch(0.88 0.12 85);
+  --secondary-foreground: oklch(0.15 0.01 30);
   
-  /* Accent: Sand/Beige background */
-  --accent: oklch(0.88 0.05 70);
-  --accent-foreground: oklch(0.25 0.02 30);
+  /* Accent: Ultra-light sand */
+  --accent: oklch(0.97 0.02 70);
+  --accent-foreground: oklch(0.15 0.01 30);
   
-  --muted: oklch(0.95 0.01 40);
-  --muted-foreground: oklch(0.50 0.01 30);
+  --muted: oklch(0.96 0.01 40);
+  --muted-foreground: oklch(0.55 0.01 30);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.90 0.02 40);
@@ -128,77 +126,75 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
-    /* Sand/beige texture background like Instagram posts */
+    /* Cleaner, minimal background - pure white with subtle texture */
+    @apply bg-white text-foreground antialiased;
     background-image: 
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f5d5ae' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
-      radial-gradient(circle at 20% 80%, rgba(255, 107, 71, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(255, 217, 102, 0.12) 0%, transparent 50%);
+      url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FF6B47' fill-opacity='0.02'%3E%3Ccircle cx='60' cy='60' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 }
 
 @layer components {
-  /* Instagram-style buttons with coral/orange and yellow */
+  /* Made buttons fully responsive with smaller padding on mobile */
   .btn-primary {
-    @apply bg-gradient-to-r from-[#FF6B47] to-[#FF8566] hover:from-[#FF5533] hover:to-[#FF6B47]
-           text-white font-black px-10 py-5 rounded-3xl shadow-2xl hover:shadow-[#FF6B47]/40 
-           transition-all duration-300 transform hover:scale-105 border-0 uppercase tracking-wide;
+    @apply bg-[#FF6B47] hover:bg-[#FF5533]
+           text-white font-semibold px-6 py-3 md:px-8 md:py-4 rounded-2xl shadow-sm hover:shadow-md
+           transition-all duration-300 border-0 uppercase tracking-widest text-xs md:text-sm;
   }
 
   .btn-secondary {
-    @apply bg-gradient-to-r from-[#FFD966] to-[#FFC533] hover:from-[#FFC533] hover:to-[#FFB500]
-           text-gray-900 font-black px-10 py-5 rounded-3xl shadow-2xl hover:shadow-[#FFD966]/40 
-           transition-all duration-300 transform hover:scale-105 border-0 uppercase tracking-wide;
+    @apply bg-white hover:bg-gray-50
+           text-[#FF6B47] font-semibold px-6 py-3 md:px-8 md:py-4 rounded-2xl shadow-sm hover:shadow-md
+           transition-all duration-300 border border-[#FF6B47]/20 uppercase tracking-widest text-xs md:text-sm;
   }
 
-  /* Instagram post-style cards with rounded corners */
-  .card-instagram {
-    @apply bg-white rounded-[2rem] shadow-xl overflow-hidden
-           transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] 
-           border-0 relative;
+  /* Made cards responsive with smaller padding on mobile */
+  .card-luxury {
+    @apply bg-white rounded-2xl md:rounded-3xl shadow-sm hover:shadow-lg
+           transition-all duration-500 border border-gray-100
+           p-6 md:p-12;
   }
 
-  /* Yellow organic circle decorations like Instagram posts */
-  .circle-decoration {
-    @apply absolute rounded-full bg-gradient-to-br from-[#FFD966] to-[#FFC533] 
-           opacity-80 blur-2xl pointer-events-none z-0;
+  /* Reduced vertical padding on mobile for sections */
+  .section-minimal {
+    @apply bg-white py-16 md:py-32;
   }
 
-  /* Coral background sections like Instagram posts */
-  .section-coral {
-    @apply bg-gradient-to-br from-[#FF6B47] to-[#FF8566] text-white rounded-[2rem] p-12;
+  .section-accent {
+    @apply bg-gradient-to-b from-white via-[#FFF9F0] to-white py-16 md:py-32;
   }
 
-  /* Bold typography like Instagram graphics */
-  .text-instagram-hero {
-    @apply font-black text-7xl md:text-9xl uppercase leading-none tracking-tight;
+  /* Made typography fully responsive for mobile */
+  .text-luxury-hero {
+    @apply font-light text-4xl sm:text-5xl md:text-7xl lg:text-8xl uppercase leading-tight tracking-wide text-gray-900;
   }
 
-  .text-instagram-title {
-    @apply font-black text-4xl md:text-6xl uppercase leading-tight tracking-tight;
+  .text-luxury-title {
+    @apply font-semibold text-2xl sm:text-3xl md:text-4xl lg:text-5xl uppercase leading-tight tracking-wider text-gray-900;
   }
 
-  .text-instagram-subtitle {
-    @apply font-bold text-xl md:text-3xl uppercase tracking-wide;
+  .text-luxury-subtitle {
+    @apply font-normal text-base sm:text-lg md:text-xl tracking-widest uppercase text-gray-500;
+  }
+
+  .text-luxury-body {
+    @apply font-light text-sm sm:text-base md:text-lg leading-relaxed text-gray-600;
   }
 }
 
-/* Updated animations to match energetic Instagram style */
-@keyframes float-instagram {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-30px) rotate(5deg); }
+/* Subtle, elegant animations */
+@keyframes float-minimal {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { 
-    box-shadow: 0 0 30px rgba(255, 107, 71, 0.6),
-                0 0 60px rgba(255, 107, 71, 0.4),
-                0 0 90px rgba(255, 217, 102, 0.3);
+@keyframes fade-in-luxury {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  50% { 
-    box-shadow: 0 0 50px rgba(255, 107, 71, 0.8),
-                0 0 80px rgba(255, 107, 71, 0.6),
-                0 0 120px rgba(255, 217, 102, 0.5);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -239,17 +235,22 @@
   }
 }
 
-.animate-float-instagram {
-  animation: float-instagram 8s ease-in-out infinite;
+.animate-float-minimal {
+  animation: float-minimal 6s ease-in-out infinite;
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-.animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
+.animate-fade-in-luxury {
+  animation: fade-in-luxury 1s ease-out forwards;
   opacity: 0;
+}
+
+/* Minimal decorative elements */
+.accent-dot {
+  @apply w-2 h-2 rounded-full bg-[#FF6B47] inline-block;
+}
+
+.divider-luxury {
+  @apply w-24 h-px bg-gradient-to-r from-transparent via-[#FF6B47]/30 to-transparent mx-auto my-16;
 }
 
 /* Sand/beach texture for hero sections */
