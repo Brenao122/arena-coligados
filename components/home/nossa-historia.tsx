@@ -30,7 +30,7 @@ export function NossaHistoria() {
               encontros e, claro, nos campos e quadras.
             </p>
 
-            <p className="text-gray-700 leading-relaxed mb-6 font-medium">
+            <p className="text-gray-800 leading-relaxed mb-6 font-medium">
               Desse vínculo surgiu também um time de futebol amador que se tornou referência na várzea goiana, acumulando
               conquistas e reforçando o espírito de união que caracteriza os Coligados.
             </p>
@@ -44,7 +44,7 @@ export function NossaHistoria() {
               convivência e a amizade.
             </p>
 
-            <p className="text-gray-700 leading-relaxed mb-6 font-medium">
+            <p className="text-gray-800 leading-relaxed mb-6 font-medium">
               Desde então, a Família Coligados só cresce. Hoje, contamos com uma equipe formada por cerca de 12
               colaboradores e centenas de clientes que se tornaram verdadeiros amigos.
             </p>

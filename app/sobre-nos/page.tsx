@@ -149,13 +149,13 @@ export default function SobreNosPage() {
               <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto" role="list">
                 <article className="section-coral-light group hover:scale-105 transition-all relative z-10" role="listitem">
                   <Trophy className="h-12 w-12 text-[#FF6B47] mx-auto mb-4" aria-hidden="true" />
-                  <h3 className="text-2xl font-black text-foreground mb-2 uppercase">Gustavo Oliveira</h3>
-                  <p className="text-muted-foreground font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
+                  <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase">Gustavo Oliveira</h3>
+                  <p className="text-gray-700 font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
                 </article>
                 <article className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-3xl p-8 border-2 border-green-500/30 group hover:scale-105 transition-all relative z-10" role="listitem">
                   <Trophy className="h-12 w-12 text-green-600 mx-auto mb-4" aria-hidden="true" />
-                  <h3 className="text-2xl font-black text-foreground mb-2 uppercase">Rafael Henrique</h3>
-                  <p className="text-muted-foreground font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
+                  <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase">Rafael Henrique</h3>
+                  <p className="text-gray-700 font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
                 </article>
               </div>
             </div>
