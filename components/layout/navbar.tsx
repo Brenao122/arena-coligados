@@ -30,6 +30,8 @@ export function Navbar() {
               width={48}
               height={48}
               className="rounded-full ring-2 ring-orange-500/50 shadow-lg"
+              priority
+              sizes="48px"
             />
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-green-500 bg-clip-text text-transparent">
@@ -49,6 +51,7 @@ export function Navbar() {
                   "text-sm font-medium transition-colors hover:text-orange-400",
                   pathname === item.href ? "text-orange-400" : "text-gray-300",
                 )}
+                prefetch={true}
               >
                 {item.name}
               </Link>
@@ -66,6 +69,8 @@ export function Navbar() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden text-gray-300 hover:text-white"
+            aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -85,6 +90,7 @@ export function Navbar() {
                   "block text-base font-medium transition-colors hover:text-orange-400",
                   pathname === item.href ? "text-orange-400" : "text-gray-300",
                 )}
+                prefetch={true}
               >
                 {item.name}
               </Link>
