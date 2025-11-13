@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { LogIn, Users, Calendar, Trophy, Star, Eye, EyeOff, MapPin, Clock, ExternalLink } from "lucide-react"
@@ -11,6 +10,7 @@ import Image from "next/image"
 // Importar novos componentes
 import { WelcomePopup } from "@/components/home/welcome-popup"
 import { NossaHistoria } from "@/components/home/nossa-historia"
+import { Navbar } from "@/components/layout/navbar"
 
 console.log("[v0] HomePage carregada - componentes importados")
 
@@ -166,10 +166,12 @@ export default function HomePage() {
 
   return (
     <>
+      {/* Adicionar navigation bar */}
+      <Navbar />
       {/* Adicionar popup de boas-vindas */}
       <WelcomePopup />
 
-      <div className="min-h-screen relative text-white flex flex-col items-center justify-center overflow-hidden">
+      <div className="min-h-screen relative text-white flex flex-col items-center justify-center overflow-hidden pt-20">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
