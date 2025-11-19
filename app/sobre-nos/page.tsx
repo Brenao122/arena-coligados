@@ -47,11 +47,11 @@ export default function SobreNosPage() {
             </div>
           </header>
 
-          <div className="mb-16 sm:mb-20 md:mb-24">
+          <div id="historia" className="mb-16 sm:mb-20 md:mb-24 scroll-mt-32">
             <NossaHistoria />
           </div>
 
-          <section aria-labelledby="mvv-heading" className="mb-16 sm:mb-20 md:mb-24">
+          <section id="mvv" aria-labelledby="mvv-heading" className="mb-16 sm:mb-20 md:mb-24 scroll-mt-32">
             <h2 id="mvv-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-center text-gray-900 mb-8 sm:mb-10 md:mb-12">
               MVV - Missão, Visão e Valores
             </h2>
@@ -64,7 +64,7 @@ export default function SobreNosPage() {
                   <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
                   <Target className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mb-4 sm:mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-3 sm:mb-4 uppercase relative z-10">Missão</h3>
-                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium relative z-10">
+                  <p className="text-sm sm:text-base text-gray-800 leading-relaxed font-bold relative z-10">
                     Proporcionar experiências esportivas de qualidade, promovendo saúde, lazer e conexões através do
                     esporte.
                   </p>
@@ -79,7 +79,7 @@ export default function SobreNosPage() {
                   <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
                   <Eye className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-green-600 mb-4 sm:mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-3 sm:mb-4 uppercase relative z-10">Visão</h3>
-                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium relative z-10">
+                  <p className="text-sm sm:text-base text-gray-800 leading-relaxed font-bold relative z-10">
                     Ser referência em gestão esportiva, expandindo nossa família para todo o Brasil.
                   </p>
                 </div>
@@ -93,7 +93,7 @@ export default function SobreNosPage() {
                   <div className="absolute -top-10 -right-10 w-24 h-24 sm:w-32 sm:h-32 bg-[#FFD966] rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
                   <Heart className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-red-500 mb-4 sm:mb-6 relative z-10 fill-current" aria-hidden="true" />
                   <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-3 sm:mb-4 uppercase relative z-10">Valores</h3>
-                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-medium relative z-10">
+                  <p className="text-sm sm:text-base text-gray-800 leading-relaxed font-bold relative z-10">
                     Amizade, respeito, excelência e compromisso com a comunidade esportiva.
                   </p>
                 </div>
@@ -114,7 +114,7 @@ export default function SobreNosPage() {
                   <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Parque Amazônia</h3>
-                  <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">5 quadras profissionais de Beach Tennis, Vôlei e Futevôlei</p>
+                  <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">5 quadras profissionais | 3 modalidades: Vôlei, Futevôlei e Beach Tennis</p>
                   <address className="text-sm text-white/80 not-italic font-medium relative z-10">Parque Amazônia, Goiânia - GO</address>
                 </div>
               </article>
@@ -127,14 +127,14 @@ export default function SobreNosPage() {
                   <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Vila Rosa</h3>
-                  <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">4 quadras equipadas com infraestrutura completa</p>
+                  <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">4 quadras equipadas | 3 modalidades: Vôlei, Futevôlei e Beach Tennis</p>
                   <address className="text-sm text-white/80 not-italic font-medium relative z-10">Setor Vila Rosa, Goiânia - GO</address>
                 </div>
               </article>
             </div>
           </section>
 
-          <section aria-labelledby="team-heading" className="text-center">
+          <section id="time" aria-labelledby="team-heading" className="text-center scroll-mt-32">
             <div className="card-instagram p-12 md:p-16 relative overflow-hidden">
               <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966]/20 rounded-full blur-3xl" />
               <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#FF6B47]/10 rounded-full blur-3xl" />
@@ -143,19 +143,19 @@ export default function SobreNosPage() {
               <h2 id="team-heading" className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-6 uppercase relative z-10">
                 Nosso Time
               </h2>
-              <p className="text-xl text-gray-700 mb-12 max-w-3xl mx-auto font-bold relative z-10 uppercase tracking-wide">
+              <p className="text-xl text-gray-800 mb-12 max-w-3xl mx-auto font-bold relative z-10 uppercase tracking-wide">
                 Uma equipe de 12 colaboradores dedicados e centenas de clientes que se tornaram verdadeiros amigos
               </p>
               <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto" role="list">
                 <article className="section-coral-light group hover:scale-105 transition-all relative z-10" role="listitem">
                   <Trophy className="h-12 w-12 text-[#FF6B47] mx-auto mb-4" aria-hidden="true" />
                   <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase">Gustavo Oliveira</h3>
-                  <p className="text-gray-700 font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
+                  <p className="text-gray-800 font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
                 </article>
                 <article className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-3xl p-8 border-2 border-green-500/30 group hover:scale-105 transition-all relative z-10" role="listitem">
                   <Trophy className="h-12 w-12 text-green-600 mx-auto mb-4" aria-hidden="true" />
                   <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase">Rafael Henrique</h3>
-                  <p className="text-gray-700 font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
+                  <p className="text-gray-800 font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
                 </article>
               </div>
             </div>

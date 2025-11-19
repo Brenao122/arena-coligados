@@ -23,19 +23,19 @@ export function NossaHistoria() {
         
         <div className="p-10 md:p-14 relative z-10">
           <div className="prose prose-lg max-w-none">
-            <p className="text-gray-900 leading-relaxed mb-6 font-medium text-lg">
+            <p className="text-gray-900 leading-relaxed mb-6 font-bold text-lg">
               O nome <strong className="text-[#FF6B47] font-black">Coligados</strong> nasceu de um grupo de amigos que se conhecem
               desde 2011. Mesmo com o passar dos anos, as mudanças da vida, o trabalho e a chegada dos filhos, esse grupo
               continua unido, mantendo viva a amizade que os conecta. Sempre que possível, estão juntos — em viagens,
               encontros e, claro, nos campos e quadras.
             </p>
 
-            <p className="text-gray-800 leading-relaxed mb-6 font-medium">
+            <p className="text-gray-800 leading-relaxed mb-6 font-bold">
               Desse vínculo surgiu também um time de futebol amador que se tornou referência na várzea goiana, acumulando
               conquistas e reforçando o espírito de união que caracteriza os Coligados.
             </p>
 
-            <p className="text-gray-900 leading-relaxed mb-6 font-medium">
+            <p className="text-gray-900 leading-relaxed mb-6 font-bold">
               Inspirados por essa trajetória de parceria, amizade e respeito, os irmãos{" "}
               <strong className="text-[#FF6B47] font-black">Gustavo Oliveira</strong> e{" "}
               <strong className="text-[#FF6B47] font-black">Rafael Henrique</strong> — integrantes do grupo desde o início —
@@ -44,12 +44,12 @@ export function NossaHistoria() {
               convivência e a amizade.
             </p>
 
-            <p className="text-gray-800 leading-relaxed mb-6 font-medium">
+            <p className="text-gray-800 leading-relaxed mb-6 font-bold">
               Desde então, a Família Coligados só cresce. Hoje, contamos com uma equipe formada por cerca de 12
               colaboradores e centenas de clientes que se tornaram verdadeiros amigos.
             </p>
 
-            <p className="text-gray-900 leading-relaxed mb-6 font-medium">
+            <p className="text-gray-900 leading-relaxed mb-6 font-bold">
               Com a primeira unidade inaugurada no <strong className="text-[#FF6B47] font-black">Parque Amazônia</strong>, a Arena
               rapidamente se consolidou e, em menos de dois anos, expandiu suas atividades para uma segunda unidade,
               localizada no <strong className="text-[#FF6B47] font-black">Setor Vila Rosa</strong>. E essa é apenas parte da nossa
@@ -66,21 +66,21 @@ export function NossaHistoria() {
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-110 transition-transform" />
           <Users className="h-14 w-14 text-white mb-4 relative z-10" aria-hidden="true" />
           <h3 className="text-2xl font-black text-white mb-2 uppercase relative z-10">Fundadores</h3>
-          <p className="text-white/90 font-bold text-sm uppercase tracking-wide relative z-10">Gustavo & Rafael</p>
+          <p className="text-white font-black text-base uppercase tracking-wide relative z-10">Gustavo & Rafael</p>
         </article>
 
         <article className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-8 relative overflow-hidden group" role="listitem">
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-110 transition-transform" />
           <Trophy className="h-14 w-14 text-white mb-4 relative z-10" aria-hidden="true" />
           <h3 className="text-2xl font-black text-white mb-2 uppercase relative z-10">Time</h3>
-          <p className="text-white/90 font-bold text-sm uppercase tracking-wide relative z-10">12 Colaboradores</p>
+          <p className="text-white font-black text-base uppercase tracking-wide relative z-10">12 Colaboradores</p>
         </article>
 
         <article className="bg-gradient-to-br from-[#FFD966] to-yellow-500 text-white rounded-[2rem] p-8 relative overflow-hidden group" role="listitem">
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#FF6B47] rounded-full opacity-30 blur-3xl group-hover:scale-110 transition-transform" />
           <Calendar className="h-14 w-14 text-white mb-4 relative z-10" aria-hidden="true" />
           <h3 className="text-2xl font-black text-white mb-2 uppercase relative z-10">Desde</h3>
-          <p className="text-white/90 font-bold text-sm uppercase tracking-wide relative z-10">2011</p>
+          <p className="text-white font-black text-base uppercase tracking-wide relative z-10">2011</p>
         </article>
       </div>
 

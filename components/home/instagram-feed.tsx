@@ -9,32 +9,32 @@ export default function InstagramFeed() {
     {
       image: "/beach-tennis-quadra-laranja-coligados-jogadores.jpg",
       type: "image",
-      link: "https://www.instagram.com/arenacoligados/"
+      link: "https://www.instagram.com/p/DDasrVvSz8H/"
     },
     {
       image: "/beach-tennis-p-r-do-sol-quadra-jogadores.jpg",
       type: "video",
-      link: "https://www.instagram.com/arenacoligados/"
+      link: "https://www.instagram.com/reel/DDMLj59yTmk/"
     },
     {
       image: "/v-lei-arena-coligados-salto-jogador.jpg",
       type: "image",
-      link: "https://www.instagram.com/arenacoligados/"
+      link: "https://www.instagram.com/p/DDIrOsPSz6d/"
     },
     {
       image: "/beach-tennis-praia-areia-amigos.jpg",
       type: "image",
-      link: "https://www.instagram.com/arenacoligados/"
+      link: "https://www.instagram.com/p/DC9YbmXyd6Z/"
     },
     {
       image: "/quadras-vista-a-rea-coligados-estrutura.jpg",
       type: "video",
-      link: "https://www.instagram.com/arenacoligados/"
+      link: "https://www.instagram.com/reel/DC3r1OByYlN/"
     },
     {
       image: "/beach-tennis-laranja-salto-comemora--o.jpg",
       type: "image",
-      link: "https://www.instagram.com/arenacoligados/"
+      link: "https://www.instagram.com/p/DCw88HMyY95/"
     },
   ]
 
