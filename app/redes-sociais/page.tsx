@@ -96,12 +96,13 @@ export default function RedesSociaisPage() {
           {/* Call to Action */}
           <section className="section-coral-light text-center">
             <Instagram className="h-20 w-20 text-[#FF6B47] mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 uppercase">
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
               Faça Parte da Família Coligados!
             </h2>
-            <p className="text-lg text-gray-800 font-bold max-w-2xl mx-auto">
+            <p className="text-lg text-white font-bold max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
               Siga nossos perfis no Instagram para acompanhar eventos, torneios, dicas de treino e muito mais!
             </p>
+            {/* </CHANGE> */}
           </section>
         </div>
       </main>
