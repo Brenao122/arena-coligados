@@ -14,6 +14,17 @@ export default function SobreNosPage() {
         id="main-content"
         className="min-h-screen bg-sand pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 relative overflow-hidden"
       >
+        <div className="absolute top-0 left-0 right-0 h-[600px] z-0">
+          <Image
+            src="/images/sports/beach-tennis-sky.jpg"
+            alt=""
+            fill
+            className="object-cover opacity-20"
+            quality={80}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#F5F0E8]/50 to-[#F5F0E8]"></div>
+        </div>
+
         <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-[#FF6B47] to-[#FFD966] rounded-full opacity-20 blur-[140px] animate-blob"></div>
         <div className="absolute bottom-40 left-10 w-80 h-80 bg-gradient-to-br from-[#10b981] to-[#FFD966] rounded-full opacity-20 blur-[120px] animate-blob animation-delay-2000"></div>
         
@@ -107,9 +118,18 @@ export default function SobreNosPage() {
             </h2>
             <div className="grid md:grid-cols-2 gap-8" role="list">
               <article
-                className="card-instagram group hover:scale-105 transition-all cursor-pointer"
+                className="card-instagram group hover:scale-105 transition-all cursor-pointer relative overflow-hidden"
                 role="listitem"
               >
+                <div className="absolute inset-0 z-0">
+                  <Image
+                    src="/images/sports/paddle-action.jpg"
+                    alt=""
+                    fill
+                    className="object-cover opacity-25 group-hover:opacity-30 transition-opacity"
+                    quality={75}
+                  />
+                </div>
                 <div className="bg-gradient-to-br from-[#FF6B47] to-[#ff8c6b] text-white rounded-[2rem] p-10 relative overflow-hidden h-full">
                   <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
@@ -120,9 +140,18 @@ export default function SobreNosPage() {
               </article>
 
               <article
-                className="card-instagram group hover:scale-105 transition-all cursor-pointer"
+                className="card-instagram group hover:scale-105 transition-all cursor-pointer relative overflow-hidden"
                 role="listitem"
               >
+                <div className="absolute inset-0 z-0">
+                  <Image
+                    src="/images/sports/close-racket.jpg"
+                    alt=""
+                    fill
+                    className="object-cover opacity-20 group-hover:opacity-25 transition-opacity"
+                    quality={75}
+                  />
+                </div>
                 <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-10 relative overflow-hidden h-full">
                   <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
@@ -136,8 +165,18 @@ export default function SobreNosPage() {
 
           <section id="time" aria-labelledby="team-heading" className="text-center scroll-mt-32">
             <div className="card-instagram p-12 md:p-16 relative overflow-hidden">
-              <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966]/20 rounded-full blur-3xl" />
-              <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#FF6B47]/10 rounded-full blur-3xl" />
+              <div className="absolute inset-0 z-0">
+                <Image
+                  src="/images/sports/paddle-flying.jpg"
+                  alt=""
+                  fill
+                  className="object-cover opacity-10"
+                  quality={75}
+                />
+              </div>
+
+              <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966]/20 rounded-full blur-3xl z-[1]" />
+              <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#FF6B47]/10 rounded-full blur-3xl z-[1]" />
               
               <Users className="h-20 w-20 text-[#FF6B47] mx-auto mb-8 relative z-10" aria-hidden="true" />
               <h2 id="team-heading" className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-6 uppercase relative z-10">

@@ -92,7 +92,19 @@ export default function HomePageClient() {
           className="relative min-h-screen flex items-center justify-center pt-24 sm:pt-28 md:pt-32 overflow-hidden px-4 sm:px-6"
           aria-label="Hero principal"
         >
-          <div className="decorative-circle decorative-circle-yellow w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 top-10 sm:top-20 -right-10 sm:-right-20"></div>
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/sports/volleyball-action.jpg"
+              alt=""
+              fill
+              className="object-cover"
+              priority
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-slate-900/95"></div>
+          </div>
+
+          <div className="decorative-circle decorative-circle-yellow w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:w-96 top-10 sm:top-20 -right-10 sm:-right-20"></div>
           <div className="decorative-circle decorative-circle-coral w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bottom-20 sm:bottom-40 -left-10 sm:-left-20"></div>
           
           <div className="relative z-10 max-w-6xl mx-auto text-center py-16 sm:py-24 md:py-32">
@@ -118,9 +130,31 @@ export default function HomePageClient() {
               <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FFD966] to-transparent"></div>
             </div>
 
-            <p className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wider text-gray-700 mb-12 sm:mb-16 px-4">
-              Beach Tennis • Vôlei • Futevôlei
-            </p>
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4">
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
+                <div className="relative bg-gradient-to-r from-[#FF6B47] to-[#FF8C47] text-white px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
+                  <Waves className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
+                  Beach Tennis
+                </div>
+              </div>
+
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
+                <div className="relative bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
+                  <Trophy className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
+                  Vôlei
+                </div>
+              </div>
+
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
+                <div className="relative bg-gradient-to-r from-[#FFD966] to-[#FFC233] text-gray-900 px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
+                  <Waves className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
+                  Futevôlei
+                </div>
+              </div>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-16 sm:mb-20 px-4">
               <Button
@@ -150,8 +184,18 @@ export default function HomePageClient() {
           </div>
         </section>
 
-        <section className="section-coral py-16 sm:py-20 md:py-24" aria-labelledby="instagram-heading">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <section className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="instagram-heading">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/sports/multi-sports.jpg"
+              alt=""
+              fill
+              className="object-cover opacity-20"
+              quality={85}
+            />
+          </div>
+          
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
               <h2 id="instagram-heading" className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-4 sm:mb-6 bg-gradient-to-r from-white via-yellow-100 to-white bg-clip-text text-transparent">
                 Viva a Experiência
@@ -165,8 +209,18 @@ export default function HomePageClient() {
           </div>
         </section>
 
-        <section className="section-vibrant py-16 sm:py-20 md:py-24" aria-labelledby="stats-heading">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <section className="section-vibrant py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="stats-heading">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/sports/volleyball-hands.jpg"
+              alt=""
+              fill
+              className="object-cover opacity-10"
+              quality={80}
+            />
+          </div>
+
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
               <h2 id="stats-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-gray-900">
                 Em Números
@@ -210,8 +264,18 @@ export default function HomePageClient() {
           </div>
         </section>
 
-        <section className="section-coral py-16 sm:py-20 md:py-24" aria-labelledby="pricing-heading">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <section className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="pricing-heading">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/sports/friends-celebrating.jpg"
+              alt=""
+              fill
+              className="object-cover opacity-15"
+              quality={85}
+            />
+          </div>
+
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
               <h2 id="pricing-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-white">
                 Planos
