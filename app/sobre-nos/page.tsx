@@ -110,7 +110,7 @@ export default function SobreNosPage() {
                 className="card-instagram group hover:scale-105 transition-all cursor-pointer"
                 role="listitem"
               >
-                <div className="section-coral relative overflow-hidden h-full">
+                <div className="bg-gradient-to-br from-[#FF6B47] to-[#ff8c6b] text-white rounded-[2rem] p-10 relative overflow-hidden h-full">
                   <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Parque Amazônia</h3>
