@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/layout/navbar"
 import { NossaHistoria } from "@/components/home/nossa-historia"
-import { MapPin, Users, Trophy, Target, Heart, Eye, Zap } from 'lucide-react'
+import { MapPin, Users, Trophy, Target, Heart, Eye, Zap, MessageCircle } from 'lucide-react'
 import Image from "next/image"
 
 export default function SobreNosPage() {
@@ -130,12 +130,19 @@ export default function SobreNosPage() {
                     quality={75}
                   />
                 </div>
-                <div className="bg-gradient-to-br from-[#FF6B47] to-[#ff8c6b] text-white rounded-[2rem] p-10 relative overflow-hidden h-full">
+                <div className="bg-gradient-to-br from-[#FF6B47] to-[#ff8c6b] text-white rounded-[2rem] p-10 relative overflow-hidden h-full flex flex-col">
                   <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Parque Amazônia</h3>
-                  <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">5 quadras profissionais | 3 modalidades: Vôlei, Futevôlei e Beach Tennis</p>
-                  <address className="text-sm text-white/80 not-italic font-medium relative z-10">Parque Amazônia, Goiânia - GO</address>
+                  <p className="text-white/90 mb-4 font-bold uppercase tracking-wide text-sm relative z-10">5 quadras profissionais | 3 modalidades: Vôlei, Futevôlei e Beach Tennis</p>
+                  <address className="text-sm text-white/80 not-italic font-medium relative z-10 mb-6">Parque Amazônia, Goiânia - GO</address>
+                  <button
+                    onClick={() => window.open("https://api.whatsapp.com/message/CI3R2YERLZ3MG1?autoload=1&app_absent=0", "_blank")}
+                    className="mt-auto bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-black py-3 px-6 rounded-full transition-all hover:scale-105 flex items-center justify-center gap-2 relative z-10 border-2 border-white/40"
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    FALE CONOSCO
+                  </button>
                 </div>
               </article>
 
@@ -152,12 +159,19 @@ export default function SobreNosPage() {
                     quality={75}
                   />
                 </div>
-                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-10 relative overflow-hidden h-full">
+                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-[2rem] p-10 relative overflow-hidden h-full flex flex-col">
                   <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Vila Rosa</h3>
-                  <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm relative z-10">4 quadras equipadas | 3 modalidades: Vôlei, Futevôlei e Beach Tennis</p>
-                  <address className="text-sm text-white/80 not-italic font-medium relative z-10">Setor Vila Rosa, Goiânia - GO</address>
+                  <p className="text-white/90 mb-4 font-bold uppercase tracking-wide text-sm relative z-10">4 quadras equipadas | 3 modalidades: Vôlei, Futevôlei e Beach Tennis</p>
+                  <address className="text-sm text-white/80 not-italic font-medium relative z-10 mb-6">Setor Vila Rosa, Goiânia - GO</address>
+                  <button
+                    onClick={() => window.open("https://api.whatsapp.com/send/?phone=5562995797965&text&type=phone_number&app_absent=0", "_blank")}
+                    className="mt-auto bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-black py-3 px-6 rounded-full transition-all hover:scale-105 flex items-center justify-center gap-2 relative z-10 border-2 border-white/40"
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    FALE CONOSCO
+                  </button>
                 </div>
               </article>
             </div>

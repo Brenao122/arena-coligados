@@ -1,43 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Instagram, Play } from 'lucide-react'
+import { ExternalLink, Instagram } from 'lucide-react'
 import Image from "next/image"
 
 export default function InstagramFeed() {
-  const instagramPosts = [
-    {
-      image: "/beach-tennis-quadra-laranja-coligados-jogadores.jpg",
-      type: "image",
-      link: "https://www.instagram.com/p/DDasrVvSz8H/"
-    },
-    {
-      image: "/beach-tennis-p-r-do-sol-quadra-jogadores.jpg",
-      type: "video",
-      link: "https://www.instagram.com/reel/DDMLj59yTmk/"
-    },
-    {
-      image: "/v-lei-arena-coligados-salto-jogador.jpg",
-      type: "image",
-      link: "https://www.instagram.com/p/DDIrOsPSz6d/"
-    },
-    {
-      image: "/beach-tennis-praia-areia-amigos.jpg",
-      type: "image",
-      link: "https://www.instagram.com/p/DC9YbmXyd6Z/"
-    },
-    {
-      image: "/quadras-vista-a-rea-coligados-estrutura.jpg",
-      type: "video",
-      link: "https://www.instagram.com/reel/DC3r1OByYlN/"
-    },
-    {
-      image: "/beach-tennis-laranja-salto-comemora--o.jpg",
-      type: "image",
-      link: "https://www.instagram.com/p/DCw88HMyY95/"
-    },
-  ]
-
   return (
     <div className="max-w-7xl mx-auto">
       <div className="relative flex flex-col items-center mb-16 md:mb-24">
@@ -131,57 +98,13 @@ export default function InstagramFeed() {
         </div>
       </div>
 
-      <div className="text-center mb-10 md:mb-14">
-        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white uppercase tracking-wide px-4 drop-shadow-[0_4px_12px_rgba(0,0,0,1)] mb-4">
-          Confira Nossos Posts
-        </h3>
-        <p className="text-white text-base md:text-lg font-bold drop-shadow-lg">Clique nas fotos para visitar nosso Instagram</p>
-        <div className="flex items-center justify-center gap-4 mt-6">
-          <div className="h-1 w-16 md:w-24 bg-gradient-to-r from-transparent via-orange-400 to-transparent"></div>
-          <div className="h-2 w-2 rounded-full bg-yellow-400"></div>
-          <div className="h-1 w-16 md:w-24 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-20 px-2 md:px-4" role="list">
-        {instagramPosts.map((post, index) => (
-          <a
-            key={index}
-            href={post.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative aspect-square rounded-2xl md:rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-orange-500/40 transition-all duration-500 hover:scale-105 cursor-pointer"
-            role="listitem"
-          >
-            <Image
-              src={post.image || "/placeholder.svg"}
-              alt={`Post ${index + 1} do Instagram Arena Coligados`}
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
-              sizes="(max-width: 768px) 50vw, 33vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-              {post.type === "video" && (
-                <div className="absolute top-4 right-4">
-                  <Play className="h-8 w-8 text-white drop-shadow-lg" fill="white" />
-                </div>
-              )}
-              <div className="text-white text-center px-4">
-                <Instagram className="h-10 w-10 md:h-12 md:w-12 mx-auto mb-2" />
-                <p className="text-sm md:text-base font-bold">Ver no Instagram</p>
-              </div>
-            </div>
-          </a>
-        ))}
-      </div>
-
       <div className="text-center px-4">
         <Button
           onClick={() => window.open("https://www.instagram.com/arenacoligados/", "_blank")}
           className="btn-primary group hover:scale-110 transition-all duration-500 text-base md:text-xl px-10 md:px-14 py-6 md:py-8 rounded-full shadow-2xl hover:shadow-orange-500/60 w-full sm:w-auto ring-4 ring-orange-400/20 hover:ring-orange-400/40"
         >
           <Instagram className="h-6 w-6 md:h-7 md:w-7 mr-3" />
-          Ver Mais no Instagram
+          Ver Perfil no Instagram
           <ExternalLink className="h-6 w-6 md:h-7 md:w-7 ml-3 group-hover:translate-x-2 group-hover:-translate-y-1 transition-transform duration-300" />
         </Button>
       </div>
