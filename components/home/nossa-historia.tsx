@@ -77,7 +77,7 @@ export function NossaHistoria() {
         </article>
 
         <article className="bg-gradient-to-br from-[#FFD966] to-yellow-500 text-white rounded-[2rem] p-8 relative overflow-hidden group" role="listitem">
-          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#FF6B47] rounded-full opacity-30 blur-3xl group-hover:scale-110 transition-transform" />
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-white rounded-full blur-3xl opacity-30 animate-pulse-glow" />
           <Calendar className="h-14 w-14 text-white mb-4 relative z-10" aria-hidden="true" />
           <h3 className="text-2xl font-black text-white mb-2 uppercase relative z-10">Desde</h3>
           <p className="text-white font-black text-base uppercase tracking-wide relative z-10">2011</p>
@@ -85,9 +85,13 @@ export function NossaHistoria() {
       </div>
 
       {/* Final quote */}
-      <div className="section-coral-light relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFD966]/30 rounded-full blur-3xl" />
-        <p className="text-gray-900 text-xl md:text-2xl font-black leading-relaxed text-center relative z-10 uppercase">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#FF6B47] via-[#ff8c6b] to-[#FFD966] p-10 md:p-12 border-4 border-white/20 shadow-2xl">
+        <div className="absolute inset-0 bg-[url('/images/sports/friends-celebrating.jpg')] bg-cover bg-center opacity-15 mix-blend-overlay" />
+        
+        <div className="absolute -top-20 -right-20 w-64 h-64 bg-white rounded-full blur-3xl opacity-30 animate-pulse-glow" />
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-[#FFD966] rounded-full blur-3xl opacity-40 animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
+        
+        <p className="text-lg sm:text-xl md:text-2xl text-white leading-relaxed text-center relative z-10 font-black uppercase tracking-wide drop-shadow-[0_2px_15px_rgba(0,0,0,0.4)]" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
           Em pouco tempo, a Arena conquistou seu espaço e consolidou uma comunidade fiel de atletas e amigos,
           mantendo vivo o propósito que nos originou: ser mais que uma arena esportiva — ser um ponto de encontro
           entre pessoas e valores.

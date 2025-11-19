@@ -328,6 +328,18 @@
   }
 }
 
+/* Adicionando animação pulse-glow para efeitos neon esportivos */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
 /* Added gradient animation for hero text */
 @keyframes gradient-shift {
   0%, 100% {
@@ -350,6 +362,10 @@
 .animate-fade-in-luxury {
   animation: fade-in-luxury 1s ease-out forwards;
   opacity: 0;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
 }
 
 /* Minimal decorative elements */

@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/layout/navbar"
 import { NossaHistoria } from "@/components/home/nossa-historia"
-import { MapPin, Users, Trophy, Target, Heart, Eye } from 'lucide-react'
+import { MapPin, Users, Trophy, Target, Heart, Eye, Zap } from 'lucide-react'
 import Image from "next/image"
 
 export default function SobreNosPage() {
@@ -164,37 +164,37 @@ export default function SobreNosPage() {
           </section>
 
           <section id="time" aria-labelledby="team-heading" className="text-center scroll-mt-32">
-            <div className="card-instagram p-12 md:p-16 relative overflow-hidden">
-              <div className="absolute inset-0 z-0">
-                <Image
-                  src="/images/sports/paddle-flying.jpg"
-                  alt=""
-                  fill
-                  className="object-cover opacity-10"
-                  quality={75}
-                />
-              </div>
-
-              <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966]/20 rounded-full blur-3xl z-[1]" />
-              <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#FF6B47]/10 rounded-full blur-3xl z-[1]" />
+            <div className="relative overflow-hidden rounded-3xl p-12 md:p-16 bg-gradient-to-br from-[#FF6B47] via-[#ff8c6b] to-[#FFD966] border-4 border-white/20 shadow-2xl">
+              <div className="absolute inset-0 bg-[url('/images/sports/paddle-flying.jpg')] bg-cover bg-center opacity-15 mix-blend-overlay" />
               
-              <Users className="h-20 w-20 text-[#FF6B47] mx-auto mb-8 relative z-10" aria-hidden="true" />
-              <h2 id="team-heading" className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-6 uppercase relative z-10">
+              <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFD966] rounded-full blur-3xl opacity-40 animate-pulse-glow" />
+              <div className="absolute bottom-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl opacity-30 animate-pulse-glow" style={{ animationDelay: '1s' }} />
+              
+              <Users className="h-20 w-20 text-white mx-auto mb-8 relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" aria-hidden="true" />
+              
+              <h2 id="team-heading" className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-6 uppercase relative z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.6)]" style={{ textShadow: '3px 3px 0 rgba(0,0,0,0.2), -1px -1px 0 rgba(255,255,255,0.5)' }}>
                 Nosso Time
               </h2>
-              <p className="text-xl text-gray-800 mb-12 max-w-3xl mx-auto font-bold relative z-10 uppercase tracking-wide">
+              
+              <p className="text-xl text-white mb-12 max-w-3xl mx-auto font-black relative z-10 uppercase tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
                 Uma equipe de 12 colaboradores dedicados e centenas de clientes que se tornaram verdadeiros amigos
               </p>
-              <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto" role="list">
-                <article className="section-coral-light group hover:scale-105 transition-all relative z-10" role="listitem">
-                  <Trophy className="h-12 w-12 text-[#FF6B47] mx-auto mb-4" aria-hidden="true" />
-                  <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase">Gustavo Oliveira</h3>
-                  <p className="text-gray-800 font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
+              
+              <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto" role="list">
+                <article className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 border-4 border-[#FF6B47] shadow-[0_0_30px_rgba(255,107,71,0.6)] group hover:scale-105 hover:shadow-[0_0_50px_rgba(255,107,71,0.9)] transition-all relative overflow-hidden" role="listitem">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B47]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Zap className="h-12 w-12 text-[#FF6B47] mx-auto mb-4 relative z-10 drop-shadow-[0_0_10px_rgba(255,107,71,0.8)]" aria-hidden="true" />
+                  <Trophy className="h-10 w-10 text-[#FFD966] mx-auto mb-4 relative z-10 drop-shadow-[0_0_10px_rgba(255,217,102,0.8)]" aria-hidden="true" />
+                  <h3 className="text-2xl font-black text-white mb-2 uppercase relative z-10 tracking-wider">Gustavo Oliveira</h3>
+                  <p className="text-[#FF6B47] font-black uppercase text-sm tracking-widest relative z-10">Co-fundador & Diretor</p>
                 </article>
-                <article className="bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-3xl p-8 border-2 border-green-500/30 group hover:scale-105 transition-all relative z-10" role="listitem">
-                  <Trophy className="h-12 w-12 text-green-600 mx-auto mb-4" aria-hidden="true" />
-                  <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase">Rafael Henrique</h3>
-                  <p className="text-gray-800 font-bold uppercase text-sm tracking-wider">Co-fundador & Diretor</p>
+                
+                <article className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 border-4 border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.6)] group hover:scale-105 hover:shadow-[0_0_50px_rgba(34,197,94,0.9)] transition-all relative overflow-hidden" role="listitem">
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Zap className="h-12 w-12 text-green-500 mx-auto mb-4 relative z-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]" aria-hidden="true" />
+                  <Trophy className="h-10 w-10 text-[#FFD966] mx-auto mb-4 relative z-10 drop-shadow-[0_0_10px_rgba(255,217,102,0.8)]" aria-hidden="true" />
+                  <h3 className="text-2xl font-black text-white mb-2 uppercase relative z-10 tracking-wider">Rafael Henrique</h3>
+                  <p className="text-green-500 font-black uppercase text-sm tracking-widest relative z-10">Co-fundador & Diretor</p>
                 </article>
               </div>
             </div>
