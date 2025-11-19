@@ -40,7 +40,7 @@ export default function SobreNosPage() {
             </h1>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-[#FF6B47]">
               <Heart className="h-6 w-6 sm:h-8 sm:w-8 fill-current" aria-hidden="true" />
-              <p className="text-base sm:text-lg md:text-xl uppercase tracking-wider font-black px-4">
+              <p className="text-base sm:text-lg md:text-xl uppercase tracking-wider font-black px-4 text-gray-900">
                 Mais que uma arena, somos família
               </p>
               <Heart className="h-6 w-6 sm:h-8 sm:w-8 fill-current hidden sm:block" aria-hidden="true" />

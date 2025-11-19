@@ -54,9 +54,7 @@ export function Navbar() {
               item.submenu ? (
                 <div 
                   key={item.name}
-                  className="relative"
-                  onMouseEnter={() => setSobreMenuOpen(true)}
-                  onMouseLeave={() => setSobreMenuOpen(false)}
+                  className="relative group"
                 >
                   <button
                     className={cn(
@@ -67,24 +65,19 @@ export function Navbar() {
                     )}
                   >
                     {item.name}
-                    <ChevronDown className={cn(
-                      "h-4 w-4 transition-transform",
-                      sobreMenuOpen && "rotate-180"
-                    )} />
+                    <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                   </button>
-                  {sobreMenuOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border-2 border-[#FFD966] py-3 animate-in fade-in slide-in-from-top-2">
-                      {item.submenu.map((subitem) => (
-                        <Link
-                          key={subitem.name}
-                          href={subitem.href}
-                          className="block px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#FFF5E6] hover:text-[#FF6B47] transition-colors uppercase tracking-wide"
-                        >
-                          {subitem.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border-2 border-[#FFD966] py-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    {item.submenu.map((subitem) => (
+                      <Link
+                        key={subitem.name}
+                        href={subitem.href}
+                        className="block px-6 py-3 text-sm font-bold text-gray-700 hover:bg-[#FFF5E6] hover:text-[#FF6B47] transition-colors uppercase tracking-wide"
+                      >
+                        {subitem.name}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <Link

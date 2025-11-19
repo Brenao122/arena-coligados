@@ -16,10 +16,10 @@ export default function RedesSociaisPage() {
     },
     {
       name: "Complexo Coligados",
-      handle: "@complexocoligados",
+      handle: "@complexoarenacoligados",
       followers: "Em breve",
       posts: "Em breve",
-      link: "https://www.instagram.com/complexocoligados/",
+      link: "https://www.instagram.com/complexoarenacoligados/",
       image: "/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
     }
   ]

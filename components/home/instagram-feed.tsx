@@ -44,43 +44,50 @@ export default function InstagramFeed() {
         <div className="absolute -top-32 -left-32 w-64 h-64 bg-yellow-400/30 rounded-full blur-[100px] animate-pulse"></div>
         <div className="absolute -bottom-16 -right-32 w-80 h-80 bg-orange-400/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
         
-        <a
-          href="https://www.instagram.com/arenacoligados/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex flex-col items-center gap-6 md:gap-8 hover:scale-105 transition-all duration-500 relative z-10"
-        >
-          <div className="relative">
-            <div className="w-32 h-32 md:w-48 md:h-48 rounded-full bg-gradient-to-tr from-yellow-400 via-orange-500 to-pink-600 p-1.5 shadow-2xl ring-4 ring-white/30 group-hover:ring-8 group-hover:ring-white/50 transition-all duration-500">
-              <div className="w-full h-full rounded-full bg-slate-900 p-3 flex items-center justify-center">
-                <Image
-                  src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
-                  alt="Arena Coligados Logo"
-                  width={180}
-                  height={180}
-                  className="rounded-full object-cover"
-                  sizes="(max-width: 768px) 128px, 180px"
-                />
+        <div className="relative z-10 w-full max-w-2xl mx-auto bg-slate-900/80 backdrop-blur-md rounded-3xl p-8 md:p-12 border-2 border-orange-500/50 shadow-2xl">
+          <a
+            href="https://www.instagram.com/arenacoligados/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex flex-col items-center gap-6 md:gap-8 hover:scale-105 transition-all duration-500"
+          >
+            <div className="relative">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-tr from-yellow-400 via-orange-500 to-pink-600 p-1.5 shadow-2xl ring-4 ring-white/30 group-hover:ring-8 group-hover:ring-white/50 transition-all duration-500">
+                <div className="w-full h-full rounded-full bg-slate-900 p-3 flex items-center justify-center">
+                  <Image
+                    src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
+                    alt="Arena Coligados Logo"
+                    width={140}
+                    height={140}
+                    className="rounded-full object-cover"
+                    sizes="(max-width: 768px) 128px, 140px"
+                  />
+                </div>
+              </div>
+              <div className="absolute -bottom-2 -right-2 md:-bottom-3 md:-right-3 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-slate-900 group-hover:scale-110 transition-transform duration-300">
+                <Instagram className="w-5 h-5 md:w-7 md:h-7 text-white" />
               </div>
             </div>
-            <div className="absolute -bottom-2 -right-2 md:-bottom-3 md:-right-3 w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-slate-900 group-hover:scale-110 transition-transform duration-300">
-              <Instagram className="w-5 h-5 md:w-8 md:h-8 text-white" />
+            <div className="text-center">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-orange-400 group-hover:to-yellow-400 group-hover:bg-clip-text transition-all duration-500 uppercase tracking-wide drop-shadow-[0_4px_12px_rgba(0,0,0,1)]">
+                @arenacoligados
+              </h3>
+              <p className="text-white text-base md:text-xl font-bold mt-2 md:mt-3 drop-shadow-lg">4.277 seguidores • 248 posts</p>
             </div>
-          </div>
-          <div className="text-center">
-            <h3 className="text-2xl md:text-4xl lg:text-5xl font-black text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-orange-400 group-hover:to-yellow-400 group-hover:bg-clip-text transition-all duration-500 uppercase tracking-wide drop-shadow-lg">
-              @arenacoligados
-            </h3>
-            <p className="text-white/90 text-base md:text-xl font-semibold mt-2 md:mt-3">4.277 seguidores • 248 posts</p>
-          </div>
-        </a>
+            <div className="w-full text-center mt-4">
+              <p className="text-2xl md:text-3xl font-black text-white uppercase tracking-wide drop-shadow-[0_4px_12px_rgba(0,0,0,1)]">
+                Faça Parte da Família Coligados!
+              </p>
+            </div>
+          </a>
+        </div>
       </div>
 
       <div className="text-center mb-10 md:mb-14">
-        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white uppercase tracking-wide px-4 drop-shadow-lg mb-4">
+        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white uppercase tracking-wide px-4 drop-shadow-[0_4px_12px_rgba(0,0,0,1)] mb-4">
           Confira Nossos Posts
         </h3>
-        <p className="text-white/90 text-base md:text-lg font-bold">Clique nas fotos para visitar nosso Instagram</p>
+        <p className="text-white text-base md:text-lg font-bold drop-shadow-lg">Clique nas fotos para visitar nosso Instagram</p>
         <div className="flex items-center justify-center gap-4 mt-6">
           <div className="h-1 w-16 md:w-24 bg-gradient-to-r from-transparent via-orange-400 to-transparent"></div>
           <div className="h-2 w-2 rounded-full bg-yellow-400"></div>

@@ -8,11 +8,11 @@ export function NossaHistoria() {
       {/* Header with decorative elements */}
       <div className="text-center mb-12 relative">
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#FFD966]/10 rounded-full blur-3xl -z-10" />
-        <h2 className="text-instagram-title text-gray-900 mb-4 uppercase">Nossa História</h2>
+        <h2 className="text-5xl md:text-6xl font-black text-white mb-4 uppercase drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">Nossa História</h2>
         <div className="flex items-center justify-center gap-4 text-[#FF6B47] font-black uppercase tracking-wider">
-          <Heart className="h-6 w-6 fill-current" aria-hidden="true" />
-          <span className="text-lg text-gray-900">Arena Coligados é FAMÍLIA</span>
-          <Heart className="h-6 w-6 fill-current" aria-hidden="true" />
+          <Heart className="h-6 w-6 fill-current drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" aria-hidden="true" />
+          <span className="text-lg text-white font-black drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">Arena Coligados é FAMÍLIA</span>
+          <Heart className="h-6 w-6 fill-current drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" aria-hidden="true" />
         </div>
       </div>
 
