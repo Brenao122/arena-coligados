@@ -20,7 +20,7 @@ export default function SobreNosPage() {
             alt=""
             fill
             className="object-cover opacity-20"
-            quality={60}
+            quality={40}
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#F5F0E8]/50 to-[#F5F0E8]"></div>
@@ -150,7 +150,7 @@ export default function SobreNosPage() {
                     alt=""
                     fill
                     className="object-cover opacity-25 group-hover:opacity-30 transition-opacity"
-                    quality={60}
+                    quality={40}
                     loading="lazy"
                   />
                 </div>
@@ -186,7 +186,7 @@ export default function SobreNosPage() {
                     alt=""
                     fill
                     className="object-cover opacity-20 group-hover:opacity-25 transition-opacity"
-                    quality={60}
+                    quality={40}
                     loading="lazy"
                   />
                 </div>

@@ -100,8 +100,9 @@ export default function HomePageClient() {
               fill
               className="object-cover"
               priority={false}
-              quality={60}
+              quality={35}
               loading="lazy"
+              fetchPriority="low"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-slate-900/97 via-slate-900/92 to-slate-900/97"></div>
           </div>
@@ -118,8 +119,9 @@ export default function HomePageClient() {
                 height={100}
                 className="rounded-full mx-auto shadow-2xl shadow-[#FF6B47]/70 border-4 border-white/90 sm:w-[120px] sm:h-[120px] hover:scale-110 transition-transform duration-300"
                 priority
-                quality={75}
+                quality={70}
                 sizes="(max-width: 640px) 100px, 120px"
+                fetchPriority="high"
               />
             </div>
 
@@ -204,8 +206,9 @@ export default function HomePageClient() {
               alt=""
               fill
               className="object-cover opacity-20"
-              quality={55}
+              quality={30}
               loading="lazy"
+              fetchPriority="low"
             />
           </div>
 
@@ -237,8 +240,9 @@ export default function HomePageClient() {
               alt=""
               fill
               className="object-cover opacity-10"
-              quality={55}
+              quality={30}
               loading="lazy"
+              fetchPriority="low"
             />
           </div>
 
@@ -334,8 +338,9 @@ export default function HomePageClient() {
               alt=""
               fill
               className="object-cover opacity-15"
-              quality={55}
+              quality={30}
               loading="lazy"
+              fetchPriority="low"
             />
           </div>
 

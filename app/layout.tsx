@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Montserrat, Oswald } from 'next/font/google'
+import { Montserrat, Oswald } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/hooks/use-auth-simple"
 import { ThemeProvider } from "@/contexts/theme-context"
@@ -10,16 +10,18 @@ import { UpdatePrompt } from "@/components/shared/update-prompt"
 
 const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "600", "800"], // Reduced from 6 weights to 3
   display: "swap",
   variable: "--font-montserrat",
+  preload: true,
 })
 
 const oswald = Oswald({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "600", "700"], // Reduced from 5 weights to 3
   display: "swap",
   variable: "--font-oswald",
+  preload: true,
 })
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arena-coligados.vercel.app"
@@ -125,6 +127,12 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Arena Coligados" />
         <link rel="apple-touch-icon" href="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg" />
+        <link
+          rel="preload"
+          as="image"
+          href="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
+          fetchPriority="high"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

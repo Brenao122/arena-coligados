@@ -107,7 +107,7 @@ export default function MidiaKitClientPage() {
                     height={160}
                     className="rounded-full transition-transform duration-500 group-hover:rotate-6"
                     loading="lazy"
-                    quality={70}
+                    quality={50}
                   />
                 </div>
                 <figcaption className="relative text-sm font-bold uppercase tracking-widest text-gray-700 text-center">
@@ -128,7 +128,7 @@ export default function MidiaKitClientPage() {
                     height={160}
                     className="rounded-full transition-transform duration-500 group-hover:rotate-6"
                     loading="lazy"
-                    quality={70}
+                    quality={50}
                   />
                 </div>
                 <figcaption className="relative text-sm font-bold uppercase tracking-widest text-white text-center">
@@ -149,7 +149,7 @@ export default function MidiaKitClientPage() {
                     height={160}
                     className="rounded-full transition-transform duration-500 group-hover:rotate-6"
                     loading="lazy"
-                    quality={70}
+                    quality={50}
                   />
                 </div>
                 <figcaption className="relative text-sm font-bold uppercase tracking-widest text-gray-800 text-center">
