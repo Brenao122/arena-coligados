@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Instagram } from 'lucide-react'
+import { ExternalLink, Instagram } from "lucide-react"
 import Image from "next/image"
 
 export default function InstagramFeed() {
@@ -9,8 +9,11 @@ export default function InstagramFeed() {
     <div className="max-w-7xl mx-auto">
       <div className="relative flex flex-col items-center mb-16 md:mb-24">
         <div className="absolute -top-32 -left-32 w-64 h-64 bg-yellow-400/30 rounded-full blur-[100px] animate-pulse"></div>
-        <div className="absolute -bottom-16 -right-32 w-80 h-80 bg-orange-400/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
-        
+        <div
+          className="absolute -bottom-16 -right-32 w-80 h-80 bg-orange-400/20 rounded-full blur-[120px] animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+
         <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 px-4">
           {/* Arena Coligados */}
           <div className="bg-white/95 backdrop-blur-md rounded-3xl p-8 md:p-10 border-2 border-orange-500/30 shadow-2xl hover:shadow-orange-500/40 hover:scale-105 transition-all duration-500">
@@ -30,6 +33,8 @@ export default function InstagramFeed() {
                       height={120}
                       className="rounded-full object-cover"
                       sizes="(max-width: 768px) 112px, 128px"
+                      loading="lazy"
+                      quality={75}
                     />
                   </div>
                 </div>
@@ -69,6 +74,8 @@ export default function InstagramFeed() {
                       height={120}
                       className="rounded-full object-cover"
                       sizes="(max-width: 768px) 112px, 128px"
+                      loading="lazy"
+                      quality={75}
                     />
                   </div>
                 </div>

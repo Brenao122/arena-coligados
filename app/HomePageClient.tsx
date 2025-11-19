@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, Suspense, lazy } from "react"
 import { Button } from "@/components/ui/button"
-import { Calendar, Trophy, MapPin, Clock, ExternalLink, Waves } from 'lucide-react'
+import { Trophy, MapPin, Clock, ExternalLink, Waves } from "lucide-react"
 import Image from "next/image"
 import { WelcomePopup } from "@/components/home/welcome-popup"
 import { Navbar } from "@/components/layout/navbar"
@@ -99,15 +99,16 @@ export default function HomePageClient() {
               alt=""
               fill
               className="object-cover"
-              priority
-              quality={90}
+              priority={false}
+              quality={60}
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-slate-900/97 via-slate-900/92 to-slate-900/97"></div>
           </div>
 
           <div className="decorative-circle decorative-circle-yellow w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:w-96 top-10 sm:top-20 -right-10 sm:-right-20"></div>
           <div className="decorative-circle decorative-circle-coral w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bottom-20 sm:bottom-40 -left-10 sm:-left-20"></div>
-          
+
           <div className="relative z-10 max-w-6xl mx-auto text-center py-16 sm:py-24 md:py-32">
             <div className="animate-bounce mb-8 sm:mb-12">
               <Image
@@ -117,12 +118,18 @@ export default function HomePageClient() {
                 height={100}
                 className="rounded-full mx-auto shadow-2xl shadow-[#FF6B47]/70 border-4 border-white/90 sm:w-[120px] sm:h-[120px] hover:scale-110 transition-transform duration-300"
                 priority
+                quality={75}
                 sizes="(max-width: 640px) 100px, 120px"
               />
             </div>
 
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-6 sm:mb-8 bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent animate-gradient" style={{ textShadow: '0 4px 20px rgba(255,107,71,0.5)' }}>
-              Arena<br />Coligados
+            <h1
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-6 sm:mb-8 bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent animate-gradient"
+              style={{ textShadow: "0 4px 20px rgba(255,107,71,0.5)" }}
+            >
+              Arena
+              <br />
+              Coligados
             </h1>
 
             <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -187,20 +194,27 @@ export default function HomePageClient() {
         </section>
 
         {/* Instagram Section */}
-        <section className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="instagram-heading">
+        <section
+          className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden"
+          aria-labelledby="instagram-heading"
+        >
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/sports/multi-sports.jpg"
               alt=""
               fill
               className="object-cover opacity-20"
-              quality={85}
+              quality={55}
+              loading="lazy"
             />
           </div>
-          
+
           <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2 id="instagram-heading" className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-4 sm:mb-6 bg-gradient-to-r from-white via-yellow-100 to-white bg-clip-text text-transparent">
+              <h2
+                id="instagram-heading"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-4 sm:mb-6 bg-gradient-to-r from-white via-yellow-100 to-white bg-clip-text text-transparent"
+              >
                 Viva a Experiência
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-white/90 font-medium">Momentos que viram memórias</p>
@@ -213,54 +227,95 @@ export default function HomePageClient() {
         </section>
 
         {/* Stats Section - já correto com 03 modalidades */}
-        <section className="section-vibrant py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="stats-heading">
+        <section
+          className="section-vibrant py-16 sm:py-20 md:py-24 relative overflow-hidden"
+          aria-labelledby="stats-heading"
+        >
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/sports/volleyball-hands.jpg"
               alt=""
               fill
               className="object-cover opacity-10"
-              quality={80}
+              quality={55}
+              loading="lazy"
             />
           </div>
 
           <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2 id="stats-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-gray-900">
+              <h2
+                id="stats-heading"
+                className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-gray-900"
+              >
                 Em Números
               </h2>
               <div className="divider-luxury"></div>
             </div>
-            
+
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 md:gap-12" role="list">
               <ScrollReveal delay={0.1}>
                 <div className="text-center" role="listitem">
-                  <MapPin className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
-                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="2 unidades">02</div>
+                  <MapPin
+                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
+                    aria-label="2 unidades"
+                  >
+                    02
+                  </div>
                   <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Unidades</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
                 <div className="text-center" role="listitem">
-                  <Trophy className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
-                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="9 quadras">09</div>
+                  <Trophy
+                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
+                    aria-label="9 quadras"
+                  >
+                    09
+                  </div>
                   <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Quadras</div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.3}>
                 <div className="text-center" role="listitem">
-                  <Trophy className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
-                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="3 modalidades">03</div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Modalidades</div>
+                  <Trophy
+                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
+                    aria-label="3 modalidades"
+                  >
+                    03
+                  </div>
+                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">
+                    Modalidades
+                  </div>
                 </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.4}>
                 <div className="text-center" role="listitem">
-                  <Clock className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
-                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="14 horas">14h</div>
+                  <Clock
+                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
+                    aria-label="14 horas"
+                  >
+                    14h
+                  </div>
                   <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Diárias</div>
                 </div>
               </ScrollReveal>
@@ -269,20 +324,27 @@ export default function HomePageClient() {
         </section>
 
         {/* Pricing Section */}
-        <section className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="pricing-heading">
+        <section
+          className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden"
+          aria-labelledby="pricing-heading"
+        >
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/sports/friends-celebrating.jpg"
               alt=""
               fill
               className="object-cover opacity-15"
-              quality={85}
+              quality={55}
+              loading="lazy"
             />
           </div>
 
           <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2 id="pricing-heading" className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-white">
+              <h2
+                id="pricing-heading"
+                className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-white"
+              >
                 Planos
               </h2>
               <p className="text-base sm:text-lg text-white/90 font-medium">Escolha sua unidade preferida</p>
@@ -291,11 +353,16 @@ export default function HomePageClient() {
             <div className="grid md:grid-cols-2 gap-6 sm:gap-8" role="list">
               <ScrollReveal delay={0.1}>
                 <article className="card-luxury text-center p-8 sm:p-10 md:p-12" role="listitem">
-                  <MapPin className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+                  <MapPin
+                    className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8"
+                    aria-hidden="true"
+                  />
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wider">
                     Parque Amazônia
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">5 Quadras</p>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">
+                    5 Quadras
+                  </p>
                   <div className="mb-8 sm:mb-10">
                     <span className="text-5xl sm:text-6xl md:text-7xl font-light text-[#FF6B47]">R$ 80</span>
                     <span className="text-xl sm:text-2xl text-gray-500 font-light">/hora</span>
@@ -311,11 +378,16 @@ export default function HomePageClient() {
 
               <ScrollReveal delay={0.2}>
                 <article className="card-luxury text-center p-8 sm:p-10 md:p-12" role="listitem">
-                  <MapPin className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8" aria-hidden="true" />
+                  <MapPin
+                    className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8"
+                    aria-hidden="true"
+                  />
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wider">
                     Vila Rosa
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">4 Quadras</p>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">
+                    4 Quadras
+                  </p>
                   <div className="mb-8 sm:mb-10">
                     <span className="text-5xl sm:text-6xl md:text-7xl font-light text-[#FF6B47]">R$ 70</span>
                     <span className="text-xl sm:text-2xl text-gray-500 font-light">/hora</span>
