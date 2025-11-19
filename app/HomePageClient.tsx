@@ -100,7 +100,7 @@ export default function HomePageClient() {
               fill
               className="object-cover"
               priority={false}
-              quality={35}
+              quality={20}
               loading="lazy"
               fetchPriority="low"
             />
@@ -119,7 +119,7 @@ export default function HomePageClient() {
                 height={100}
                 className="rounded-full mx-auto shadow-2xl shadow-[#FF6B47]/70 border-4 border-white/90 sm:w-[120px] sm:h-[120px] hover:scale-110 transition-transform duration-300"
                 priority
-                quality={70}
+                quality={60}
                 sizes="(max-width: 640px) 100px, 120px"
                 fetchPriority="high"
               />
@@ -206,7 +206,7 @@ export default function HomePageClient() {
               alt=""
               fill
               className="object-cover opacity-20"
-              quality={30}
+              quality={20}
               loading="lazy"
               fetchPriority="low"
             />
@@ -240,7 +240,7 @@ export default function HomePageClient() {
               alt=""
               fill
               className="object-cover opacity-10"
-              quality={30}
+              quality={20}
               loading="lazy"
               fetchPriority="low"
             />
@@ -338,7 +338,7 @@ export default function HomePageClient() {
               alt=""
               fill
               className="object-cover opacity-15"
-              quality={30}
+              quality={20}
               loading="lazy"
               fetchPriority="low"
             />

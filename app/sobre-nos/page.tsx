@@ -106,7 +106,7 @@ export default function SobreNosPage() {
                     Visão
                   </h3>
                   <p className="text-sm sm:text-base text-gray-800 leading-relaxed font-bold relative z-10">
-                    Ser referência em gestão esportiva, expandindo nossa família para todo o Brasil.
+                    Ser referência em complexos esportivos de areia, expandindo nossa família para todo o Brasil.
                   </p>
                 </div>
               </article>
