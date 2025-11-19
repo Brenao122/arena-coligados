@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Montserrat, Oswald } from "next/font/google"
+import { Montserrat, Oswald } from 'next/font/google'
 import "./globals.css"
 import { AuthProvider } from "@/hooks/use-auth-simple"
 import { ThemeProvider } from "@/contexts/theme-context"
@@ -31,12 +31,11 @@ export const metadata: Metadata = {
     template: "%s | Arena Coligados",
   },
   description:
-    "Arena Coligados oferece quadras profissionais de Beach Tennis, Vôlei de Praia, Futevôlei e Tênis em Goiânia. 2 unidades, 9 quadras, aulas experimentais grátis. Sua segunda casa no esporte!",
+    "Arena Coligados oferece quadras profissionais de Beach Tennis, Vôlei de Praia e Futevôlei em Goiânia. 2 unidades, 9 quadras, aulas experimentais grátis. Sua segunda casa no esporte!",
   keywords: [
     "beach tennis",
     "vôlei de praia",
     "futevôlei",
-    "tênis",
     "arena esportiva",
     "quadras de areia",
     "esportes Goiânia",
@@ -68,7 +67,7 @@ export const metadata: Metadata = {
     siteName: "Arena Coligados",
     title: "Arena Coligados - Beach Tennis, Vôlei e Futevôlei em Goiânia",
     description:
-      "2 unidades com 9 quadras profissionais de areia. Beach Tennis, Vôlei, Futevôlei e Tênis. Aulas experimentais grátis!",
+      "2 unidades com 9 quadras profissionais de areia. Beach Tennis, Vôlei e Futevôlei. Aulas experimentais grátis!",
     images: [
       {
         url: `${siteUrl}/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg`,
@@ -82,7 +81,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Arena Coligados - Beach Tennis, Vôlei e Futevôlei em Goiânia",
     description:
-      "2 unidades com 9 quadras profissionais de areia. Beach Tennis, Vôlei, Futevôlei e Tênis. Aulas experimentais grátis!",
+      "2 unidades com 9 quadras profissionais de areia. Beach Tennis, Vôlei e Futevôlei. Aulas experimentais grátis!",
     images: [`${siteUrl}/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg`],
   },
   robots: {
@@ -134,7 +133,7 @@ export default function RootLayout({
               "@type": "SportsActivityLocation",
               name: "Arena Coligados",
               description:
-                "Arena esportiva com quadras profissionais de Beach Tennis, Vôlei de Praia, Futevôlei e Tênis em Goiânia",
+                "Arena esportiva com quadras profissionais de Beach Tennis, Vôlei de Praia e Futevôlei em Goiânia",
               url: siteUrl,
               logo: `${siteUrl}/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg`,
               image: `${siteUrl}/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg`,
@@ -168,7 +167,7 @@ export default function RootLayout({
                 closes: "22:00",
               },
               sameAs: ["https://www.instagram.com/arenacoligados/"],
-              sport: ["Beach Tennis", "Volleyball", "Footvolley", "Tennis"],
+              sport: ["Beach Tennis", "Volleyball", "Footvolley"],
               amenityFeature: [
                 {
                   "@type": "LocationFeatureSpecification",

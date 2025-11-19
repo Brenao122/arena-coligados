@@ -134,7 +134,7 @@ export default function SobreNosPage() {
                   <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Parque Amazônia</h3>
-                  <p className="text-white/90 mb-4 font-bold uppercase tracking-wide text-sm relative z-10">5 quadras profissionais | 3 modalidades: Vôlei, Futevôlei e Beach Tennis</p>
+                  <p className="text-white/90 mb-4 font-bold uppercase tracking-wide text-sm relative z-10">5 quadras profissionais | Beach Tennis, Vôlei e Futevôlei</p>
                   <address className="text-sm text-white/80 not-italic font-medium relative z-10 mb-6">Parque Amazônia, Goiânia - GO</address>
                   <button
                     onClick={() => window.open("https://api.whatsapp.com/message/CI3R2YERLZ3MG1?autoload=1&app_absent=0", "_blank")}
@@ -163,7 +163,7 @@ export default function SobreNosPage() {
                   <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#FFD966] rounded-full opacity-30 blur-3xl group-hover:scale-125 transition-transform" />
                   <MapPin className="h-14 w-14 text-white mb-6 relative z-10" aria-hidden="true" />
                   <h3 className="text-4xl font-black text-white mb-3 uppercase relative z-10">Vila Rosa</h3>
-                  <p className="text-white/90 mb-4 font-bold uppercase tracking-wide text-sm relative z-10">4 quadras equipadas | 3 modalidades: Vôlei, Futevôlei e Beach Tennis</p>
+                  <p className="text-white/90 mb-4 font-bold uppercase tracking-wide text-sm relative z-10">4 quadras equipadas | Beach Tennis, Vôlei e Futevôlei</p>
                   <address className="text-sm text-white/80 not-italic font-medium relative z-10 mb-6">Setor Vila Rosa, Goiânia - GO</address>
                   <button
                     onClick={() => window.open("https://api.whatsapp.com/send/?phone=5562995797965&text&type=phone_number&app_absent=0", "_blank")}
@@ -208,7 +208,7 @@ export default function SobreNosPage() {
                   <Zap className="h-12 w-12 text-green-500 mx-auto mb-4 relative z-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]" aria-hidden="true" />
                   <Trophy className="h-10 w-10 text-[#FFD966] mx-auto mb-4 relative z-10 drop-shadow-[0_0_10px_rgba(255,217,102,0.8)]" aria-hidden="true" />
                   <h3 className="text-2xl font-black text-white mb-2 uppercase relative z-10 tracking-wider">Rafael Henrique</h3>
-                  <p className="text-green-500 font-black uppercase text-sm tracking-widest relative z-10">Co-fundador & Diretor</p>
+                  <p className="text-green-500 font-black uppercase text-sm tracking-widest relative z-10">Sócio Investidor</p>
                 </article>
               </div>
             </div>

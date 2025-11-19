@@ -331,12 +331,12 @@
 /* Adicionando animação pulse-glow para efeitos neon esportivos */
 @keyframes pulse-glow {
   0%, 100% {
-    opacity: 0.3;
+    opacity: 0.4;
     transform: scale(1);
   }
   50% {
-    opacity: 0.6;
-    transform: scale(1.1);
+    opacity: 0.8;
+    transform: scale(1.15);
   }
 }
 
@@ -409,4 +409,128 @@
 /* Add smooth hover transitions to all interactive elements */
 button, a {
   @apply transition-all duration-300 ease-out;
+}
+
+/* Added new sport-themed animations and polished effects for dynamic athletic feel */
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+@keyframes glow-pulse-strong {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 107, 71, 0.5), 0 0 40px rgba(255, 107, 71, 0.3);
+    filter: brightness(1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 107, 71, 0.8), 0 0 60px rgba(255, 107, 71, 0.5);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-glow-pulse-strong {
+  animation: glow-pulse-strong 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s linear infinite;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Enhanced card hover effects with sport vibes */
+.card-luxury::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,107,71,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.card-luxury:hover::before {
+  opacity: 1;
+}
+
+.card-luxury:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 107, 71, 0.4);
+}
+
+/* Sport-themed gradients for modern athletic aesthetic */
+.gradient-sport-beach {
+  background: linear-gradient(135deg, #FF6B47 0%, #FFD966 100%);
+}
+
+.gradient-sport-volley {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.gradient-sport-fute {
+  background: linear-gradient(135deg, #FFD966 0%, #FFC233 100%);
+}
+
+/* Smooth scroll behavior for better UX */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced focus states for accessibility compliance */
+*:focus-visible {
+  outline: 3px solid #FF6B47;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Loading state shimmer for skeleton screens */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Parallax effect for hero sections */
+@media (prefers-reduced-motion: no-preference) {
+  .parallax-slow {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 15px 30px rgba(255, 107, 71, 0.5);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 15px 30px rgba(255, 107, 71, 0.3);
+}
+
+a {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

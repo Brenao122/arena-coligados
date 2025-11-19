@@ -212,8 +212,8 @@ export default function MidiaKitClientPage() {
                 <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-br from-[#FFD966] to-[#ffd24d] rounded-full flex items-center justify-center">
                   <Palette className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                 </div>
-                <div className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD966] to-[#ffd24d] mb-3" aria-label="4 modalidades">
-                  04
+                <div className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD966] to-[#ffd24d] mb-3" aria-label="3 modalidades">
+                  03
                 </div>
                 <p className="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-600">Modalidades</p>
               </article>

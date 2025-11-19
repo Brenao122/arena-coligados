@@ -88,6 +88,7 @@ export default function HomePageClient() {
       <WelcomePopup />
 
       <main id="main-content">
+        {/* Hero Section */}
         <section
           className="relative min-h-screen flex items-center justify-center pt-24 sm:pt-28 md:pt-32 overflow-hidden px-4 sm:px-6"
           aria-label="Hero principal"
@@ -101,7 +102,7 @@ export default function HomePageClient() {
               priority
               quality={90}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-slate-900/95"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/97 via-slate-900/92 to-slate-900/97"></div>
           </div>
 
           <div className="decorative-circle decorative-circle-yellow w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:w-96 top-10 sm:top-20 -right-10 sm:-right-20"></div>
@@ -114,22 +115,23 @@ export default function HomePageClient() {
                 alt="Logo Arena Coligados"
                 width={100}
                 height={100}
-                className="rounded-full mx-auto shadow-2xl shadow-[#FF6B47]/50 border-4 border-white sm:w-[120px] sm:h-[120px]"
+                className="rounded-full mx-auto shadow-2xl shadow-[#FF6B47]/70 border-4 border-white/90 sm:w-[120px] sm:h-[120px] hover:scale-110 transition-transform duration-300"
                 priority
                 sizes="(max-width: 640px) 100px, 120px"
               />
             </div>
 
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-6 sm:mb-8 drop-shadow-2xl bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent animate-gradient">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-6 sm:mb-8 bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent animate-gradient" style={{ textShadow: '0 4px 20px rgba(255,107,71,0.5)' }}>
               Arena<br />Coligados
             </h1>
 
             <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
               <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FF6B47] to-transparent"></div>
-              <div className="h-2 w-2 rounded-full bg-[#FFD966]"></div>
+              <div className="h-2 w-2 rounded-full bg-[#FFD966] animate-pulse-glow"></div>
               <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FFD966] to-transparent"></div>
             </div>
 
+            {/* Sport badges - já correto com 3 modalidades */}
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4">
               <div className="group relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
@@ -176,7 +178,7 @@ export default function HomePageClient() {
 
             <Link
               href="/sobre-nos"
-              className="inline-flex items-center gap-2 text-[#FF6B47] hover:text-[#FF5533] transition-colors font-bold text-xs sm:text-sm uppercase tracking-widest"
+              className="inline-flex items-center gap-2 text-[#FF6B47] hover:text-[#FF5533] transition-colors font-bold text-xs sm:text-sm uppercase tracking-widest hover:gap-3"
             >
               <span>Conheça Nossa História</span>
               <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
@@ -184,6 +186,7 @@ export default function HomePageClient() {
           </div>
         </section>
 
+        {/* Instagram Section */}
         <section className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="instagram-heading">
           <div className="absolute inset-0 z-0">
             <Image
@@ -209,6 +212,7 @@ export default function HomePageClient() {
           </div>
         </section>
 
+        {/* Stats Section - já correto com 03 modalidades */}
         <section className="section-vibrant py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="stats-heading">
           <div className="absolute inset-0 z-0">
             <Image
@@ -248,7 +252,7 @@ export default function HomePageClient() {
               <ScrollReveal delay={0.3}>
                 <div className="text-center" role="listitem">
                   <Trophy className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6" aria-hidden="true" />
-                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="4 modalidades">04</div>
+                  <div className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4" aria-label="3 modalidades">03</div>
                   <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Modalidades</div>
                 </div>
               </ScrollReveal>
@@ -264,6 +268,7 @@ export default function HomePageClient() {
           </div>
         </section>
 
+        {/* Pricing Section */}
         <section className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden" aria-labelledby="pricing-heading">
           <div className="absolute inset-0 z-0">
             <Image
