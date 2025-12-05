@@ -176,13 +176,14 @@ export default function HomePageClient() {
                 Aula Experimental
               </Button>
 
-              <Button
-                onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                className="btn-secondary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-                aria-label="Reservar quadra"
-              >
-                Reservar Quadra
-              </Button>
+              <Link href="/reserva">
+                <Button
+                  className="btn-secondary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
+                  aria-label="Reservar quadra com novo fluxo"
+                >
+                  Reservar Quadra
+                </Button>
+              </Link>
             </div>
 
             <Link
