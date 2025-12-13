@@ -1,6 +1,5 @@
 "use client"
 
-// Google Sheets integration configured with Base64 private key
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -8,10 +7,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, CheckCircle2, Loader2, Copy, Calendar } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Loader2, Copy } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+
+const MODALIDADES = [
+  { id: "Beach Tennis", name: "Beach Tennis", icon: "🎾", description: "Partidas dinâmicas" },
+  { id: "Vôlei", name: "Vôlei", icon: "🏐", description: "Jogo clássico de vôlei" },
+  { id: "Futevôlei", name: "Futevôlei", icon: "⚽", description: "Fusão futebol + vôlei" },
+  { id: "Tênis", name: "Tênis", icon: "🎾", description: "Tênis tradicional" },
+]
 
 const MODALIDADES_POR_QUADRA: Record<string, string[]> = {
   "Parque Amazônia-Quadra 01": ["Vôlei", "Futevôlei", "Beach Tennis"],
@@ -29,12 +34,10 @@ const UNIDADES = {
   "Parque Amazônia": {
     preco: "80,00",
     quadras: ["Quadra 01", "Quadra 02", "Quadra 03", "Quadra 04", "Quadra 05"],
-    pix: "12345678",
   },
   "Vila Rosa": {
     preco: "70,00",
     quadras: ["Q1", "Q2", "Q3", "Q4"],
-    pix: "87654321",
   },
 }
 
@@ -68,76 +71,57 @@ const HORARIOS = [
   "21:00",
 ]
 
-const isHorarioBloqueado = (horario: string, dataReserva?: Date) => {
-  const data = dataReserva || new Date()
-  const diaSemana = data.getDay() // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
-  const isSegundaASexta = diaSemana >= 1 && diaSemana <= 5
-
-  if (isSegundaASexta && (horario === "19:30" || horario === "20:00")) {
-    return true
-  }
-
-  return false
-}
-
-const isHorarioPassado = (horario: string, dataReserva: Date) => {
-  const agora = new Date()
-  const [hora, minuto] = horario.split(":").map(Number)
-
-  const dataHoraSelecionada = new Date(dataReserva)
-  dataHoraSelecionada.setHours(hora, minuto, 0, 0)
-
-  return dataHoraSelecionada < agora
-}
-
 const getNext7Days = () => {
   const days = []
   const today = new Date()
-
   for (let i = 0; i < 7; i++) {
     const date = new Date(today)
     date.setDate(today.getDate() + i)
     days.push(date)
   }
-
   return days
 }
 
 const formatDate = (date: Date) => {
   const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
-  const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+  const meses = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ]
 
   return {
     diaSemana: dias[date.getDay()],
     dia: date.getDate(),
     mes: meses[date.getMonth()],
+    mesAbrev: meses[date.getMonth()].slice(0, 3),
     full: date.toISOString().split("T")[0],
   }
 }
 
 export default function ReservarQuadraPage() {
   const router = useRouter()
+  const [step, setStep] = useState<"modalidade" | "dados" | "data" | "horarios" | "pagamento">("modalidade")
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+
   const [horariosOcupados, setHorariosOcupados] = useState<Record<string, string[]>>({})
+  const [horariosEmProcesso, setHorariosEmProcesso] = useState<Record<string, string[]>>({})
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [availableDays] = useState<Date[]>(getNext7Days())
 
-  const [selectedSlots, setSelectedSlots] = useState<
-    Array<{
-      unidade: string
-      quadra: string
-      horario: string
-    }>
-  >([])
+  const [selectedSlots, setSelectedSlots] = useState<Array<{ unidade: string; quadra: string; horario: string }>>([])
   const [selectedModalidade, setSelectedModalidade] = useState<string>("")
-  const [showModalidadeDialog, setShowModalidadeDialog] = useState(false)
-  const [tempSlot, setTempSlot] = useState<{
-    unidade: string
-    quadra: string
-    horario: string
-  } | null>(null)
 
   const [formData, setFormData] = useState({
     nome: "",
@@ -145,6 +129,7 @@ export default function ReservarQuadraPage() {
     email: "",
     cpf: "",
   })
+
   const [showPayment, setShowPayment] = useState(false)
   const [paymentData, setPaymentData] = useState<{
     paymentId: string
@@ -152,25 +137,19 @@ export default function ReservarQuadraPage() {
     pixPayload: string
     expirationDate: string
   } | null>(null)
+
   const [checkingPayment, setCheckingPayment] = useState(false)
-  const [countdown, setCountdown] = useState(20)
-  const [canConfirm, setCanConfirm] = useState(false)
   const [pixCopied, setPixCopied] = useState(false)
-  const SERVICE_ACCOUNT_EMAIL = "service-account-email@example.com"
 
   useEffect(() => {
     const fetchHorariosOcupados = async () => {
       try {
-        console.log("[v0] Buscando horários ocupados...")
         const response = await fetch("/api/sheets/reservas")
         if (response.ok) {
           const data = await response.json()
-          console.log("[v0] Dados recebidos:", data)
-
           const ocupados: Record<string, string[]> = {}
 
           data.reservas?.forEach((reserva: any) => {
-            // Para cada horário da reserva, marcar como ocupado
             reserva.horarios?.forEach((horario: string) => {
               const key = `${reserva.data}-${reserva.unidade}-${reserva.quadra}`
               if (!ocupados[key]) ocupados[key] = []
@@ -178,28 +157,18 @@ export default function ReservarQuadraPage() {
             })
           })
 
-          console.log("[v0] Horários ocupados processados:", ocupados)
           setHorariosOcupados(ocupados)
-        } else {
-          console.error("[v0] Erro na resposta:", response.status)
         }
       } catch (error) {
         console.error("[v0] Erro ao buscar horários:", error)
       }
     }
     fetchHorariosOcupados()
-  }, [])
 
-  useEffect(() => {
-    if (showPayment && countdown > 0) {
-      const timer = setTimeout(() => {
-        setCountdown(countdown - 1)
-      }, 1000)
-      return () => clearTimeout(timer)
-    } else if (countdown === 0) {
-      setCanConfirm(true)
-    }
-  }, [showPayment, countdown])
+    // Atualizar a cada 10 segundos
+    const interval = setInterval(fetchHorariosOcupados, 10000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     if (showPayment && paymentData?.paymentId && !checkingPayment) {
@@ -213,7 +182,6 @@ export default function ReservarQuadraPage() {
           const result = await response.json()
 
           if (result.success && (result.payment.status === "RECEIVED" || result.payment.status === "CONFIRMED")) {
-            console.log("[v0] Pagamento confirmado automaticamente!")
             clearInterval(checkInterval)
             await handleConfirmReservation()
           }
@@ -222,7 +190,7 @@ export default function ReservarQuadraPage() {
         } finally {
           setCheckingPayment(false)
         }
-      }, 5000) // Verifica a cada 5 segundos
+      }, 5000)
 
       return () => clearInterval(checkInterval)
     }
@@ -234,17 +202,38 @@ export default function ReservarQuadraPage() {
     return horariosOcupados[key]?.includes(horario) || false
   }
 
+  const isHorarioEmProcesso = (unidade: string, quadra: string, horario: string) => {
+    const dateStr = selectedDate.toISOString().split("T")[0]
+    const key = `${dateStr}-${unidade}-${quadra}`
+    return horariosEmProcesso[key]?.includes(horario) || false
+  }
+
   const isSlotSelected = (unidade: string, quadra: string, horario: string) => {
     return selectedSlots.some((slot) => slot.unidade === unidade && slot.quadra === quadra && slot.horario === horario)
   }
 
+  const marcarHorarioEmProcesso = (unidade: string, quadra: string, horario: string, ativo: boolean) => {
+    const dateStr = selectedDate.toISOString().split("T")[0]
+    const key = `${dateStr}-${unidade}-${quadra}`
+
+    setHorariosEmProcesso((prev) => {
+      const updated = { ...prev }
+      if (ativo) {
+        if (!updated[key]) updated[key] = []
+        if (!updated[key].includes(horario)) {
+          updated[key].push(horario)
+        }
+      } else {
+        if (updated[key]) {
+          updated[key] = updated[key].filter((h) => h !== horario)
+        }
+      }
+      return updated
+    })
+  }
+
   const handleSlotClick = (unidade: string, quadra: string, horario: string) => {
-    if (
-      isHorarioOcupado(unidade, quadra, horario) ||
-      isHorarioBloqueado(horario, selectedDate) ||
-      isHorarioPassado(horario, selectedDate)
-    )
-      return
+    if (isHorarioOcupado(unidade, quadra, horario) || isHorarioEmProcesso(unidade, quadra, horario)) return
 
     const isSelected = isSlotSelected(unidade, quadra, horario)
 
@@ -254,6 +243,7 @@ export default function ReservarQuadraPage() {
           (slot) => !(slot.unidade === unidade && slot.quadra === quadra && slot.horario === horario),
         ),
       )
+      marcarHorarioEmProcesso(unidade, quadra, horario, false)
     } else {
       if (selectedSlots.length > 0) {
         const firstSlot = selectedSlots[0]
@@ -262,23 +252,8 @@ export default function ReservarQuadraPage() {
           return
         }
       }
-
-      setTempSlot({ unidade, quadra, horario })
-
-      if (selectedModalidade) {
-        setSelectedSlots([...selectedSlots, { unidade, quadra, horario }])
-      } else {
-        setShowModalidadeDialog(true)
-      }
-    }
-  }
-
-  const handleModalidadeSelect = (modalidade: string) => {
-    if (tempSlot) {
-      setSelectedSlots([...selectedSlots, tempSlot])
-      setSelectedModalidade(modalidade)
-      setShowModalidadeDialog(false)
-      setTempSlot(null)
+      setSelectedSlots([...selectedSlots, { unidade, quadra, horario }])
+      marcarHorarioEmProcesso(unidade, quadra, horario, true)
     }
   }
 
@@ -301,60 +276,149 @@ export default function ReservarQuadraPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (selectedSlots.length === 0) {
-      alert("Por favor, selecione pelo menos um horário")
-      return
-    }
-
     setLoading(true)
+
     try {
+      // Validações
+      if (!selectedModalidade || selectedSlots.length === 0) {
+        alert("Por favor, selecione a modalidade e os horários")
+        setLoading(false)
+        return
+      }
+
+      if (!formData.nome || !formData.telefone || !formData.cpf) {
+        alert("Por favor, preencha todos os dados")
+        setLoading(false)
+        return
+      }
+
       const firstSlot = selectedSlots[0]
-      const valorTotal = calcularValorTotal().replace(",", ".")
-      const dataReserva = selectedDate.toISOString().split("T")[0]
+      const valorTotal = Number.parseFloat(UNIDADES[firstSlot.unidade as keyof typeof UNIDADES].preco.replace(",", "."))
+      const valorReserva = valorTotal / 2
 
-      console.log("[v0] Criando cobrança PIX no Asaas...")
+      const reservaResponse = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "leads - quadra",
+          values: [
+            [
+              new Date().toISOString(), // timestamp
+              selectedDate.toISOString().split("T")[0], // data
+              firstSlot.unidade, // Unidade
+              firstSlot.quadra, // quadra_id
+              selectedSlots
+                .map((s) => s.horario)
+                .join(", "), // horarios
+              selectedModalidade, // modalidade
+              formData.nome, // nome
+              formData.telefone, // whatsapp_number
+              formData.email, // email
+              formData.cpf, // cpf
+              "PENDENTE", // Status inicial é PENDENTE
+              "", // payment_id - será preenchido depois
+              valorTotal.toFixed(2), // valor_total
+              valorReserva.toFixed(2), // valor_reserva
+            ],
+          ],
+        }),
+      })
 
-      const response = await fetch("/api/asaas/create-payment", {
+      if (!reservaResponse.ok) {
+        throw new Error("Erro ao salvar reserva")
+      }
+
+      console.log("[v0] Reserva salva como PENDENTE")
+
+      // Criar pagamento PIX
+      const paymentResponse = await fetch("/api/asaas/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           customer: {
             name: formData.nome,
-            cpfCnpj: formData.cpf,
-            email: formData.email,
+            cpfCnpj: formData.cpf.replace(/\D/g, ""),
+            email: formData.email || `${formData.cpf.replace(/\D/g, "")}@temp.com`,
             phone: formData.telefone.replace(/\D/g, ""),
           },
-          value: Number.parseFloat(valorTotal),
-          description: `Reserva ${firstSlot.unidade} - ${firstSlot.quadra} - ${selectedModalidade}`,
-          dueDate: dataReserva,
-          externalReference: `${dataReserva}-${firstSlot.unidade}-${firstSlot.quadra}-${Date.now()}`,
-          unidade: firstSlot.unidade, // Enviando a unidade
+          value: valorTotal,
+          description: `Reserva ${firstSlot.quadra} - ${selectedModalidade}`,
+          dueDate: new Date().toISOString().split("T")[0],
+          externalReference: `${formData.cpf}-${Date.now()}`,
+          unidade: firstSlot.unidade,
         }),
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        console.error("[v0] Erro ao criar cobrança:", result)
-        alert(`Erro ao gerar pagamento: ${result.error || "Tente novamente"}`)
-        return
+      if (!paymentResponse.ok) {
+        const errorData = await paymentResponse.json()
+        throw new Error(errorData.error || "Erro ao criar pagamento")
       }
 
-      console.log("[v0] Cobrança criada com sucesso:", result.payment.id)
+      const paymentResult = await paymentResponse.json()
+
+      await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "leads - quadra",
+          values: [
+            [
+              new Date().toISOString(),
+              selectedDate.toISOString().split("T")[0],
+              firstSlot.unidade,
+              firstSlot.quadra,
+              selectedSlots.map((s) => s.horario).join(", "),
+              selectedModalidade,
+              formData.nome,
+              formData.telefone,
+              formData.email,
+              formData.cpf,
+              "PENDENTE",
+              paymentResult.payment.id, // payment_id
+              valorTotal.toFixed(2),
+              valorReserva.toFixed(2),
+            ],
+          ],
+        }),
+      })
 
       setPaymentData({
-        paymentId: result.payment.id,
-        qrCodeBase64: result.pix.qrCode,
-        pixPayload: result.pix.payload,
-        expirationDate: result.pix.expirationDate,
+        paymentId: paymentResult.payment.id,
+        qrCodeBase64: paymentResult.pix.qrCode,
+        pixPayload: paymentResult.pix.payload,
+        expirationDate: paymentResult.pix.expirationDate,
       })
 
       setShowPayment(true)
     } catch (error) {
-      console.error("[v0] Erro ao criar pagamento:", error)
-      alert("Erro ao processar pagamento. Tente novamente.")
+      console.error("[v0] Erro:", error)
+      alert(error instanceof Error ? error.message : "Erro ao processar reserva")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleConfirmReservation = async () => {
+    try {
+      if (!paymentData?.paymentId) return
+
+      // Atualizar status para CONFIRMADA
+      const updateResponse = await fetch("/api/sheets/reservas/update-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paymentId: paymentData.paymentId,
+          status: "CONFIRMADA",
+        }),
+      })
+
+      if (updateResponse.ok) {
+        console.log("[v0] Status atualizado para CONFIRMADA")
+        setSuccess(true)
+        setShowPayment(false)
+      }
+    } catch (error) {
+      console.error("[v0] Erro ao confirmar reserva:", error)
     }
   }
 
@@ -366,111 +430,391 @@ export default function ReservarQuadraPage() {
     }
   }
 
-  const handleConfirmReservation = async () => {
-    if (selectedSlots.length === 0) return
+  const getQuadrasDisponiveis = () => {
+    if (!selectedModalidade) return []
 
-    setLoading(true)
+    const quadrasComModalidade: Array<{ unidade: string; quadra: string }> = []
 
-    try {
-      const horariosFormatados = selectedSlots.map((slot) => slot.horario).sort()
-
-      // Formatar horários: se consecutivos, usar intervalo (08:30 - 10:00), senão listar (08:30, 09:00, 10:00)
-      let horariosString = ""
-      if (horariosFormatados.length === 1) {
-        horariosString = horariosFormatados[0]
-      } else {
-        // Verificar se são consecutivos
-        const saoConsecutivos = horariosFormatados.every((horario, index) => {
-          if (index === 0) return true
-          const indexAnterior = HORARIOS.indexOf(horariosFormatados[index - 1])
-          const indexAtual = HORARIOS.indexOf(horario)
-          return indexAtual === indexAnterior + 1
-        })
-
-        if (saoConsecutivos) {
-          // Formato de intervalo: "08:30 - 10:00"
-          const primeiroHorario = horariosFormatados[0]
-          const ultimoIndex = HORARIOS.indexOf(horariosFormatados[horariosFormatados.length - 1])
-          const horarioFim = HORARIOS[ultimoIndex + 1] || horariosFormatados[horariosFormatados.length - 1]
-          horariosString = `${primeiroHorario} - ${horarioFim}`
-        } else {
-          // Formato de lista: "08:30, 09:00, 10:00"
-          horariosString = horariosFormatados.join(", ")
-        }
+    Object.entries(MODALIDADES_POR_QUADRA).forEach(([quadraKey, modalidades]) => {
+      if (modalidades.includes(selectedModalidade)) {
+        const [unidade, quadra] = quadraKey.split("-")
+        quadrasComModalidade.push({ unidade, quadra })
       }
+    })
 
-      const extrairNumeroQuadra = (quadra: string): string => {
-        const match = quadra.match(/\d+/)
-        if (match) {
-          const numero = match[0].padStart(2, "0")
-          return `Quadra ${numero}`
-        }
-        return quadra
-      }
-
-      const firstSlot = selectedSlots[0]
-      const dataReserva = selectedDate.toISOString().split("T")[0]
-      const preco = UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".")
-      const valorTotal = (Number.parseFloat(preco) * selectedSlots.length).toFixed(2)
-
-      const dadosReserva = {
-        whatsapp_number: formData.telefone,
-        nome: formData.nome,
-        Unidade: firstSlot.unidade,
-        esporte: selectedModalidade,
-        quadra_id: extrairNumeroQuadra(firstSlot.quadra),
-        data: dataReserva,
-        horarios: horariosString,
-        valor_total: valorTotal,
-        observacoes: `Email: ${formData.email}${paymentData ? ` | Pagamento ID: ${paymentData.paymentId}` : ""}`,
-        status: "Confirmado",
-      }
-
-      console.log("[v0] ===== INICIANDO ENVIO DE RESERVA =====")
-      console.log("[v0] Dados da reserva:", JSON.stringify(dadosReserva, null, 2))
-
-      const response = await fetch("/api/sheets/append", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sheetName: "leads - quadra",
-          data: dadosReserva,
-        }),
-      })
-
-      console.log("[v0] Status da resposta:", response.status, response.statusText)
-
-      const result = await response.json()
-      console.log("[v0] Resposta completa da API:", JSON.stringify(result, null, 2))
-
-      if (!response.ok) {
-        console.error("[v0] ❌ ERRO na resposta da API")
-        alert(`Erro ao processar reserva: ${result.error || "Erro desconhecido"}`)
-        return
-      }
-
-      console.log("[v0] ✅ Reserva confirmada com sucesso!")
-      setSuccess(true)
-      setTimeout(() => router.push("/"), 3000)
-    } catch (error) {
-      console.error("[v0] ❌ ERRO ao enviar formulário:", error)
-      alert(`❌ ${error instanceof Error ? error.message : "Erro desconhecido"}`)
-    } finally {
-      setLoading(false)
-    }
+    return quadrasComModalidade
   }
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4">
-        <Card className="max-w-md w-full bg-white/10 backdrop-blur-xl border-white/20">
-          <CardContent className="pt-12 pb-8 text-center">
-            <CheckCircle2 className="h-20 w-20 text-green-400 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-white mb-4">Reserva Confirmada!</h2>
-            <p className="text-gray-300 mb-6">Sua reserva foi confirmada com sucesso.</p>
-            <p className="text-sm text-gray-400">Redirecionando...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 via-emerald-900 to-teal-800 p-4">
+        <Card className="max-w-md w-full bg-white/10 backdrop-blur-xl border-white/20 text-center">
+          <CardHeader>
+            <div className="mx-auto mb-4 w-20 h-20 bg-green-500 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="w-12 h-12 text-white" />
+            </div>
+            <CardTitle className="text-3xl font-bold text-white">Pagamento Confirmado!</CardTitle>
+            <CardDescription className="text-gray-300 text-lg mt-2">
+              Sua reserva foi confirmada com sucesso
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-white/5 rounded-lg p-4 border border-white/20">
+              <p className="text-gray-300 mb-2">
+                <strong>Data:</strong> {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes}
+              </p>
+              <p className="text-gray-300 mb-2">
+                <strong>Modalidade:</strong> {selectedModalidade}
+              </p>
+              <p className="text-gray-300">
+                <strong>Horários:</strong> {selectedSlots.map((s) => s.horario).join(", ")}
+              </p>
+            </div>
+            <Link href="/">
+              <Button className="w-full bg-green-600 hover:bg-green-700">Voltar ao Início</Button>
+            </Link>
           </CardContent>
         </Card>
+      </div>
+    )
+  }
+
+  if (step === "modalidade") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          <Link href="/">
+            <Button variant="ghost" className="mb-6 text-white hover:text-white/80">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
+          </Link>
+
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Modalidade</CardTitle>
+              <CardDescription className="text-gray-300 text-center">
+                Selecione qual esporte deseja praticar
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {MODALIDADES.map((mod) => (
+                  <Card
+                    key={mod.id}
+                    className={`cursor-pointer transition-all border-2 ${
+                      selectedModalidade === mod.id
+                        ? "border-green-500 bg-green-900/20"
+                        : "border-gray-700 bg-gray-800/50 hover:border-green-400"
+                    }`}
+                    onClick={() => {
+                      setSelectedModalidade(mod.id)
+                      setStep("dados")
+                    }}
+                  >
+                    <div className="p-6 text-center">
+                      <div className="text-5xl mb-3">{mod.icon}</div>
+                      <h3 className="text-lg font-bold text-white mb-2">{mod.name}</h3>
+                      <p className="text-sm text-gray-400">{mod.description}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === "dados") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-2xl mx-auto">
+          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("modalidade")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-white text-center">Seus Dados</CardTitle>
+              <CardDescription className="text-gray-300 text-center">
+                Modalidade selecionada: <span className="text-green-400 font-semibold">{selectedModalidade}</span>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form
+                className="space-y-4"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  setStep("data")
+                }}
+              >
+                <div>
+                  <Label htmlFor="nome" className="text-white">
+                    Nome Completo
+                  </Label>
+                  <Input
+                    id="nome"
+                    value={formData.nome}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                    placeholder="João Silva"
+                    required
+                    className="bg-white/10 border-white/30 text-white"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="telefone" className="text-white">
+                    Telefone
+                  </Label>
+                  <Input
+                    id="telefone"
+                    value={formData.telefone}
+                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                    placeholder="(00) 00000-0000"
+                    required
+                    className="bg-white/10 border-white/30 text-white"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="cpf" className="text-white">
+                    CPF
+                  </Label>
+                  <Input
+                    id="cpf"
+                    value={formData.cpf}
+                    onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                    placeholder="000.000.000-00"
+                    required
+                    className="bg-white/10 border-white/30 text-white"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email" className="text-white">
+                    Email (opcional)
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="joao@example.com"
+                    className="bg-white/10 border-white/30 text-white"
+                  />
+                </div>
+                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white">
+                  Continuar para Data
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === "data") {
+    const mesAtual = formatDate(availableDays[0]).mes
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("dados")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Data</CardTitle>
+              <CardDescription className="text-gray-300 text-center text-xl">{mesAtual}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 md:grid-cols-4 lg:grid-cols-7">
+                {availableDays.map((date) => {
+                  const formatted = formatDate(date)
+                  const isSelected = selectedDate.toDateString() === date.toDateString()
+
+                  return (
+                    <Button
+                      key={date.toISOString()}
+                      onClick={() => {
+                        setSelectedDate(date)
+                        setStep("horarios")
+                      }}
+                      variant={isSelected ? "default" : "outline"}
+                      className={cn(
+                        "flex flex-col items-center py-6 h-auto",
+                        isSelected
+                          ? "bg-green-600 hover:bg-green-700 text-white border-green-500"
+                          : "bg-white/10 hover:bg-white/20 text-white border-white/30",
+                      )}
+                    >
+                      <span className="text-xs font-medium">{formatted.diaSemana}</span>
+                      <span className="text-2xl font-bold">{formatted.dia}</span>
+                      <span className="text-xs">{formatted.mesAbrev}</span>
+                    </Button>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === "horarios") {
+    const quadrasDisponiveis = getQuadrasDisponiveis()
+    const parqueQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Parque Amazônia")
+    const vilaQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Vila Rosa")
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-7xl mx-auto">
+          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("data")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 mb-6">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-white text-center">
+                Horários Disponíveis - {formatDate(selectedDate).diaSemana}, {formatDate(selectedDate).dia} de{" "}
+                {formatDate(selectedDate).mes}
+              </CardTitle>
+              <CardDescription className="text-gray-300 text-center">
+                Modalidade: <span className="text-green-400">{selectedModalidade}</span>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Parque Amazônia */}
+                <div>
+                  <h3 className="text-xl font-bold text-orange-400 mb-4">🏖️ Parque Amazônia</h3>
+                  {parqueQuadras.map(({ unidade, quadra }) => (
+                    <div key={`${unidade}-${quadra}`} className="mb-6 bg-white/5 rounded-lg p-4">
+                      <h4 className="text-lg font-semibold text-white mb-3">{quadra}</h4>
+                      <div className="grid grid-cols-4 gap-2">
+                        {HORARIOS.map((horario) => {
+                          const ocupado = isHorarioOcupado(unidade, quadra, horario)
+                          const emProcesso = isHorarioEmProcesso(unidade, quadra, horario)
+                          const selecionado = isSlotSelected(unidade, quadra, horario)
+
+                          return (
+                            <Button
+                              key={horario}
+                              onClick={() => handleSlotClick(unidade, quadra, horario)}
+                              disabled={ocupado || emProcesso}
+                              size="sm"
+                              className={cn(
+                                "text-xs h-10",
+                                selecionado && "bg-yellow-500 hover:bg-yellow-600 text-black",
+                                !selecionado && !ocupado && !emProcesso && "bg-green-700 hover:bg-green-600 text-white",
+                                ocupado && "bg-red-900 text-red-300 cursor-not-allowed opacity-50",
+                                emProcesso && "bg-orange-700 text-orange-300 cursor-not-allowed opacity-70",
+                              )}
+                            >
+                              {horario}
+                            </Button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  {parqueQuadras.length === 0 && (
+                    <p className="text-gray-400 text-center py-8">
+                      Nenhuma quadra disponível para {selectedModalidade}
+                    </p>
+                  )}
+                </div>
+
+                {/* Vila Rosa */}
+                <div>
+                  <h3 className="text-xl font-bold text-blue-400 mb-4">🏐 Vila Rosa</h3>
+                  {vilaQuadras.map(({ unidade, quadra }) => (
+                    <div key={`${unidade}-${quadra}`} className="mb-6 bg-white/5 rounded-lg p-4">
+                      <h4 className="text-lg font-semibold text-white mb-3">{quadra}</h4>
+                      <div className="grid grid-cols-4 gap-2">
+                        {HORARIOS.map((horario) => {
+                          const ocupado = isHorarioOcupado(unidade, quadra, horario)
+                          const emProcesso = isHorarioEmProcesso(unidade, quadra, horario)
+                          const selecionado = isSlotSelected(unidade, quadra, horario)
+
+                          return (
+                            <Button
+                              key={horario}
+                              onClick={() => handleSlotClick(unidade, quadra, horario)}
+                              disabled={ocupado || emProcesso}
+                              size="sm"
+                              className={cn(
+                                "text-xs h-10",
+                                selecionado && "bg-yellow-500 hover:bg-yellow-600 text-black",
+                                !selecionado && !ocupado && !emProcesso && "bg-green-700 hover:bg-green-600 text-white",
+                                ocupado && "bg-red-900 text-red-300 cursor-not-allowed opacity-50",
+                                emProcesso && "bg-orange-700 text-orange-300 cursor-not-allowed opacity-70",
+                              )}
+                            >
+                              {horario}
+                            </Button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  {vilaQuadras.length === 0 && (
+                    <p className="text-gray-400 text-center py-8">
+                      Nenhuma quadra disponível para {selectedModalidade}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Legenda */}
+              <div className="mt-6 flex flex-wrap justify-center gap-4 text-xs text-gray-300">
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-green-700 rounded" /> Disponível
+                </span>
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-yellow-500 rounded" /> Selecionado
+                </span>
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-orange-700 rounded" /> Em processo
+                </span>
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-900 rounded" /> Ocupado
+                </span>
+              </div>
+
+              {/* Resumo e botão de continuar */}
+              {selectedSlots.length > 0 && (
+                <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
+                  <p className="text-white mb-2">
+                    <strong>{selectedSlots.length}</strong> horário(s) selecionado(s)
+                  </p>
+                  <p className="text-gray-300 text-sm mb-4">
+                    {selectedSlots[0].unidade} - {selectedSlots[0].quadra}
+                  </p>
+                  <Button
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    onClick={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processando...
+                      </>
+                    ) : (
+                      `Ir para Pagamento - R$ ${calcularValorReserva()}`
+                    )}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
@@ -478,7 +822,7 @@ export default function ReservarQuadraPage() {
   if (showPayment && selectedSlots.length > 0) {
     const firstSlot = selectedSlots[0]
     const valorTotal = calcularValorTotal()
-    const valorReserva = calcularValorReserva() // Usar valor da reserva (50%)
+    const valorReserva = calcularValorReserva()
 
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4">
@@ -489,23 +833,16 @@ export default function ReservarQuadraPage() {
               {firstSlot.unidade} - {firstSlot.quadra}
               <br />
               {selectedSlots.map((slot) => slot.horario).join(", ")}
-              <br />
-              <span className="text-orange-400 font-semibold">
-                {selectedSlots.length} {selectedSlots.length === 1 ? "hora" : "horas"}
-              </span>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-white/5 rounded-lg p-6 text-center border border-white/20 space-y-3">
-              <div>
-                <p className="text-gray-400 text-sm mb-1">Valor total:</p>
-                <p className="text-2xl font-semibold text-gray-300">R$ {valorTotal}</p>
-              </div>
-              <div className="border-t border-white/20 pt-3">
-                <p className="text-gray-300 mb-2">Valor da reserva (50%):</p>
-                <p className="text-4xl font-bold text-green-400">R$ {valorReserva}</p>
-                <p className="text-xs text-gray-400 mt-2">Restante será pago no local</p>
-              </div>
+            <div className="bg-white/5 rounded-lg p-6 text-center border border-white/20">
+              <p className="text-gray-400 text-sm mb-1">Valor total:</p>
+              <p className="text-2xl font-semibold text-gray-300">R$ {valorTotal}</p>
+              <div className="border-t border-white/20 my-3" />
+              <p className="text-gray-300 mb-2">Valor da reserva (50%):</p>
+              <p className="text-4xl font-bold text-green-400">R$ {valorReserva}</p>
+              <p className="text-xs text-gray-400 mt-2">Restante será pago no local</p>
             </div>
 
             {paymentData && (
@@ -538,11 +875,7 @@ export default function ReservarQuadraPage() {
                   {pixCopied && (
                     <p className="text-green-400 text-sm text-center mt-2 font-medium">✓ Código copiado!</p>
                   )}
-                  <p className="text-xs text-gray-400 text-center mt-3">
-                    Cole este código no seu aplicativo de pagamento
-                  </p>
                 </div>
-                {/* </CHANGE> */}
 
                 <div className="bg-blue-500/20 rounded-lg p-4 text-center border border-blue-500/30">
                   <p className="text-blue-300 text-sm">
@@ -555,313 +888,29 @@ export default function ReservarQuadraPage() {
                       "Aguardando confirmação do pagamento..."
                     )}
                   </p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    O pagamento será confirmado automaticamente após a aprovação
-                  </p>
                 </div>
               </>
             )}
 
-            <div className="space-y-3">
-              <Button
-                onClick={handleConfirmReservation}
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-6 text-lg"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Confirmando...
-                  </>
-                ) : (
-                  "Já paguei - Confirmar Manualmente"
-                )}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  setShowPayment(false)
-                  setPaymentData(null)
-                  setCountdown(20)
-                  setCanConfirm(false)
-                }}
-                variant="outline"
-                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20"
-              >
-                Cancelar
-              </Button>
-            </div>
+            <Button
+              onClick={handleConfirmReservation}
+              disabled={loading}
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Confirmando...
+                </>
+              ) : (
+                "Confirmar Pagamento Manualmente"
+              )}
+            </Button>
           </CardContent>
         </Card>
       </div>
     )
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <Link href="/">
-          <Button variant="ghost" className="mb-6 text-white hover:text-orange-400">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-        </Link>
-
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Arena Coligados</h1>
-          <p className="text-gray-300">Selecione a data e o horário desejado</p>
-        </div>
-
-        <Card className="bg-white/10 backdrop-blur-xl border-white/20 mb-8 max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-white flex items-center gap-2">
-              <Calendar className="h-6 w-6 text-orange-400" />
-              Selecione a Data
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-7 gap-2">
-              {availableDays.map((date) => {
-                const formatted = formatDate(date)
-                const isSelected = selectedDate.toISOString().split("T")[0] === formatted.full
-                const isToday = new Date().toISOString().split("T")[0] === formatted.full
-
-                return (
-                  <button
-                    key={formatted.full}
-                    onClick={() => {
-                      setSelectedDate(date)
-                      setSelectedSlots([])
-                      setSelectedModalidade("")
-                    }}
-                    className={cn(
-                      "flex flex-col items-center justify-center p-4 rounded-lg transition-all",
-                      "border-2",
-                      isSelected && "bg-orange-500 border-orange-400 text-white",
-                      !isSelected && "bg-white/5 border-white/20 text-gray-300 hover:bg-white/10",
-                      isToday && !isSelected && "border-orange-400/50",
-                    )}
-                  >
-                    <span className="text-xs font-medium mb-1">{formatted.diaSemana}</span>
-                    <span className="text-2xl font-bold">{formatted.dia}</span>
-                    <span className="text-xs">{formatted.mes}</span>
-                    {isToday && <span className="text-xs text-orange-400 mt-1">Hoje</span>}
-                  </button>
-                )
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Dialog open={showModalidadeDialog} onOpenChange={setShowModalidadeDialog}>
-          <DialogContent className="bg-slate-900 border-white/20 text-white">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-orange-400">Qual modalidade você vai jogar?</DialogTitle>
-              <DialogDescription className="text-gray-300 text-base">
-                {tempSlot && (
-                  <>
-                    <span className="font-semibold">
-                      {tempSlot.unidade} - {tempSlot.quadra} às {tempSlot.horario}
-                    </span>
-                    <br />
-                    <span className="text-sm">Esta quadra suporta:</span>
-                  </>
-                )}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-3 py-4">
-              {tempSlot &&
-                MODALIDADES_POR_QUADRA[`${tempSlot.unidade}-${tempSlot.quadra}`]?.map((modalidade) => (
-                  <Button
-                    key={modalidade}
-                    onClick={() => handleModalidadeSelect(modalidade)}
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-6 text-lg"
-                  >
-                    {modalidade}
-                  </Button>
-                ))}
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {Object.entries(UNIDADES).map(([unidade, config]) => (
-            <Card key={unidade} className="bg-white/10 backdrop-blur-xl border-white/20">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-white">{unidade}</CardTitle>
-                <CardDescription className="text-orange-400 text-xl font-semibold">
-                  R$ {config.preco} a hora
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr>
-                        <th className="text-white text-sm font-semibold p-2 border border-white/20">Horário</th>
-                        {config.quadras.map((quadra) => (
-                          <th key={quadra} className="text-white text-sm font-semibold p-2 border border-white/20">
-                            {quadra}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {HORARIOS.map((horario) => (
-                        <tr key={horario}>
-                          <td className="text-white text-sm p-2 border border-white/20 font-medium">{horario}</td>
-                          {config.quadras.map((quadra) => {
-                            const ocupado = isHorarioOcupado(unidade, quadra, horario)
-                            const bloqueado = isHorarioBloqueado(horario, selectedDate)
-                            const passado = isHorarioPassado(horario, selectedDate)
-                            const indisponivel = ocupado || bloqueado || passado
-                            const selecionado = isSlotSelected(unidade, quadra, horario)
-
-                            return (
-                              <td key={quadra} className="p-1 border border-white/20">
-                                <button
-                                  type="button"
-                                  onClick={() => handleSlotClick(unidade, quadra, horario)}
-                                  disabled={indisponivel}
-                                  className={cn(
-                                    "w-full h-10 rounded text-xs font-medium transition-all",
-                                    indisponivel && "bg-red-500/30 text-red-300 cursor-not-allowed",
-                                    !indisponivel &&
-                                      !selecionado &&
-                                      "bg-green-500/20 text-green-300 hover:bg-green-500/40",
-                                    selecionado && "bg-orange-500 text-white ring-2 ring-orange-300",
-                                  )}
-                                >
-                                  {passado
-                                    ? "Passado"
-                                    : bloqueado
-                                      ? "Bloqueado"
-                                      : ocupado
-                                        ? "Ocupado"
-                                        : selecionado
-                                          ? "Selecionado"
-                                          : "Disponível"}
-                                </button>
-                              </td>
-                            )
-                          })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {selectedSlots.length > 0 && (
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-white">Confirme seus dados</CardTitle>
-              <CardDescription className="text-gray-300">
-                Data: {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes} (
-                {formatDate(selectedDate).diaSemana})
-                <br />
-                Horários: {selectedSlots[0].unidade} - {selectedSlots[0].quadra}
-                <br />
-                <span className="text-orange-400 font-semibold">
-                  {selectedSlots.map((slot) => slot.horario).join(", ")} ({selectedSlots.length}{" "}
-                  {selectedSlots.length === 1 ? "hora" : "horas"})
-                </span>
-                <br />
-                <span className="text-orange-400 font-semibold">Modalidade: {selectedModalidade}</span>
-                <br />
-                <span className="text-green-400 font-bold text-lg">
-                  Valor da Reserva (50%): R$ {calcularValorReserva()}
-                </span>
-                <br />
-                <span className="text-gray-400 text-sm">
-                  (Valor total: R$ {calcularValorTotal()} - Restante no local)
-                </span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="nome" className="text-white">
-                    Nome Completo *
-                  </Label>
-                  <Input
-                    id="nome"
-                    value={formData.nome}
-                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                    className="bg-white/10 border-white/30 text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="cpf" className="text-white">
-                    CPF *
-                  </Label>
-                  <Input
-                    id="cpf"
-                    type="text"
-                    value={formData.cpf}
-                    onChange={(e) => {
-                      // Remove caracteres não numéricos
-                      const cpfLimpo = e.target.value.replace(/\D/g, "")
-                      // Limita a 11 dígitos
-                      if (cpfLimpo.length <= 11) {
-                        setFormData({ ...formData, cpf: cpfLimpo })
-                      }
-                    }}
-                    placeholder="Apenas números (11 dígitos)"
-                    className="bg-white/10 border-white/30 text-white"
-                    maxLength={11}
-                    required
-                  />
-                  <p className="text-xs text-gray-400">Digite apenas os números do CPF (sem pontos ou traços)</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="telefone" className="text-white">
-                      Telefone *
-                    </Label>
-                    <Input
-                      id="telefone"
-                      type="tel"
-                      value={formData.telefone}
-                      onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                      className="bg-white/10 border-white/30 text-white"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-white">
-                      Email *
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="bg-white/10 border-white/30 text-white"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-6 text-lg"
-                  disabled={loading}
-                >
-                  Prosseguir para Pagamento
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
-  )
+  return null
 }

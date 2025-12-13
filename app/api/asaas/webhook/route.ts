@@ -10,21 +10,29 @@ export async function POST(request: NextRequest) {
       status: body.payment?.status,
     })
 
-    // Validar evento
     if (!body.event || !body.payment) {
       console.error("[v0] Webhook inválido:", body)
       return NextResponse.json({ error: "Webhook inválido" }, { status: 400 })
     }
 
-    // Processar eventos de pagamento
     switch (body.event) {
       case "PAYMENT_RECEIVED":
       case "PAYMENT_CONFIRMED":
         console.log("[v0] Pagamento confirmado:", body.payment.id)
-        // Aqui você pode adicionar lógica adicional, como:
-        // - Enviar email de confirmação
-        // - Atualizar status na planilha
-        // - Notificar o usuário
+
+        // Buscar a reserva pelo externalReference (payment ID) e atualizar status
+        try {
+          const externalRef = body.payment.externalReference || body.payment.id
+
+          // Atualizar o status da reserva para CONFIRMADA
+          // Nota: Esta é uma simplificação. Na produção, você deve buscar a linha específica e atualizar
+          console.log("[v0] Atualizando status da reserva para CONFIRMADA:", externalRef)
+
+          // TODO: Implementar lógica para atualizar linha específica no Google Sheets
+          // Por enquanto, apenas registramos o log
+        } catch (error) {
+          console.error("[v0] Erro ao atualizar status da reserva:", error)
+        }
         break
 
       case "PAYMENT_OVERDUE":
@@ -39,11 +47,9 @@ export async function POST(request: NextRequest) {
         console.log("[v0] Evento não tratado:", body.event)
     }
 
-    // Sempre retornar 200 para o Asaas saber que recebemos o webhook
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("[v0] Erro ao processar webhook:", error)
-    // Mesmo com erro, retornar 200 para não ficar reenviando
     return NextResponse.json({ success: false, error: "Erro interno" })
   }
 }
