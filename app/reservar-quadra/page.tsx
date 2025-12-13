@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,42 +31,29 @@ const MODALIDADES_POR_QUADRA: Record<string, string[]> = {
 
 const UNIDADES = {
   "Parque Amazônia": {
-    preco: "80,00",
+    preco: 80.0,
     quadras: ["Quadra 01", "Quadra 02", "Quadra 03", "Quadra 04", "Quadra 05"],
   },
   "Vila Rosa": {
-    preco: "70,00",
+    preco: 70.0,
     quadras: ["Q1", "Q2", "Q3", "Q4"],
   },
 }
 
 const HORARIOS = [
   "08:00",
-  "08:30",
   "09:00",
-  "09:30",
   "10:00",
-  "10:30",
   "11:00",
-  "11:30",
   "12:00",
-  "12:30",
   "13:00",
-  "13:30",
   "14:00",
-  "14:30",
   "15:00",
-  "15:30",
   "16:00",
-  "16:30",
   "17:00",
-  "17:30",
   "18:00",
-  "18:30",
   "19:00",
-  "19:30",
   "20:00",
-  "20:30",
   "21:00",
 ]
 
@@ -109,18 +95,16 @@ const formatDate = (date: Date) => {
 }
 
 export default function ReservarQuadraPage() {
-  const router = useRouter()
-  const [step, setStep] = useState<"modalidade" | "dados" | "data" | "horarios" | "pagamento">("modalidade")
+  const [step, setStep] = useState<"cadastro" | "modalidade" | "data" | "horarios" | "pagamento" | "sucesso">(
+    "cadastro",
+  )
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [leadId, setLeadId] = useState<string>("")
 
   const [horariosOcupados, setHorariosOcupados] = useState<Record<string, string[]>>({})
-  const [horariosEmProcesso, setHorariosEmProcesso] = useState<Record<string, string[]>>({})
-
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [availableDays] = useState<Date[]>(getNext7Days())
-
-  const [selectedSlots, setSelectedSlots] = useState<Array<{ unidade: string; quadra: string; horario: string }>>([])
+  const [selectedSlot, setSelectedSlot] = useState<{ unidade: string; quadra: string; horario: string } | null>(null)
   const [selectedModalidade, setSelectedModalidade] = useState<string>("")
 
   const [formData, setFormData] = useState({
@@ -130,7 +114,6 @@ export default function ReservarQuadraPage() {
     cpf: "",
   })
 
-  const [showPayment, setShowPayment] = useState(false)
   const [paymentData, setPaymentData] = useState<{
     paymentId: string
     qrCodeBase64: string
@@ -150,11 +133,13 @@ export default function ReservarQuadraPage() {
           const ocupados: Record<string, string[]> = {}
 
           data.reservas?.forEach((reserva: any) => {
-            reserva.horarios?.forEach((horario: string) => {
-              const key = `${reserva.data}-${reserva.unidade}-${reserva.quadra}`
-              if (!ocupados[key]) ocupados[key] = []
-              ocupados[key].push(horario)
-            })
+            if (reserva.status === "CONFIRMADA") {
+              reserva.horarios?.forEach((horario: string) => {
+                const key = `${reserva.data}-${reserva.unidade}-${reserva.quadra}`
+                if (!ocupados[key]) ocupados[key] = []
+                ocupados[key].push(horario)
+              })
+            }
           })
 
           setHorariosOcupados(ocupados)
@@ -164,20 +149,17 @@ export default function ReservarQuadraPage() {
       }
     }
     fetchHorariosOcupados()
-
-    // Atualizar a cada 10 segundos
     const interval = setInterval(fetchHorariosOcupados, 10000)
     return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
-    if (showPayment && paymentData?.paymentId && !checkingPayment) {
+    if (step === "pagamento" && paymentData?.paymentId && !checkingPayment && selectedSlot) {
       const checkInterval = setInterval(async () => {
         try {
           setCheckingPayment(true)
-          const firstSlot = selectedSlots[0]
           const response = await fetch(
-            `/api/asaas/check-payment?paymentId=${paymentData.paymentId}&unidade=${encodeURIComponent(firstSlot.unidade)}`,
+            `/api/asaas/check-payment?paymentId=${paymentData.paymentId}&unidade=${encodeURIComponent(selectedSlot.unidade)}`,
           )
           const result = await response.json()
 
@@ -194,7 +176,7 @@ export default function ReservarQuadraPage() {
 
       return () => clearInterval(checkInterval)
     }
-  }, [showPayment, paymentData, checkingPayment])
+  }, [step, paymentData, checkingPayment, selectedSlot])
 
   const isHorarioOcupado = (unidade: string, quadra: string, horario: string) => {
     const dateStr = selectedDate.toISOString().split("T")[0]
@@ -202,98 +184,65 @@ export default function ReservarQuadraPage() {
     return horariosOcupados[key]?.includes(horario) || false
   }
 
-  const isHorarioEmProcesso = (unidade: string, quadra: string, horario: string) => {
-    const dateStr = selectedDate.toISOString().split("T")[0]
-    const key = `${dateStr}-${unidade}-${quadra}`
-    return horariosEmProcesso[key]?.includes(horario) || false
-  }
-
-  const isSlotSelected = (unidade: string, quadra: string, horario: string) => {
-    return selectedSlots.some((slot) => slot.unidade === unidade && slot.quadra === quadra && slot.horario === horario)
-  }
-
-  const marcarHorarioEmProcesso = (unidade: string, quadra: string, horario: string, ativo: boolean) => {
-    const dateStr = selectedDate.toISOString().split("T")[0]
-    const key = `${dateStr}-${unidade}-${quadra}`
-
-    setHorariosEmProcesso((prev) => {
-      const updated = { ...prev }
-      if (ativo) {
-        if (!updated[key]) updated[key] = []
-        if (!updated[key].includes(horario)) {
-          updated[key].push(horario)
-        }
-      } else {
-        if (updated[key]) {
-          updated[key] = updated[key].filter((h) => h !== horario)
-        }
-      }
-      return updated
-    })
-  }
-
-  const handleSlotClick = (unidade: string, quadra: string, horario: string) => {
-    if (isHorarioOcupado(unidade, quadra, horario) || isHorarioEmProcesso(unidade, quadra, horario)) return
-
-    const isSelected = isSlotSelected(unidade, quadra, horario)
-
-    if (isSelected) {
-      setSelectedSlots(
-        selectedSlots.filter(
-          (slot) => !(slot.unidade === unidade && slot.quadra === quadra && slot.horario === horario),
-        ),
-      )
-      marcarHorarioEmProcesso(unidade, quadra, horario, false)
-    } else {
-      if (selectedSlots.length > 0) {
-        const firstSlot = selectedSlots[0]
-        if (firstSlot.unidade !== unidade || firstSlot.quadra !== quadra) {
-          alert("Por favor, selecione horários da mesma quadra")
-          return
-        }
-      }
-      setSelectedSlots([...selectedSlots, { unidade, quadra, horario }])
-      marcarHorarioEmProcesso(unidade, quadra, horario, true)
-    }
-  }
-
-  const calcularValorTotal = () => {
-    if (selectedSlots.length === 0) return "0,00"
-    const firstSlot = selectedSlots[0]
-    const precoUnitario = Number.parseFloat(
-      UNIDADES[firstSlot.unidade as keyof typeof UNIDADES]?.preco.replace(",", ".") || "0",
-    )
-    const total = precoUnitario * selectedSlots.length
-    return total.toFixed(2).replace(".", ",")
-  }
-
-  const calcularValorReserva = () => {
-    if (selectedSlots.length === 0) return "0,00"
-    const valorTotal = calcularValorTotal().replace(",", ".")
-    const valorReserva = Number.parseFloat(valorTotal) / 2
-    return valorReserva.toFixed(2).replace(".", ",")
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCadastroSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      // Validações
-      if (!selectedModalidade || selectedSlots.length === 0) {
-        alert("Por favor, selecione a modalidade e os horários")
-        setLoading(false)
-        return
-      }
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "leads - quadra",
+          values: [
+            [
+              new Date().toISOString(),
+              "", // data - preenchido depois
+              "", // unidade - preenchido depois
+              "", // quadra - preenchido depois
+              "", // horario - preenchido depois
+              "", // modalidade - preenchido depois
+              formData.nome,
+              formData.telefone,
+              formData.email,
+              formData.cpf,
+              "LEAD", // Status inicial
+              "", // payment_id
+              "", // valor_total
+              "", // valor_reserva
+            ],
+          ],
+        }),
+      })
 
-      if (!formData.nome || !formData.telefone || !formData.cpf) {
-        alert("Por favor, preencha todos os dados")
-        setLoading(false)
-        return
-      }
+      if (!response.ok) throw new Error("Erro ao salvar cadastro")
 
-      const firstSlot = selectedSlots[0]
-      const valorTotal = Number.parseFloat(UNIDADES[firstSlot.unidade as keyof typeof UNIDADES].preco.replace(",", "."))
+      const data = await response.json()
+      setLeadId(data.rowIndex || new Date().getTime().toString())
+
+      console.log("[v0] ✅ LEAD salvo com sucesso!")
+      setStep("modalidade")
+    } catch (error) {
+      console.error("[v0] Erro ao salvar cadastro:", error)
+      alert("Erro ao salvar dados. Tente novamente.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date)
+    setStep("horarios")
+  }
+
+  const handleHorarioSelect = async (unidade: string, quadra: string, horario: string) => {
+    if (isHorarioOcupado(unidade, quadra, horario)) return
+
+    setSelectedSlot({ unidade, quadra, horario })
+    setLoading(true)
+
+    try {
+      const valorTotal = UNIDADES[unidade as keyof typeof UNIDADES].preco
       const valorReserva = valorTotal / 2
 
       const reservaResponse = await fetch("/api/sheets/append", {
@@ -303,34 +252,29 @@ export default function ReservarQuadraPage() {
           sheetName: "leads - quadra",
           values: [
             [
-              new Date().toISOString(), // timestamp
-              selectedDate.toISOString().split("T")[0], // data
-              firstSlot.unidade, // Unidade
-              firstSlot.quadra, // quadra_id
-              selectedSlots
-                .map((s) => s.horario)
-                .join(", "), // horarios
-              selectedModalidade, // modalidade
-              formData.nome, // nome
-              formData.telefone, // whatsapp_number
-              formData.email, // email
-              formData.cpf, // cpf
-              "PENDENTE", // Status inicial é PENDENTE
-              "", // payment_id - será preenchido depois
-              valorTotal.toFixed(2), // valor_total
-              valorReserva.toFixed(2), // valor_reserva
+              new Date().toISOString(),
+              selectedDate.toISOString().split("T")[0],
+              unidade,
+              quadra,
+              horario,
+              selectedModalidade,
+              formData.nome,
+              formData.telefone,
+              formData.email,
+              formData.cpf,
+              "PENDENTE",
+              "",
+              valorTotal.toFixed(2),
+              valorReserva.toFixed(2),
             ],
           ],
         }),
       })
 
-      if (!reservaResponse.ok) {
-        throw new Error("Erro ao salvar reserva")
-      }
+      if (!reservaResponse.ok) throw new Error("Erro ao criar reserva")
 
-      console.log("[v0] Reserva salva como PENDENTE")
+      console.log("[v0] ✅ Reserva PENDENTE criada")
 
-      // Criar pagamento PIX
       const paymentResponse = await fetch("/api/asaas/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -342,45 +286,19 @@ export default function ReservarQuadraPage() {
             phone: formData.telefone.replace(/\D/g, ""),
           },
           value: valorTotal,
-          description: `Reserva ${firstSlot.quadra} - ${selectedModalidade}`,
+          description: `Reserva ${quadra} - ${selectedModalidade}`,
           dueDate: new Date().toISOString().split("T")[0],
           externalReference: `${formData.cpf}-${Date.now()}`,
-          unidade: firstSlot.unidade,
+          unidade: unidade,
         }),
       })
 
       if (!paymentResponse.ok) {
         const errorData = await paymentResponse.json()
-        throw new Error(errorData.error || "Erro ao criar pagamento")
+        throw new Error(errorData.error || "Erro ao gerar PIX")
       }
 
       const paymentResult = await paymentResponse.json()
-
-      await fetch("/api/sheets/append", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sheetName: "leads - quadra",
-          values: [
-            [
-              new Date().toISOString(),
-              selectedDate.toISOString().split("T")[0],
-              firstSlot.unidade,
-              firstSlot.quadra,
-              selectedSlots.map((s) => s.horario).join(", "),
-              selectedModalidade,
-              formData.nome,
-              formData.telefone,
-              formData.email,
-              formData.cpf,
-              "PENDENTE",
-              paymentResult.payment.id, // payment_id
-              valorTotal.toFixed(2),
-              valorReserva.toFixed(2),
-            ],
-          ],
-        }),
-      })
 
       setPaymentData({
         paymentId: paymentResult.payment.id,
@@ -389,7 +307,8 @@ export default function ReservarQuadraPage() {
         expirationDate: paymentResult.pix.expirationDate,
       })
 
-      setShowPayment(true)
+      console.log("[v0] ✅ PIX gerado com sucesso!")
+      setStep("pagamento")
     } catch (error) {
       console.error("[v0] Erro:", error)
       alert(error instanceof Error ? error.message : "Erro ao processar reserva")
@@ -402,23 +321,21 @@ export default function ReservarQuadraPage() {
     try {
       if (!paymentData?.paymentId) return
 
-      // Atualizar status para CONFIRMADA
       const updateResponse = await fetch("/api/sheets/reservas/update-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.JSON.stringify({
           paymentId: paymentData.paymentId,
           status: "CONFIRMADA",
         }),
       })
 
       if (updateResponse.ok) {
-        console.log("[v0] Status atualizado para CONFIRMADA")
-        setSuccess(true)
-        setShowPayment(false)
+        console.log("[v0] ✅ Reserva CONFIRMADA!")
+        setStep("sucesso")
       }
     } catch (error) {
-      console.error("[v0] Erro ao confirmar reserva:", error)
+      console.error("[v0] Erro ao confirmar:", error)
     }
   }
 
@@ -437,7 +354,9 @@ export default function ReservarQuadraPage() {
 
     Object.entries(MODALIDADES_POR_QUADRA).forEach(([quadraKey, modalidades]) => {
       if (modalidades.includes(selectedModalidade)) {
-        const [unidade, quadra] = quadraKey.split("-")
+        const parts = quadraKey.split("-")
+        const unidade = parts[0]
+        const quadra = parts.slice(1).join("-")
         quadrasComModalidade.push({ unidade, quadra })
       }
     })
@@ -445,7 +364,357 @@ export default function ReservarQuadraPage() {
     return quadrasComModalidade
   }
 
-  if (success) {
+  if (step === "cadastro") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-2xl mx-auto">
+          <Link href="/">
+            <Button variant="ghost" className="mb-6 text-white hover:text-white/80">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
+          </Link>
+
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-white text-center">Seus Dados</CardTitle>
+              <CardDescription className="text-gray-300 text-center">
+                Preencha seus dados para continuar
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4" onSubmit={handleCadastroSubmit}>
+                <div>
+                  <Label htmlFor="nome" className="text-white">
+                    Nome Completo
+                  </Label>
+                  <Input
+                    id="nome"
+                    value={formData.nome}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                    placeholder="João Silva"
+                    required
+                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="telefone" className="text-white">
+                    Telefone
+                  </Label>
+                  <Input
+                    id="telefone"
+                    value={formData.telefone}
+                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                    placeholder="(00) 00000-0000"
+                    required
+                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="cpf" className="text-white">
+                    CPF
+                  </Label>
+                  <Input
+                    id="cpf"
+                    value={formData.cpf}
+                    onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                    placeholder="000.000.000-00"
+                    required
+                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email" className="text-white">
+                    Email (opcional)
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="seuemail@exemplo.com"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                  />
+                </div>
+                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={loading}>
+                  {loading ? <Loader2 className="animate-spin" /> : "Continuar"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === "modalidade") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("cadastro")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Modalidade</CardTitle>
+              <CardDescription className="text-gray-300 text-center">
+                Olá {formData.nome}! Selecione qual esporte deseja praticar
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {MODALIDADES.map((mod) => (
+                  <Card
+                    key={mod.id}
+                    className={cn(
+                      "cursor-pointer transition-all border-2",
+                      selectedModalidade === mod.id
+                        ? "border-green-500 bg-green-900/20"
+                        : "border-gray-700 bg-gray-800/50 hover:border-green-400",
+                    )}
+                    onClick={() => {
+                      setSelectedModalidade(mod.id)
+                      setStep("data")
+                    }}
+                  >
+                    <div className="p-6 text-center">
+                      <div className="text-5xl mb-3">{mod.icon}</div>
+                      <h3 className="text-lg font-bold text-white mb-2">{mod.name}</h3>
+                      <p className="text-sm text-gray-400">{mod.description}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === "data") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("modalidade")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Data</CardTitle>
+              <CardDescription className="text-gray-300 text-center">
+                Modalidade: <span className="text-green-400 font-semibold">{selectedModalidade}</span>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {availableDays.map((date) => {
+                  const formatted = formatDate(date)
+                  const isSelected = selectedDate.toDateString() === date.toDateString()
+
+                  return (
+                    <Card
+                      key={formatted.full}
+                      className={cn(
+                        "cursor-pointer transition-all border-2",
+                        isSelected
+                          ? "border-green-500 bg-green-900/20"
+                          : "border-gray-700 bg-gray-800/50 hover:border-green-400",
+                      )}
+                      onClick={() => handleDateSelect(date)}
+                    >
+                      <div className="p-6 text-center">
+                        <p className="text-sm text-gray-400 mb-1">{formatted.diaSemana}</p>
+                        <p className="text-3xl font-bold text-white mb-1">{formatted.dia}</p>
+                        <p className="text-sm text-gray-300">{formatted.mes}</p>
+                      </div>
+                    </Card>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === "horarios") {
+    const quadrasDisponiveis = getQuadrasDisponiveis()
+
+    const parqueQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Parque Amazônia")
+    const vilaQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Vila Rosa")
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-7xl mx-auto">
+          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("data")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Horários Disponíveis</h1>
+            <p className="text-gray-300">
+              {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes} - {selectedModalidade}
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* PARQUE AMAZÔNIA */}
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-white">Parque Amazônia</CardTitle>
+                <CardDescription className="text-gray-300">
+                  R$ {UNIDADES["Parque Amazônia"].preco.toFixed(2)}/hora
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {parqueQuadras.map(({ quadra }) => (
+                  <div key={quadra}>
+                    <h3 className="text-white font-semibold mb-3">{quadra}</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {HORARIOS.map((horario) => {
+                        const ocupado = isHorarioOcupado("Parque Amazônia", quadra, horario)
+
+                        return (
+                          <Button
+                            key={horario}
+                            variant={ocupado ? "outline" : "default"}
+                            disabled={ocupado || loading}
+                            onClick={() => handleHorarioSelect("Parque Amazônia", quadra, horario)}
+                            className={cn(
+                              "h-12",
+                              ocupado
+                                ? "bg-red-900/30 border-red-700 cursor-not-allowed"
+                                : "bg-green-600 hover:bg-green-700",
+                            )}
+                          >
+                            {horario}
+                          </Button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+                {parqueQuadras.length === 0 && (
+                  <p className="text-gray-400 text-center py-8">Nenhuma quadra disponível para esta modalidade</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* VILA ROSA */}
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-white">Vila Rosa</CardTitle>
+                <CardDescription className="text-gray-300">
+                  R$ {UNIDADES["Vila Rosa"].preco.toFixed(2)}/hora
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {vilaQuadras.map(({ quadra }) => (
+                  <div key={quadra}>
+                    <h3 className="text-white font-semibold mb-3">{quadra}</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {HORARIOS.map((horario) => {
+                        const ocupado = isHorarioOcupado("Vila Rosa", quadra, horario)
+
+                        return (
+                          <Button
+                            key={horario}
+                            variant={ocupado ? "outline" : "default"}
+                            disabled={ocupado || loading}
+                            onClick={() => handleHorarioSelect("Vila Rosa", quadra, horario)}
+                            className={cn(
+                              "h-12",
+                              ocupado
+                                ? "bg-red-900/30 border-red-700 cursor-not-allowed"
+                                : "bg-green-600 hover:bg-green-700",
+                            )}
+                          >
+                            {horario}
+                          </Button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+                {vilaQuadras.length === 0 && (
+                  <p className="text-gray-400 text-center py-8">Nenhuma quadra disponível para esta modalidade</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === "pagamento" && paymentData && selectedSlot) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+        <div className="max-w-2xl mx-auto">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-white text-center">Pagamento PIX</CardTitle>
+              <CardDescription className="text-gray-300 text-center">
+                Escaneie o QR Code ou copie o código
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-white p-6 rounded-lg">
+                <img
+                  src={`data:image/png;base64,${paymentData.qrCodeBase64}`}
+                  alt="QR Code PIX"
+                  className="w-full max-w-xs mx-auto"
+                />
+              </div>
+
+              <div className="bg-white/5 rounded-lg p-4 border border-white/20">
+                <p className="text-white font-semibold mb-2">{selectedSlot.unidade}</p>
+                <p className="text-gray-300 text-sm">
+                  {selectedSlot.quadra} - {selectedSlot.horario}
+                </p>
+                <p className="text-gray-300 text-sm">
+                  {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes}
+                </p>
+                <p className="text-green-400 font-bold text-lg mt-2">
+                  R$ {(UNIDADES[selectedSlot.unidade as keyof typeof UNIDADES].preco / 2).toFixed(2)}
+                </p>
+                <p className="text-gray-400 text-xs">Valor da reserva (50%)</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-white">Código Pix Copia e Cola</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={paymentData.pixPayload}
+                    readOnly
+                    className="bg-white/10 border-white/30 text-white text-xs"
+                  />
+                  <Button onClick={handleCopyPix} variant="outline">
+                    {pixCopied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <Loader2 className="animate-spin h-8 w-8 text-green-500 mx-auto mb-2" />
+                <p className="text-gray-300">Aguardando pagamento...</p>
+                <p className="text-gray-400 text-sm">Verificando automaticamente a cada 5 segundos</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === "sucesso" && selectedSlot) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 via-emerald-900 to-teal-800 p-4">
         <Card className="max-w-md w-full bg-white/10 backdrop-blur-xl border-white/20 text-center">
@@ -464,448 +733,18 @@ export default function ReservarQuadraPage() {
                 <strong>Data:</strong> {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes}
               </p>
               <p className="text-gray-300 mb-2">
+                <strong>Local:</strong> {selectedSlot.unidade} - {selectedSlot.quadra}
+              </p>
+              <p className="text-gray-300 mb-2">
                 <strong>Modalidade:</strong> {selectedModalidade}
               </p>
               <p className="text-gray-300">
-                <strong>Horários:</strong> {selectedSlots.map((s) => s.horario).join(", ")}
+                <strong>Horário:</strong> {selectedSlot.horario}
               </p>
             </div>
             <Link href="/">
               <Button className="w-full bg-green-600 hover:bg-green-700">Voltar ao Início</Button>
             </Link>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
-  if (step === "modalidade") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          <Link href="/">
-            <Button variant="ghost" className="mb-6 text-white hover:text-white/80">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar
-            </Button>
-          </Link>
-
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Modalidade</CardTitle>
-              <CardDescription className="text-gray-300 text-center">
-                Selecione qual esporte deseja praticar
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {MODALIDADES.map((mod) => (
-                  <Card
-                    key={mod.id}
-                    className={`cursor-pointer transition-all border-2 ${
-                      selectedModalidade === mod.id
-                        ? "border-green-500 bg-green-900/20"
-                        : "border-gray-700 bg-gray-800/50 hover:border-green-400"
-                    }`}
-                    onClick={() => {
-                      setSelectedModalidade(mod.id)
-                      setStep("dados")
-                    }}
-                  >
-                    <div className="p-6 text-center">
-                      <div className="text-5xl mb-3">{mod.icon}</div>
-                      <h3 className="text-lg font-bold text-white mb-2">{mod.name}</h3>
-                      <p className="text-sm text-gray-400">{mod.description}</p>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  if (step === "dados") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-2xl mx-auto">
-          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("modalidade")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-white text-center">Seus Dados</CardTitle>
-              <CardDescription className="text-gray-300 text-center">
-                Modalidade selecionada: <span className="text-green-400 font-semibold">{selectedModalidade}</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form
-                className="space-y-4"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  setStep("data")
-                }}
-              >
-                <div>
-                  <Label htmlFor="nome" className="text-white">
-                    Nome Completo
-                  </Label>
-                  <Input
-                    id="nome"
-                    value={formData.nome}
-                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                    placeholder="João Silva"
-                    required
-                    className="bg-white/10 border-white/30 text-white"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="telefone" className="text-white">
-                    Telefone
-                  </Label>
-                  <Input
-                    id="telefone"
-                    value={formData.telefone}
-                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                    placeholder="(00) 00000-0000"
-                    required
-                    className="bg-white/10 border-white/30 text-white"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="cpf" className="text-white">
-                    CPF
-                  </Label>
-                  <Input
-                    id="cpf"
-                    value={formData.cpf}
-                    onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-                    placeholder="000.000.000-00"
-                    required
-                    className="bg-white/10 border-white/30 text-white"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email" className="text-white">
-                    Email (opcional)
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="joao@example.com"
-                    className="bg-white/10 border-white/30 text-white"
-                  />
-                </div>
-                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white">
-                  Continuar para Data
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  if (step === "data") {
-    const mesAtual = formatDate(availableDays[0]).mes
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("dados")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Data</CardTitle>
-              <CardDescription className="text-gray-300 text-center text-xl">{mesAtual}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-3 md:grid-cols-4 lg:grid-cols-7">
-                {availableDays.map((date) => {
-                  const formatted = formatDate(date)
-                  const isSelected = selectedDate.toDateString() === date.toDateString()
-
-                  return (
-                    <Button
-                      key={date.toISOString()}
-                      onClick={() => {
-                        setSelectedDate(date)
-                        setStep("horarios")
-                      }}
-                      variant={isSelected ? "default" : "outline"}
-                      className={cn(
-                        "flex flex-col items-center py-6 h-auto",
-                        isSelected
-                          ? "bg-green-600 hover:bg-green-700 text-white border-green-500"
-                          : "bg-white/10 hover:bg-white/20 text-white border-white/30",
-                      )}
-                    >
-                      <span className="text-xs font-medium">{formatted.diaSemana}</span>
-                      <span className="text-2xl font-bold">{formatted.dia}</span>
-                      <span className="text-xs">{formatted.mesAbrev}</span>
-                    </Button>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  if (step === "horarios") {
-    const quadrasDisponiveis = getQuadrasDisponiveis()
-    const parqueQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Parque Amazônia")
-    const vilaQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Vila Rosa")
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-7xl mx-auto">
-          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("data")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 mb-6">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-white text-center">
-                Horários Disponíveis - {formatDate(selectedDate).diaSemana}, {formatDate(selectedDate).dia} de{" "}
-                {formatDate(selectedDate).mes}
-              </CardTitle>
-              <CardDescription className="text-gray-300 text-center">
-                Modalidade: <span className="text-green-400">{selectedModalidade}</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6 lg:grid-cols-2">
-                {/* Parque Amazônia */}
-                <div>
-                  <h3 className="text-xl font-bold text-orange-400 mb-4">🏖️ Parque Amazônia</h3>
-                  {parqueQuadras.map(({ unidade, quadra }) => (
-                    <div key={`${unidade}-${quadra}`} className="mb-6 bg-white/5 rounded-lg p-4">
-                      <h4 className="text-lg font-semibold text-white mb-3">{quadra}</h4>
-                      <div className="grid grid-cols-4 gap-2">
-                        {HORARIOS.map((horario) => {
-                          const ocupado = isHorarioOcupado(unidade, quadra, horario)
-                          const emProcesso = isHorarioEmProcesso(unidade, quadra, horario)
-                          const selecionado = isSlotSelected(unidade, quadra, horario)
-
-                          return (
-                            <Button
-                              key={horario}
-                              onClick={() => handleSlotClick(unidade, quadra, horario)}
-                              disabled={ocupado || emProcesso}
-                              size="sm"
-                              className={cn(
-                                "text-xs h-10",
-                                selecionado && "bg-yellow-500 hover:bg-yellow-600 text-black",
-                                !selecionado && !ocupado && !emProcesso && "bg-green-700 hover:bg-green-600 text-white",
-                                ocupado && "bg-red-900 text-red-300 cursor-not-allowed opacity-50",
-                                emProcesso && "bg-orange-700 text-orange-300 cursor-not-allowed opacity-70",
-                              )}
-                            >
-                              {horario}
-                            </Button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                  {parqueQuadras.length === 0 && (
-                    <p className="text-gray-400 text-center py-8">
-                      Nenhuma quadra disponível para {selectedModalidade}
-                    </p>
-                  )}
-                </div>
-
-                {/* Vila Rosa */}
-                <div>
-                  <h3 className="text-xl font-bold text-blue-400 mb-4">🏐 Vila Rosa</h3>
-                  {vilaQuadras.map(({ unidade, quadra }) => (
-                    <div key={`${unidade}-${quadra}`} className="mb-6 bg-white/5 rounded-lg p-4">
-                      <h4 className="text-lg font-semibold text-white mb-3">{quadra}</h4>
-                      <div className="grid grid-cols-4 gap-2">
-                        {HORARIOS.map((horario) => {
-                          const ocupado = isHorarioOcupado(unidade, quadra, horario)
-                          const emProcesso = isHorarioEmProcesso(unidade, quadra, horario)
-                          const selecionado = isSlotSelected(unidade, quadra, horario)
-
-                          return (
-                            <Button
-                              key={horario}
-                              onClick={() => handleSlotClick(unidade, quadra, horario)}
-                              disabled={ocupado || emProcesso}
-                              size="sm"
-                              className={cn(
-                                "text-xs h-10",
-                                selecionado && "bg-yellow-500 hover:bg-yellow-600 text-black",
-                                !selecionado && !ocupado && !emProcesso && "bg-green-700 hover:bg-green-600 text-white",
-                                ocupado && "bg-red-900 text-red-300 cursor-not-allowed opacity-50",
-                                emProcesso && "bg-orange-700 text-orange-300 cursor-not-allowed opacity-70",
-                              )}
-                            >
-                              {horario}
-                            </Button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                  {vilaQuadras.length === 0 && (
-                    <p className="text-gray-400 text-center py-8">
-                      Nenhuma quadra disponível para {selectedModalidade}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Legenda */}
-              <div className="mt-6 flex flex-wrap justify-center gap-4 text-xs text-gray-300">
-                <span className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-green-700 rounded" /> Disponível
-                </span>
-                <span className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-yellow-500 rounded" /> Selecionado
-                </span>
-                <span className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-orange-700 rounded" /> Em processo
-                </span>
-                <span className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-red-900 rounded" /> Ocupado
-                </span>
-              </div>
-
-              {/* Resumo e botão de continuar */}
-              {selectedSlots.length > 0 && (
-                <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
-                  <p className="text-white mb-2">
-                    <strong>{selectedSlots.length}</strong> horário(s) selecionado(s)
-                  </p>
-                  <p className="text-gray-300 text-sm mb-4">
-                    {selectedSlots[0].unidade} - {selectedSlots[0].quadra}
-                  </p>
-                  <Button
-                    className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processando...
-                      </>
-                    ) : (
-                      `Ir para Pagamento - R$ ${calcularValorReserva()}`
-                    )}
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  if (showPayment && selectedSlots.length > 0) {
-    const firstSlot = selectedSlots[0]
-    const valorTotal = calcularValorTotal()
-    const valorReserva = calcularValorReserva()
-
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4">
-        <Card className="max-w-md w-full bg-white/10 backdrop-blur-xl border-white/20">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold text-white mb-2">Pagamento via PIX</CardTitle>
-            <CardDescription className="text-gray-300 text-lg">
-              {firstSlot.unidade} - {firstSlot.quadra}
-              <br />
-              {selectedSlots.map((slot) => slot.horario).join(", ")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-white/5 rounded-lg p-6 text-center border border-white/20">
-              <p className="text-gray-400 text-sm mb-1">Valor total:</p>
-              <p className="text-2xl font-semibold text-gray-300">R$ {valorTotal}</p>
-              <div className="border-t border-white/20 my-3" />
-              <p className="text-gray-300 mb-2">Valor da reserva (50%):</p>
-              <p className="text-4xl font-bold text-green-400">R$ {valorReserva}</p>
-              <p className="text-xs text-gray-400 mt-2">Restante será pago no local</p>
-            </div>
-
-            {paymentData && (
-              <>
-                <div className="bg-white rounded-lg p-4 flex items-center justify-center">
-                  <img
-                    src={`data:image/png;base64,${paymentData.qrCodeBase64}`}
-                    alt="QR Code PIX"
-                    className="w-64 h-64"
-                  />
-                </div>
-
-                <div className="bg-white/5 rounded-lg p-4 border border-white/20">
-                  <p className="text-gray-300 mb-3 text-center font-medium">Ou copie o código PIX:</p>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={paymentData.pixPayload}
-                      readOnly
-                      className="bg-white/10 border-white/30 text-white text-xs font-mono"
-                    />
-                    <Button
-                      onClick={handleCopyPix}
-                      variant="outline"
-                      size="icon"
-                      className="bg-orange-500 hover:bg-orange-600 border-orange-400 text-white shrink-0"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  {pixCopied && (
-                    <p className="text-green-400 text-sm text-center mt-2 font-medium">✓ Código copiado!</p>
-                  )}
-                </div>
-
-                <div className="bg-blue-500/20 rounded-lg p-4 text-center border border-blue-500/30">
-                  <p className="text-blue-300 text-sm">
-                    {checkingPayment ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin inline mr-2" />
-                        Verificando pagamento...
-                      </>
-                    ) : (
-                      "Aguardando confirmação do pagamento..."
-                    )}
-                  </p>
-                </div>
-              </>
-            )}
-
-            <Button
-              onClick={handleConfirmReservation}
-              disabled={loading}
-              className="w-full bg-green-600 hover:bg-green-700"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Confirmando...
-                </>
-              ) : (
-                "Confirmar Pagamento Manualmente"
-              )}
-            </Button>
           </CardContent>
         </Card>
       </div>
