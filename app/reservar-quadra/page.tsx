@@ -370,374 +370,357 @@ export default function ReservarQuadraPage() {
     return quadrasComModalidade
   }
 
-  if (step === "cadastro") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-2xl mx-auto">
-          <Link href="/">
-            <Button variant="ghost" className="mb-6 text-white hover:text-white/80">
+  return (
+    <div className="min-h-screen">
+      {step === "cadastro" && (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+          <div className="max-w-2xl mx-auto">
+            <Link href="/">
+              <Button variant="ghost" className="mb-6 text-white hover:text-white/80">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar
+              </Button>
+            </Link>
+
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold text-white text-center">Seus Dados</CardTitle>
+                <CardDescription className="text-gray-300 text-center">
+                  Preencha seus dados para continuar
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form className="space-y-4" onSubmit={handleCadastroSubmit}>
+                  <div>
+                    <Label htmlFor="nome" className="text-white">
+                      Nome Completo
+                    </Label>
+                    <Input
+                      id="nome"
+                      value={formData.nome}
+                      onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                      placeholder="João Silva"
+                      required
+                      className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="telefone" className="text-white">
+                      Telefone
+                    </Label>
+                    <Input
+                      id="telefone"
+                      value={formData.telefone}
+                      onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                      placeholder="(00) 00000-0000"
+                      required
+                      className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cpf" className="text-white">
+                      CPF
+                    </Label>
+                    <Input
+                      id="cpf"
+                      value={formData.cpf}
+                      onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                      placeholder="000.000.000-00"
+                      required
+                      className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="email" className="text-white">
+                      Email (opcional)
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="seuemail@exemplo.com"
+                      className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={loading}>
+                    {loading ? <Loader2 className="animate-spin" /> : "Continuar"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+      {step === "modalidade" && (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+          <div className="max-w-4xl mx-auto">
+            <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("cadastro")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Voltar
             </Button>
-          </Link>
 
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-white text-center">Seus Dados</CardTitle>
-              <CardDescription className="text-gray-300 text-center">
-                Preencha seus dados para continuar
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form className="space-y-4" onSubmit={handleCadastroSubmit}>
-                <div>
-                  <Label htmlFor="nome" className="text-white">
-                    Nome Completo
-                  </Label>
-                  <Input
-                    id="nome"
-                    value={formData.nome}
-                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                    placeholder="João Silva"
-                    required
-                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="telefone" className="text-white">
-                    Telefone
-                  </Label>
-                  <Input
-                    id="telefone"
-                    value={formData.telefone}
-                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                    placeholder="(00) 00000-0000"
-                    required
-                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="cpf" className="text-white">
-                    CPF
-                  </Label>
-                  <Input
-                    id="cpf"
-                    value={formData.cpf}
-                    onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-                    placeholder="000.000.000-00"
-                    required
-                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email" className="text-white">
-                    Email (opcional)
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="seuemail@exemplo.com"
-                    className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
-                  />
-                </div>
-                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={loading}>
-                  {loading ? <Loader2 className="animate-spin" /> : "Continuar"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  if (step === "modalidade") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("cadastro")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Modalidade</CardTitle>
-              <CardDescription className="text-gray-300 text-center">
-                Olá {formData.nome}! Selecione qual esporte deseja praticar
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {MODALIDADES.map((mod) => (
-                  <Card
-                    key={mod.id}
-                    className={cn(
-                      "cursor-pointer transition-all border-2",
-                      selectedModalidade === mod.id
-                        ? "border-green-500 bg-green-900/20"
-                        : "border-gray-700 bg-gray-800/50 hover:border-green-400",
-                    )}
-                    onClick={() => {
-                      setSelectedModalidade(mod.id)
-                      setStep("data")
-                    }}
-                  >
-                    <div className="p-6 text-center">
-                      <div className="text-5xl mb-3">{mod.icon}</div>
-                      <h3 className="text-lg font-bold text-white mb-2">{mod.name}</h3>
-                      <p className="text-sm text-gray-400">{mod.description}</p>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  if (step === "data") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("modalidade")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Data</CardTitle>
-              <CardDescription className="text-gray-300 text-center">
-                Modalidade: <span className="text-green-400 font-semibold">{selectedModalidade}</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                {availableDays.map((date) => {
-                  const formatted = formatDate(date)
-                  const isSelected = selectedDate.toDateString() === date.toDateString()
-
-                  return (
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Modalidade</CardTitle>
+                <CardDescription className="text-gray-300 text-center">
+                  Olá {formData.nome}! Selecione qual esporte deseja praticar
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  {MODALIDADES.map((mod) => (
                     <Card
-                      key={formatted.full}
+                      key={mod.id}
                       className={cn(
                         "cursor-pointer transition-all border-2",
-                        isSelected
+                        selectedModalidade === mod.id
                           ? "border-green-500 bg-green-900/20"
                           : "border-gray-700 bg-gray-800/50 hover:border-green-400",
                       )}
-                      onClick={() => handleDateSelect(date)}
+                      onClick={() => {
+                        setSelectedModalidade(mod.id)
+                        setStep("data")
+                      }}
                     >
                       <div className="p-6 text-center">
-                        <p className="text-sm text-gray-400 mb-1">{formatted.diaSemana}</p>
-                        <p className="text-3xl font-bold text-white mb-1">{formatted.dia}</p>
-                        <p className="text-sm text-gray-300">{formatted.mes}</p>
+                        <div className="text-5xl mb-3">{mod.icon}</div>
+                        <h3 className="text-lg font-bold text-white mb-2">{mod.name}</h3>
+                        <p className="text-sm text-gray-400">{mod.description}</p>
                       </div>
                     </Card>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
-  if (step === "horarios") {
-    const quadrasDisponiveis = getQuadrasDisponiveis()
-    const parqueQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Parque Amazônia")
-    const vilaQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Vila Rosa")
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-7xl mx-auto">
-          <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("data")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Horários Disponíveis</h1>
-            <p className="text-gray-300">
-              {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes} - {selectedModalidade}
-            </p>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* PARQUE AMAZÔNIA */}
-            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-white text-center">Parque Amazônia</CardTitle>
-                <CardDescription className="text-center text-gray-300">R$ 80,00 por hora</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {parqueQuadras.length === 0 ? (
-                  <p className="text-gray-400 text-center py-8">Nenhuma quadra disponível para esta modalidade</p>
-                ) : (
-                  parqueQuadras.map((item) => (
-                    <div key={item.quadra}>
-                      <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
-                      <div className="grid grid-cols-3 gap-2">
-                        {HORARIOS.map((horario) => {
-                          const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
-                          return (
-                            <Button
-                              key={horario}
-                              variant={ocupado ? "outline" : "default"}
-                              disabled={ocupado || loading}
-                              onClick={() => handleHorarioSelect(item.unidade, item.quadra, horario)}
-                              className={cn(
-                                "text-sm",
-                                ocupado
-                                  ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
-                                  : "bg-green-600 hover:bg-green-700 text-white",
-                              )}
-                            >
-                              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : horario}
-                            </Button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-
-            {/* VILA ROSA */}
-            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-white text-center">Vila Rosa</CardTitle>
-                <CardDescription className="text-center text-gray-300">R$ 70,00 por hora</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {vilaQuadras.length === 0 ? (
-                  <p className="text-gray-400 text-center py-8">Nenhuma quadra disponível para esta modalidade</p>
-                ) : (
-                  vilaQuadras.map((item) => (
-                    <div key={item.quadra}>
-                      <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
-                      <div className="grid grid-cols-3 gap-2">
-                        {HORARIOS.map((horario) => {
-                          const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
-                          return (
-                            <Button
-                              key={horario}
-                              variant={ocupado ? "outline" : "default"}
-                              disabled={ocupado || loading}
-                              onClick={() => handleHorarioSelect(item.unidade, item.quadra, horario)}
-                              className={cn(
-                                "text-sm",
-                                ocupado
-                                  ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
-                                  : "bg-green-600 hover:bg-green-700 text-white",
-                              )}
-                            >
-                              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : horario}
-                            </Button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))
-                )}
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
-      </div>
-    )
-  }
+      )}
+      {step === "data" && (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+          <div className="max-w-4xl mx-auto">
+            <Button
+              variant="ghost"
+              className="mb-6 text-white hover:text-white/80"
+              onClick={() => setStep("modalidade")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
 
-  if (step === "pagamento") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-        <div className="max-w-2xl mx-auto">
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-white text-center">Pagamento via PIX</CardTitle>
-              <CardDescription className="text-gray-300 text-center">
-                Escaneie o QR Code ou copie o código PIX
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {paymentData && (
-                <>
-                  <div className="bg-white p-4 rounded-xl mx-auto w-fit">
-                    <img
-                      src={`data:image/png;base64,${paymentData.qrCodeBase64}`}
-                      alt="QR Code PIX"
-                      className="w-64 h-64"
-                    />
-                  </div>
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold text-white text-center">Escolha a Data</CardTitle>
+                <CardDescription className="text-gray-300 text-center">
+                  Modalidade: <span className="text-green-400 font-semibold">{selectedModalidade}</span>
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                  {availableDays.map((date) => {
+                    const formatted = formatDate(date)
+                    const isSelected = selectedDate.toDateString() === date.toDateString()
 
-                  <div className="space-y-3">
-                    <Label className="text-white">Código PIX Copia e Cola:</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={paymentData.pixPayload}
-                        readOnly
-                        className="bg-white/10 border-white/30 text-white text-sm"
+                    return (
+                      <Card
+                        key={formatted.full}
+                        className={cn(
+                          "cursor-pointer transition-all border-2",
+                          isSelected
+                            ? "border-green-500 bg-green-900/20"
+                            : "border-gray-700 bg-gray-800/50 hover:border-green-400",
+                        )}
+                        onClick={() => handleDateSelect(date)}
+                      >
+                        <div className="p-6 text-center">
+                          <p className="text-sm text-gray-400 mb-1">{formatted.diaSemana}</p>
+                          <p className="text-3xl font-bold text-white mb-1">{formatted.dia}</p>
+                          <p className="text-sm text-gray-300">{formatted.mes}</p>
+                        </div>
+                      </Card>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+      {step === "horarios" && (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+          <div className="max-w-7xl mx-auto">
+            <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("data")}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
+
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-white mb-2">Horários Disponíveis</h1>
+              <p className="text-gray-300">
+                {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes} - {selectedModalidade}
+              </p>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* PARQUE AMAZÔNIA */}
+              <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold text-white text-center">Parque Amazônia</CardTitle>
+                  <CardDescription className="text-center text-gray-300">R$ 80,00 por hora</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {getQuadrasDisponiveis()
+                    .filter((q) => q.unidade === "Parque Amazônia")
+                    .map((item) => (
+                      <div key={item.quadra}>
+                        <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
+                        <div className="grid grid-cols-3 gap-2">
+                          {HORARIOS.map((horario) => {
+                            const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
+                            return (
+                              <Button
+                                key={horario}
+                                variant={ocupado ? "outline" : "default"}
+                                disabled={ocupado || loading}
+                                onClick={() => handleHorarioSelect(item.unidade, item.quadra, horario)}
+                                className={cn(
+                                  "text-sm",
+                                  ocupado
+                                    ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
+                                    : "bg-green-600 hover:bg-green-700 text-white",
+                                )}
+                              >
+                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : horario}
+                              </Button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                </CardContent>
+              </Card>
+
+              {/* VILA ROSA */}
+              <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold text-white text-center">Vila Rosa</CardTitle>
+                  <CardDescription className="text-center text-gray-300">R$ 70,00 por hora</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {getQuadrasDisponiveis()
+                    .filter((q) => q.unidade === "Vila Rosa")
+                    .map((item) => (
+                      <div key={item.quadra}>
+                        <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
+                        <div className="grid grid-cols-3 gap-2">
+                          {HORARIOS.map((horario) => {
+                            const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
+                            return (
+                              <Button
+                                key={horario}
+                                variant={ocupado ? "outline" : "default"}
+                                disabled={ocupado || loading}
+                                onClick={() => handleHorarioSelect(item.unidade, item.quadra, horario)}
+                                className={cn(
+                                  "text-sm",
+                                  ocupado
+                                    ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
+                                    : "bg-green-600 hover:bg-green-700 text-white",
+                                )}
+                              >
+                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : horario}
+                              </Button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      )}
+      {step === "pagamento" && (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+          <div className="max-w-2xl mx-auto">
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold text-white text-center">Pagamento via PIX</CardTitle>
+                <CardDescription className="text-gray-300 text-center">
+                  Escaneie o QR Code ou copie o código PIX
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {paymentData && (
+                  <>
+                    <div className="bg-white p-4 rounded-xl mx-auto w-fit">
+                      <img
+                        src={`data:image/png;base64,${paymentData.qrCodeBase64}`}
+                        alt="QR Code PIX"
+                        className="w-64 h-64"
                       />
-                      <Button onClick={handleCopyPix} variant="outline" className="bg-green-600 hover:bg-green-700">
-                        {pixCopied ? <CheckCircle2 className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
-                      </Button>
                     </div>
-                  </div>
 
-                  <div className="text-center space-y-2">
-                    <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin text-green-400" />
-                      <p className="text-green-400 font-semibold">Aguardando confirmação do pagamento...</p>
+                    <div className="space-y-3">
+                      <Label className="text-white">Código PIX Copia e Cola:</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          value={paymentData.pixPayload}
+                          readOnly
+                          className="bg-white/10 border-white/30 text-white text-sm"
+                        />
+                        <Button onClick={handleCopyPix} variant="outline" className="bg-green-600 hover:bg-green-700">
+                          {pixCopied ? <CheckCircle2 className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
+                        </Button>
+                      </div>
                     </div>
-                    <p className="text-gray-400 text-sm">A reserva será confirmada automaticamente após o pagamento</p>
-                  </div>
-                </>
-              )}
+
+                    <div className="text-center space-y-2">
+                      <div className="flex items-center justify-center gap-2">
+                        <Loader2 className="h-5 w-5 animate-spin text-green-400" />
+                        <p className="text-green-400 font-semibold">Aguardando confirmação do pagamento...</p>
+                      </div>
+                      <p className="text-gray-400 text-sm">
+                        A reserva será confirmada automaticamente após o pagamento
+                      </p>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+      {step === "sucesso" && (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12 flex items-center justify-center">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 max-w-2xl">
+            <CardContent className="pt-12 pb-12 text-center space-y-6">
+              <div className="mx-auto w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle2 className="h-12 w-12 text-green-400" />
+              </div>
+              <h1 className="text-4xl font-bold text-white">Reserva Confirmada!</h1>
+              <p className="text-gray-300 text-lg">
+                Sua reserva para {selectedModalidade} em {selectedSlot?.unidade} foi confirmada com sucesso!
+              </p>
+              <div className="bg-white/10 p-6 rounded-xl space-y-2">
+                <p className="text-white">
+                  <strong>Data:</strong> {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes}
+                </p>
+                <p className="text-white">
+                  <strong>Horário:</strong> {selectedSlot?.horario}
+                </p>
+                <p className="text-white">
+                  <strong>Local:</strong> {selectedSlot?.unidade} - {selectedSlot?.quadra}
+                </p>
+              </div>
+              <Link href="/">
+                <Button className="bg-green-600 hover:bg-green-700 text-lg px-8 py-6">Voltar para Home</Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
-      </div>
-    )
-  }
-
-  if (step === "sucesso") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12 flex items-center justify-center">
-        <Card className="bg-white/10 backdrop-blur-xl border-white/20 max-w-2xl">
-          <CardContent className="pt-12 pb-12 text-center space-y-6">
-            <div className="mx-auto w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle2 className="h-12 w-12 text-green-400" />
-            </div>
-            <h1 className="text-4xl font-bold text-white">Reserva Confirmada!</h1>
-            <p className="text-gray-300 text-lg">
-              Sua reserva para {selectedModalidade} em {selectedSlot?.unidade} foi confirmada com sucesso!
-            </p>
-            <div className="bg-white/10 p-6 rounded-xl space-y-2">
-              <p className="text-white">
-                <strong>Data:</strong> {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes}
-              </p>
-              <p className="text-white">
-                <strong>Horário:</strong> {selectedSlot?.horario}
-              </p>
-              <p className="text-white">
-                <strong>Local:</strong> {selectedSlot?.unidade} - {selectedSlot?.quadra}
-              </p>
-            </div>
-            <Link href="/">
-              <Button className="bg-green-600 hover:bg-green-700 text-lg px-8 py-6">Voltar para Home</Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
-  return null
+      )}
+    </div>
+  )
 }
