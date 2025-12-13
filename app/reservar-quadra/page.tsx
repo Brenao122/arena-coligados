@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, CheckCircle2, Loader2, Copy } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Loader2, Copy, Check } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -473,7 +473,7 @@ export default function ReservarQuadraPage() {
                     <Card
                       key={mod.id}
                       className={cn(
-                        "cursor-pointer transition-all border-2",
+                        "cursor-pointer transition-all border-2 relative",
                         selectedModalidade === mod.id
                           ? "border-green-500 bg-green-900/20"
                           : "border-gray-700 bg-gray-800/50 hover:border-green-400",
@@ -483,6 +483,11 @@ export default function ReservarQuadraPage() {
                         setStep("data")
                       }}
                     >
+                      {selectedModalidade === mod.id && (
+                        <div className="absolute top-2 right-2 bg-green-500 rounded-full p-1">
+                          <Check className="h-4 w-4 text-white" />
+                        </div>
+                      )}
                       <div className="p-6 text-center">
                         <div className="text-5xl mb-3">{mod.icon}</div>
                         <h3 className="text-lg font-bold text-white mb-2">{mod.name}</h3>

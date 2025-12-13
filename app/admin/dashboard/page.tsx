@@ -3,9 +3,22 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
-import { Loader2, Phone, Mail, Calendar, Clock, MapPin, CheckCircle2, AlertCircle, X, LogOut } from "lucide-react"
+import {
+  Loader2,
+  Phone,
+  Mail,
+  Calendar,
+  Clock,
+  MapPin,
+  CheckCircle2,
+  AlertCircle,
+  X,
+  LogOut,
+  Settings,
+} from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 interface Reserva {
   timestamp: string
@@ -111,14 +124,25 @@ const DashboardPage = () => {
             <h1 className="text-4xl font-bold text-white mb-2">Dashboard Administrativo</h1>
             <p className="text-gray-400">Gerencie todas as reservas do Arena Coligados</p>
           </div>
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="bg-red-500/20 hover:bg-red-500/30 text-red-300 border-red-500/50"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Sair
-          </Button>
+          <div className="flex gap-3">
+            <Link href="/admin/gerenciar-horarios">
+              <Button
+                variant="outline"
+                className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border-blue-500/50"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Gerenciar Horários
+              </Button>
+            </Link>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="bg-red-500/20 hover:bg-red-500/30 text-red-300 border-red-500/50"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sair
+            </Button>
+          </div>
         </div>
 
         {reservasPendentes.length > 0 && (
