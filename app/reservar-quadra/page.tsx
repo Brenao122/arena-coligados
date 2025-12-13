@@ -127,18 +127,18 @@ export default function ReservarQuadraPage() {
   useEffect(() => {
     const fetchHorariosOcupados = async () => {
       try {
-        const response = await fetch("/api/sheets/reservas")
+        const response = await fetch("/api/sheets/reservas/list-all")
         if (response.ok) {
           const data = await response.json()
           const ocupados: Record<string, string[]> = {}
 
           data.reservas?.forEach((reserva: any) => {
             if (reserva.status === "CONFIRMADA") {
-              reserva.horarios?.forEach((horario: string) => {
-                const key = `${reserva.data}-${reserva.unidade}-${reserva.quadra}`
-                if (!ocupados[key]) ocupados[key] = []
-                ocupados[key].push(horario)
-              })
+              const key = `${reserva.data}-${reserva.unidade}-${reserva.quadra}`
+              if (!ocupados[key]) ocupados[key] = []
+              if (reserva.horarios && !ocupados[key].includes(reserva.horarios)) {
+                ocupados[key].push(reserva.horarios)
+              }
             }
           })
 
@@ -154,10 +154,9 @@ export default function ReservarQuadraPage() {
   }, [])
 
   useEffect(() => {
-    if (step === "pagamento" && paymentData?.paymentId && !checkingPayment && selectedSlot) {
+    if (step === "pagamento" && paymentData?.paymentId && selectedSlot) {
       const checkInterval = setInterval(async () => {
         try {
-          setCheckingPayment(true)
           const response = await fetch(
             `/api/asaas/check-payment?paymentId=${paymentData.paymentId}&unidade=${encodeURIComponent(selectedSlot.unidade)}`,
           )
@@ -169,14 +168,12 @@ export default function ReservarQuadraPage() {
           }
         } catch (error) {
           console.error("[v0] Erro ao verificar pagamento:", error)
-        } finally {
-          setCheckingPayment(false)
         }
       }, 5000)
 
       return () => clearInterval(checkInterval)
     }
-  }, [step, paymentData, checkingPayment, selectedSlot])
+  }, [step, paymentData, selectedSlot])
 
   const isHorarioOcupado = (unidade: string, quadra: string, horario: string) => {
     const dateStr = selectedDate.toISOString().split("T")[0]
@@ -197,28 +194,25 @@ export default function ReservarQuadraPage() {
           values: [
             [
               new Date().toISOString(),
-              "", // data - preenchido depois
-              "", // unidade - preenchido depois
-              "", // quadra - preenchido depois
-              "", // horario - preenchido depois
-              "", // modalidade - preenchido depois
+              "",
+              "",
+              "",
+              "",
+              "",
               formData.nome,
               formData.telefone,
               formData.email,
               formData.cpf,
-              "LEAD", // Status inicial
-              "", // payment_id
-              "", // valor_total
-              "", // valor_reserva
+              "LEAD",
+              "",
+              "",
+              "",
             ],
           ],
         }),
       })
 
       if (!response.ok) throw new Error("Erro ao salvar cadastro")
-
-      const data = await response.json()
-      setLeadId(data.rowIndex || new Date().getTime().toString())
 
       console.log("[v0] ✅ LEAD salvo com sucesso!")
       setStep("modalidade")
@@ -245,6 +239,7 @@ export default function ReservarQuadraPage() {
       const valorTotal = UNIDADES[unidade as keyof typeof UNIDADES].preco
       const valorReserva = valorTotal / 2
 
+      // Criar reserva PENDENTE
       const reservaResponse = await fetch("/api/sheets/append", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -275,6 +270,7 @@ export default function ReservarQuadraPage() {
 
       console.log("[v0] ✅ Reserva PENDENTE criada")
 
+      // Gerar PIX no ASAAS
       const paymentResponse = await fetch("/api/asaas/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -285,7 +281,7 @@ export default function ReservarQuadraPage() {
             email: formData.email || `${formData.cpf.replace(/\D/g, "")}@temp.com`,
             phone: formData.telefone.replace(/\D/g, ""),
           },
-          value: valorTotal,
+          value: valorReserva,
           description: `Reserva ${quadra} - ${selectedModalidade}`,
           dueDate: new Date().toISOString().split("T")[0],
           externalReference: `${formData.cpf}-${Date.now()}`,
@@ -299,6 +295,16 @@ export default function ReservarQuadraPage() {
       }
 
       const paymentResult = await paymentResponse.json()
+
+      // Atualizar payment_id na reserva
+      const updateResponse = await fetch("/api/sheets/reservas/update-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paymentId: paymentResult.payment.id,
+          status: "PENDENTE",
+        }),
+      })
 
       setPaymentData({
         paymentId: paymentResult.payment.id,
@@ -324,7 +330,7 @@ export default function ReservarQuadraPage() {
       const updateResponse = await fetch("/api/sheets/reservas/update-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.JSON.stringify({
+        body: JSON.stringify({
           paymentId: paymentData.paymentId,
           status: "CONFIRMADA",
         }),
@@ -545,7 +551,6 @@ export default function ReservarQuadraPage() {
 
   if (step === "horarios") {
     const quadrasDisponiveis = getQuadrasDisponiveis()
-
     const parqueQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Parque Amazônia")
     const vilaQuadras = quadrasDisponiveis.filter((q) => q.unidade === "Vila Rosa")
 
@@ -568,41 +573,39 @@ export default function ReservarQuadraPage() {
             {/* PARQUE AMAZÔNIA */}
             <Card className="bg-white/10 backdrop-blur-xl border-white/20">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold text-white">Parque Amazônia</CardTitle>
-                <CardDescription className="text-gray-300">
-                  R$ {UNIDADES["Parque Amazônia"].preco.toFixed(2)}/hora
-                </CardDescription>
+                <CardTitle className="text-2xl font-bold text-white text-center">Parque Amazônia</CardTitle>
+                <CardDescription className="text-center text-gray-300">R$ 80,00 por hora</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {parqueQuadras.map(({ quadra }) => (
-                  <div key={quadra}>
-                    <h3 className="text-white font-semibold mb-3">{quadra}</h3>
-                    <div className="grid grid-cols-3 gap-2">
-                      {HORARIOS.map((horario) => {
-                        const ocupado = isHorarioOcupado("Parque Amazônia", quadra, horario)
-
-                        return (
-                          <Button
-                            key={horario}
-                            variant={ocupado ? "outline" : "default"}
-                            disabled={ocupado || loading}
-                            onClick={() => handleHorarioSelect("Parque Amazônia", quadra, horario)}
-                            className={cn(
-                              "h-12",
-                              ocupado
-                                ? "bg-red-900/30 border-red-700 cursor-not-allowed"
-                                : "bg-green-600 hover:bg-green-700",
-                            )}
-                          >
-                            {horario}
-                          </Button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
-                {parqueQuadras.length === 0 && (
+              <CardContent className="space-y-4">
+                {parqueQuadras.length === 0 ? (
                   <p className="text-gray-400 text-center py-8">Nenhuma quadra disponível para esta modalidade</p>
+                ) : (
+                  parqueQuadras.map((item) => (
+                    <div key={item.quadra}>
+                      <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        {HORARIOS.map((horario) => {
+                          const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
+                          return (
+                            <Button
+                              key={horario}
+                              variant={ocupado ? "outline" : "default"}
+                              disabled={ocupado || loading}
+                              onClick={() => handleHorarioSelect(item.unidade, item.quadra, horario)}
+                              className={cn(
+                                "text-sm",
+                                ocupado
+                                  ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
+                                  : "bg-green-600 hover:bg-green-700 text-white",
+                              )}
+                            >
+                              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : horario}
+                            </Button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))
                 )}
               </CardContent>
             </Card>
@@ -610,41 +613,39 @@ export default function ReservarQuadraPage() {
             {/* VILA ROSA */}
             <Card className="bg-white/10 backdrop-blur-xl border-white/20">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold text-white">Vila Rosa</CardTitle>
-                <CardDescription className="text-gray-300">
-                  R$ {UNIDADES["Vila Rosa"].preco.toFixed(2)}/hora
-                </CardDescription>
+                <CardTitle className="text-2xl font-bold text-white text-center">Vila Rosa</CardTitle>
+                <CardDescription className="text-center text-gray-300">R$ 70,00 por hora</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {vilaQuadras.map(({ quadra }) => (
-                  <div key={quadra}>
-                    <h3 className="text-white font-semibold mb-3">{quadra}</h3>
-                    <div className="grid grid-cols-3 gap-2">
-                      {HORARIOS.map((horario) => {
-                        const ocupado = isHorarioOcupado("Vila Rosa", quadra, horario)
-
-                        return (
-                          <Button
-                            key={horario}
-                            variant={ocupado ? "outline" : "default"}
-                            disabled={ocupado || loading}
-                            onClick={() => handleHorarioSelect("Vila Rosa", quadra, horario)}
-                            className={cn(
-                              "h-12",
-                              ocupado
-                                ? "bg-red-900/30 border-red-700 cursor-not-allowed"
-                                : "bg-green-600 hover:bg-green-700",
-                            )}
-                          >
-                            {horario}
-                          </Button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
-                {vilaQuadras.length === 0 && (
+              <CardContent className="space-y-4">
+                {vilaQuadras.length === 0 ? (
                   <p className="text-gray-400 text-center py-8">Nenhuma quadra disponível para esta modalidade</p>
+                ) : (
+                  vilaQuadras.map((item) => (
+                    <div key={item.quadra}>
+                      <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        {HORARIOS.map((horario) => {
+                          const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
+                          return (
+                            <Button
+                              key={horario}
+                              variant={ocupado ? "outline" : "default"}
+                              disabled={ocupado || loading}
+                              onClick={() => handleHorarioSelect(item.unidade, item.quadra, horario)}
+                              className={cn(
+                                "text-sm",
+                                ocupado
+                                  ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
+                                  : "bg-green-600 hover:bg-green-700 text-white",
+                              )}
+                            >
+                              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : horario}
+                            </Button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))
                 )}
               </CardContent>
             </Card>
@@ -654,59 +655,51 @@ export default function ReservarQuadraPage() {
     )
   }
 
-  if (step === "pagamento" && paymentData && selectedSlot) {
+  if (step === "pagamento") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
         <div className="max-w-2xl mx-auto">
           <Card className="bg-white/10 backdrop-blur-xl border-white/20">
             <CardHeader>
-              <CardTitle className="text-3xl font-bold text-white text-center">Pagamento PIX</CardTitle>
+              <CardTitle className="text-3xl font-bold text-white text-center">Pagamento via PIX</CardTitle>
               <CardDescription className="text-gray-300 text-center">
-                Escaneie o QR Code ou copie o código
+                Escaneie o QR Code ou copie o código PIX
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-white p-6 rounded-lg">
-                <img
-                  src={`data:image/png;base64,${paymentData.qrCodeBase64}`}
-                  alt="QR Code PIX"
-                  className="w-full max-w-xs mx-auto"
-                />
-              </div>
+              {paymentData && (
+                <>
+                  <div className="bg-white p-4 rounded-xl mx-auto w-fit">
+                    <img
+                      src={`data:image/png;base64,${paymentData.qrCodeBase64}`}
+                      alt="QR Code PIX"
+                      className="w-64 h-64"
+                    />
+                  </div>
 
-              <div className="bg-white/5 rounded-lg p-4 border border-white/20">
-                <p className="text-white font-semibold mb-2">{selectedSlot.unidade}</p>
-                <p className="text-gray-300 text-sm">
-                  {selectedSlot.quadra} - {selectedSlot.horario}
-                </p>
-                <p className="text-gray-300 text-sm">
-                  {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes}
-                </p>
-                <p className="text-green-400 font-bold text-lg mt-2">
-                  R$ {(UNIDADES[selectedSlot.unidade as keyof typeof UNIDADES].preco / 2).toFixed(2)}
-                </p>
-                <p className="text-gray-400 text-xs">Valor da reserva (50%)</p>
-              </div>
+                  <div className="space-y-3">
+                    <Label className="text-white">Código PIX Copia e Cola:</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={paymentData.pixPayload}
+                        readOnly
+                        className="bg-white/10 border-white/30 text-white text-sm"
+                      />
+                      <Button onClick={handleCopyPix} variant="outline" className="bg-green-600 hover:bg-green-700">
+                        {pixCopied ? <CheckCircle2 className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
+                      </Button>
+                    </div>
+                  </div>
 
-              <div className="space-y-2">
-                <Label className="text-white">Código Pix Copia e Cola</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={paymentData.pixPayload}
-                    readOnly
-                    className="bg-white/10 border-white/30 text-white text-xs"
-                  />
-                  <Button onClick={handleCopyPix} variant="outline">
-                    {pixCopied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <Loader2 className="animate-spin h-8 w-8 text-green-500 mx-auto mb-2" />
-                <p className="text-gray-300">Aguardando pagamento...</p>
-                <p className="text-gray-400 text-sm">Verificando automaticamente a cada 5 segundos</p>
-              </div>
+                  <div className="text-center space-y-2">
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="h-5 w-5 animate-spin text-green-400" />
+                      <p className="text-green-400 font-semibold">Aguardando confirmação do pagamento...</p>
+                    </div>
+                    <p className="text-gray-400 text-sm">A reserva será confirmada automaticamente após o pagamento</p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -714,36 +707,31 @@ export default function ReservarQuadraPage() {
     )
   }
 
-  if (step === "sucesso" && selectedSlot) {
+  if (step === "sucesso") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 via-emerald-900 to-teal-800 p-4">
-        <Card className="max-w-md w-full bg-white/10 backdrop-blur-xl border-white/20 text-center">
-          <CardHeader>
-            <div className="mx-auto mb-4 w-20 h-20 bg-green-500 rounded-full flex items-center justify-center">
-              <CheckCircle2 className="w-12 h-12 text-white" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12 flex items-center justify-center">
+        <Card className="bg-white/10 backdrop-blur-xl border-white/20 max-w-2xl">
+          <CardContent className="pt-12 pb-12 text-center space-y-6">
+            <div className="mx-auto w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 className="h-12 w-12 text-green-400" />
             </div>
-            <CardTitle className="text-3xl font-bold text-white">Pagamento Confirmado!</CardTitle>
-            <CardDescription className="text-gray-300 text-lg mt-2">
-              Sua reserva foi confirmada com sucesso
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-white/5 rounded-lg p-4 border border-white/20">
-              <p className="text-gray-300 mb-2">
+            <h1 className="text-4xl font-bold text-white">Reserva Confirmada!</h1>
+            <p className="text-gray-300 text-lg">
+              Sua reserva para {selectedModalidade} em {selectedSlot?.unidade} foi confirmada com sucesso!
+            </p>
+            <div className="bg-white/10 p-6 rounded-xl space-y-2">
+              <p className="text-white">
                 <strong>Data:</strong> {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes}
               </p>
-              <p className="text-gray-300 mb-2">
-                <strong>Local:</strong> {selectedSlot.unidade} - {selectedSlot.quadra}
+              <p className="text-white">
+                <strong>Horário:</strong> {selectedSlot?.horario}
               </p>
-              <p className="text-gray-300 mb-2">
-                <strong>Modalidade:</strong> {selectedModalidade}
-              </p>
-              <p className="text-gray-300">
-                <strong>Horário:</strong> {selectedSlot.horario}
+              <p className="text-white">
+                <strong>Local:</strong> {selectedSlot?.unidade} - {selectedSlot?.quadra}
               </p>
             </div>
             <Link href="/">
-              <Button className="w-full bg-green-600 hover:bg-green-700">Voltar ao Início</Button>
+              <Button className="bg-green-600 hover:bg-green-700 text-lg px-8 py-6">Voltar para Home</Button>
             </Link>
           </CardContent>
         </Card>

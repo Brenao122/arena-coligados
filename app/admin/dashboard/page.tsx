@@ -3,8 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
-import { Loader2, Phone, Mail, Calendar, Clock, MapPin, CheckCircle2, AlertCircle, X } from "lucide-react"
+import { Loader2, Phone, Mail, Calendar, Clock, MapPin, CheckCircle2, AlertCircle, X, LogOut } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useRouter } from "next/navigation"
 
 interface Reserva {
   timestamp: string
@@ -24,6 +25,7 @@ interface Reserva {
 }
 
 const DashboardPage = () => {
+  const router = useRouter()
   const [filtroStatus, setFiltroStatus] = useState<"TODAS" | "CONFIRMADA" | "PENDENTE">("TODAS")
   const [reservas, setReservas] = useState<Reserva[]>([])
   const [loading, setLoading] = useState(true)
@@ -31,7 +33,6 @@ const DashboardPage = () => {
 
   useEffect(() => {
     fetchReservas()
-    // Atualizar a cada 30 segundos
     const interval = setInterval(fetchReservas, 30000)
     return () => clearInterval(interval)
   }, [])
@@ -49,7 +50,6 @@ const DashboardPage = () => {
       setLoading(false)
     }
   }
-  // </CHANGE>
 
   const handleCancelarReserva = async (paymentId: string) => {
     if (!confirm("Tem certeza que deseja cancelar esta reserva?")) return
@@ -78,7 +78,11 @@ const DashboardPage = () => {
       setCancelando(null)
     }
   }
-  // </CHANGE>
+
+  const handleLogout = async () => {
+    await fetch("/api/admin/auth", { method: "DELETE" })
+    router.push("/admin/login")
+  }
 
   const reservasFiltradas = reservas.filter((reserva) => {
     if (filtroStatus === "TODAS") return reserva.status !== "CANCELADA"
@@ -102,10 +106,21 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-white mb-2">Dashboard Administrativo</h1>
-        <p className="text-gray-400 mb-8">Gerencie todas as reservas do Arena Coligados</p>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">Dashboard Administrativo</h1>
+            <p className="text-gray-400">Gerencie todas as reservas do Arena Coligados</p>
+          </div>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="bg-red-500/20 hover:bg-red-500/30 text-red-300 border-red-500/50"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sair
+          </Button>
+        </div>
 
-        {/* Alerta de Pendentes */}
         {reservasPendentes.length > 0 && (
           <div className="mb-6 p-6 bg-yellow-500/20 border-2 border-yellow-500/50 rounded-xl backdrop-blur-sm">
             <div className="flex items-center gap-3">
@@ -122,7 +137,6 @@ const DashboardPage = () => {
           </div>
         )}
 
-        {/* Estatísticas */}
         <div className="grid gap-4 md:grid-cols-3 mb-8">
           <Card className="bg-white/10 backdrop-blur-xl border-white/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -157,7 +171,6 @@ const DashboardPage = () => {
           </Card>
         </div>
 
-        {/* Filtros */}
         <div className="mb-6 flex gap-3">
           <Button
             variant={filtroStatus === "TODAS" ? "default" : "outline"}
@@ -194,7 +207,6 @@ const DashboardPage = () => {
           </Button>
         </div>
 
-        {/* Lista de Reservas */}
         <div className="space-y-4">
           {reservasFiltradas.length === 0 ? (
             <Card className="bg-white/10 backdrop-blur-xl border-white/20">
@@ -227,7 +239,7 @@ const DashboardPage = () => {
                       </div>
                       <p className="text-gray-400 text-sm">{reserva.modalidade}</p>
                     </div>
-                    {reserva.status !== "CANCELADA" && (
+                    {reserva.status !== "CANCELADA" && reserva.payment_id && (
                       <Button
                         onClick={() => handleCancelarReserva(reserva.payment_id)}
                         disabled={cancelando === reserva.payment_id}
@@ -266,6 +278,8 @@ const DashboardPage = () => {
                       <Phone className="h-4 w-4 text-orange-400" />
                       <a
                         href={`https://wa.me/55${reserva.telefone.replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="text-sm hover:text-green-400"
                       >
                         {reserva.telefone}

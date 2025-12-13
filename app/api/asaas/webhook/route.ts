@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     console.log("[v0] Status:", body.payment?.status)
 
     if (!body.event || !body.payment) {
-      console.error("[v0] ❌ Webhook inválido:", body)
+      console.error("[v0] Webhook inválido:", body)
       return NextResponse.json({ error: "Webhook inválido" }, { status: 400 })
     }
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         // Buscar todas as reservas
         const response = await sheets.spreadsheets.values.get({
           spreadsheetId,
-          range: "leads - quadra!A:Z",
+          range: "leads - quadra!A:N",
         })
 
         const rows = response.data.values || []
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         const statusIndex = headers.indexOf("status")
 
         if (paymentIdIndex === -1 || statusIndex === -1) {
-          console.error("[v0] ❌ Colunas payment_id ou status não encontradas")
+          console.error("[v0] Colunas payment_id ou status não encontradas")
           return NextResponse.json({ error: "Estrutura da planilha inválida" }, { status: 500 })
         }
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (rowIndex === -1) {
-          console.error("[v0] ❌ Reserva não encontrada para payment_id:", body.payment.id)
+          console.error("[v0] Reserva não encontrada para payment_id:", body.payment.id)
           return NextResponse.json({ error: "Reserva não encontrada" }, { status: 404 })
         }
 
@@ -73,28 +73,15 @@ export async function POST(request: NextRequest) {
         })
 
         console.log("[v0] ✅ Status atualizado para CONFIRMADA na linha:", rowIndex)
-        // </CHANGE>
       } catch (error) {
-        console.error("[v0] ❌ Erro ao atualizar status:", error)
+        console.error("[v0] Erro ao atualizar status:", error)
         // Não retornar erro para o ASAAS continuar tentando
       }
     }
 
-    // Outros eventos
-    switch (body.event) {
-      case "PAYMENT_OVERDUE":
-        console.log("[v0] ⚠️ Pagamento vencido:", body.payment.id)
-        break
-      case "PAYMENT_DELETED":
-        console.log("[v0] 🗑️ Pagamento deletado:", body.payment.id)
-        break
-      default:
-        console.log("[v0] Evento não tratado:", body.event)
-    }
-
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("[v0] ❌ Erro ao processar webhook:", error)
+    console.error("[v0] Erro ao processar webhook:", error)
     return NextResponse.json({ success: false, error: "Erro interno" }, { status: 500 })
   }
 }
