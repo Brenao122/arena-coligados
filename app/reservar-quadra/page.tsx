@@ -191,28 +191,30 @@ export default function ReservarQuadraPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sheetName: "leads - quadra",
-          values: [
-            [
-              new Date().toISOString(),
-              "",
-              "",
-              "",
-              "",
-              "",
-              formData.nome,
-              formData.telefone,
-              formData.email,
-              formData.cpf,
-              "LEAD",
-              "",
-              "",
-              "",
-            ],
-          ],
+          data: {
+            timestamp: new Date().toISOString(),
+            data: "",
+            unidade: "",
+            quadra: "",
+            horarios: "",
+            modalidade: "",
+            nome: formData.nome,
+            telefone: formData.telefone,
+            email: formData.email,
+            cpf: formData.cpf,
+            status: "LEAD",
+            payment_id: "",
+            valor_total: "",
+            valor_reserva: "",
+          },
         }),
       })
 
-      if (!response.ok) throw new Error("Erro ao salvar cadastro")
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error("[v0] Erro da API:", errorData)
+        throw new Error(errorData.error || "Erro ao salvar cadastro")
+      }
 
       console.log("[v0] ✅ LEAD salvo com sucesso!")
       setStep("modalidade")
@@ -245,28 +247,30 @@ export default function ReservarQuadraPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sheetName: "leads - quadra",
-          values: [
-            [
-              new Date().toISOString(),
-              selectedDate.toISOString().split("T")[0],
-              unidade,
-              quadra,
-              horario,
-              selectedModalidade,
-              formData.nome,
-              formData.telefone,
-              formData.email,
-              formData.cpf,
-              "PENDENTE",
-              "",
-              valorTotal.toFixed(2),
-              valorReserva.toFixed(2),
-            ],
-          ],
+          data: {
+            timestamp: new Date().toISOString(),
+            data: selectedDate.toISOString().split("T")[0],
+            unidade: unidade,
+            quadra: quadra,
+            horarios: horario,
+            modalidade: selectedModalidade,
+            nome: formData.nome,
+            telefone: formData.telefone,
+            email: formData.email,
+            cpf: formData.cpf,
+            status: "PENDENTE",
+            payment_id: "",
+            valor_total: valorTotal.toFixed(2),
+            valor_reserva: valorReserva.toFixed(2),
+          },
         }),
       })
 
-      if (!reservaResponse.ok) throw new Error("Erro ao criar reserva")
+      if (!reservaResponse.ok) {
+        const errorData = await reservaResponse.json()
+        console.error("[v0] Erro da API reserva:", errorData)
+        throw new Error(errorData.error || "Erro ao criar reserva")
+      }
 
       console.log("[v0] ✅ Reserva PENDENTE criada")
 

@@ -18,6 +18,31 @@ export async function POST(request: NextRequest) {
     const sheets = google.sheets({ version: "v4", auth })
     const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID
 
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: "leads - quadra!A:O",
+    })
+
+    const rows = response.data.values || []
+
+    // Verificar se já existe reserva CONFIRMADA ou PENDENTE para este horário
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i]
+      if (
+        row[1] === data &&
+        row[2] === unidade &&
+        row[3] === quadra &&
+        row[4] === horarios &&
+        (row[10] === "CONFIRMADA" || row[10] === "PENDENTE")
+      ) {
+        return NextResponse.json(
+          { error: "Já existe uma reserva confirmada ou pendente para este horário" },
+          { status: 409 },
+        )
+      }
+    }
+    // </CHANGE>
+
     // Criar uma reserva de bloqueio
     const values = [
       [

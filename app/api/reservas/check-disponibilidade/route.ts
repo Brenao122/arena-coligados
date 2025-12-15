@@ -21,15 +21,30 @@ export async function POST(request: NextRequest) {
     const dataReservas = await responseReservas.json()
     const horariosOcupados: string[] = []
 
-    // Filtrar reservas para a quadra e data específicas
+    const agora = new Date()
+
     dataReservas.reservas?.forEach((reserva: any) => {
       if (reserva.unidade === unidade && reserva.quadra === quadra && reserva.data === data) {
-        // Adicionar todos os horários da reserva como ocupados
-        if (Array.isArray(reserva.horarios)) {
-          horariosOcupados.push(...reserva.horarios)
+        // Se for PENDENTE, verificar se não expirou (15 minutos)
+        if (reserva.status === "PENDENTE") {
+          const timestampReserva = new Date(reserva.timestamp)
+          const diferencaMinutos = (agora.getTime() - timestampReserva.getTime()) / 1000 / 60
+
+          // Ignorar reservas pendentes com mais de 15 minutos
+          if (diferencaMinutos > 15) {
+            return
+          }
+        }
+
+        // Adicionar horários ocupados (CONFIRMADA, BLOQUEIO ou PENDENTE recente)
+        if (reserva.status === "CONFIRMADA" || reserva.modalidade === "BLOQUEIO" || reserva.status === "PENDENTE") {
+          if (Array.isArray(reserva.horarios)) {
+            horariosOcupados.push(...reserva.horarios)
+          }
         }
       }
     })
+    // </CHANGE>
 
     // Se foram enviados horários específicos para validar
     if (horarios && Array.isArray(horarios)) {
