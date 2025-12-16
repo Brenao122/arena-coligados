@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Webhook inválido" }, { status: 400 })
     }
 
-    // Processar apenas pagamentos confirmados/recebidos
     if (body.event === "PAYMENT_RECEIVED" || body.event === "PAYMENT_CONFIRMED") {
       console.log("[v0] ✅ Pagamento confirmado, atualizando status...")
 
@@ -31,7 +30,6 @@ export async function POST(request: NextRequest) {
         const sheets = google.sheets({ version: "v4", auth })
         const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID
 
-        // Buscar todas as reservas
         const response = await sheets.spreadsheets.values.get({
           spreadsheetId,
           range: "leads - quadra!A:N",
@@ -41,17 +39,34 @@ export async function POST(request: NextRequest) {
         const headers = rows[0]
         const paymentIdIndex = headers.indexOf("payment_id")
         const statusIndex = headers.indexOf("status")
+        const telefoneIndex = headers.indexOf("telefone")
+        const nomeIndex = headers.indexOf("nome")
+        const dataIndex = headers.indexOf("data")
+        const horariosIndex = headers.indexOf("horarios")
+        const unidadeIndex = headers.indexOf("unidade")
+        const quadraIndex = headers.indexOf("quadra")
+        const modalidadeIndex = headers.indexOf("modalidade")
 
         if (paymentIdIndex === -1 || statusIndex === -1) {
           console.error("[v0] Colunas payment_id ou status não encontradas")
           return NextResponse.json({ error: "Estrutura da planilha inválida" }, { status: 500 })
         }
 
-        // Encontrar a linha com o payment_id
         let rowIndex = -1
+        let clienteData: any = {}
+
         for (let i = 1; i < rows.length; i++) {
           if (rows[i][paymentIdIndex] === body.payment.id) {
-            rowIndex = i + 1 // +1 porque Sheets usa indexação 1-based
+            rowIndex = i + 1
+            clienteData = {
+              telefone: rows[i][telefoneIndex],
+              nome: rows[i][nomeIndex],
+              data: rows[i][dataIndex],
+              horarios: rows[i][horariosIndex],
+              unidade: rows[i][unidadeIndex],
+              quadra: rows[i][quadraIndex],
+              modalidade: rows[i][modalidadeIndex],
+            }
             break
           }
         }
@@ -61,8 +76,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "Reserva não encontrada" }, { status: 404 })
         }
 
-        // Atualizar o status para CONFIRMADA
-        const columnLetter = String.fromCharCode(65 + statusIndex) // A=65, B=66, etc
+        const columnLetter = String.fromCharCode(65 + statusIndex)
         await sheets.spreadsheets.values.update({
           spreadsheetId,
           range: `leads - quadra!${columnLetter}${rowIndex}`,
@@ -73,9 +87,20 @@ export async function POST(request: NextRequest) {
         })
 
         console.log("[v0] ✅ Status atualizado para CONFIRMADA na linha:", rowIndex)
+
+        try {
+          await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/whatsapp/enviar-confirmacao`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(clienteData),
+          })
+          console.log("[v0] ✅ WhatsApp de confirmação enviado")
+        } catch (whatsappError) {
+          console.error("[v0] Erro ao enviar WhatsApp:", whatsappError)
+          // Não falhar o webhook por causa do WhatsApp
+        }
       } catch (error) {
         console.error("[v0] Erro ao atualizar status:", error)
-        // Não retornar erro para o ASAAS continuar tentando
       }
     }
 

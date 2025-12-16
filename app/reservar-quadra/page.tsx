@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, CheckCircle2, Loader2, Copy, Check } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Loader2, Copy, Check, MapPin, Phone, Clock } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -42,18 +42,31 @@ const UNIDADES = {
 
 const HORARIOS = [
   "08:00",
+  "08:30",
   "09:00",
+  "09:30",
   "10:00",
+  "10:30",
   "11:00",
+  "11:30",
   "12:00",
+  "12:30",
   "13:00",
+  "13:30",
   "14:00",
+  "14:30",
   "15:00",
+  "15:30",
   "16:00",
+  "16:30",
   "17:00",
+  "17:30",
   "18:00",
+  "18:30",
   "19:00",
+  "19:30",
   "20:00",
+  "20:30",
   "21:00",
 ]
 
@@ -95,23 +108,26 @@ const formatDate = (date: Date) => {
 }
 
 export default function ReservarQuadraPage() {
-  const [step, setStep] = useState<"cadastro" | "modalidade" | "data" | "horarios" | "pagamento" | "sucesso">(
-    "cadastro",
-  )
+  const [step, setStep] = useState<
+    "cadastro" | "modalidade" | "data" | "unidade" | "horarios" | "pagamento" | "sucesso"
+  >("cadastro")
   const [loading, setLoading] = useState(false)
   const [leadId, setLeadId] = useState<string>("")
 
   const [horariosOcupados, setHorariosOcupados] = useState<Record<string, string[]>>({})
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [availableDays] = useState<Date[]>(getNext7Days())
-  const [selectedSlot, setSelectedSlot] = useState<{ unidade: string; quadra: string; horario: string } | null>(null)
+
+  const [selectedSlots, setSelectedSlots] = useState<Array<{ unidade: string; quadra: string; horario: string }>>([])
+
   const [selectedModalidade, setSelectedModalidade] = useState<string>("")
+  const [selectedUnidade, setSelectedUnidade] = useState<string>("")
 
   const [formData, setFormData] = useState({
     nome: "",
     telefone: "",
     email: "",
-    cpf: "",
+    cpf: "", // Agora opcional
   })
 
   const [paymentData, setPaymentData] = useState<{
@@ -123,6 +139,9 @@ export default function ReservarQuadraPage() {
 
   const [checkingPayment, setCheckingPayment] = useState(false)
   const [pixCopied, setPixCopied] = useState(false)
+
+  const [timeRemaining, setTimeRemaining] = useState<number>(600) // 600 segundos = 10 minutos
+  const [selectedSlot, setSelectedSlot] = useState<{ unidade: string; quadra: string; horario: string } | null>(null)
 
   useEffect(() => {
     const fetchHorariosOcupados = async () => {
@@ -175,6 +194,31 @@ export default function ReservarQuadraPage() {
     }
   }, [step, paymentData, selectedSlot])
 
+  useEffect(() => {
+    if (step === "pagamento" && timeRemaining > 0) {
+      const timer = setInterval(() => {
+        setTimeRemaining((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer)
+            alert("Tempo expirado! Sua reserva foi cancelada.")
+            window.location.href = "/"
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+
+      return () => clearInterval(timer)
+    }
+  }, [step, timeRemaining])
+
+  // Formatar tempo restante
+  const formatTimeRemaining = () => {
+    const minutes = Math.floor(timeRemaining / 60)
+    const seconds = timeRemaining % 60
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`
+  }
+
   const isHorarioOcupado = (unidade: string, quadra: string, horario: string) => {
     const dateStr = selectedDate.toISOString().split("T")[0]
     const key = `${dateStr}-${unidade}-${quadra}`
@@ -201,7 +245,7 @@ export default function ReservarQuadraPage() {
             nome: formData.nome,
             telefone: formData.telefone,
             email: formData.email,
-            cpf: formData.cpf,
+            cpf: formData.cpf || "NÃO INFORMADO", // CPF opcional
             status: "LEAD",
             payment_id: "",
             valor_total: "",
@@ -228,51 +272,77 @@ export default function ReservarQuadraPage() {
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date)
-    setStep("horarios")
+    setStep("unidade")
   }
 
-  const handleHorarioSelect = async (unidade: string, quadra: string, horario: string) => {
+  const handleHorarioToggle = (unidade: string, quadra: string, horario: string) => {
     if (isHorarioOcupado(unidade, quadra, horario)) return
 
-    setSelectedSlot({ unidade, quadra, horario })
+    const exists = selectedSlots.find(
+      (slot) => slot.unidade === unidade && slot.quadra === quadra && slot.horario === horario,
+    )
+
+    if (exists) {
+      // Remover seleção
+      setSelectedSlots(
+        selectedSlots.filter(
+          (slot) => !(slot.unidade === unidade && slot.quadra === quadra && slot.horario === horario),
+        ),
+      )
+    } else {
+      // Limitar a 3 horários
+      if (selectedSlots.length >= 3) {
+        alert("Você pode selecionar no máximo 3 horários")
+        return
+      }
+      // Adicionar seleção
+      setSelectedSlots([...selectedSlots, { unidade, quadra, horario }])
+    }
+  }
+
+  const handleContinuarPagamento = async () => {
+    if (selectedSlots.length === 0) {
+      alert("Selecione pelo menos um horário")
+      return
+    }
+
     setLoading(true)
 
     try {
-      const valorTotal = UNIDADES[unidade as keyof typeof UNIDADES].preco
+      const preco = UNIDADES[selectedUnidade as keyof typeof UNIDADES].preco
+      const valorTotal = preco * selectedSlots.length * 0.5 // 30min = metade do preço
       const valorReserva = valorTotal / 2
 
-      // Criar reserva PENDENTE
-      const reservaResponse = await fetch("/api/sheets/append", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sheetName: "leads - quadra",
-          data: {
-            timestamp: new Date().toISOString(),
-            data: selectedDate.toISOString().split("T")[0],
-            unidade: unidade,
-            quadra: quadra,
-            horarios: horario,
-            modalidade: selectedModalidade,
-            nome: formData.nome,
-            telefone: formData.telefone,
-            email: formData.email,
-            cpf: formData.cpf,
-            status: "PENDENTE",
-            payment_id: "",
-            valor_total: valorTotal.toFixed(2),
-            valor_reserva: valorReserva.toFixed(2),
-          },
-        }),
-      })
+      // Criar uma reserva para cada horário
+      for (const slot of selectedSlots) {
+        const reservaResponse = await fetch("/api/sheets/append", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sheetName: "leads - quadra",
+            data: {
+              timestamp: new Date().toISOString(),
+              data: selectedDate.toISOString().split("T")[0],
+              unidade: slot.unidade,
+              quadra: slot.quadra,
+              horarios: slot.horario,
+              modalidade: selectedModalidade,
+              nome: formData.nome,
+              telefone: formData.telefone,
+              email: formData.email,
+              cpf: formData.cpf || "NÃO INFORMADO",
+              status: "PENDENTE",
+              payment_id: "",
+              valor_total: valorTotal.toFixed(2),
+              valor_reserva: valorReserva.toFixed(2),
+            },
+          }),
+        })
 
-      if (!reservaResponse.ok) {
-        const errorData = await reservaResponse.json()
-        console.error("[v0] Erro da API reserva:", errorData)
-        throw new Error(errorData.error || "Erro ao criar reserva")
+        if (!reservaResponse.ok) {
+          throw new Error("Erro ao criar reserva")
+        }
       }
-
-      console.log("[v0] ✅ Reserva PENDENTE criada")
 
       // Gerar PIX no ASAAS
       const paymentResponse = await fetch("/api/asaas/create-payment", {
@@ -281,34 +351,23 @@ export default function ReservarQuadraPage() {
         body: JSON.stringify({
           customer: {
             name: formData.nome,
-            cpfCnpj: formData.cpf.replace(/\D/g, ""),
-            email: formData.email || `${formData.cpf.replace(/\D/g, "")}@temp.com`,
+            cpfCnpj: formData.cpf.replace(/\D/g, "") || "00000000000",
+            email: formData.email || `${Date.now()}@temp.com`,
             phone: formData.telefone.replace(/\D/g, ""),
           },
           value: valorReserva,
-          description: `Reserva ${quadra} - ${selectedModalidade}`,
+          description: `Reserva ${selectedModalidade} - ${selectedSlots.length} horário(s)`,
           dueDate: new Date().toISOString().split("T")[0],
-          externalReference: `${formData.cpf}-${Date.now()}`,
-          unidade: unidade,
+          externalReference: `${formData.telefone}-${Date.now()}`,
+          unidade: selectedUnidade,
         }),
       })
 
       if (!paymentResponse.ok) {
-        const errorData = await paymentResponse.json()
-        throw new Error(errorData.error || "Erro ao gerar PIX")
+        throw new Error("Erro ao gerar PIX")
       }
 
       const paymentResult = await paymentResponse.json()
-
-      // Atualizar payment_id na reserva
-      const updateResponse = await fetch("/api/sheets/reservas/update-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          paymentId: paymentResult.payment.id,
-          status: "PENDENTE",
-        }),
-      })
 
       setPaymentData({
         paymentId: paymentResult.payment.id,
@@ -317,7 +376,7 @@ export default function ReservarQuadraPage() {
         expirationDate: paymentResult.pix.expirationDate,
       })
 
-      console.log("[v0] ✅ PIX gerado com sucesso!")
+      setTimeRemaining(600) // Resetar cronômetro
       setStep("pagamento")
     } catch (error) {
       console.error("[v0] Erro:", error)
@@ -359,6 +418,7 @@ export default function ReservarQuadraPage() {
 
   const getQuadrasDisponiveis = () => {
     if (!selectedModalidade) return []
+    if (!selectedUnidade) return []
 
     const quadrasComModalidade: Array<{ unidade: string; quadra: string }> = []
 
@@ -367,7 +427,9 @@ export default function ReservarQuadraPage() {
         const parts = quadraKey.split("-")
         const unidade = parts[0]
         const quadra = parts.slice(1).join("-")
-        quadrasComModalidade.push({ unidade, quadra })
+        if (unidade === selectedUnidade) {
+          quadrasComModalidade.push({ unidade, quadra })
+        }
       }
     })
 
@@ -422,19 +484,6 @@ export default function ReservarQuadraPage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="cpf" className="text-white">
-                      CPF
-                    </Label>
-                    <Input
-                      id="cpf"
-                      value={formData.cpf}
-                      onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-                      placeholder="000.000.000-00"
-                      required
-                      className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
-                    />
-                  </div>
-                  <div>
                     <Label htmlFor="email" className="text-white">
                       Email (opcional)
                     </Label>
@@ -444,6 +493,18 @@ export default function ReservarQuadraPage() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="seuemail@exemplo.com"
+                      className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cpf" className="text-white">
+                      CPF (opcional)
+                    </Label>
+                    <Input
+                      id="cpf"
+                      value={formData.cpf}
+                      onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                      placeholder="000.000.000-00"
                       className="bg-white/10 border-white/30 text-white placeholder:text-gray-400"
                     />
                   </div>
@@ -555,95 +616,190 @@ export default function ReservarQuadraPage() {
           </div>
         </div>
       )}
-      {step === "horarios" && (
+      {step === "unidade" && (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("data")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Voltar
             </Button>
 
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold text-white text-center">Selecione a Unidade</CardTitle>
+                <CardDescription className="text-gray-300 text-center">
+                  Escolha a unidade mais próxima de você
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-6 md:grid-cols-2">
+                  {/* Parque Amazônia */}
+                  <Card
+                    className={cn(
+                      "cursor-pointer transition-all border-2 hover:scale-105",
+                      selectedUnidade === "Parque Amazônia"
+                        ? "border-green-500 bg-green-900/20"
+                        : "border-gray-700 bg-gray-800/50 hover:border-green-400",
+                    )}
+                    onClick={() => {
+                      setSelectedUnidade("Parque Amazônia")
+                      setStep("horarios")
+                    }}
+                  >
+                    <CardContent className="pt-6 space-y-4">
+                      <div className="text-center">
+                        <h3 className="text-2xl font-bold text-white mb-2">Parque Amazônia</h3>
+                        <div className="inline-block bg-green-600 text-white px-4 py-2 rounded-full font-semibold mb-4">
+                          R$ 80,00 / hora
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 text-gray-300">
+                        <div className="flex items-start gap-3">
+                          <MapPin className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm">Parque Amazônia, Goiânia - GO</p>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Phone className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm">(62) 3225-5400</p>
+                        </div>
+                        <div className="pt-2 border-t border-gray-700">
+                          <p className="text-sm font-semibold text-white mb-2">5 Quadras disponíveis</p>
+                          <p className="text-xs text-gray-400">
+                            Quadras 01, 02, 03, 04 e 05 com diferentes modalidades
+                          </p>
+                        </div>
+                      </div>
+
+                      <Button className="w-full bg-green-600 hover:bg-green-700 mt-4">Selecionar</Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Vila Rosa */}
+                  <Card
+                    className={cn(
+                      "cursor-pointer transition-all border-2 hover:scale-105",
+                      selectedUnidade === "Vila Rosa"
+                        ? "border-green-500 bg-green-900/20"
+                        : "border-gray-700 bg-gray-800/50 hover:border-green-400",
+                    )}
+                    onClick={() => {
+                      setSelectedUnidade("Vila Rosa")
+                      setStep("horarios")
+                    }}
+                  >
+                    <CardContent className="pt-6 space-y-4">
+                      <div className="text-center">
+                        <h3 className="text-2xl font-bold text-white mb-2">Vila Rosa</h3>
+                        <div className="inline-block bg-green-600 text-white px-4 py-2 rounded-full font-semibold mb-4">
+                          R$ 70,00 / hora
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 text-gray-300">
+                        <div className="flex items-start gap-3">
+                          <MapPin className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm">Vila Rosa, Goiânia - GO</p>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Phone className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm">(62) 3224-1000</p>
+                        </div>
+                        <div className="pt-2 border-t border-gray-700">
+                          <p className="text-sm font-semibold text-white mb-2">4 Quadras disponíveis</p>
+                          <p className="text-xs text-gray-400">Quadras Q1, Q2, Q3 e Q4 com diferentes modalidades</p>
+                        </div>
+                      </div>
+
+                      <Button className="w-full bg-green-600 hover:bg-green-700 mt-4">Selecionar</Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+      {step === "horarios" && (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 p-4 py-12">
+          <div className="max-w-7xl mx-auto">
+            <Button variant="ghost" className="mb-6 text-white hover:text-white/80" onClick={() => setStep("unidade")}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
+
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">Horários Disponíveis</h1>
+              <h1 className="text-3xl font-bold text-white mb-2">Selecione os Horários</h1>
               <p className="text-gray-300">
                 {formatDate(selectedDate).dia} de {formatDate(selectedDate).mes} - {selectedModalidade}
               </p>
+              <p className="text-green-400 font-semibold mt-2">{selectedUnidade}</p>
+              {selectedSlots.length > 0 && (
+                <p className="text-white mt-2">
+                  {selectedSlots.length} horário(s) selecionado(s) - R${" "}
+                  {(UNIDADES[selectedUnidade as keyof typeof UNIDADES].preco * selectedSlots.length * 0.5).toFixed(2)}
+                </p>
+              )}
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2">
-              {/* PARQUE AMAZÔNIA */}
+            <div className="grid gap-6">
               <Card className="bg-white/10 backdrop-blur-xl border-white/20">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-white text-center">Parque Amazônia</CardTitle>
-                  <CardDescription className="text-center text-gray-300">R$ 80,00 por hora</CardDescription>
+                  <CardTitle className="text-2xl font-bold text-white text-center">{selectedUnidade}</CardTitle>
+                  <CardDescription className="text-center text-gray-300">
+                    R$ {UNIDADES[selectedUnidade as keyof typeof UNIDADES].preco.toFixed(2)} por hora | R${" "}
+                    {(UNIDADES[selectedUnidade as keyof typeof UNIDADES].preco * 0.5).toFixed(2)} por 30 minutos
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {getQuadrasDisponiveis()
-                    .filter((q) => q.unidade === "Parque Amazônia")
-                    .map((item) => (
-                      <div key={item.quadra}>
-                        <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
-                        <div className="grid grid-cols-3 gap-2">
-                          {HORARIOS.map((horario) => {
-                            const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
-                            return (
-                              <Button
-                                key={horario}
-                                variant={ocupado ? "outline" : "default"}
-                                disabled={ocupado || loading}
-                                onClick={() => handleHorarioSelect(item.unidade, item.quadra, horario)}
-                                className={cn(
-                                  "text-sm",
-                                  ocupado
-                                    ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
-                                    : "bg-green-600 hover:bg-green-700 text-white",
-                                )}
-                              >
-                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : horario}
-                              </Button>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                </CardContent>
-              </Card>
+                  {getQuadrasDisponiveis().map((item) => (
+                    <div key={item.quadra}>
+                      <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
+                      <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+                        {HORARIOS.map((horario) => {
+                          const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
+                          const selecionado = selectedSlots.some(
+                            (slot) =>
+                              slot.unidade === item.unidade && slot.quadra === item.quadra && slot.horario === horario,
+                          )
 
-              {/* VILA ROSA */}
-              <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-white text-center">Vila Rosa</CardTitle>
-                  <CardDescription className="text-center text-gray-300">R$ 70,00 por hora</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {getQuadrasDisponiveis()
-                    .filter((q) => q.unidade === "Vila Rosa")
-                    .map((item) => (
-                      <div key={item.quadra}>
-                        <h4 className="text-white font-semibold mb-3">{item.quadra}</h4>
-                        <div className="grid grid-cols-3 gap-2">
-                          {HORARIOS.map((horario) => {
-                            const ocupado = isHorarioOcupado(item.unidade, item.quadra, horario)
-                            return (
-                              <Button
-                                key={horario}
-                                variant={ocupado ? "outline" : "default"}
-                                disabled={ocupado || loading}
-                                onClick={() => handleHorarioSelect(item.unidade, item.quadra, horario)}
-                                className={cn(
-                                  "text-sm",
-                                  ocupado
-                                    ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
-                                    : "bg-green-600 hover:bg-green-700 text-white",
-                                )}
-                              >
-                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : horario}
-                              </Button>
-                            )
-                          })}
-                        </div>
+                          return (
+                            <Button
+                              key={horario}
+                              variant={selecionado ? "default" : ocupado ? "outline" : "secondary"}
+                              disabled={ocupado}
+                              onClick={() => handleHorarioToggle(item.unidade, item.quadra, horario)}
+                              className={cn(
+                                "text-sm relative",
+                                ocupado
+                                  ? "bg-red-900/20 border-red-500 text-red-400 cursor-not-allowed"
+                                  : selecionado
+                                    ? "bg-green-600 hover:bg-green-700 text-white"
+                                    : "bg-gray-700 hover:bg-gray-600 text-white",
+                              )}
+                            >
+                              {selecionado && <CheckCircle2 className="h-3 w-3 absolute top-1 right-1" />}
+                              {horario}
+                            </Button>
+                          )
+                        })}
                       </div>
-                    ))}
+                    </div>
+                  ))}
+
+                  {selectedSlots.length > 0 && (
+                    <Button
+                      onClick={handleContinuarPagamento}
+                      disabled={loading}
+                      className="w-full bg-green-600 hover:bg-green-700 text-lg py-6 mt-6"
+                    >
+                      {loading ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        `Continuar para Pagamento - R$ ${((UNIDADES[selectedUnidade as keyof typeof UNIDADES].preco * selectedSlots.length * 0.5) / 2).toFixed(2)}`
+                      )}
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -659,6 +815,18 @@ export default function ReservarQuadraPage() {
                 <CardDescription className="text-gray-300 text-center">
                   Escaneie o QR Code ou copie o código PIX
                 </CardDescription>
+                <div className="text-center mt-4">
+                  <div
+                    className={cn(
+                      "inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-lg",
+                      timeRemaining <= 120 ? "bg-red-600/30 text-red-300" : "bg-yellow-600/30 text-yellow-300",
+                    )}
+                  >
+                    <Clock className="h-5 w-5" />
+                    Tempo restante: {formatTimeRemaining()}
+                  </div>
+                  {timeRemaining <= 120 && <p className="text-red-400 text-sm mt-2">⚠️ Seu tempo está acabando!</p>}
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {paymentData && (

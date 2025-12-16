@@ -18,27 +18,24 @@ export async function POST(request: NextRequest) {
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: "leads - quadra!A:K",
+      range: "leads - quadra!A:N",
     })
 
     const rows = response.data.values || []
     const agora = new Date()
     let canceladas = 0
 
-    // Percorrer todas as linhas (começar em 1 para pular header)
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i]
       const timestamp = row[0]
       const status = row[10]
 
-      // Se for PENDENTE
       if (status === "PENDENTE") {
         const timestampReserva = new Date(timestamp)
         const diferencaMinutos = (agora.getTime() - timestampReserva.getTime()) / 1000 / 60
 
-        // Se passou mais de 15 minutos, cancelar
-        if (diferencaMinutos > 15) {
-          const rowIndex = i + 1 // +1 porque Sheets usa indexação 1-based
+        if (diferencaMinutos > 10) {
+          const rowIndex = i + 1
 
           await sheets.spreadsheets.values.update({
             spreadsheetId,
