@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 
     const reserva = reservas[rowIndex]
 
-    await updateSheetData("Reservas", rowIndex + 2, {
+    await updateSheetData("Reservas", rowIndex, {
       Status: "CANCELADA",
       ObservacaosCancelamento: `Cancelado pelo cliente. Crédito de ${percentual}% (R$ ${credito.toFixed(2)}) gerado.`,
     })
