@@ -18,14 +18,17 @@ const MODALIDADES = [
 ]
 
 const MODALIDADES_POR_QUADRA: Record<string, string[]> = {
+  // Parque Amazônia
   "Parque Amazônia-Quadra 01": ["Vôlei", "Futevôlei", "Beach Tennis"],
   "Parque Amazônia-Quadra 02": ["Vôlei", "Futevôlei", "Beach Tennis"],
-  "Parque Amazônia-Quadra 03": ["Vôlei", "Futevôlei"],
-  "Parque Amazônia-Quadra 04": ["Beach Tennis", "Tênis"],
-  "Parque Amazônia-Quadra 05": ["Vôlei", "Beach Tennis"],
+  "Parque Amazônia-Quadra 03": ["Vôlei", "Beach Tennis"], // SEM Futevôlei
+  "Parque Amazônia-Quadra 04": ["Vôlei", "Futevôlei", "Beach Tennis"],
+  "Parque Amazônia-Quadra 05": ["Vôlei", "Beach Tennis"], // SEM Futevôlei
+
+  // Vila Rosa - Todas quadras compatíveis com todas modalidades
   "Vila Rosa-Q1": ["Vôlei", "Futevôlei", "Beach Tennis"],
-  "Vila Rosa-Q2": ["Vôlei", "Futevôlei"],
-  "Vila Rosa-Q3": ["Beach Tennis", "Tênis"],
+  "Vila Rosa-Q2": ["Vôlei", "Futevôlei", "Beach Tennis"],
+  "Vila Rosa-Q3": ["Vôlei", "Futevôlei", "Beach Tennis"],
   "Vila Rosa-Q4": ["Vôlei", "Futevôlei", "Beach Tennis"],
 }
 

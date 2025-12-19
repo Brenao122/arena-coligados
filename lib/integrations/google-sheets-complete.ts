@@ -124,3 +124,21 @@ export async function listAllSheets() {
     throw error
   }
 }
+
+export class GoogleSheetsService {
+  async read(sheetName: string) {
+    return readSheetData(sheetName)
+  }
+
+  async append(sheetName: string, data: any) {
+    return writeSheetData(sheetName, [data])
+  }
+
+  async update(sheetName: string, rowIndex: number, data: any) {
+    return updateSheetData(sheetName, rowIndex, data)
+  }
+
+  async listSheets() {
+    return listAllSheets()
+  }
+}
