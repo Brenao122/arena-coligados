@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { GoogleSheetsService } from "@/lib/integrations/google-sheets-complete"
+import { readSheetData } from "@/lib/integrations/google-sheets-complete"
 
 export async function GET(request: Request) {
   try {
@@ -10,8 +10,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Telefone não fornecido" }, { status: 400 })
     }
 
-    const sheets = new GoogleSheetsService()
-    const creditos = await sheets.read("Creditos")
+    const creditos = await readSheetData("Creditos")
 
     const creditosCliente = creditos.filter((row: any) => row.Telefone === telefone && row.Status === "DISPONIVEL")
 

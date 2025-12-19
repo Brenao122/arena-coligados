@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { GoogleSheetsService } from "@/lib/integrations/google-sheets-complete"
+import { readSheetData, updateSheetData, writeSheetData } from "@/lib/integrations/google-sheets-complete"
 
 export async function POST(request: Request) {
   try {
@@ -10,10 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Dados incompletos" }, { status: 400 })
     }
 
-    const sheets = new GoogleSheetsService()
-
-    // Atualizar status da reserva para CANCELADA
-    const reservas = await sheets.read("Reservas")
+    const reservas = await readSheetData("Reservas")
     const rowIndex = reservas.findIndex((row: any) => row.PaymentID === payment_id && row.Telefone === telefone)
 
     if (rowIndex === -1) {
@@ -22,23 +19,23 @@ export async function POST(request: Request) {
 
     const reserva = reservas[rowIndex]
 
-    // Atualizar status
-    await sheets.update("Reservas", rowIndex + 2, {
+    await updateSheetData("Reservas", rowIndex + 2, {
       Status: "CANCELADA",
       ObservacaosCancelamento: `Cancelado pelo cliente. Crédito de ${percentual}% (R$ ${credito.toFixed(2)}) gerado.`,
     })
 
-    // Adicionar crédito na aba de Créditos
-    await sheets.append("Creditos", {
-      Telefone: telefone,
-      Nome: reserva.Nome,
-      Valor: credito,
-      Percentual: percentual,
-      OrigemReserva: payment_id,
-      DataCancelamento: new Date().toLocaleString("pt-BR"),
-      Status: "DISPONIVEL",
-      Timestamp: new Date().toISOString(),
-    })
+    await writeSheetData("Creditos", [
+      {
+        Telefone: telefone,
+        Nome: reserva.Nome,
+        Valor: credito,
+        Percentual: percentual,
+        OrigemReserva: payment_id,
+        DataCancelamento: new Date().toLocaleString("pt-BR"),
+        Status: "DISPONIVEL",
+        Timestamp: new Date().toISOString(),
+      },
+    ])
 
     // Enviar WhatsApp de cancelamento
     try {
