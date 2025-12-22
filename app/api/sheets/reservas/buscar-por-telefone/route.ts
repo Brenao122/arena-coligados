@@ -13,8 +13,8 @@ export async function GET(request: Request) {
     const todasReservas = await readSheetData("Reservas")
 
     const reservasCliente = todasReservas
-      .filter((row: any) => row.Telefone === telefone)
-      .map((row: any) => ({
+      .filter((row: Record<string, any>) => row.Telefone === telefone)
+      .map((row: Record<string, any>) => ({
         id: row.ID || `${row.Data}-${row.Horario}`,
         data: row.Data,
         horarios: row.Horarios ? row.Horarios.split(",") : [row.Horario],

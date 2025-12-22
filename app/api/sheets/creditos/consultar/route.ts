@@ -12,9 +12,14 @@ export async function GET(request: Request) {
 
     const creditos = await readSheetData("Creditos")
 
-    const creditosCliente = creditos.filter((row: any) => row.Telefone === telefone && row.Status === "DISPONIVEL")
+    const creditosCliente = creditos.filter(
+      (row: Record<string, any>) => row.Telefone === telefone && row.Status === "DISPONIVEL",
+    )
 
-    const totalCredito = creditosCliente.reduce((sum: number, row: any) => sum + Number.parseFloat(row.Valor || "0"), 0)
+    const totalCredito = creditosCliente.reduce(
+      (sum: number, row: Record<string, any>) => sum + Number.parseFloat(row.Valor || "0"),
+      0,
+    )
 
     return NextResponse.json({
       success: true,

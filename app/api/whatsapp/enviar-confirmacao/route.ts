@@ -5,10 +5,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { telefone, nome, data, horarios, unidade, quadra, modalidade } = body
 
-    console.log("[v0] Enviando WhatsApp para:", telefone)
-
     // TODO: Integrar com API WhatsApp (Baileys, Evolution API, ou WhatsApp Business API)
-    // Por enquanto, apenas log
     const mensagem = `
 🎾 *Reserva Confirmada - Arena Coligados*
 
@@ -30,14 +27,12 @@ ${unidade === "Parque Amazônia" ? "(62) 3225-5400" : "(62) 3224-1000"}
 Nos vemos em breve! 💪
     `.trim()
 
-    console.log("[v0] Mensagem preparada:", mensagem)
-
     // Aqui você integraria com a API real
     // Exemplo: await enviarWhatsApp(telefone, mensagem)
 
     return NextResponse.json({ success: true, message: "WhatsApp enviado" })
   } catch (error) {
-    console.error("[v0] Erro ao enviar WhatsApp:", error)
+    console.error("Erro ao enviar WhatsApp:", error)
     return NextResponse.json({ error: "Erro ao enviar WhatsApp" }, { status: 500 })
   }
 }
