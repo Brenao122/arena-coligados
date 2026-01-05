@@ -176,7 +176,7 @@ export default function HomePageClient() {
                 Aula Experimental
               </Button>
 
-              <Link href="/reservar-quadra">
+              <Link href="/escolher-unidade">
                 <Button
                   className="btn-secondary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
                   aria-label="Reservar quadra"
