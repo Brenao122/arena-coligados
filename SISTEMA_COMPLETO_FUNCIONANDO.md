@@ -153,7 +153,7 @@
 
 ## VARIÁVEIS DE AMBIENTE NECESSÁRIAS
 
-```env
+\`\`\`env
 # Google Sheets
 GOOGLE_SERVICE_ACCOUNT_EMAIL=...
 GOOGLE_PRIVATE_KEY=...
@@ -165,7 +165,7 @@ ASAAS_API_KEY_VILA_ROSA=$aact_...
 
 # Admin
 ADMIN_PASSWORD=suasenhaaqui
-```
+\`\`\`
 
 ---
 
