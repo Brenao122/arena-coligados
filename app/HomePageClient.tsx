@@ -179,9 +179,9 @@ export default function HomePageClient() {
               <Link href="/escolher-unidade">
                 <Button
                   className="btn-secondary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-                  aria-label="Reservar quadra"
+                  aria-label="Reserve agora no WhatsApp"
                 >
-                  Reservar Quadra
+                  Reserve Agora no WhatsApp
                 </Button>
               </Link>
             </div>
