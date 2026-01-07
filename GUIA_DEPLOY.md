@@ -22,9 +22,9 @@ Todas as variáveis de ambiente necessárias já estão configuradas no projeto:
 ## Passos para Deploy
 
 ### 1. Build Local (Opcional)
-\`\`\`bash
+```bash
 npm run build
-\`\`\`
+```
 
 Se o build passar localmente, está pronto para deploy!
 
@@ -40,16 +40,16 @@ Se o build passar localmente, está pronto para deploy!
 4. Clique em "Deploy"
 
 #### Via CLI
-\`\`\`bash
+```bash
 npm i -g vercel
 vercel --prod
-\`\`\`
+```
 
 ### 3. Configurar Cron Jobs
 
 Os cron jobs já estão configurados no `vercel.json`:
 
-\`\`\`json
+```json
 {
   "crons": [
     {
@@ -62,7 +62,7 @@ Os cron jobs já estão configurados no `vercel.json`:
     }
   ]
 }
-\`\`\`
+```
 
 **Importante:** Na Vercel, vá em:
 - Settings → Environment Variables
@@ -104,9 +104,9 @@ Após o deploy, configure o webhook do ASAAS:
 - Teste o cancelamento
 
 ### 4. Monitore os Logs
-\`\`\`bash
+```bash
 vercel logs --follow
-\`\`\`
+```
 
 ## Problemas Comuns
 

@@ -30,10 +30,10 @@
 6. Clique em **"Deploy"**
 
 ### OPÇÃO 2: Forçar Deploy via Commit Vazio
-\`\`\`bash
+```bash
 git commit --allow-empty -m "Trigger deploy"
 git push origin main
-\`\`\`
+```
 
 ### OPÇÃO 3: Verificar Conexão Vercel-GitHub
 1. No Vercel Dashboard, vá em **Settings** → **Git**

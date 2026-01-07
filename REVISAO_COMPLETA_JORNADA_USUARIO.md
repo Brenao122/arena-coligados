@@ -112,7 +112,7 @@ Este documento mapeia TODA a jornada do usuário no site Arena Coligados, desde 
 - ✅ Níveis de experiência: Hardcoded no componente
 
 #### 📝 **Dados enviados ao Google Sheets:**
-\`\`\`
+```
 Coluna A: Data/Hora (formato: DD/MM/YYYY HH:mm)
 Coluna B: Nome Completo
 Coluna C: Telefone
@@ -121,7 +121,7 @@ Coluna E: Modalidade
 Coluna F: Nível de Experiência
 Coluna G: Observações
 Coluna H: Status ("novo")
-\`\`\`
+```
 
 #### ⚠️ **Status:** IMPLEMENTADO - Aguardando `GOOGLE_PRIVATE_KEY`
 
@@ -197,7 +197,7 @@ Após clicar em horário disponível:
 - ✅ **Chaves PIX:** Hardcoded por unidade
 
 #### 📝 **Dados enviados ao Google Sheets:**
-\`\`\`
+```
 Coluna A: Data (formato: DD/MM/YYYY)
 Coluna B: Horário (formato: HH:mm)
 Coluna C: Unidade (Parque Amazônia ou Vila Rosa)
@@ -208,7 +208,7 @@ Coluna G: Email
 Coluna H: Modalidade
 Coluna I: Valor (R$ 80,00 ou R$ 70,00)
 Coluna J: Status ("Confirmado")
-\`\`\`
+```
 
 #### ⚠️ **Status:** IMPLEMENTADO - Aguardando `GOOGLE_PRIVATE_KEY`
 
@@ -330,7 +330,7 @@ Coluna J: Status ("Confirmado")
 - ✅ **Fallback:** Dados mock das 9 quadras (Parque Amazônia + Vila Rosa)
 
 #### 📝 **Estrutura esperada no Google Sheets (aba "quadras"):**
-\`\`\`
+```
 Coluna A: ID
 Coluna B: Nome
 Coluna C: Unidade (Parque Amazônia ou Vila Rosa)
@@ -338,7 +338,7 @@ Coluna D: Tipo (Beach Tennis, Vôlei, Futevôlei, Tênis)
 Coluna E: Preço por Hora (80.00 ou 70.00)
 Coluna F: Status (Ativa ou Inativa)
 Coluna G: Descrição
-\`\`\`
+```
 
 #### ⚠️ **Status:** IMPLEMENTADO - Aguardando `GOOGLE_PRIVATE_KEY`
 
@@ -378,7 +378,7 @@ Coluna G: Descrição
 - ✅ **Fallback:** 2 clientes mock (João Silva, Maria Santos)
 
 #### 📝 **Estrutura esperada no Google Sheets (aba "clientes"):**
-\`\`\`
+```
 Coluna A: ID
 Coluna B: Nome Completo
 Coluna C: Email
@@ -386,7 +386,7 @@ Coluna D: Telefone
 Coluna E: Data de Cadastro (DD/MM/YYYY)
 Coluna F: Status (Ativo ou Inativo)
 Coluna G: Observações
-\`\`\`
+```
 
 #### ⚠️ **Status:** IMPLEMENTADO - Aguardando `GOOGLE_PRIVATE_KEY`
 
@@ -428,7 +428,7 @@ Coluna G: Observações
 - ✅ **Especialidades:** Hardcoded (Beach Tennis, Vôlei, Futevôlei, Tênis)
 
 #### 📝 **Estrutura esperada no Google Sheets (aba "professores"):**
-\`\`\`
+```
 Coluna A: ID
 Coluna B: Nome Completo
 Coluna C: Email
@@ -436,7 +436,7 @@ Coluna D: Telefone
 Coluna E: Especialidades (separadas por vírgula)
 Coluna F: Data de Cadastro (DD/MM/YYYY)
 Coluna G: Status (Ativo ou Inativo)
-\`\`\`
+```
 
 #### ⚠️ **Status:** IMPLEMENTADO - Aguardando `GOOGLE_PRIVATE_KEY`
 
@@ -476,7 +476,7 @@ Coluna G: Status (Ativo ou Inativo)
 - ✅ **Fallback:** 2 pagamentos mock
 
 #### 📝 **Estrutura esperada no Google Sheets (aba "pagamentos"):**
-\`\`\`
+```
 Coluna A: ID
 Coluna B: Data (DD/MM/YYYY)
 Coluna C: Cliente
@@ -485,7 +485,7 @@ Coluna E: Valor (formato: 80.00)
 Coluna F: Status (Pago, Pendente, Cancelado)
 Coluna G: Método (PIX, Dinheiro, Cartão)
 Coluna H: Observações
-\`\`\`
+```
 
 #### ⚠️ **Status:** IMPLEMENTADO - Aguardando `GOOGLE_PRIVATE_KEY`
 
@@ -527,7 +527,7 @@ Coluna H: Observações
 - ✅ **Fallback:** Lista vazia
 
 #### 📝 **Estrutura esperada no Google Sheets (aba "leads"):**
-\`\`\`
+```
 Coluna A: Data/Hora (DD/MM/YYYY HH:mm)
 Coluna B: Nome Completo
 Coluna C: Telefone
@@ -536,7 +536,7 @@ Coluna E: Modalidade
 Coluna F: Nível de Experiência
 Coluna G: Observações
 Coluna H: Status (novo, contatado, convertido, perdido)
-\`\`\`
+```
 
 #### ⚠️ **Status:** IMPLEMENTADO - Aguardando `GOOGLE_PRIVATE_KEY`
 

@@ -209,7 +209,7 @@
 **Função:** Adiciona uma nova linha em qualquer aba da planilha
 
 **Parâmetros:**
-\`\`\`json
+```json
 {
   "sheetName": "leads - quadra",
   "data": {
@@ -224,7 +224,7 @@
     "valor": "R$ 150,00"
   }
 }
-\`\`\`
+```
 
 **Usado por:**
 - Página de reserva pública (`app/reservar-quadra/page.tsx`)
