@@ -69,7 +69,7 @@ Sistema completo de gestão para arenas esportivas desenvolvido com Next.js, Typ
 
 ### ESTRUTURA DE ARQUIVOS
 
-```
+\`\`\`
 app/
 ├── page.tsx                           # Página de login
 ├── layout.tsx                         # Layout principal
@@ -124,7 +124,7 @@ hooks/
 
 lib/
 └── utils.ts                           # Utilitários
-```
+\`\`\`
 
 ### DADOS MOCK IMPLEMENTADOS
 
@@ -228,18 +228,18 @@ lib/
 ## DEPLOY E CONFIGURAÇÃO
 
 ### VARIÁVEIS DE AMBIENTE
-```env
+\`\`\`env
 NEXT_PUBLIC_APP_NAME="Arena Coligados"
 NEXT_PUBLIC_APP_VERSION="1.0.0"
-```
+\`\`\`
 
 ### COMANDOS
-```bash
+\`\`\`bash
 npm install          # Instalar dependências
 npm run dev         # Desenvolvimento
 npm run build       # Build de produção
 npm run start       # Servidor de produção
-```
+\`\`\`
 
 ## STATUS ATUAL
 

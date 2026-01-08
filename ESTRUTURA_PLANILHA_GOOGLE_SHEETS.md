@@ -23,9 +23,9 @@ Este documento descreve a estrutura completa das abas e colunas necessárias na 
 - **K - Status:** "Pendente", "Confirmado", "Cancelado"
 
 **Exemplo de linha:**
-```
+\`\`\`
 08/10/2025 14:30 | Breno Araujo | 62981912294 | breno@email.com | Parque Amazônia | Quadra 01 | Futevôlei | 10/10/2025 | 14:00 | Primeira vez | Pendente
-```
+\`\`\`
 
 ---
 
@@ -44,9 +44,9 @@ Este documento descreve a estrutura completa das abas e colunas necessárias na 
 - **H - Status:** "Novo", "Contatado", "Agendado", "Convertido"
 
 **Exemplo de linha:**
-```
+\`\`\`
 08/10/2025 11:20 | Maria Silva | 62999887766 | maria@email.com | Vôlei | Iniciante | Quero conhecer | Novo
-```
+\`\`\`
 
 ---
 
@@ -65,9 +65,9 @@ Este documento descreve a estrutura completa das abas e colunas necessárias na 
 - **H - Status:** "Ativo" ou "Inativo"
 
 **Exemplo de linha:**
-```
+\`\`\`
 1 | João Silva | joao@email.com | 62988776655 | 01/01/2025 | 15 | 1200.00 | Ativo
-```
+\`\`\`
 
 ---
 
@@ -86,9 +86,9 @@ Este documento descreve a estrutura completa das abas e colunas necessárias na 
 - **H - Status:** "Ativo" ou "Inativo"
 
 **Exemplo de linha:**
-```
+\`\`\`
 1 | Carlos Silva | carlos@arena.com | 62977665544 | Futevôlei | 4.8 | 25 | Ativo
-```
+\`\`\`
 
 ---
 
@@ -106,9 +106,9 @@ Este documento descreve a estrutura completa das abas e colunas necessárias na 
 - **G - Status:** "Ativa" ou "Inativa"
 
 **Exemplo de linha:**
-```
+\`\`\`
 1 | Quadra 01 | Parque Amazônia | Futevôlei | 80.00 | Quadra coberta com grama sintética | Ativa
-```
+\`\`\`
 
 **Lista completa esperada:**
 - Parque Amazônia: Quadra 01, 02, 03, 04, 05 (R$ 80/h)
@@ -130,9 +130,9 @@ Este documento descreve a estrutura completa das abas e colunas necessárias na 
 - **G - Status:** "Pago", "Pendente", "Cancelado"
 
 **Exemplo de linha:**
-```
+\`\`\`
 1 | 08/10/2025 | João Silva | 80.00 | PIX | Reserva Quadra 01 - 14:00 | Pago
-```
+\`\`\`
 
 ---
 
@@ -152,9 +152,9 @@ Este documento descreve a estrutura completa das abas e colunas necessárias na 
 - **I - Status:** "Confirmada", "Pendente", "Cancelada"
 
 **Exemplo de linha:**
-```
+\`\`\`
 1 | 08/10/2025 10:00 | Maria Santos | Quadra 02 | Carlos Silva | 10/10/2025 | 15:00 | 80.00 | Confirmada
-```
+\`\`\`
 
 ---
 

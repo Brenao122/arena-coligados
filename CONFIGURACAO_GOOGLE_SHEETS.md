@@ -33,7 +33,7 @@ A plataforma não está salvando dados na planilha porque falta a variável de a
 
 Abra o arquivo JSON baixado e procure o campo `private_key`. Ele terá este formato:
 
-```json
+\`\`\`json
 {
   "type": "service_account",
   "project_id": "credencial-n8n-471801",
@@ -42,7 +42,7 @@ Abra o arquivo JSON baixado e procure o campo `private_key`. Ele terá este form
   "client_email": "arenasheets@credencial-n8n-471801.iam.gserviceaccount.com",
   ...
 }
-```
+\`\`\`
 
 Copie **TODO** o conteúdo do campo `private_key`, incluindo:
 - `-----BEGIN PRIVATE KEY-----`
