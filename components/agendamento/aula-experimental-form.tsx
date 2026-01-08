@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { supabase } from "@/lib/supabase"
 import { normalizePhone } from "@/lib/normalize-phone"
 import { Loader2, GraduationCap, Users, Clock } from "lucide-react"
 
@@ -30,7 +29,7 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
     aluno_email: "",
     aluno_idade: "",
     modalidade: "",
-    nivel: "iniciante",
+    nivel: "aprendiz",
     melhor_dia: "",
     melhor_horario: "",
     data_aula: "",
@@ -44,14 +43,14 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
     { value: "beach_tennis", label: "Beach Tennis" },
     { value: "futevolei", label: "Futevôlei" },
     { value: "volei", label: "Vôlei" },
-    { value: "futsal", label: "Futsal" },
-    { value: "basquete", label: "Basquete" },
+    { value: "tenis", label: "Tênis" },
   ]
 
   const niveis = [
-    { value: "iniciante", label: "Iniciante" },
-    { value: "intermediario", label: "Intermediário" },
-    { value: "avancado", label: "Avançado" },
+    { value: "aprendiz", label: "Aprendiz", descricao: "Primeiros contatos com a modalidade" },
+    { value: "iniciante", label: "Iniciante", descricao: "Leve familiaridade" },
+    { value: "intermediario", label: "Intermediário", descricao: "Já tenho bastante convívio com a modalidade" },
+    { value: "avancado", label: "Avançado", descricao: "Jogo bem! Quero aprimorar e evoluir" },
   ]
 
   const diasSemana = [
@@ -77,45 +76,43 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
     setSuccess("")
 
     try {
-      // Gerar ID da turma se for uma aula agendada
-      const turmaId = formData.data_aula ? crypto.randomUUID() : null
-
       const aulaData = {
         aluno_nome: formData.aluno_nome,
         aluno_telefone: normalizePhone(formData.aluno_telefone),
-        aluno_email: formData.aluno_email || null,
-        aluno_idade: formData.aluno_idade ? Number.parseInt(formData.aluno_idade) : null,
+        aluno_email: formData.aluno_email || "",
+        aluno_idade: formData.aluno_idade || "",
         modalidade: formData.modalidade,
         nivel: formData.nivel,
-        melhor_dia: formData.melhor_dia || null,
-        melhor_horario: formData.melhor_horario || null,
-        data_aula: formData.data_aula || null,
-        hora_inicio: formData.hora_inicio || null,
-        hora_fim: formData.hora_fim || null,
-        professor_nome: formData.professor_nome || null,
-        turma_id: turmaId,
-        vagas_ocupadas: 1,
-        max_vagas: 4,
-        status: formData.data_aula ? "agendado" : "pendente",
-        origem: "plataforma",
+        melhor_dia: formData.melhor_dia || "",
+        melhor_horario: formData.melhor_horario || "",
+        data_aula: formData.data_aula || "",
+        hora_inicio: formData.hora_inicio || "",
+        hora_fim: formData.hora_fim || "",
+        professor_nome: formData.professor_nome || "",
         observacoes: formData.observacoes,
-        needs_sync: true, // Marca para sincronização com Google Sheets
+        status: formData.data_aula ? "agendado" : "pendente",
       }
 
-      const { error: supabaseError } = await supabase.from("aulas_experimentais_sheets").insert([aulaData])
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "leads-aulas",
+          data: aulaData,
+        }),
+      })
 
-      if (supabaseError) throw supabaseError
+      if (!response.ok) throw new Error("Erro ao enviar dados")
 
-      setSuccess("Aula experimental registrada com sucesso! Será sincronizada com a planilha automaticamente.")
+      setSuccess("Aula experimental registrada com sucesso!")
 
-      // Reset form
       setFormData({
         aluno_nome: "",
         aluno_telefone: "",
         aluno_email: "",
         aluno_idade: "",
         modalidade: "",
-        nivel: "iniciante",
+        nivel: "aprendiz",
         melhor_dia: "",
         melhor_horario: "",
         data_aula: "",
@@ -242,7 +239,10 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="nivel">Nível</Label>
+                <Label htmlFor="nivel">
+                  Qual seu nível de experiência?{" "}
+                  <span className="text-sm text-gray-600">(A turma indicada será baseada em sua resposta!)</span>
+                </Label>
                 <Select value={formData.nivel} onValueChange={(value) => setFormData({ ...formData, nivel: value })}>
                   <SelectTrigger>
                     <SelectValue />
@@ -250,52 +250,19 @@ export function AulaExperimentalForm({ onSuccess, onClose }: AulaExperimentalFor
                   <SelectContent>
                     {niveis.map((nivel) => (
                       <SelectItem key={nivel.value} value={nivel.value}>
-                        {nivel.label}
+                        <div className="flex flex-col">
+                          <span className="font-medium">{nivel.label}</span>
+                          <span className="text-xs text-gray-500">{nivel.descricao}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-
-            {/* Preferências de Horário */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="melhor_dia">Melhor Dia (Preferência)</Label>
-                <Select
-                  value={formData.melhor_dia}
-                  onValueChange={(value) => setFormData({ ...formData, melhor_dia: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o dia" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {diasSemana.map((dia) => (
-                      <SelectItem key={dia.value} value={dia.value}>
-                        {dia.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="melhor_horario">Melhor Horário (Preferência)</Label>
-                <Select
-                  value={formData.melhor_horario}
-                  onValueChange={(value) => setFormData({ ...formData, melhor_horario: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o horário" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {horarios.map((horario) => (
-                      <SelectItem key={horario.value} value={horario.value}>
-                        {horario.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {formData.nivel && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {niveis.find((n) => n.value === formData.nivel)?.descricao}
+                  </p>
+                )}
               </div>
             </div>
           </div>

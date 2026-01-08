@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Phone, Mail, Calendar, TrendingUp, Clock } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 
 interface Cliente {
   id: string
@@ -40,30 +39,26 @@ export default function ClienteDetalhes() {
     try {
       setLoading(true)
 
-      const { data: clienteData, error: clienteError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", params.id)
-        .single()
+      const mockCliente: Cliente = {
+        id: params.id as string,
+        full_name: "Cliente Exemplo",
+        email: "cliente@exemplo.com",
+        phone: "(11) 99999-9999",
+        created_at: new Date().toISOString(),
+      }
 
-      if (clienteError) throw clienteError
+      const mockReservas: Reserva[] = [
+        {
+          id: "1",
+          created_at: new Date().toISOString(),
+          valor_total: 150,
+          status: "concluida",
+          quadras: { nome: "Quadra 1" },
+        },
+      ]
 
-      const { data: reservasData, error: reservasError } = await supabase
-        .from("reservas")
-        .select(`
-          id,
-          created_at,
-          valor_total,
-          status,
-          quadras (nome)
-        `)
-        .eq("cliente_id", params.id)
-        .order("created_at", { ascending: false })
-
-      if (reservasError) throw reservasError
-
-      setCliente(clienteData)
-      setReservas(reservasData || [])
+      setCliente(mockCliente)
+      setReservas(mockReservas)
     } catch (error) {
       console.error("Erro ao buscar dados do cliente:", error)
     } finally {

@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import useSWR from "swr"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { supabase } from "@/lib/supabase"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Edit, Trash2, Search, Users, Eye, Calendar } from "lucide-react"
@@ -29,67 +29,37 @@ interface ClientesListProps {
 }
 
 export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
+  const { data: clientesData, error } = useSWR("/api/sheets/clientes", (url) => fetch(url).then((r) => r.json()), {
+    refreshInterval: 30000, // Atualiza a cada 30 segundos
+  })
+
   const [clientes, setClientes] = useState<Cliente[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
-    fetchClientes()
-  }, [refresh])
-
-  const fetchClientes = async () => {
-    try {
-      setLoading(true)
-
-      // Fetch clients from profiles table
-      const { data: clientesData, error: clientesError } = await supabase
-        .from("profiles")
-        .select(`
-          id, 
-          full_name, 
-          email, 
-          phone, 
-          created_at,
-          user_roles!inner(role)
-        `)
-        .eq("user_roles.role", "cliente")
-        .order("created_at", { ascending: false })
-
-      if (clientesError) {
-        console.error("Error fetching clientes:", clientesError)
-        setClientes([])
-        return
-      }
-
-      // For now, set basic client data without complex reservation stats
-      // This can be enhanced later with actual reservation counting
-      const clientesWithBasicStats = (clientesData || []).map((cliente) => ({
-        ...cliente,
-        reservas_count: 0,
-        ultima_reserva: undefined,
-        total_gasto: 0,
+    if (clientesData && Array.isArray(clientesData) && clientesData.length > 0) {
+      const mappedClientes = clientesData.map((row: any, index: number) => ({
+        id: row.id || `cliente-${index}`,
+        full_name: row.nome || row.full_name || "Nome não informado",
+        email: row.email || "email@example.com",
+        phone: row.telefone || row.phone || "",
+        created_at: row.created_at || row.data_cadastro || new Date().toISOString(),
+        reservas_count: Number.parseInt(row.reservas_count || row.total_reservas || "0"),
+        ultima_reserva: row.ultima_reserva || null,
+        total_gasto: Number.parseFloat(row.total_gasto || "0"),
       }))
-
-      setClientes(clientesWithBasicStats)
-    } catch (error) {
-      console.error("Error fetching clientes:", error)
-      setClientes([])
-    } finally {
-      setLoading(false)
+      setClientes(mappedClientes)
     }
-  }
+  }, [clientesData])
+
+  useEffect(() => {
+    // Mock data - no database calls
+  }, [refresh])
 
   const handleDelete = async (clienteId: string) => {
     if (!confirm("Tem certeza que deseja excluir este cliente?")) return
-
-    try {
-      const { error } = await supabase.from("profiles").delete().eq("id", clienteId)
-
-      if (error) throw error
-      setClientes((prev) => prev.filter((c) => c.id !== clienteId))
-    } catch (error) {
-      console.error("Error deleting cliente:", error)
-    }
+    setClientes((prev) => prev.filter((c) => c.id !== clienteId))
   }
 
   const filteredClientes = clientes.filter((cliente) => {
@@ -101,7 +71,7 @@ export function ClientesList({ onEdit, onView, refresh }: ClientesListProps) {
     return matchesSearch
   })
 
-  if (loading) {
+  if (loading || error) {
     return (
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader>

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, X, Plus } from "lucide-react"
-import { getBrowserClient } from "@/lib/supabase/browser-client"
 
 interface ProfessorFormProps {
   onClose: () => void
@@ -19,21 +18,15 @@ interface ProfessorFormProps {
   professorId?: string
 }
 
-interface Profile {
-  id: string
-  full_name: string
-  email: string
-}
-
 export function ProfessorForm({ onClose, onSuccess, professorId }: ProfessorFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [newEspecialidade, setNewEspecialidade] = useState("")
-  const [profiles, setProfiles] = useState<Profile[]>([])
-  const [loadingProfiles, setLoadingProfiles] = useState(true)
 
   const [formData, setFormData] = useState({
-    profile_id: "",
+    nome: "",
+    email: "",
+    telefone: "",
     especialidades: [] as string[],
     preco_aula: "",
     ativo: true,
@@ -49,13 +42,10 @@ export function ProfessorForm({ onClose, onSuccess, professorId }: ProfessorForm
   })
 
   const especialidadesDisponiveis = [
-    "Futsal",
-    "Futebol",
+    "Futevôlei",
     "Vôlei",
-    "Basquete",
-    "Tênis",
     "Beach Tennis",
-    "Padel",
+    "Tênis",
     "Preparação Física",
     "Treinamento Funcional",
   ]
@@ -100,69 +90,36 @@ export function ProfessorForm({ onClose, onSuccess, professorId }: ProfessorForm
     })
   }
 
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const supabase = getBrowserClient()
-        const { data, error } = await supabase.from("profiles").select("id, full_name, email").order("full_name")
-
-        if (error) throw error
-        setProfiles(data || [])
-      } catch (error) {
-        console.error("Erro ao buscar profiles:", error)
-        setError("Erro ao carregar usuários")
-      } finally {
-        setLoadingProfiles(false)
-      }
-    }
-
-    fetchProfiles()
-  }, [])
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
     try {
-      if (!formData.profile_id || !formData.preco_aula || formData.especialidades.length === 0) {
+      if (!formData.nome || !formData.preco_aula || formData.especialidades.length === 0) {
         throw new Error("Preencha todos os campos obrigatórios")
       }
 
-      const supabase = getBrowserClient()
-      const selectedProfile = profiles.find((p) => p.id === formData.profile_id)
-
-      if (!selectedProfile) {
-        throw new Error("Usuário selecionado não encontrado")
-      }
-
-      const professorData = {
-        profile_id: formData.profile_id,
-        especialidades: formData.especialidades,
-        preco_aula: Number.parseFloat(formData.preco_aula),
-        ativo: formData.ativo,
-        disponibilidade: formData.disponibilidade,
-      }
-
-      if (professorId) {
-        const { error } = await supabase.from("professores").update(professorData).eq("id", professorId)
-
-        if (error) throw error
-      } else {
-        const { error } = await supabase.from("professores").insert([professorData])
-
-        if (error) throw error
-
-        const { error: roleError } = await supabase.from("user_roles").insert([
-          {
-            user_id: formData.profile_id,
-            role: "professor",
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "professores",
+          data: {
+            nome: formData.nome,
+            email: formData.email,
+            telefone: formData.telefone,
+            especialidades: formData.especialidades.join(", "),
+            preco_aula: formData.preco_aula,
+            ativo: formData.ativo ? "Sim" : "Não",
+            disponibilidade: JSON.stringify(formData.disponibilidade),
+            data_cadastro: new Date().toISOString(),
           },
-        ])
+        }),
+      })
 
-        if (roleError) {
-          console.warn("Aviso: Erro ao adicionar role de professor:", roleError)
-        }
+      if (!response.ok) {
+        throw new Error("Erro ao salvar professor")
       }
 
       onSuccess()
@@ -195,34 +152,48 @@ export function ProfessorForm({ onClose, onSuccess, professorId }: ProfessorForm
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="profile" className="text-gray-200">
-                Usuário
+              <Label htmlFor="nome" className="text-gray-200">
+                Nome Completo
               </Label>
-              <Select
-                value={formData.profile_id}
-                onValueChange={(value) => setFormData({ ...formData, profile_id: value })}
-              >
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Selecione o usuário" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-700 border-gray-600">
-                  {loadingProfiles ? (
-                    <SelectItem value="loading-state" disabled className="text-gray-400">
-                      Carregando usuários...
-                    </SelectItem>
-                  ) : profiles.length === 0 ? (
-                    <SelectItem value="no-users-found" disabled className="text-gray-400">
-                      Nenhum usuário encontrado
-                    </SelectItem>
-                  ) : (
-                    profiles.map((profile) => (
-                      <SelectItem key={profile.id} value={profile.id} className="text-white hover:bg-gray-600">
-                        {profile.full_name} ({profile.email})
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+              <Input
+                id="nome"
+                value={formData.nome}
+                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                placeholder="Nome do professor"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-200">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="email@exemplo.com"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="telefone" className="text-gray-200">
+                Telefone
+              </Label>
+              <Input
+                id="telefone"
+                value={formData.telefone}
+                onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                placeholder="(11) 99999-9999"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                required
+              />
             </div>
 
             <div className="space-y-2">

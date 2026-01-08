@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { getBrowserClient } from "@/lib/supabase/browser-client"
 import { Loader2, X } from "lucide-react"
 
 interface ClienteFormProps {
@@ -34,8 +33,6 @@ export function ClienteForm({ onClose, onSuccess, clienteId }: ClienteFormProps)
     setError("")
 
     try {
-      const supabase = getBrowserClient()
-
       if (!clienteId && formData.password !== formData.confirmPassword) {
         throw new Error("As senhas não coincidem")
       }
@@ -44,56 +41,21 @@ export function ClienteForm({ onClose, onSuccess, clienteId }: ClienteFormProps)
         throw new Error("Nome e email são obrigatórios")
       }
 
-      if (!clienteId) {
-        // Criar usuário no Supabase Auth
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-          options: {
-            data: {
-              full_name: formData.full_name,
-              phone: formData.phone,
-            },
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "clientes",
+          data: {
+            nome: formData.full_name,
+            email: formData.email,
+            telefone: formData.phone,
+            data_cadastro: new Date().toISOString(),
           },
-        })
+        }),
+      })
 
-        if (authError) throw authError
-
-        // Inserir perfil na tabela profiles
-        if (authData.user) {
-          const { error: profileError } = await supabase.from("profiles").insert([
-            {
-              id: authData.user.id,
-              email: formData.email,
-              full_name: formData.full_name,
-              phone: formData.phone,
-            },
-          ])
-
-          if (profileError) throw profileError
-
-          // Criar role de cliente
-          const { error: roleError } = await supabase.from("user_roles").insert([
-            {
-              user_id: authData.user.id,
-              role: "cliente",
-            },
-          ])
-
-          if (roleError) throw roleError
-        }
-      } else {
-        // Atualizar cliente existente
-        const { error: updateError } = await supabase
-          .from("profiles")
-          .update({
-            full_name: formData.full_name,
-            phone: formData.phone,
-          })
-          .eq("id", clienteId)
-
-        if (updateError) throw updateError
-      }
+      if (!response.ok) throw new Error("Erro ao salvar cliente")
 
       onSuccess()
       onClose()

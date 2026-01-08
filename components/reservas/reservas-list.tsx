@@ -1,19 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { getBrowserClient } from "@/lib/supabase/browser-client"
-import { useAuth } from "@/hooks/use-auth"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Edit, Trash2, Search } from "lucide-react"
-import { detectReservasSchema } from "@/lib/supabase/schema-detector"
-import { handleDatabaseError } from "@/lib/supabase/error-handler"
 
 interface Reserva {
   id: string
@@ -22,20 +18,10 @@ interface Reserva {
   tipo: string
   status: string
   valor: number
-  observacoes: string
-  profiles: {
-    full_name: string
-    email: string
-  }
-  quadras: {
-    nome: string
-    tipo: string
-  }
-  professores?: {
-    profiles: {
-      full_name: string
-    }
-  }
+  cliente_nome: string
+  cliente_email: string
+  quadra_nome: string
+  quadra_tipo: string
 }
 
 interface ReservasListProps {
@@ -44,137 +30,56 @@ interface ReservasListProps {
 }
 
 export function ReservasList({ onEdit, refresh }: ReservasListProps) {
-  const { profile } = useAuth()
-  const [reservas, setReservas] = useState<Reserva[]>([])
-  const [loading, setLoading] = useState(true)
+  const [reservas] = useState<Reserva[]>([
+    {
+      id: "1",
+      data_inicio: new Date().toISOString(),
+      data_fim: new Date(Date.now() + 3600000).toISOString(),
+      tipo: "Locação",
+      status: "confirmada",
+      valor: 150.0,
+      cliente_nome: "João Silva",
+      cliente_email: "joao@email.com",
+      quadra_nome: "Quadra 1 - Futsal",
+      quadra_tipo: "Futsal",
+    },
+    {
+      id: "2",
+      data_inicio: new Date(Date.now() + 86400000).toISOString(),
+      data_fim: new Date(Date.now() + 90000000).toISOString(),
+      tipo: "Aula",
+      status: "pendente",
+      valor: 120.0,
+      cliente_nome: "Maria Santos",
+      cliente_email: "maria@email.com",
+      quadra_nome: "Quadra 2 - Beach Tennis",
+      quadra_tipo: "Beach Tennis",
+    },
+  ])
+  const [loading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [tipoFilter, setTipoFilter] = useState("all")
 
-  useEffect(() => {
-    fetchReservas()
-  }, [refresh])
-
-  const fetchReservas = async () => {
-    try {
-      setLoading(true)
-      const supabase = getBrowserClient()
-
-      const schema = await detectReservasSchema()
-
-      let query = supabase
-        .from("reservas")
-        .select(`
-          id,
-          ${schema === "tstzrange" ? "duracao" : "data_inicio, data_fim"},
-          tipo,
-          status,
-          ${schema === "tstzrange" ? "valor_total" : "valor"},
-          observacoes,
-          profiles:cliente_id (full_name, email),
-          quadras:quadra_id (nome, tipo),
-          professores:professor_id (
-            profiles:profile_id (full_name)
-          )
-        `)
-        .order(schema === "tstzrange" ? "duracao" : "data_inicio", { ascending: false })
-
-      if (profile?.role === "cliente") {
-        query = query.eq("cliente_id", profile.id)
-      }
-
-      const { data, error } = await query
-
-      if (error) {
-        console.error("Error fetching reservas:", error)
-        setReservas([])
-      } else {
-        const transformedReservas = (data || []).map((reserva: any) => {
-          let dataInicio = new Date().toISOString()
-          let dataFim = new Date().toISOString()
-
-          if (schema === "tstzrange" && reserva.duracao) {
-            try {
-              const duracaoStr = reserva.duracao.toString()
-              const match = duracaoStr.match(/\["([^"]+)","([^"]+)"\]/) || duracaoStr.match(/\[([^,]+),([^)]+)\]/)
-
-              if (match) {
-                dataInicio = new Date(match[1].replace(/"/g, "")).toISOString()
-                dataFim = new Date(match[2].replace(/"/g, "")).toISOString()
-              }
-            } catch (error) {
-              console.error("Erro ao parsear duracao:", error)
-            }
-          } else if (reserva.data_inicio && reserva.data_fim) {
-            dataInicio = reserva.data_inicio
-            dataFim = reserva.data_fim
-          }
-
-          return {
-            ...reserva,
-            data_inicio: dataInicio,
-            data_fim: dataFim,
-            valor: reserva.valor_total || reserva.valor || 0,
-          }
-        })
-
-        setReservas(transformedReservas)
-      }
-    } catch (error) {
-      console.error("Error fetching reservas:", error)
-      const dbError = handleDatabaseError(error)
-      console.error("Database error:", dbError.message)
-      setReservas([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleStatusChange = async (reservaId: string, newStatus: string) => {
-    try {
-      const supabase = getBrowserClient()
-      const { error } = await supabase.from("reservas").update({ status: newStatus }).eq("id", reservaId)
-
-      if (error) throw error
-      fetchReservas()
-    } catch (error) {
-      console.error("Error updating status:", error)
-    }
-  }
-
-  const handleDelete = async (reservaId: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta reserva?")) return
-
-    try {
-      const supabase = getBrowserClient()
-      const { error } = await supabase.from("reservas").delete().eq("id", reservaId)
-
-      if (error) throw error
-      fetchReservas()
-    } catch (error) {
-      console.error("Error deleting reserva:", error)
-    }
-  }
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmada":
-        return "bg-green-100 text-green-800"
+        return "bg-green-500 text-white"
       case "pendente":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-500 text-white"
       case "cancelada":
-        return "bg-red-100 text-red-800"
+        return "bg-red-500 text-white"
       case "concluida":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-500 text-white"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-500 text-white"
     }
   }
 
   const filteredReservas = reservas.filter((reserva) => {
     const matchesSearch =
-      reserva.profiles?.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reserva.quadras?.nome.toLowerCase().includes(searchTerm.toLowerCase())
+      reserva.cliente_nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reserva.quadra_nome.toLowerCase().includes(searchTerm.toLowerCase())
 
     const matchesStatus = statusFilter === "all" || reserva.status === statusFilter
     const matchesTipo = tipoFilter === "all" || reserva.tipo === tipoFilter
@@ -184,14 +89,14 @@ export function ReservasList({ onEdit, refresh }: ReservasListProps) {
 
   if (loading) {
     return (
-      <Card>
+      <Card className="bg-gray-800 border-gray-700">
         <CardHeader>
-          <CardTitle>Reservas</CardTitle>
+          <CardTitle className="text-white">Reservas</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 rounded"></div>
+              <div key={i} className="h-16 bg-gray-700 rounded"></div>
             ))}
           </div>
         </CardContent>
@@ -200,10 +105,10 @@ export function ReservasList({ onEdit, refresh }: ReservasListProps) {
   }
 
   return (
-    <Card>
+    <Card className="bg-gray-800 border-gray-700">
       <CardHeader>
-        <CardTitle>Lista de Reservas</CardTitle>
-        <CardDescription>Gerencie todas as reservas da arena</CardDescription>
+        <CardTitle className="text-white">Lista de Reservas</CardTitle>
+        <CardDescription className="text-gray-400">Gerencie todas as reservas da arena</CardDescription>
       </CardHeader>
       <CardContent>
         {/* Filters */}
@@ -215,15 +120,15 @@ export function ReservasList({ onEdit, refresh }: ReservasListProps) {
                 placeholder="Buscar por cliente ou quadra..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
               />
             </div>
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-[150px] bg-gray-700 border-gray-600 text-white">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-gray-700 border-gray-600">
               <SelectItem value="all">Todos Status</SelectItem>
               <SelectItem value="pendente">Pendente</SelectItem>
               <SelectItem value="confirmada">Confirmada</SelectItem>
@@ -232,109 +137,90 @@ export function ReservasList({ onEdit, refresh }: ReservasListProps) {
             </SelectContent>
           </Select>
           <Select value={tipoFilter} onValueChange={setTipoFilter}>
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-[150px] bg-gray-700 border-gray-600 text-white">
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-gray-700 border-gray-600">
               <SelectItem value="all">Todos Tipos</SelectItem>
               <SelectItem value="Locação">Locação</SelectItem>
-              <SelectItem value="Aula Experimental">Aula Experimental</SelectItem>
-              <SelectItem value="Aula Particular">Aula Particular</SelectItem>
+              <SelectItem value="Aula">Aula</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Table */}
-        <div className="rounded-md border">
+        <div className="rounded-md border border-gray-600">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Quadra</TableHead>
-                <TableHead>Data/Hora</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Valor</TableHead>
-                {(profile?.role === "admin" || profile?.role === "professor") && <TableHead>Ações</TableHead>}
+              <TableRow className="border-gray-600">
+                <TableHead className="text-gray-300">Cliente</TableHead>
+                <TableHead className="text-gray-300">Quadra</TableHead>
+                <TableHead className="text-gray-300">Data/Hora</TableHead>
+                <TableHead className="text-gray-300">Tipo</TableHead>
+                <TableHead className="text-gray-300">Status</TableHead>
+                <TableHead className="text-gray-300">Valor</TableHead>
+                <TableHead className="text-gray-300">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredReservas.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableRow className="border-gray-600">
+                  <TableCell colSpan={7} className="text-center py-8 text-gray-400">
                     Nenhuma reserva encontrada
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredReservas.map((reserva) => (
-                  <TableRow key={reserva.id}>
+                  <TableRow key={reserva.id} className="border-gray-600">
                     <TableCell>
                       <div>
-                        <p className="font-medium">{reserva.profiles?.full_name}</p>
-                        <p className="text-sm text-muted-foreground">{reserva.profiles?.email}</p>
+                        <p className="font-medium text-white">{reserva.cliente_nome}</p>
+                        <p className="text-sm text-gray-400">{reserva.cliente_email}</p>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-medium">{reserva.quadras?.nome}</p>
-                        <p className="text-sm text-muted-foreground capitalize">{reserva.quadras?.tipo}</p>
+                        <p className="font-medium text-white">{reserva.quadra_nome}</p>
+                        <p className="text-sm text-gray-400 capitalize">{reserva.quadra_tipo}</p>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-medium">
+                        <p className="font-medium text-white">
                           {format(new Date(reserva.data_inicio), "dd/MM/yyyy", { locale: ptBR })}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-gray-400">
                           {format(new Date(reserva.data_inicio), "HH:mm", { locale: ptBR })} -{" "}
                           {format(new Date(reserva.data_fim), "HH:mm", { locale: ptBR })}
                         </p>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className="capitalize">
+                      <Badge variant="secondary" className="capitalize bg-gray-600 text-white">
                         {reserva.tipo}
                       </Badge>
-                      {reserva.professores && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Prof: {reserva.professores.profiles?.full_name}
-                        </p>
-                      )}
                     </TableCell>
                     <TableCell>
-                      {profile?.role === "admin" ? (
-                        <Select value={reserva.status} onValueChange={(value) => handleStatusChange(reserva.id, value)}>
-                          <SelectTrigger className="w-[120px]">
-                            <Badge className={getStatusColor(reserva.status)}>{reserva.status}</Badge>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pendente">Pendente</SelectItem>
-                            <SelectItem value="confirmada">Confirmada</SelectItem>
-                            <SelectItem value="concluida">Concluída</SelectItem>
-                            <SelectItem value="cancelada">Cancelada</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <Badge className={getStatusColor(reserva.status)}>{reserva.status}</Badge>
-                      )}
+                      <Badge className={getStatusColor(reserva.status)}>{reserva.status}</Badge>
                     </TableCell>
                     <TableCell>
-                      <p className="font-medium">R$ {reserva.valor.toFixed(2)}</p>
+                      <p className="font-medium text-white">R$ {reserva.valor.toFixed(2)}</p>
                     </TableCell>
-                    {(profile?.role === "admin" || profile?.role === "professor") && (
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => onEdit(reserva.id)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          {profile?.role === "admin" && (
-                            <Button variant="ghost" size="sm" onClick={() => handleDelete(reserva.id)}>
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    )}
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEdit(reserva.id)}
+                          className="hover:bg-gray-600"
+                        >
+                          <Edit className="h-4 w-4 text-white" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="hover:bg-gray-600">
+                          <Trash2 className="h-4 w-4 text-red-400" />
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))
               )}

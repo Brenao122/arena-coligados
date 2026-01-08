@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/sync-nextfit",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/limpar-reservas-expiradas",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}

@@ -2,41 +2,75 @@ import { GoogleSpreadsheet } from "google-spreadsheet"
 import { JWT } from "google-auth-library"
 
 const SPREADSHEET_ID = "174HlbAsnc30_T2sJeTdU4xqLPQuojm7wWS8YWfhh5Ew"
-const SERVICE_ACCOUNT_EMAIL = "arenasheets@credencial-n8n-471801.iam.gserviceaccount.com"
+const SERVICE_ACCOUNT_EMAIL =
+  process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "arenasheets@credencial-n8n-471801.iam.gserviceaccount.com"
 const PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n")
 
-const serviceAccountAuth = new JWT({
-  email: SERVICE_ACCOUNT_EMAIL,
-  key: PRIVATE_KEY,
-  scopes: ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.file"],
-})
+if (!PRIVATE_KEY) {
+  console.error("[v0] ❌ ERRO CRÍTICO: GOOGLE_PRIVATE_KEY não configurada!")
+  console.error("[v0] Adicione a variável GOOGLE_PRIVATE_KEY nas configurações do projeto")
+}
+
+if (!SERVICE_ACCOUNT_EMAIL) {
+  console.error("[v0] ❌ ERRO CRÍTICO: GOOGLE_SERVICE_ACCOUNT_EMAIL não configurada!")
+}
+
+let serviceAccountAuth: JWT | null = null
+
+if (PRIVATE_KEY && SERVICE_ACCOUNT_EMAIL) {
+  serviceAccountAuth = new JWT({
+    email: SERVICE_ACCOUNT_EMAIL,
+    key: PRIVATE_KEY,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.file"],
+  })
+}
 
 let doc: GoogleSpreadsheet | null = null
 
 async function initializeSheet() {
+  if (!serviceAccountAuth) {
+    throw new Error(
+      "Credenciais do Google Sheets não configuradas. Adicione GOOGLE_PRIVATE_KEY e GOOGLE_SERVICE_ACCOUNT_EMAIL nas variáveis de ambiente.",
+    )
+  }
+
   if (!doc) {
+    console.log("[v0] Inicializando Google Sheets...")
+    console.log("[v0] Spreadsheet ID:", SPREADSHEET_ID)
+    console.log("[v0] Service Account:", SERVICE_ACCOUNT_EMAIL)
+
     doc = new GoogleSpreadsheet(SPREADSHEET_ID, serviceAccountAuth)
     await doc.loadInfo()
-    console.log("[v0] Google Sheets conectado:", doc.title)
+    console.log("[v0] ✅ Google Sheets conectado:", doc.title)
   }
   return doc
 }
 
 export async function readSheetData(sheetName: string) {
   try {
+    console.log(`[v0] Tentando ler aba '${sheetName}'...`)
     const sheet = await initializeSheet()
     const worksheet = sheet.sheetsByTitle[sheetName]
 
     if (!worksheet) {
-      throw new Error(`Aba '${sheetName}' não encontrada`)
+      const availableSheets = Object.keys(sheet.sheetsByTitle)
+      console.error(`[v0] Aba '${sheetName}' não encontrada. Abas disponíveis:`, availableSheets)
+      throw new Error(`Aba '${sheetName}' não encontrada. Abas disponíveis: ${availableSheets.join(", ")}`)
     }
 
     const rows = await worksheet.getRows()
     console.log(`[v0] Lidos ${rows.length} registros da aba '${sheetName}'`)
 
+    if (rows.length > 0) {
+      console.log("[v0] Exemplo de registro:", rows[0].toObject())
+    }
+
     return rows.map((row) => row.toObject())
   } catch (error) {
     console.error(`[v0] Erro ao ler aba '${sheetName}':`, error)
+    if (error instanceof Error) {
+      throw new Error(`Erro ao ler planilha: ${error.message}`)
+    }
     throw error
   }
 }
@@ -88,5 +122,23 @@ export async function listAllSheets() {
   } catch (error) {
     console.error("[v0] Erro ao listar abas:", error)
     throw error
+  }
+}
+
+export class GoogleSheetsService {
+  async read(sheetName: string) {
+    return readSheetData(sheetName)
+  }
+
+  async append(sheetName: string, data: any) {
+    return writeSheetData(sheetName, [data])
+  }
+
+  async update(sheetName: string, rowIndex: number, data: any) {
+    return updateSheetData(sheetName, rowIndex, data)
+  }
+
+  async listSheets() {
+    return listAllSheets()
   }
 }

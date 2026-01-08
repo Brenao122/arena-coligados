@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Search, Filter, Plus, Phone, Mail, MessageCircle, TrendingUp, Users, Target } from "lucide-react"
 import { LeadForm } from "@/components/leads/lead-form"
-import { supabase } from "@/lib/supabase"
 
 interface Lead {
   id: string
@@ -36,11 +35,11 @@ export default function LeadsPage() {
     try {
       setLoading(true)
 
-      const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false })
-
-      if (error) throw error
-
-      setLeads(data || [])
+      const response = await fetch("/api/sheets/clientes")
+      if (response.ok) {
+        const data = await response.json()
+        setLeads(data.leads || [])
+      }
     } catch (error) {
       console.error("Erro ao buscar leads:", error)
     } finally {

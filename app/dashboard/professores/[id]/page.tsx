@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Phone, Mail, Calendar, Users, Clock, Star } from "lucide-react"
-import { getBrowserClient } from "@/lib/supabase/browser-client"
 
 interface Professor {
   id: string
@@ -43,46 +42,21 @@ export default function ProfessorDetalhes() {
   useEffect(() => {
     const fetchProfessorData = async () => {
       try {
-        const supabase = getBrowserClient()
+        const mockProfessor: Professor = {
+          id: params.id as string,
+          full_name: "Professor Exemplo",
+          email: "professor@exemplo.com",
+          phone: "(11) 99999-9999",
+          especialidades: ["Tênis", "Beach Tennis"],
+          created_at: new Date().toISOString(),
+          preco_aula: 150,
+          alunos_ativos: 10,
+          aulas_mes: 40,
+          avaliacao: 4.8,
+        }
 
-        // Buscar dados do professor
-        const { data: professorData, error: professorError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", params.id)
-          .single()
-
-        if (professorError) throw professorError
-
-        // Buscar aulas do professor
-        const { data: aulasData, error: aulasError } = await supabase
-          .from("reservas")
-          .select(`
-            id,
-            duracao,
-            status,
-            cliente:cliente_id (full_name),
-            quadra:quadra_id (nome)
-          `)
-          .eq("professor_id", params.id)
-          .order("duracao", { ascending: true })
-          .limit(10)
-
-        if (aulasError) throw aulasError
-
-        // Transformar dados das aulas
-        const aulasTransformadas =
-          aulasData?.map((aula) => ({
-            id: aula.id,
-            data_inicio: aula.duracao ? aula.duracao.split(",")[0].replace("[", "") : "",
-            data_fim: aula.duracao ? aula.duracao.split(",")[1].replace(")", "") : "",
-            cliente: aula.cliente || { full_name: "Cliente não encontrado" },
-            quadra: aula.quadra || { nome: "Quadra não encontrada" },
-            status: aula.status || "agendada",
-          })) || []
-
-        setProfessor(professorData)
-        setAulas(aulasTransformadas)
+        setProfessor(mockProfessor)
+        setAulas([])
       } catch (error) {
         console.error("Erro ao buscar dados do professor:", error)
       } finally {

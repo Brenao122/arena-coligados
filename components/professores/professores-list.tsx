@@ -1,30 +1,24 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import useSWR from "swr"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Edit, Trash2, Search, UserCheck } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 
 interface Professor {
   id: string
-  user_id: string
-  specialties: string[]
-  hourly_rate: number
-  bio?: string
-  experience_years?: number
-  rating: number
-  total_reviews: number
+  nome: string
+  email: string
+  telefone: string
+  especialidades: string[]
+  preco_aula: number
   ativo: boolean
-  created_at: string
-  profiles: {
-    full_name: string
-    email: string
-    phone?: string
-  }
+  rating: number
+  total_avaliacoes: number
 }
 
 interface ProfessoresListProps {
@@ -33,99 +27,79 @@ interface ProfessoresListProps {
 }
 
 export function ProfessoresList({ onEdit, refresh }: ProfessoresListProps) {
-  const [professores, setProfessores] = useState<Professor[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: professoresData, error } = useSWR(
+    "/api/sheets/professores",
+    (url) => fetch(url).then((r) => r.json()),
+    {
+      refreshInterval: 30000, // Atualiza a cada 30 segundos
+    },
+  )
+
+  const [professores, setProfessores] = useState<Professor[]>([
+    {
+      id: "1",
+      nome: "Carlos Silva",
+      email: "carlos@arena.com",
+      telefone: "(11) 99999-9999",
+      especialidades: ["Tênis", "Beach Tennis"],
+      preco_aula: 150.0,
+      ativo: true,
+      rating: 4.8,
+      total_avaliacoes: 24,
+    },
+    {
+      id: "2",
+      nome: "Ana Santos",
+      email: "ana@arena.com",
+      telefone: "(11) 98888-8888",
+      especialidades: ["Futsal", "Futevôlei"],
+      preco_aula: 120.0,
+      ativo: true,
+      rating: 4.9,
+      total_avaliacoes: 31,
+    },
+  ])
+  const [loading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [especialidadeFilter, setEspecialidadeFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
 
-  const fetchProfessores = async () => {
-    try {
-      setLoading(true)
-      console.log("[v0] Fetching professores from database...")
-
-      const { data, error } = await supabase
-        .from("professores")
-        .select(`
-          *,
-          profiles (
-            full_name,
-            email,
-            phone
-          )
-        `)
-        .order("created_at", { ascending: false })
-
-      console.log("[v0] Professores query result:", { data, error })
-
-      if (error) {
-        console.error("Erro ao buscar professores:", error)
-        setProfessores([])
-        return
-      }
-
-      console.log("[v0] Found", data?.length || 0, "professores")
-      setProfessores(data || [])
-    } catch (error) {
-      console.error("Erro ao conectar com Supabase:", error)
-      setProfessores([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    fetchProfessores()
-  }, [refresh])
-
-  const handleDelete = async (professorId: string) => {
-    if (!confirm("Tem certeza que deseja excluir este professor?")) return
-
-    try {
-      const { error } = await supabase.from("professores").delete().eq("id", professorId)
-
-      if (error) {
-        console.error("Erro ao deletar professor:", error)
-        return
-      }
-
-      setProfessores((prev) => prev.filter((prof) => prof.id !== professorId))
-    } catch (error) {
-      console.error("Erro ao conectar com Supabase:", error)
+    if (professoresData && Array.isArray(professoresData) && professoresData.length > 0) {
+      const mappedProfessores = professoresData.map((row: any, index: number) => ({
+        id: row.id || `prof-${index}`,
+        nome: row.nome || "Nome não informado",
+        email: row.email || "email@example.com",
+        telefone: row.telefone || row.phone || "",
+        especialidades: row.especialidades
+          ? typeof row.especialidades === "string"
+            ? row.especialidades.split(",").map((e: string) => e.trim())
+            : row.especialidades
+          : [],
+        preco_aula: Number.parseFloat(row.preco_aula || row.valor_hora || "0"),
+        ativo: row.ativo === "true" || row.ativo === true || row.status === "ativo",
+        rating: Number.parseFloat(row.rating || row.avaliacao || "0"),
+        total_avaliacoes: Number.parseInt(row.total_avaliacoes || "0"),
+      }))
+      setProfessores(mappedProfessores)
     }
-  }
-
-  const toggleStatus = async (professorId: string, currentStatus: boolean) => {
-    try {
-      const { error } = await supabase.from("professores").update({ ativo: !currentStatus }).eq("id", professorId)
-
-      if (error) {
-        console.error("Erro ao atualizar status:", error)
-        return
-      }
-
-      setProfessores((prev) =>
-        prev.map((prof) => (prof.id === professorId ? { ...prof, ativo: !currentStatus } : prof)),
-      )
-    } catch (error) {
-      console.error("Erro ao conectar com Supabase:", error)
-    }
-  }
+  }, [professoresData])
 
   const getAllEspecialidades = () => {
     const especialidades = new Set<string>()
     professores.forEach((prof) => {
-      prof.specialties?.forEach((esp) => especialidades.add(esp))
+      prof.especialidades?.forEach((esp) => especialidades.add(esp))
     })
     return Array.from(especialidades).sort()
   }
 
   const filteredProfessores = professores.filter((professor) => {
     const matchesSearch =
-      professor.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      professor.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      professor.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      professor.email?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesEspecialidade = especialidadeFilter === "all" || professor.specialties?.includes(especialidadeFilter)
+    const matchesEspecialidade =
+      especialidadeFilter === "all" || professor.especialidades?.includes(especialidadeFilter)
 
     const matchesStatus = statusFilter === "all" || (statusFilter === "ativo" ? professor.ativo : !professor.ativo)
 
@@ -218,14 +192,12 @@ export function ProfessoresList({ onEdit, refresh }: ProfessoresListProps) {
                       <div className="flex items-center gap-3">
                         <div className="h-12 w-12 rounded-full bg-gradient-to-r from-orange-500 to-green-500 flex items-center justify-center">
                           <span className="text-white font-medium">
-                            {professor.profiles?.full_name?.charAt(0)?.toUpperCase() || "P"}
+                            {professor.nome?.charAt(0)?.toUpperCase() || "P"}
                           </span>
                         </div>
                         <div>
-                          <h3 className="font-semibold text-lg text-white">
-                            {professor.profiles?.full_name || "Nome não informado"}
-                          </h3>
-                          <p className="text-sm text-gray-400">{professor.profiles?.email || "Email não informado"}</p>
+                          <h3 className="font-semibold text-lg text-white">{professor.nome || "Nome não informado"}</h3>
+                          <p className="text-sm text-gray-400">{professor.email || "Email não informado"}</p>
                         </div>
                       </div>
                       <Badge
@@ -238,22 +210,21 @@ export function ProfessoresList({ onEdit, refresh }: ProfessoresListProps) {
 
                     <div>
                       <p className="text-2xl font-bold text-orange-500">
-                        R$ {professor.hourly_rate?.toFixed(2) || "0.00"}/aula
+                        R$ {professor.preco_aula?.toFixed(2) || "0.00"}/aula
                       </p>
-                      {professor.profiles?.phone && <p className="text-sm text-gray-400">{professor.profiles.phone}</p>}
+                      {professor.telefone && <p className="text-sm text-gray-400">{professor.telefone}</p>}
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-yellow-400">★</span>
                         <span className="text-sm text-gray-300">
-                          {professor.rating?.toFixed(1) || "0.0"} ({professor.total_reviews || 0} avaliações)
+                          {professor.rating?.toFixed(1) || "0.0"} ({professor.total_avaliacoes || 0} avaliações)
                         </span>
-                        <span className="text-xs text-gray-400">• {professor.experience_years || 0} anos</span>
                       </div>
                     </div>
 
                     <div>
                       <p className="text-sm font-medium mb-2 text-white">Especialidades:</p>
                       <div className="flex flex-wrap gap-1">
-                        {professor.specialties?.map((especialidade) => (
+                        {professor.especialidades?.map((especialidade) => (
                           <Badge
                             key={especialidade}
                             variant="outline"
@@ -264,12 +235,6 @@ export function ProfessoresList({ onEdit, refresh }: ProfessoresListProps) {
                         ))}
                       </div>
                     </div>
-
-                    {professor.bio && (
-                      <div>
-                        <p className="text-sm text-gray-400 line-clamp-2">{professor.bio}</p>
-                      </div>
-                    )}
 
                     <div className="flex gap-2 pt-2">
                       <Button
@@ -284,16 +249,7 @@ export function ProfessoresList({ onEdit, refresh }: ProfessoresListProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => toggleStatus(professor.id, professor.ativo)}
-                        className="flex-1 border-green-500 text-green-400 hover:bg-green-500 hover:text-white"
-                      >
-                        {professor.ativo ? "Desativar" : "Ativar"}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(professor.id)}
-                        className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white"
+                        className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white bg-transparent"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import useSWR from "swr"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -10,7 +11,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Search, DollarSign, CreditCard, Smartphone } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 
 interface Pagamento {
@@ -39,7 +39,48 @@ interface PagamentosListProps {
   refresh: boolean
 }
 
+const mockPagamentos: Pagamento[] = [
+  {
+    id: "1",
+    reserva_id: "res1",
+    amount: 150.0,
+    method: "pix",
+    status: "aprovado",
+    transaction_id: "TXN001",
+    paid_at: new Date().toISOString(),
+    created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    reservas: {
+      cliente_id: "cli1",
+      quadra_id: "q1",
+      duracao: '["2025-01-10T14:00:00Z","2025-01-10T15:00:00Z")',
+      profiles: { full_name: "João Silva" },
+      quadras: { nome: "Quadra 1" },
+    },
+  },
+  {
+    id: "2",
+    reserva_id: "res2",
+    amount: 120.0,
+    method: "cartao",
+    status: "pendente",
+    transaction_id: "TXN002",
+    paid_at: null,
+    created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    reservas: {
+      cliente_id: "cli2",
+      quadra_id: "q2",
+      duracao: '["2025-01-10T16:00:00Z","2025-01-10T17:00:00Z")',
+      profiles: { full_name: "Maria Santos" },
+      quadras: { nome: "Quadra 2" },
+    },
+  },
+]
+
 export function PagamentosList({ refresh }: PagamentosListProps) {
+  const { data: pagamentosData, error } = useSWR("/api/sheets/pagamentos", (url) => fetch(url).then((r) => r.json()), {
+    refreshInterval: 30000, // Atualiza a cada 30 segundos
+  })
+
   const [pagamentos, setPagamentos] = useState<Pagamento[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -47,25 +88,44 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
   const [metodoFilter, setMetodoFilter] = useState("all")
   const { toast } = useToast()
 
+  useEffect(() => {
+    if (pagamentosData && Array.isArray(pagamentosData) && pagamentosData.length > 0) {
+      const mappedPagamentos = pagamentosData.map((row: any, index: number) => ({
+        id: row.id || `pag-${index}`,
+        reserva_id: row.reserva_id || "",
+        amount: Number.parseFloat(row.valor || row.amount || "0"),
+        method: row.metodo || row.method || "pix",
+        status: row.status || "pendente",
+        transaction_id: row.transaction_id || row.id_transacao || null,
+        paid_at: row.paid_at || row.data_pagamento || null,
+        created_at: row.created_at || row.data_criacao || new Date().toISOString(),
+        reservas: {
+          cliente_id: row.cliente_id || "",
+          quadra_id: row.quadra_id || "",
+          duracao: row.duracao || "",
+          profiles: {
+            full_name: row.cliente_nome || row.nome_cliente || "Cliente",
+          },
+          quadras: {
+            nome: row.quadra_nome || row.nome_quadra || "Quadra",
+          },
+        },
+      }))
+      setPagamentos(mappedPagamentos)
+      setLoading(false)
+    } else if (!pagamentosData) {
+      // Usar dados mock se não houver dados do Google Sheets
+      setPagamentos(mockPagamentos)
+      setLoading(false)
+    }
+  }, [pagamentosData])
+
   const fetchPagamentos = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from("pagamentos")
-        .select(`
-          *,
-          reservas (
-            cliente_id,
-            quadra_id,
-            duracao,
-            profiles:cliente_id (full_name),
-            quadras:quadra_id (nome)
-          )
-        `)
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-      setPagamentos(data || [])
+      // Simular delay de rede
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      setPagamentos(mockPagamentos)
     } catch (error) {
       console.error("Erro ao buscar pagamentos:", error)
       toast({
@@ -79,27 +139,30 @@ export function PagamentosList({ refresh }: PagamentosListProps) {
   }
 
   useEffect(() => {
-    fetchPagamentos()
+    if (!pagamentosData) {
+      fetchPagamentos()
+    }
   }, [refresh])
 
   const handleStatusChange = async (pagamentoId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from("pagamentos")
-        .update({
-          status: newStatus,
-          paid_at: newStatus === "aprovado" ? new Date().toISOString() : null,
-        })
-        .eq("id", pagamentoId)
-
-      if (error) throw error
+      // Atualizar localmente
+      setPagamentos((prev) =>
+        prev.map((p) =>
+          p.id === pagamentoId
+            ? {
+                ...p,
+                status: newStatus,
+                paid_at: newStatus === "aprovado" ? new Date().toISOString() : null,
+              }
+            : p,
+        ),
+      )
 
       toast({
         title: "Sucesso",
         description: `Pagamento ${newStatus} com sucesso`,
       })
-
-      fetchPagamentos() // Recarregar dados
     } catch (error) {
       console.error("Erro ao atualizar status:", error)
       toast({

@@ -1,116 +1,147 @@
 "use client"
 
-import { MapPin, Phone, Clock, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { MapPin, Phone, Clock, ArrowRight } from "lucide-react"
 import Image from "next/image"
-
-const unidades = [
-  {
-    id: 1,
-    nome: "Parque Amazônia",
-    endereco: "Parque Amazônia, Goiânia - GO",
-    horario: "06:00 - 23:00",
-    whatsapp: "556282935151",
-    imagem: "/beach-tennis-court-parque-amazonia.jpg",
-    preco: "A partir de R$ 60/hora",
-  },
-  {
-    id: 2,
-    nome: "Vila Rosa",
-    endereco: "Vila Rosa, Goiânia - GO",
-    horario: "06:00 - 23:00",
-    whatsapp: "556295797965",
-    imagem: "/beach-tennis-court-vila-rosa.jpg",
-    preco: "A partir de R$ 60/hora",
-  },
-]
+import Link from "next/link"
 
 export default function EscolherUnidadePage() {
-  const handleWhatsApp = (whatsapp: string, unidade: string) => {
-    const mensagem = encodeURIComponent(
-      `Olá! Gostaria de reservar uma quadra na unidade ${unidade} da Arena Coligados.`,
-    )
-    window.open(`https://wa.me/${whatsapp}?text=${mensagem}`, "_blank")
+  const unidades = [
+    {
+      nome: "Parque Amazônia",
+      endereco: "Parque Amazônia, Goiânia - GO",
+      quadras: "5 Quadras Profissionais",
+      preco: "R$ 80/hora",
+      horario: "06:00 às 22:00",
+      whatsapp: "556282935151", // número real da unidade Parque Amazônia
+      mensagem: "Olá! Gostaria de reservar uma quadra no Parque Amazônia",
+      imagem: "/images/sports/volleyball-action.jpg",
+    },
+    {
+      nome: "Vila Rosa",
+      endereco: "Vila Rosa, Goiânia - GO",
+      quadras: "4 Quadras Profissionais",
+      preco: "R$ 70/hora",
+      horario: "06:00 às 22:00",
+      whatsapp: "556295797965", // número real da unidade Vila Rosa
+      mensagem: "Olá! Gostaria de reservar uma quadra no Vila Rosa",
+      imagem: "/images/sports/multi-sports.jpg",
+    },
+  ]
+
+  const handleWhatsApp = (whatsapp: string, mensagem: string) => {
+    const url = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensagem)}`
+    window.open(url, "_blank")
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white">
       {/* Header */}
-      <div className="bg-black/30 backdrop-blur-sm border-b border-white/10">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <Link href="/" className="inline-flex items-center text-gray-300 hover:text-white transition-colors">
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Voltar
-          </Link>
-        </div>
-      </div>
+      <header className="relative pt-8 pb-16 px-4 sm:px-6 text-center">
+        <Link href="/" className="inline-block mb-8 hover:scale-110 transition-transform">
+          <Image
+            src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
+            alt="Arena Coligados"
+            width={80}
+            height={80}
+            className="rounded-full shadow-2xl shadow-[#FF6B47]/70 border-4 border-white/90 mx-auto"
+          />
+        </Link>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-orange-400">Escolha</span> sua Unidade
-          </h1>
-          <p className="text-gray-300 text-lg">Selecione a unidade mais próxima de você para reservar sua quadra</p>
-        </div>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter mb-4 bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent">
+          Escolha sua Unidade
+        </h1>
 
-        {/* Cards das Unidades */}
-        <div className="grid md:grid-cols-2 gap-8">
-          {unidades.map((unidade) => (
-            <div
-              key={unidade.id}
-              className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 overflow-hidden hover:border-orange-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10"
+        <p className="text-lg sm:text-xl text-white/80 font-medium">Selecione a unidade mais próxima de você</p>
+
+        <div className="flex items-center justify-center gap-4 mt-6">
+          <div className="h-1 w-20 bg-gradient-to-r from-transparent via-[#FF6B47] to-transparent"></div>
+          <div className="h-2 w-2 rounded-full bg-[#FFD966] animate-pulse"></div>
+          <div className="h-1 w-20 bg-gradient-to-r from-transparent via-[#FFD966] to-transparent"></div>
+        </div>
+      </header>
+
+      {/* Unidades Cards */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 pb-20">
+        <div className="space-y-6">
+          {unidades.map((unidade, index) => (
+            <article
+              key={index}
+              className="group relative bg-white/5 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/10 hover:border-[#FF6B47]/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#FF6B47]/20"
             >
-              {/* Imagem */}
-              <div className="relative h-48 overflow-hidden">
+              {/* Background Image */}
+              <div className="absolute inset-0 z-0">
                 <Image
                   src={unidade.imagem || "/placeholder.svg"}
-                  alt={`Unidade ${unidade.nome}`}
+                  alt=""
                   fill
-                  className="object-cover"
+                  className="object-cover opacity-10 group-hover:opacity-20 transition-opacity"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-4 left-4">
-                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {unidade.preco}
-                  </span>
-                </div>
               </div>
 
-              {/* Info */}
-              <div className="p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">{unidade.nome}</h2>
-
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center text-gray-300">
-                    <MapPin className="h-5 w-5 mr-3 text-orange-400" />
-                    <span>{unidade.endereco}</span>
+              <div className="relative z-10 p-6 sm:p-8">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white mb-2">
+                      {unidade.nome}
+                    </h2>
+                    <p className="text-white/70 text-sm sm:text-base flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-[#FF6B47]" />
+                      {unidade.endereco}
+                    </p>
                   </div>
-                  <div className="flex items-center text-gray-300">
-                    <Clock className="h-5 w-5 mr-3 text-orange-400" />
-                    <span>{unidade.horario}</span>
+
+                  <div className="bg-gradient-to-br from-[#FF6B47] to-[#FF8C47] text-white px-4 py-2 rounded-full text-sm font-bold">
+                    {unidade.preco}
                   </div>
                 </div>
 
-                {/* Botão WhatsApp */}
+                {/* Info Grid */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="flex items-center gap-3 text-white/80">
+                    <div className="bg-white/10 p-2 rounded-lg">
+                      <MapPin className="h-5 w-5 text-[#FFD966]" />
+                    </div>
+                    <span className="text-sm font-medium">{unidade.quadras}</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-white/80">
+                    <div className="bg-white/10 p-2 rounded-lg">
+                      <Clock className="h-5 w-5 text-[#FFD966]" />
+                    </div>
+                    <span className="text-sm font-medium">{unidade.horario}</span>
+                  </div>
+                </div>
+
+                {/* CTA Button */}
                 <Button
-                  onClick={() => handleWhatsApp(unidade.whatsapp, unidade.nome)}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-[1.02]"
+                  onClick={() => handleWhatsApp(unidade.whatsapp, unidade.mensagem)}
+                  className="w-full bg-gradient-to-r from-[#FF6B47] to-[#FF8C47] hover:from-[#FF5533] hover:to-[#FF6B47] text-white font-bold py-6 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#FF6B47]/50 group-hover:scale-[1.02]"
                 >
-                  <Phone className="h-5 w-5 mr-2" />
-                  Reservar via WhatsApp
+                  <Phone className="h-5 w-5" />
+                  <span className="text-lg">Reservar via WhatsApp</span>
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>
-            </div>
+            </article>
           ))}
         </div>
 
-        {/* Info adicional */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-400">Horário de funcionamento: Segunda a Domingo, das 06h às 23h</p>
+        {/* Voltar */}
+        <div className="text-center mt-12">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm font-medium"
+          >
+            ← Voltar para home
+          </Link>
         </div>
-      </div>
+      </main>
+
+      {/* Floating decoration */}
+      <div className="fixed top-20 right-10 w-64 h-64 bg-[#FF6B47]/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="fixed bottom-20 left-10 w-80 h-80 bg-[#FFD966]/10 rounded-full blur-3xl pointer-events-none"></div>
     </div>
   )
 }

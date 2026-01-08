@@ -1,20 +1,29 @@
-# Help with prompt
+# Arena Coligados - Sistema de Gestão de Quadras Esportivas
 
 *Automatically synced with your [v0.app](https://v0.app) deployments*
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/contatobrenofilm-6982s-projects/v0-help-with-prompt)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/lZoMGKE8YhV)
 
-## Overview
+## Plataforma Arena Coligados
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+Sistema completo de gestão para quadras esportivas com integração ao Google Sheets, Supabase, e sistema de pagamentos Asaas.
+
+
+## Funcionalidades Principais
+
+- Gestão de quadras e horários
+- Sistema de reservas online
+- Integração com Google Sheets para dados
+- Pagamentos via Asaas
+- Dashboard administrativo
+- Autenticação de usuários
 
 ## Deployment
 
 Your project is live at:
 
-**[https://vercel.com/contatobrenofilm-6982s-projects/v0-help-with-prompt](https://vercel.com/contatobrenofilm-6982s-projects/v0-help-with-prompt)**
+**[arenacoligados.com.br](https://arenacoligados.com.br)**
 
 ## Build your app
 

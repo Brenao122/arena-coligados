@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { supabase } from "@/lib/supabase"
 import { normalizePhone } from "@/lib/normalize-phone"
 import { Loader2, Calendar, Clock, MapPin, DollarSign } from "lucide-react"
 
@@ -66,33 +65,37 @@ export function QuadraAgendamentoForm({ onSuccess, onClose }: QuadraAgendamentoF
 
     try {
       const precoTotal = calcularPreco()
-      const sinalPix = precoTotal * 0.5 // 50% de sinal
+      const sinalPix = precoTotal * 0.5
+
+      const dataInicio = `${formData.data_agendamento} ${formData.hora_inicio}`
+      const dataFim = `${formData.data_agendamento} ${formData.hora_fim}`
 
       const agendamentoData = {
-        cliente_nome: formData.cliente_nome,
-        cliente_telefone: normalizePhone(formData.cliente_telefone),
-        cliente_email: formData.cliente_email || null,
-        modalidade: formData.modalidade,
-        quadra_numero: formData.quadra_numero,
-        data_agendamento: formData.data_agendamento,
-        hora_inicio: formData.hora_inicio,
-        hora_fim: formData.hora_fim,
-        preco_total: precoTotal,
-        sinal_pix: sinalPix,
-        valor_restante: precoTotal - sinalPix,
+        whatsapp_number: normalizePhone(formData.cliente_telefone),
+        nome: formData.cliente_nome,
+        esporte: formData.modalidade,
+        quadra_id: `Quadra ${formData.quadra_numero}`,
+        data_inicio: dataInicio,
+        data_fim: dataFim,
+        valor_total: precoTotal.toFixed(2),
+        observacoes: `Email: ${formData.cliente_email || "N/A"} | Sinal PIX: R$ ${sinalPix.toFixed(2)} | ${formData.observacoes}`,
+        created_at: new Date().toISOString(),
         status: "pendente",
-        origem: "plataforma",
-        observacoes: formData.observacoes,
-        needs_sync: true, // Marca para sincronização com Google Sheets
       }
 
-      const { error: supabaseError } = await supabase.from("quadras_agendamentos_sheets").insert([agendamentoData])
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "reservas",
+          data: agendamentoData,
+        }),
+      })
 
-      if (supabaseError) throw supabaseError
+      if (!response.ok) throw new Error("Erro ao enviar dados")
 
-      setSuccess("Agendamento criado com sucesso! Será sincronizado com a planilha automaticamente.")
+      setSuccess("Agendamento criado com sucesso!")
 
-      // Reset form
       setFormData({
         cliente_nome: "",
         cliente_telefone: "",

@@ -129,7 +129,7 @@ function SidebarContent({
             <h1 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-green-500 bg-clip-text text-transparent">
               Arena Coligados
             </h1>
-            <p className="text-xs text-gray-400 font-medium">Gestão Esportiva</p>
+            <p className="text-xs text-gray-400 font-medium">Complexo de Quadras</p>
           </div>
         </div>
         {onClose && (

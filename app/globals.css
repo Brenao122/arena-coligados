@@ -1,36 +1,40 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: oklch(0.98 0.02 50);
+  --foreground: oklch(0.2 0.02 30);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --card-foreground: oklch(0.2 0.02 30);
+
+  --primary: oklch(0.65 0.2 35); /* Coral vibrante #FF6B47 */
+  --primary-foreground: oklch(1 0 0);
+
+  --secondary: oklch(0.85 0.15 85); /* Amarelo #FFD966 */
+  --secondary-foreground: oklch(0.2 0.02 30);
+
+  --accent: oklch(0.92 0.08 130); /* Verde fresco */
+  --accent-foreground: oklch(0.2 0.02 30);
+
+  --muted: oklch(0.96 0.01 40);
+  --muted-foreground: oklch(0.55 0.01 30);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.9 0.02 40);
+  --input: oklch(0.9 0.02 40);
+  --ring: oklch(0.68 0.18 35);
+  --chart-1: oklch(0.68 0.18 35);
+  --chart-2: oklch(0.85 0.15 85);
+  --chart-3: oklch(0.6 0.15 160);
+  --chart-4: oklch(0.75 0.12 50);
+  --chart-5: oklch(0.55 0.2 25);
+  --radius: 1.5rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.68 0.18 35);
+  --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
@@ -40,33 +44,28 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --background: oklch(0.2 0.01 30);
+  --foreground: oklch(0.98 0.01 40);
+  --card: oklch(0.22 0.01 30);
+  --card-foreground: oklch(0.98 0.01 40);
+  --popover: oklch(0.2 0.01 30);
+  --popover-foreground: oklch(0.98 0.01 40);
+  --primary: oklch(0.7 0.2 35);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.85 0.15 85);
+  --secondary-foreground: oklch(0.2 0.01 30);
+  --muted: oklch(0.3 0.01 30);
+  --muted-foreground: oklch(0.65 0.01 40);
+  --accent: oklch(0.35 0.05 70);
+  --accent-foreground: oklch(0.98 0.01 40);
+  --destructive: oklch(0.5 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.3 0.01 30);
+  --input: oklch(0.3 0.01 30);
+  --ring: oklch(0.7 0.2 35);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.7 0.2 35);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
@@ -75,6 +74,7 @@
 }
 
 @theme inline {
+  /* optional: --font-sans, --font-serif, --font-mono if they are applied in the layout.tsx */
   --font-sans: var(--font-montserrat);
   --font-serif: var(--font-oswald);
   --color-background: var(--background);
@@ -101,10 +101,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 0.5rem);
+  --radius-md: calc(var(--radius) - 0.25rem);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 0.5rem);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -113,6 +113,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --animate-spin: spin 1s linear infinite;
+  --animate-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-bounce: bounce 1s infinite;
 }
 
 @layer base {
@@ -120,97 +124,376 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
-  }
-
-  /* Adicionando textura premium de fundo */
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
+    @apply bg-gradient-to-br from-[#FFF5E6] via-[#FFEBE0] to-[#FFF5E6] text-foreground antialiased;
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f5d5ae' fill-opacity='0.25'%3E%3Ccircle cx='40' cy='40' r='2'/%3E%3Ccircle cx='20' cy='60' r='1.5'/%3E%3Ccircle cx='60' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
   }
 }
 
 @layer components {
-  /* Botões premium com gradientes e animações */
   .btn-primary {
-    @apply bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 
-           text-white font-bold px-8 py-4 rounded-2xl shadow-2xl hover:shadow-orange-500/30 
-           transition-all duration-300 transform hover:scale-105 border-0;
+    @apply bg-gradient-to-r from-[#FF6B47] to-[#FF8566] hover:from-[#FF5533] hover:to-[#FF6B47]
+           text-white font-black px-8 py-4 rounded-full shadow-lg shadow-[#FF6B47]/30 hover:shadow-xl hover:shadow-[#FF6B47]/50
+           transition-all duration-300 border-2 border-[#FF6B47] uppercase tracking-widest text-sm
+           hover:scale-105 transform;
   }
 
   .btn-secondary {
-    @apply bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 
-           text-white font-bold px-8 py-4 rounded-2xl shadow-2xl hover:shadow-green-500/30 
-           transition-all duration-300 transform hover:scale-105 border-0;
+    @apply bg-white hover:bg-gradient-to-r hover:from-[#FFD966]/20 hover:to-[#FF6B47]/20
+           text-[#FF6B47] font-black px-8 py-4 rounded-full shadow-lg hover:shadow-xl
+           transition-all duration-300 border-2 border-[#FF6B47] uppercase tracking-widest text-sm
+           hover:scale-105 transform;
   }
 
-  /* Cards com efeito glass morphism */
-  .card-premium {
-    @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl 
-           transition-all duration-500 hover:shadow-2xl hover:scale-105 hover:border-orange-500/50;
+  .card-vibrant {
+    @apply bg-white rounded-[2rem] shadow-lg hover:shadow-2xl hover:shadow-[#FF6B47]/20
+           transition-all duration-500 border-2 border-[#FFD966]/30
+           p-10 relative overflow-hidden;
   }
 
-  /* Texto com gradiente elegante */
-  .text-gradient-primary {
-    @apply bg-gradient-to-r from-orange-300 via-orange-400 to-orange-500 bg-clip-text text-transparent;
+  .card-vibrant::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255, 217, 102, 0.3) 0%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
   }
 
-  .text-gradient-hero {
-    @apply bg-gradient-to-r from-orange-200 via-white to-orange-300 bg-clip-text text-transparent;
+  .section-vibrant {
+    @apply bg-gradient-to-b from-[#FFF5E6] via-white to-[#FFF5E6] py-32 relative;
+  }
+
+  /* Added Instagram-style vibrant card styles with proper contrast */
+  .card-instagram {
+    @apply bg-white rounded-[2rem] shadow-xl hover:shadow-2xl hover:shadow-[#FF6B47]/30
+           transition-all duration-500 border border-[#FFD966]/20
+           p-8 relative overflow-hidden;
+  }
+
+  .section-coral {
+    @apply bg-gradient-to-br from-[#FF6B47] to-[#FF8566] text-white rounded-[2rem] p-8 relative overflow-hidden shadow-xl;
+  }
+
+  .section-coral-light {
+    @apply bg-gradient-to-br from-[#FF6B47]/10 to-[#FFD966]/10 rounded-[2rem] p-8 relative overflow-hidden border-2 border-[#FF6B47]/20;
+  }
+
+  .text-instagram-title {
+    @apply font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-tight tracking-tight;
+  }
+
+  /* Added bg-sand class for consistent background */
+  .bg-sand {
+    @apply bg-gradient-to-br from-[#FFF5E6] via-[#FFEBE0] to-[#FFF5E6];
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f5d5ae' fill-opacity='0.25'%3E%3Ccircle cx='40' cy='40' r='2'/%3E%3Ccircle cx='20' cy='60' r='1.5'/%3E%3Ccircle cx='60' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .section-coral {
+    @apply bg-gradient-to-br from-[#FF6B47]/10 via-[#FFD966]/10 to-[#FF6B47]/10 py-32;
+  }
+
+  .text-vibrant-hero {
+    @apply font-black text-6xl md:text-8xl lg:text-9xl uppercase leading-none tracking-tight 
+           bg-gradient-to-r from-[#FF6B47] via-[#FF8566] to-[#FFD966] bg-clip-text text-transparent;
+  }
+
+  .text-vibrant-title {
+    @apply font-black text-4xl md:text-6xl uppercase leading-tight tracking-tight text-gray-900;
+  }
+
+  .text-vibrant-subtitle {
+    @apply font-bold text-xl md:text-2xl tracking-wide uppercase text-[#FF6B47];
+  }
+
+  .card-luxury {
+    @apply bg-white rounded-2xl md:rounded-3xl shadow-sm hover:shadow-lg
+           transition-all duration-500 border border-gray-100
+           p-6 md:p-12;
+  }
+
+  /* Reduced vertical padding on mobile for sections */
+  .section-minimal {
+    @apply bg-white py-16 md:py-32;
+  }
+
+  .section-accent {
+    @apply bg-gradient-to-b from-white via-[#FFF9F0] to-white py-16 md:py-32;
+  }
+
+  /* Made typography fully responsive for mobile */
+  .text-luxury-hero {
+    @apply font-light text-4xl sm:text-5xl md:text-7xl lg:text-8xl uppercase leading-tight tracking-wide text-gray-900;
+  }
+
+  .text-luxury-title {
+    @apply font-semibold text-2xl sm:text-3xl md:text-4xl lg:text-5xl uppercase leading-tight tracking-wider text-gray-900;
+  }
+
+  .text-luxury-subtitle {
+    @apply font-normal text-base sm:text-lg md:text-xl tracking-widest uppercase text-gray-500;
+  }
+
+  .text-luxury-body {
+    @apply font-light text-sm sm:text-base md:text-lg leading-relaxed text-gray-600;
   }
 }
 
-/* Animações premium */
-@keyframes float {
+/* Enhanced animations and visual effects */
+.decorative-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: float-circle 10s ease-in-out infinite;
+}
+
+.decorative-circle-yellow {
+  background: radial-gradient(circle, #ffd966 0%, transparent 70%);
+}
+
+.decorative-circle-coral {
+  background: radial-gradient(circle, #ff6b47 0%, transparent 70%);
+}
+
+@keyframes float-circle {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.5;
+  }
+  33% {
+    transform: translate(40px, -40px) scale(1.15) rotate(120deg);
+    opacity: 0.7;
+  }
+  66% {
+    transform: translate(-40px, 40px) scale(0.85) rotate(240deg);
+    opacity: 0.6;
+  }
+}
+
+/* Subtle, elegant animations */
+@keyframes float-minimal {
   0%,
   100% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-15px);
   }
 }
 
-@keyframes glow {
+@keyframes fade-in-luxury {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
   50% {
-    box-shadow: 0 0 40px rgba(249, 115, 22, 0.8), 0 0 60px rgba(34, 197, 94, 0.3);
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.animate-glow {
-  animation: glow 3s ease-in-out infinite;
+/* Adicionando animação pulse-glow para efeitos neon esportivos */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
-/* Efeitos visuais premium */
-.hero-gradient {
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.95) 0%,
-    rgba(30, 41, 59, 0.9) 25%,
-    rgba(249, 115, 22, 0.1) 50%,
-    rgba(34, 197, 94, 0.1) 75%,
-    rgba(15, 23, 42, 0.95) 100%
-  );
+/* Added gradient animation for hero text */
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradient-shift 5s ease infinite;
+}
+
+.animate-float-minimal {
+  animation: float-minimal 6s ease-in-out infinite;
+}
+
+.animate-fade-in-luxury {
+  animation: fade-in-luxury 1s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Minimal decorative elements */
+.accent-dot {
+  @apply w-2 h-2 rounded-full bg-[#FF6B47] inline-block;
+}
+
+.divider-luxury {
+  @apply w-24 h-px bg-gradient-to-r from-transparent via-[#FF6B47]/30 to-transparent mx-auto my-16;
+}
+
+/* Sand/beach texture for hero sections */
+.hero-sand {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f5d5ae' fill-opacity='0.15'%3E%3Ccircle cx='50' cy='50' r='2'/%3E%3Ccircle cx='25' cy='75' r='1.5'/%3E%3Ccircle cx='75' cy='25' r='1.5'/%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3Ccircle cx='90' cy='90' r='1'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(135deg, rgba(255, 107, 71, 0.2) 0%, rgba(255, 217, 102, 0.15) 100%);
 }
 
 .premium-blur {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+/* Enhanced instagram embed wrapper */
+.instagram-embed-wrapper {
+  @apply rounded-3xl overflow-hidden shadow-2xl hover:shadow-[#FF6B47]/40 transition-all duration-500 hover:scale-[1.02];
+}
+
+.instagram-media {
+  @apply rounded-3xl;
+}
+
+/* Add smooth hover transitions to all interactive elements */
+button,
+a {
+  @apply transition-all duration-300 ease-out;
+}
+
+/* Added new sport-themed animations and polished effects for dynamic athletic feel */
+
+/* removed shimmer animation for better performance */
+
+/* simplified animations for performance */
+
+/* simplified animations for performance */
+
+/* Enhanced card hover effects with sport vibes */
+/* simplified card hover effects for better performance */
+.card-luxury:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.2);
+}
+
+/* Sport-themed gradients for modern athletic aesthetic */
+.gradient-sport-beach {
+  background: linear-gradient(135deg, #ff6b47 0%, #ffd966 100%);
+}
+
+.gradient-sport-volley {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.gradient-sport-fute {
+  background: linear-gradient(135deg, #ffd966 0%, #ffc233 100%);
+}
+
+/* Smooth scroll behavior for better UX */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced focus states for accessibility compliance */
+*:focus-visible {
+  outline: 3px solid #ff6b47;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Loading state shimmer for skeleton screens */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Parallax effect for hero sections */
+@media (prefers-reduced-motion: no-preference) {
+  .parallax-slow {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+}
+
+/* simplified button hover for performance */
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(255, 107, 71, 0.3);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(255, 107, 71, 0.15);
+}
+
+a {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

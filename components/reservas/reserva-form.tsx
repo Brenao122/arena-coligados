@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,8 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/hooks/use-auth"
-import { supabase } from "@/lib/supabase"
 import { Loader2, X } from "lucide-react"
 
 interface ReservaFormProps {
@@ -19,40 +17,14 @@ interface ReservaFormProps {
   reservaId?: string
 }
 
-interface Quadra {
-  id: string
-  name: string
-  type: string
-  price_per_hour: number
-}
-
-interface Professor {
-  id: string
-  user_id: string
-  hourly_rate: number
-  profiles: {
-    name: string
-  }
-}
-
-interface Cliente {
-  id: string
-  name: string
-  email: string
-}
-
 export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps) {
-  const { profile } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [quadras, setQuadras] = useState<Quadra[]>([])
-  const [professores, setProfessores] = useState<Professor[]>([])
-  const [clientes, setClientes] = useState<Cliente[]>([])
 
   const [formData, setFormData] = useState({
-    cliente_id: "",
-    quadra_id: "",
-    professor_id: "",
+    cliente_nome: "",
+    cliente_telefone: "",
+    quadra: "",
     data: "",
     hora_inicio: "",
     hora_fim: "",
@@ -60,55 +32,20 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
     observacoes: "",
   })
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data: quadrasData } = await supabase.from("quadras").select("*").eq("active", true)
-
-        if (quadrasData) setQuadras(quadrasData)
-
-        const { data: professoresData } = await supabase
-          .from("professores")
-          .select(`
-            id,
-            user_id,
-            hourly_rate,
-            profiles!professores_user_id_fkey (
-              name
-            )
-          `)
-          .eq("active", true)
-
-        if (professoresData) setProfessores(professoresData)
-
-        if (profile?.role === "admin" || profile?.role === "professor") {
-          const { data: clientesData } = await supabase.from("profiles").select("id, name, email").eq("role", "aluno")
-
-          if (clientesData) setClientes(clientesData)
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error)
-      }
-    }
-
-    fetchData()
-  }, [profile])
+  const quadras = [
+    { id: "1", nome: "Quadra 1 - Futsal", preco: 150 },
+    { id: "2", nome: "Quadra 2 - Beach Tennis", preco: 120 },
+  ]
 
   const calculateValue = () => {
-    const quadra = quadras.find((q) => q.id === formData.quadra_id)
-    const professor = professores.find((p) => p.id === formData.professor_id)
-
+    const quadra = quadras.find((q) => q.id === formData.quadra)
     if (!quadra || !formData.hora_inicio || !formData.hora_fim) return 0
 
     const inicio = new Date(`2000-01-01T${formData.hora_inicio}`)
     const fim = new Date(`2000-01-01T${formData.hora_fim}`)
     const horas = (fim.getTime() - inicio.getTime()) / (1000 * 60 * 60)
 
-    if (formData.tipo === "aula" && professor) {
-      return professor.hourly_rate * horas
-    }
-
-    return quadra.price_per_hour * horas
+    return quadra.preco * horas
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -117,22 +54,30 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
     setError("")
 
     try {
-      const reservaData = {
-        user_id: formData.cliente_id || profile?.id,
-        quadra_id: formData.quadra_id,
-        professor_id: formData.professor_id || null,
-        date: formData.data,
-        start_time: formData.hora_inicio,
-        end_time: formData.hora_fim,
-        total_price: calculateValue(),
-        status: "pendente",
-        payment_status: "pendente",
-        notes: formData.observacoes,
+      const response = await fetch("/api/sheets/append", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sheetName: "reservas",
+          data: {
+            cliente_nome: formData.cliente_nome,
+            cliente_telefone: formData.cliente_telefone,
+            quadra: formData.quadra,
+            data: formData.data,
+            hora_inicio: formData.hora_inicio,
+            hora_fim: formData.hora_fim,
+            tipo: formData.tipo,
+            valor: calculateValue(),
+            status: "Pendente",
+            observacoes: formData.observacoes,
+            data_cadastro: new Date().toISOString(),
+          },
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Erro ao salvar reserva")
       }
-
-      const { error: supabaseError } = await supabase.from("reservas").insert([reservaData])
-
-      if (supabaseError) throw supabaseError
 
       onSuccess()
       onClose()
@@ -162,45 +107,49 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
             </Alert>
           )}
 
-          {(profile?.role === "admin" || profile?.role === "professor") && (
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="cliente" className="text-gray-200">
-                Cliente
+              <Label htmlFor="cliente_nome" className="text-gray-200">
+                Nome do Cliente
               </Label>
-              <Select
-                value={formData.cliente_id}
-                onValueChange={(value) => setFormData({ ...formData, cliente_id: value })}
-              >
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Selecione o cliente" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-700 border-gray-600">
-                  {clientes.map((cliente) => (
-                    <SelectItem key={cliente.id} value={cliente.id} className="text-white hover:bg-gray-600">
-                      {cliente.name} ({cliente.email})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                id="cliente_nome"
+                value={formData.cliente_nome}
+                onChange={(e) => setFormData({ ...formData, cliente_nome: e.target.value })}
+                placeholder="Nome completo"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                required
+              />
             </div>
-          )}
+
+            <div className="space-y-2">
+              <Label htmlFor="cliente_telefone" className="text-gray-200">
+                Telefone
+              </Label>
+              <Input
+                id="cliente_telefone"
+                value={formData.cliente_telefone}
+                onChange={(e) => setFormData({ ...formData, cliente_telefone: e.target.value })}
+                placeholder="(11) 99999-9999"
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                required
+              />
+            </div>
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="quadra" className="text-gray-200">
                 Quadra
               </Label>
-              <Select
-                value={formData.quadra_id}
-                onValueChange={(value) => setFormData({ ...formData, quadra_id: value })}
-              >
+              <Select value={formData.quadra} onValueChange={(value) => setFormData({ ...formData, quadra: value })}>
                 <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
                   <SelectValue placeholder="Selecione a quadra" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-700 border-gray-600">
                   {quadras.map((quadra) => (
                     <SelectItem key={quadra.id} value={quadra.id} className="text-white hover:bg-gray-600">
-                      {quadra.name} - R$ {quadra.price_per_hour}/h
+                      {quadra.nome} - R$ {quadra.preco}/h
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -229,29 +178,6 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
               </Select>
             </div>
           </div>
-
-          {formData.tipo === "aula" && (
-            <div className="space-y-2">
-              <Label htmlFor="professor" className="text-gray-200">
-                Professor
-              </Label>
-              <Select
-                value={formData.professor_id}
-                onValueChange={(value) => setFormData({ ...formData, professor_id: value })}
-              >
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Selecione o professor" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-700 border-gray-600">
-                  {professores.map((professor) => (
-                    <SelectItem key={professor.id} value={professor.id} className="text-white hover:bg-gray-600">
-                      {professor.profiles.name} - R$ {professor.hourly_rate}/h
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
@@ -310,7 +236,7 @@ export function ReservaForm({ onClose, onSuccess, reservaId }: ReservaFormProps)
             />
           </div>
 
-          {formData.quadra_id && formData.hora_inicio && formData.hora_fim && (
+          {formData.quadra && formData.hora_inicio && formData.hora_fim && (
             <div className="p-4 bg-gray-700 rounded-lg border border-gray-600">
               <p className="text-sm text-gray-300">Valor estimado:</p>
               <p className="text-2xl font-bold text-orange-500">R$ {calculateValue().toFixed(2)}</p>
