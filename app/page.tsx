@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { LogIn, Users, Calendar, Trophy, Star, Eye, EyeOff } from "lucide-react"
+import { LogIn, Users, Calendar, Trophy, Star, Eye, EyeOff, MessageCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function HomePage() {
   const [showLogin, setShowLogin] = useState(false)
@@ -20,10 +20,8 @@ export default function HomePage() {
     e.preventDefault()
     setLoading(true)
 
-    // Simular login
     setTimeout(() => {
       if (email === "admin@arena.com" && password === "admin123") {
-        // Salvar no localStorage
         localStorage.setItem(
           "arena-user",
           JSON.stringify({
@@ -69,7 +67,7 @@ export default function HomePage() {
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-11%20at%2022.27.16-0QPOwwmNw3jfubVRs8DJkiW87DX0AW.jpeg"
+              src="/images/whatsapp-20image-202025-08-11-20at-2022.jpeg"
               alt="Arena Coligados Logo"
               width={80}
               height={80}
@@ -131,14 +129,14 @@ export default function HomePage() {
           <div className="mt-6 p-4 bg-gray-800/50 rounded-lg">
             <p className="text-sm text-gray-300 mb-2">Usuários de teste:</p>
             <div className="text-xs text-gray-400 space-y-1">
-              <p>👨‍💼 Admin: admin@arena.com / admin123</p>
-              <p>👨‍🏫 Professor: professor@arena.com / prof123</p>
-              <p>👤 Cliente: cliente@arena.com / cliente123</p>
+              <p>Admin: admin@arena.com / admin123</p>
+              <p>Professor: professor@arena.com / prof123</p>
+              <p>Cliente: cliente@arena.com / cliente123</p>
             </div>
           </div>
 
           <button onClick={() => setShowLogin(false)} className="w-full mt-4 text-gray-400 hover:text-white text-sm">
-            ← Voltar para página inicial
+            Voltar para página inicial
           </button>
         </div>
       </div>
@@ -152,7 +150,7 @@ export default function HomePage() {
         <div className="mb-12">
           <div className="flex justify-center mb-8">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-11%20at%2022.27.16-0QPOwwmNw3jfubVRs8DJkiW87DX0AW.jpeg"
+              src="/images/whatsapp-20image-202025-08-11-20at-2022.jpeg"
               alt="Arena Coligados Logo"
               width={120}
               height={120}
@@ -198,29 +196,28 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Botão de Login */}
-        <div className="mb-8">
+        {/* Botões de Ação */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+          <Link href="/escolher-unidade">
+            <Button className="bg-green-600 hover:bg-green-700 text-white text-xl px-12 py-8 rounded-2xl shadow-2xl hover:shadow-green-500/30 transition-all duration-300 transform hover:scale-105 border-0">
+              <MessageCircle className="h-7 w-7 mr-3" />
+              Reserve Agora no WhatsApp
+            </Button>
+          </Link>
+
           <Button
             onClick={() => setShowLogin(true)}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-2xl px-16 py-8 rounded-2xl shadow-2xl hover:shadow-orange-500/30 transition-all duration-300 transform hover:scale-105 border-0"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xl px-12 py-8 rounded-2xl shadow-2xl hover:shadow-orange-500/30 transition-all duration-300 transform hover:scale-105 border-0"
           >
-            <LogIn className="h-8 w-8 mr-4" />
-            ACESSAR SISTEMA
+            <LogIn className="h-7 w-7 mr-3" />
+            Acessar Sistema
           </Button>
         </div>
 
         {/* Status da Plataforma */}
         <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 backdrop-blur-sm">
-          <p className="text-green-300 text-lg font-medium mb-2">🟢 Plataforma Online e Funcionando</p>
-          <p className="text-green-200 text-sm">Sistema pronto para deploy no Vercel</p>
-        </div>
-
-        {/* Informações de Deploy */}
-        <div className="mt-8 bg-blue-500/10 border border-blue-500/30 rounded-xl p-6 backdrop-blur-sm">
-          <p className="text-blue-300 text-lg font-medium mb-2">🚀 Pronto para Deploy</p>
-          <p className="text-blue-200 text-sm">
-            Clique no botão "Publish" no canto superior direito para colocar online
-          </p>
+          <p className="text-green-300 text-lg font-medium mb-2">Plataforma Online e Funcionando</p>
+          <p className="text-green-200 text-sm">Sistema pronto para uso</p>
         </div>
       </div>
     </div>
