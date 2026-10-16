@@ -28,30 +28,23 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arena-coligados.ver
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-    title: {
-    default: "Joseph's Well - Affiliate Resources",
-    template: "%s | Joseph's Well",
+  title: {
+    default: "Fearless Phone Fanatic | Build Sales Confidence",
+    template: "%s | Fearless Phone Fanatic",
   },
   description:
-    "Promote Joseph's Well with proven creatives, high EPCs, and commissions of up to $197 per sale.",
+    "Discover Fearless Phone Fanatic and learn how audio mind programming, an eBook, and a cheat sheet can support greater cold-calling confidence.",
   keywords: [
-    "beach tennis",
-    "vôlei de praia",
-    "futevôlei",
-    "arena esportiva",
-    "quadras de areia",
-    "esportes Goiânia",
-    "aulas de beach tennis",
-    "aluguel de quadras",
-    "Arena Coligados",
-    "Parque Amazônia",
-    "Vila Rosa",
-    "esportes de areia",
-    "aula experimental grátis",
+    "Fearless Phone Fanatic",
+    "cold calling anxiety",
+    "sales confidence",
+    "mind programming",
+    "cold calling mindset",
+    "sales training",
   ],
-  authors: [{ name: "Arena Coligados" }],
-  creator: "Arena Coligados",
-  publisher: "Arena Coligados",
+  authors: [{ name: "Fearless Phone Fanatic" }],
+  creator: "Fearless Phone Fanatic",
+  publisher: "Fearless Phone Fanatic",
   formatDetection: {
     email: false,
     address: false,
