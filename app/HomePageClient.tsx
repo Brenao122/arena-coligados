@@ -1,434 +1,73 @@
 "use client"
 
-import type React from "react"
-import { useState, Suspense, lazy } from "react"
-import { Button } from "@/components/ui/button"
-import { Trophy, MapPin, Clock, ExternalLink, Waves } from "lucide-react"
-import Image from "next/image"
-import { WelcomePopup } from "@/components/home/welcome-popup"
-import { Navbar } from "@/components/layout/navbar"
-import Link from "next/link"
-import { ScrollReveal } from "@/components/shared/scroll-reveal"
+import { useState } from "react"
+import { ArrowRight, Check, ExternalLink, ShieldCheck, X } from "lucide-react"
 
-const InstagramFeed = lazy(() => import("@/components/home/instagram-feed"))
+const salesLink = "https://checkout-ds24.com/redir/615548/brenofilm3030"
+
+const benefits = [
+  "Reprogram your subconscious mind for greater confidence on the phone",
+  "Replace cold-calling anxiety with clarity, energy, and determination",
+  "Use practical scripts, rituals, and mindset resets before every call",
+]
+
+const ebookItems = [
+  "Neuro-performance techniques to change your inner dialogue",
+  "The high-performing pre-call ritual for entering a confident flow state",
+  "The 3-second mindset reset to start calls with conviction",
+  "Psychological reframes that turn rejection into fuel for growth",
+  "Natural scripts and talking points for confident conversations",
+  "Your personalized Fearless Call Blueprint for lasting progress",
+]
 
 export default function HomePageClient() {
-  const [showLogin, setShowLogin] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setSuccessMessage("")
-    setErrorMessage("")
-
-    setTimeout(() => {
-      if (email === "admin@arena.com" && password === "admin123") {
-        localStorage.setItem(
-          "arena-user",
-          JSON.stringify({
-            email: "admin@arena.com",
-            name: "Administrador",
-            role: "admin",
-          }),
-        )
-        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
-        setTimeout(() => {
-          window.location.href = "/dashboard"
-        }, 1500)
-      } else if (email === "professor@arena.com" && password === "prof123") {
-        localStorage.setItem(
-          "arena-user",
-          JSON.stringify({
-            email: "professor@arena.com",
-            name: "Professor",
-            role: "professor",
-          }),
-        )
-        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
-        setTimeout(() => {
-          window.location.href = "/dashboard"
-        }, 1500)
-      } else if (email === "cliente@arena.com" && password === "cliente123") {
-        localStorage.setItem(
-          "arena-user",
-          JSON.stringify({
-            email: "cliente@arena.com",
-            name: "Cliente",
-            role: "cliente",
-          }),
-        )
-        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
-        setTimeout(() => {
-          window.location.href = "/dashboard"
-        }, 1500)
-      } else {
-        setErrorMessage("Email ou senha incorretos!")
-      }
-      setLoading(false)
-    }, 1000)
-  }
-
-  if (showLogin) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white flex items-center justify-center p-6">
-        {/* ... existing login form ... */}
-      </div>
-    )
-  }
+  const [activeTab, setActiveTab] = useState("about")
+  const [showCookie, setShowCookie] = useState(true)
+  const [showCheckout, setShowCheckout] = useState(false)
 
   return (
-    <>
-      <Navbar />
-      <WelcomePopup />
-
-      <main id="main-content">
-        {/* Hero Section */}
-        <section
-          className="relative min-h-screen flex items-center justify-center pt-24 sm:pt-28 md:pt-32 overflow-hidden px-4 sm:px-6"
-          aria-label="Hero principal"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/sports/volleyball-action.jpg"
-              alt=""
-              fill
-              className="object-cover"
-              priority={false}
-              quality={20}
-              loading="lazy"
-              fetchPriority="low"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/97 via-slate-900/92 to-slate-900/97"></div>
+    <main className="min-h-screen bg-[#f8f5ef] text-[#211b1b]">
+      <header className="border-b border-[#dfd4c8] bg-[#211b1b] text-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#e8b86a]">Fearless Phone Fanatic</p>
+            <p className="mt-1 text-xl font-black tracking-tight">Mind Programming for Sales Confidence</p>
           </div>
+          <button type="button" onClick={() => setShowCheckout(true)} className="hidden items-center rounded-full bg-[#e8b86a] px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-[#211b1b] transition hover:bg-white sm:inline-flex">Get Instant Access <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></button>
+        </div>
+      </header>
 
-          <div className="decorative-circle decorative-circle-yellow w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:w-96 top-10 sm:top-20 -right-10 sm:-right-20"></div>
-          <div className="decorative-circle decorative-circle-coral w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bottom-20 sm:bottom-40 -left-10 sm:-left-20"></div>
+      <section className="relative overflow-hidden bg-[#211b1b] px-6 py-20 text-center text-white sm:py-28">
+        <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-[#e8b86a]/15 blur-3xl" />
+        <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-[#a9483f]/25 blur-3xl" />
+        <div className="relative mx-auto max-w-4xl">
+          <p className="mb-5 text-sm font-bold uppercase tracking-[0.28em] text-[#e8b86a]">Stop fearing the phone</p>
+          <h1 className="text-4xl font-black tracking-tight sm:text-6xl">Turn cold calling anxiety into <span className="text-[#e8b86a]">confidence.</span></h1>
+          <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-white/80">Just listen, relax, and let the Fearless Phone Fanatic audio help reprogram the subconscious beliefs holding your sales performance back.</p>
+          <button type="button" onClick={() => setShowCheckout(true)} className="mt-9 inline-flex items-center rounded-full bg-[#e8b86a] px-8 py-4 text-sm font-black uppercase tracking-wider text-[#211b1b] shadow-xl transition hover:scale-[1.02] hover:bg-white">Access Fearless Phone Fanatic <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></button>
+          <p className="mt-4 text-xs text-white/55">Get the audio, eBook, and cheat sheet through the members area.</p>
+        </div>
+      </section>
 
-          <div className="relative z-10 max-w-6xl mx-auto text-center py-16 sm:py-24 md:py-32">
-            <div className="animate-bounce mb-8 sm:mb-12">
-              <Image
-                src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
-                alt="Logo Arena Coligados"
-                width={100}
-                height={100}
-                className="rounded-full mx-auto shadow-2xl shadow-[#FF6B47]/70 border-4 border-white/90 sm:w-[120px] sm:h-[120px] hover:scale-110 transition-transform duration-300"
-                priority
-                quality={60}
-                sizes="(max-width: 640px) 100px, 120px"
-                fetchPriority="high"
-              />
-            </div>
+      <nav className="sticky top-0 z-20 border-b border-[#dfd4c8] bg-[#f8f5ef]/95 px-6 py-3 backdrop-blur" aria-label="Product information">
+        <div className="mx-auto flex max-w-4xl justify-center gap-2 sm:gap-8">
+          {[['about', 'The product'], ['benefits', 'What you get'], ['details', 'Details']].map(([value, label]) => <button key={value} type="button" onClick={() => setActiveTab(value)} className={`rounded-full px-4 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:px-6 ${activeTab === value ? 'bg-[#211b1b] text-white' : 'text-[#6c5b55] hover:bg-[#eee5dc]'}`}>{label}</button>)}
+        </div>
+      </nav>
 
-            <h1
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-6 sm:mb-8 bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent animate-gradient"
-              style={{ textShadow: "0 4px 20px rgba(255,107,71,0.5)" }}
-            >
-              Arena
-              <br />
-              Coligados
-            </h1>
+      <section className="mx-auto max-w-5xl px-6 py-16 sm:py-24">
+        {activeTab === "about" && <div className="space-y-12"><div className="text-center"><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#a9483f]">A calmer, stronger sales mindset</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">What if cold calling felt easy?</h2><p className="mx-auto mt-5 max-w-2xl leading-8 text-[#6c5b55]">Your subconscious mind can replay negative beliefs about cold calling. This program is designed to support a new mental pattern of confidence, focus, and action.</p></div><div className="grid gap-6 md:grid-cols-3">{benefits.map((benefit, index) => <article key={benefit} className="rounded-3xl border border-[#dfd4c8] bg-white p-7 shadow-sm"><span className="text-4xl font-black text-[#e8b86a]">0{index + 1}</span><p className="mt-5 text-lg font-bold leading-7">{benefit}</p></article>)}</div><div className="rounded-3xl bg-[#eee5dc] p-8 text-center sm:p-10"><ShieldCheck className="mx-auto text-[#a9483f]" aria-hidden="true" /><h3 className="mt-4 text-2xl font-black">Listen, relax, and build a fearless mindset</h3><p className="mx-auto mt-3 max-w-2xl leading-7 text-[#6c5b55]">Most users notice increased confidence in a week or two. The recommended program is designed for 30 days of use.</p><button type="button" onClick={() => setShowCheckout(true)} className="mt-6 inline-flex items-center rounded-full bg-[#211b1b] px-7 py-3 font-black text-white transition hover:bg-[#a9483f]">See the full offer <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></button></div></div>}
 
-            <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-              <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FF6B47] to-transparent"></div>
-              <div className="h-2 w-2 rounded-full bg-[#FFD966] animate-pulse-glow"></div>
-              <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FFD966] to-transparent"></div>
-            </div>
+        {activeTab === "benefits" && <div className="mx-auto max-w-3xl"><div className="mb-12 text-center"><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#a9483f]">Included with your access</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">Three tools to change your calls</h2></div><div className="space-y-4">{['Fearless Phone Fanatic audio program', 'eBook: More Strategies to Overcome Cold Calling Anxiety', 'The Fearless Phone Fanatic Cheat Sheet'].map((item) => <div key={item} className="flex gap-4 rounded-2xl border border-[#dfd4c8] bg-white p-6 shadow-sm"><Check className="mt-1 shrink-0 text-[#a9483f]" aria-hidden="true" /><p className="font-bold leading-7">{item}</p></div>)}</div><div className="mt-10 rounded-3xl border border-[#dfd4c8] bg-white p-7"><h3 className="text-2xl font-black">Inside the eBook</h3><ul className="mt-5 space-y-3 text-[#6c5b55]">{ebookItems.map((item) => <li key={item} className="flex gap-3"><Check className="mt-1 h-5 w-5 shrink-0 text-[#a9483f]" aria-hidden="true" />{item}</li>)}</ul></div><div className="mt-10 text-center"><button type="button" onClick={() => setShowCheckout(true)} className="inline-flex items-center rounded-full bg-[#a9483f] px-8 py-4 font-black text-white hover:bg-[#211b1b]">Get instant access <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></button></div></div>}
 
-            {/* Sport badges - já correto com 3 modalidades */}
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4">
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
-                <div className="relative bg-gradient-to-r from-[#FF6B47] to-[#FF8C47] text-white px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
-                  <Waves className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
-                  Beach Tennis
-                </div>
-              </div>
+        {activeTab === "details" && <div className="mx-auto max-w-3xl"><div className="mb-12 text-center"><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#a9483f]">Simple and low risk</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">Start for only $59</h2></div><div className="space-y-6 rounded-3xl border border-[#dfd4c8] bg-white p-7 leading-8 text-[#6c5b55] sm:p-10"><p>Upon purchase, you will be immediately transferred to a download page containing all three products available for download.</p><p>Your purchase is processed securely by Digistore24 and includes a 60-day money-back guarantee.</p><p>The program is a personal development tool designed to support mindset change through subliminal programming. Results vary from person to person. Users should be 18 or older and consult a medical professional if they have concerns about mental health.</p><div className="pt-3 text-center"><button type="button" onClick={() => setShowCheckout(true)} className="inline-flex items-center rounded-full bg-[#211b1b] px-7 py-3 font-black text-white hover:bg-[#a9483f]">View the official offer <ExternalLink className="ml-2 h-4 w-4" aria-hidden="true" /></button></div></div></div>}
+      </section>
 
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
-                <div className="relative bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
-                  <Trophy className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
-                  Vôlei
-                </div>
-              </div>
+      <footer className="border-t border-[#dfd4c8] bg-[#211b1b] px-6 py-12 text-center text-white/70"><div className="mx-auto max-w-5xl"><img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-zDicaSm4HJH3n4qywWwz94Xxky3JeK.png" alt="60 Day Money Back Guarantee" className="mx-auto mb-8 w-44 object-contain" /><h2 className="text-xl font-black text-white">60 Day Money-Back Guarantee</h2><p className="mx-auto mt-2 max-w-4xl text-sm leading-6">If, for any reason, you are not satisfied with your product within 60 days of purchase, just locate the receipt/invoice sent to your email after purchase and follow the steps to request a refund.</p><div className="mx-auto mt-8 max-w-5xl text-left text-xs leading-5"><h3 className="text-center font-black text-white">Disclaimer</h3><p className="mt-2">The methods used in Fearless Phone Fanatic have been extremely effective in helping people make the transformations that they desired, however, results may vary from person to person. The Fearless Phone Fanatic audio program is a personal development tool designed to support mindset change through subliminal programming.</p><ul className="mt-2 list-disc space-y-1 pl-5"><li>You are solely responsible for how you interpret and apply the content.</li><li>The creators, owners, and distributors of this program are not liable for any outcomes, perceived lack of results, or interpretations of the program&apos;s effect.</li><li>This product is intended for adults 18 and older. Consult a medical professional if you have concerns about mental health.</li></ul></div><p className="mt-10 text-lg font-black text-white">© 2025 Fearless Phone Fanatic. All rights reserved.</p><p className="mt-2 text-sm">FearlessPhoneFanatic.store is a U.S.-based business. Unauthorized use of any content or materials on this site is strictly prohibited.</p><div className="mt-5 flex justify-center gap-5 text-xs font-bold uppercase tracking-wide"><a href={salesLink} target="_blank" rel="noreferrer" className="hover:text-white">Privacy Policy</a><a href={salesLink} target="_blank" rel="noreferrer" className="hover:text-white">Terms and conditions</a></div></div></footer>
 
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
-                <div className="relative bg-gradient-to-r from-[#FFD966] to-[#FFC233] text-gray-900 px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
-                  <Waves className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
-                  Futevôlei
-                </div>
-              </div>
-            </div>
+      {showCookie && <div className="fixed inset-0 z-[60] flex items-end justify-center bg-[#211b1b]/35 px-4 pb-5 sm:items-center sm:pb-0" role="dialog" aria-modal="true" aria-labelledby="cookie-title"><div className="w-full max-w-md rounded-3xl border border-[#dfd4c8] bg-white p-6 text-center shadow-2xl"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#eee5dc] text-xl" aria-hidden="true">✓</div><h2 id="cookie-title" className="mt-4 text-xl font-black text-[#211b1b]">We use cookies</h2><p className="mt-2 text-sm leading-6 text-[#6c5b55]">We use cookies to improve your experience and show you the official offer. By accepting, you will continue to the checkout page.</p><button type="button" onClick={() => { setShowCookie(false); window.location.assign(salesLink) }} className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#e8b86a] px-6 py-3 font-black text-[#211b1b] transition hover:bg-[#211b1b] hover:text-white">Accept cookies and continue <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></button><button type="button" onClick={() => setShowCookie(false)} className="mt-3 text-xs font-bold text-[#6c5b55] underline hover:text-[#a9483f]">Continue browsing</button></div></div>}
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-16 sm:mb-20 px-4">
-              <Button
-                onClick={() => window.open("https://links.nextfit.bio/eFiVtHg", "_blank")}
-                className="btn-primary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-                aria-label="Agendar aula experimental"
-              >
-                Aula Experimental
-              </Button>
-
-              <Link href="/escolher-unidade">
-                <Button
-                  className="btn-secondary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-                  aria-label="Reserve agora no WhatsApp"
-                >
-                  Reserve Agora no WhatsApp
-                </Button>
-              </Link>
-            </div>
-
-            <Link
-              href="/sobre-nos"
-              className="inline-flex items-center gap-2 text-[#FF6B47] hover:text-[#FF5533] transition-colors font-bold text-xs sm:text-sm uppercase tracking-widest hover:gap-3"
-            >
-              <span>Conheça Nossa História</span>
-              <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </section>
-
-        {/* Instagram Section */}
-        <section
-          className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden"
-          aria-labelledby="instagram-heading"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/sports/multi-sports.jpg"
-              alt=""
-              fill
-              className="object-cover opacity-20"
-              quality={20}
-              loading="lazy"
-              fetchPriority="low"
-            />
-          </div>
-
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-            <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2
-                id="instagram-heading"
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-4 sm:mb-6 bg-gradient-to-r from-white via-yellow-100 to-white bg-clip-text text-transparent"
-              >
-                Viva a Experiência
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/90 font-medium">Momentos que viram memórias</p>
-            </div>
-
-            <Suspense fallback={<InstagramLoadingSkeleton />}>
-              <InstagramFeed />
-            </Suspense>
-          </div>
-        </section>
-
-        {/* Stats Section - já correto com 03 modalidades */}
-        <section
-          className="section-vibrant py-16 sm:py-20 md:py-24 relative overflow-hidden"
-          aria-labelledby="stats-heading"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/sports/volleyball-hands.jpg"
-              alt=""
-              fill
-              className="object-cover opacity-10"
-              quality={20}
-              loading="lazy"
-              fetchPriority="low"
-            />
-          </div>
-
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
-            <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2
-                id="stats-heading"
-                className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-gray-900"
-              >
-                Em Números
-              </h2>
-              <div className="divider-luxury"></div>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 md:gap-12" role="list">
-              <ScrollReveal delay={0.1}>
-                <div className="text-center" role="listitem">
-                  <MapPin
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
-                    aria-label="2 unidades"
-                  >
-                    02
-                  </div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Unidades</div>
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <div className="text-center" role="listitem">
-                  <Trophy
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
-                    aria-label="9 quadras"
-                  >
-                    09
-                  </div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Quadras</div>
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.3}>
-                <div className="text-center" role="listitem">
-                  <Trophy
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
-                    aria-label="3 modalidades"
-                  >
-                    03
-                  </div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">
-                    Modalidades
-                  </div>
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.4}>
-                <div className="text-center" role="listitem">
-                  <Clock
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
-                    aria-label="14 horas"
-                  >
-                    14h
-                  </div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Diárias</div>
-                </div>
-              </ScrollReveal>
-            </div>
-          </div>
-        </section>
-
-        {/* Pricing Section */}
-        <section
-          className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden"
-          aria-labelledby="pricing-heading"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/sports/friends-celebrating.jpg"
-              alt=""
-              fill
-              className="object-cover opacity-15"
-              quality={20}
-              loading="lazy"
-              fetchPriority="low"
-            />
-          </div>
-
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
-            <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2
-                id="pricing-heading"
-                className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-white"
-              >
-                Planos
-              </h2>
-              <p className="text-base sm:text-lg text-white/90 font-medium">Escolha sua unidade preferida</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 sm:gap-8" role="list">
-              <ScrollReveal delay={0.1}>
-                <article className="card-luxury text-center p-8 sm:p-10 md:p-12" role="listitem">
-                  <MapPin
-                    className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8"
-                    aria-hidden="true"
-                  />
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wider">
-                    Parque Amazônia
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">
-                    5 Quadras
-                  </p>
-                  <div className="mb-8 sm:mb-10">
-                    <span className="text-5xl sm:text-6xl md:text-7xl font-light text-[#FF6B47]">R$ 80</span>
-                    <span className="text-xl sm:text-2xl text-gray-500 font-light">/hora</span>
-                  </div>
-                  <Button
-                    onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                    className="btn-primary w-full text-base sm:text-lg py-5 sm:py-6"
-                  >
-                    Reservar
-                  </Button>
-                </article>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <article className="card-luxury text-center p-8 sm:p-10 md:p-12" role="listitem">
-                  <MapPin
-                    className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8"
-                    aria-hidden="true"
-                  />
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wider">
-                    Vila Rosa
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">
-                    4 Quadras
-                  </p>
-                  <div className="mb-8 sm:mb-10">
-                    <span className="text-5xl sm:text-6xl md:text-7xl font-light text-[#FF6B47]">R$ 70</span>
-                    <span className="text-xl sm:text-2xl text-gray-500 font-light">/hora</span>
-                  </div>
-                  <Button
-                    onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                    className="btn-primary w-full text-base sm:text-lg py-5 sm:py-6"
-                  >
-                    Reservar
-                  </Button>
-                </article>
-              </ScrollReveal>
-            </div>
-          </div>
-        </section>
-      </main>
-    </>
-  )
-}
-
-function InstagramLoadingSkeleton() {
-  return (
-    <div className="max-w-4xl mx-auto animate-pulse" role="status" aria-label="Carregando feed do Instagram">
-      <div className="flex justify-center mb-8">
-        <div className="bg-white/20 rounded-3xl w-full max-w-md h-64"></div>
-      </div>
-      <div className="flex justify-center">
-        <div className="bg-white/20 rounded-3xl w-full max-w-md aspect-square"></div>
-      </div>
-      <div className="flex justify-center gap-2 mt-8">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-3 w-3 bg-white/30 rounded-full"></div>
-        ))}
-      </div>
-      <span className="sr-only">Carregando posts do Instagram...</span>
-    </div>
+      {showCheckout && <div className="fixed inset-0 z-40 flex items-center justify-center bg-[#211b1b]/75 px-6 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="checkout-title"><div className="relative w-full max-w-lg rounded-3xl bg-white p-8 text-center shadow-2xl sm:p-10"><button type="button" onClick={() => setShowCheckout(false)} aria-label="Close checkout popup" className="absolute right-4 top-4 rounded-full p-2 text-[#6c5b55] hover:bg-[#eee5dc]"><X className="h-5 w-5" aria-hidden="true" /></button><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#a9483f]">Fearless Phone Fanatic</p><h2 id="checkout-title" className="mt-3 text-3xl font-black text-[#211b1b]">Ready to become fearless?</h2><p className="mt-4 leading-7 text-[#6c5b55]">Continue to the official offer to get instant access to the audio, eBook, and cheat sheet.</p><p className="mt-4 text-2xl font-black text-[#a9483f]">Today only $59</p><a href={salesLink} target="_blank" rel="noreferrer" className="mt-7 inline-flex items-center rounded-full bg-[#e8b86a] px-8 py-4 font-black text-[#211b1b] transition hover:bg-[#211b1b] hover:text-white">Go to checkout <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></a></div></div>}
+    </main>
   )
 }
