@@ -28,12 +28,12 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arena-coligados.ver
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "Arena Coligados - Beach Tennis, Vôlei e Futevôlei em Goiânia",
-    template: "%s | Arena Coligados",
+    title: {
+    default: "Joseph's Well - Affiliate Resources",
+    template: "%s | Joseph's Well",
   },
   description:
-    "Arena Coligados oferece quadras profissionais de Beach Tennis, Vôlei de Praia e Futevôlei em Goiânia. 2 unidades, 9 quadras, aulas experimentais grátis. Sua segunda casa no esporte!",
+    "Promote Joseph's Well with proven creatives, high EPCs, and commissions of up to $197 per sale.",
   keywords: [
     "beach tennis",
     "vôlei de praia",

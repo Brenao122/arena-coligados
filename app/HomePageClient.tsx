@@ -1,434 +1,130 @@
 "use client"
 
-import type React from "react"
-import { useState, Suspense, lazy } from "react"
-import { Button } from "@/components/ui/button"
-import { Trophy, MapPin, Clock, ExternalLink, Waves } from "lucide-react"
-import Image from "next/image"
-import { WelcomePopup } from "@/components/home/welcome-popup"
-import { Navbar } from "@/components/layout/navbar"
-import Link from "next/link"
-import { ScrollReveal } from "@/components/shared/scroll-reveal"
+import { useState } from "react"
+import { ExternalLink, Mail, ShieldCheck, Sparkles, Video, X } from "lucide-react"
 
-const InstagramFeed = lazy(() => import("@/components/home/instagram-feed"))
+const affiliateLink = "https://uswaterrevolution.com/#aff=brenofilm3030"
+
+const emails = [
+  {
+    title: "Email 1",
+    subject: "[URGENT] The Bible warned us… now it’s happening",
+    body: `Our Lord warned us this day would come… but we didn’t listen...
+
+“And He will shut up the heavens so that it will not rain.” — Deut. 11:17
+
+Now, for many, it is too late!
+
+The rivers are drying…
+The wells are empty…
+
+And America is running out of water.
+
+But one man—guided by prayer—built a simple system… A God-given way to provide water when nothing else will.
+
+Watch this before it’s too late.
+
+— [Your Name]`,
+  },
+  {
+    title: "Email 2",
+    subject: "[URGENT] All true Christians need to see this…",
+    body: `Farmers know it. NASA confirmed it.
+
+But Scripture warned us first:
+
+“I will command the clouds not to rain on it.” — Isaiah 5:6
+
+America is running out of water. We’ve entered the days of famine and thirst.
+
+But this video shows the quiet solution one believer built to protect his family.
+
+Watch now before it’s too late.
+
+– [Your Name]`,
+  },
+  {
+    title: "Email 3",
+    subject: "[URGENT] This Prophecy Is Unfolding—And Most Christians Aren’t Ready",
+    body: `Farmers saw it coming. Now NASA confirms it: the drought is real.
+
+But the first warning came from Scripture:
+
+“I will command the clouds not to rain on it.” — Isaiah 5:6
+
+We’re not just facing a water shortage.
+
+We’re living through the beginning of the great drought—just as the Bible foretold.
+
+But one faithful man didn’t wait for disaster.
+
+He built a simple device to shield his family from thirst—no wells, no filters, no grid.
+
+This short video shows exactly how he did it.
+You need to see this before it’s taken down.
+
+[Watch the video now]
+
+[Your Name]`,
+  },
+]
 
 export default function HomePageClient() {
-  const [showLogin, setShowLogin] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setSuccessMessage("")
-    setErrorMessage("")
-
-    setTimeout(() => {
-      if (email === "admin@arena.com" && password === "admin123") {
-        localStorage.setItem(
-          "arena-user",
-          JSON.stringify({
-            email: "admin@arena.com",
-            name: "Administrador",
-            role: "admin",
-          }),
-        )
-        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
-        setTimeout(() => {
-          window.location.href = "/dashboard"
-        }, 1500)
-      } else if (email === "professor@arena.com" && password === "prof123") {
-        localStorage.setItem(
-          "arena-user",
-          JSON.stringify({
-            email: "professor@arena.com",
-            name: "Professor",
-            role: "professor",
-          }),
-        )
-        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
-        setTimeout(() => {
-          window.location.href = "/dashboard"
-        }, 1500)
-      } else if (email === "cliente@arena.com" && password === "cliente123") {
-        localStorage.setItem(
-          "arena-user",
-          JSON.stringify({
-            email: "cliente@arena.com",
-            name: "Cliente",
-            role: "cliente",
-          }),
-        )
-        setSuccessMessage("Login realizado com sucesso! Redirecionando...")
-        setTimeout(() => {
-          window.location.href = "/dashboard"
-        }, 1500)
-      } else {
-        setErrorMessage("Email ou senha incorretos!")
-      }
-      setLoading(false)
-    }, 1000)
-  }
-
-  if (showLogin) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white flex items-center justify-center p-6">
-        {/* ... existing login form ... */}
-      </div>
-    )
-  }
+  const [activeTab, setActiveTab] = useState("start")
+  const [showCookie, setShowCookie] = useState(true)
 
   return (
-    <>
-      <Navbar />
-      <WelcomePopup />
-
-      <main id="main-content">
-        {/* Hero Section */}
-        <section
-          className="relative min-h-screen flex items-center justify-center pt-24 sm:pt-28 md:pt-32 overflow-hidden px-4 sm:px-6"
-          aria-label="Hero principal"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/sports/volleyball-action.jpg"
-              alt=""
-              fill
-              className="object-cover"
-              priority={false}
-              quality={20}
-              loading="lazy"
-              fetchPriority="low"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/97 via-slate-900/92 to-slate-900/97"></div>
+    <main className="min-h-screen bg-[#f6f4ee] text-[#18252b]">
+      <header className="border-b border-[#d8d3c5] bg-[#102d34] text-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#d9b75c]">Affiliate Resources</p>
+            <p className="mt-1 text-xl font-black tracking-tight">Joseph&apos;s Well</p>
           </div>
+          <a href={affiliateLink} target="_blank" rel="noreferrer" className="hidden rounded-full bg-[#d9b75c] px-5 py-3 text-sm font-extrabold uppercase tracking-wide text-[#102d34] transition hover:bg-white sm:inline-flex">
+            Get Your Link <ExternalLink className="ml-2 h-4 w-4" aria-hidden="true" />
+          </a>
+        </div>
+      </header>
 
-          <div className="decorative-circle decorative-circle-yellow w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:w-96 top-10 sm:top-20 -right-10 sm:-right-20"></div>
-          <div className="decorative-circle decorative-circle-coral w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bottom-20 sm:bottom-40 -left-10 sm:-left-20"></div>
+      <section className="relative overflow-hidden bg-[#102d34] px-6 py-20 text-center text-white sm:py-28">
+        <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-[#d9b75c]/10 blur-3xl" />
+        <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-[#c47755]/20 blur-3xl" />
+        <div className="relative mx-auto max-w-4xl">
+          <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#d9b75c]/40 bg-[#d9b75c]/10 text-[#d9b75c]"><Sparkles aria-hidden="true" /></div>
+          <p className="mb-5 text-sm font-bold uppercase tracking-[0.28em] text-[#d9b75c]">Joseph&apos;s Well</p>
+          <h1 className="text-4xl font-black tracking-tight sm:text-6xl">Promote now and get up to <span className="text-[#d9b75c]">$197 per sale</span>.</h1>
+          <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-white/80">Our affiliates are seeing 5%+ conversion rates and over $2 EPCs on ice-cold traffic.</p>
+          <p className="mx-auto mt-4 max-w-2xl font-semibold text-white/95">Huge EPCs. Fully optimized for insane cold traffic performance—with proven creatives provided.</p>
+          <a href={affiliateLink} target="_blank" rel="noreferrer" className="mt-9 inline-flex items-center rounded-full bg-[#d9b75c] px-8 py-4 text-sm font-black uppercase tracking-wider text-[#102d34] shadow-xl transition hover:scale-[1.02] hover:bg-white">Get Your Affiliate Link <ExternalLink className="ml-2 h-4 w-4" aria-hidden="true" /></a>
+        </div>
+      </section>
 
-          <div className="relative z-10 max-w-6xl mx-auto text-center py-16 sm:py-24 md:py-32">
-            <div className="animate-bounce mb-8 sm:mb-12">
-              <Image
-                src="/images/design-mode/WhatsApp%20Image%202025-08-11%20at%2022.27.16.jpeg"
-                alt="Logo Arena Coligados"
-                width={100}
-                height={100}
-                className="rounded-full mx-auto shadow-2xl shadow-[#FF6B47]/70 border-4 border-white/90 sm:w-[120px] sm:h-[120px] hover:scale-110 transition-transform duration-300"
-                priority
-                quality={60}
-                sizes="(max-width: 640px) 100px, 120px"
-                fetchPriority="high"
-              />
-            </div>
+      <nav className="sticky top-0 z-20 border-b border-[#d8d3c5] bg-[#f6f4ee]/95 px-6 py-3 backdrop-blur" aria-label="Affiliate resources">
+        <div className="mx-auto flex max-w-4xl justify-center gap-2 sm:gap-8">
+          {[["start", "Get started"], ["creatives", "Emails & creatives"], ["terms", "Terms"]].map(([value, label]) => (
+            <button key={value} onClick={() => setActiveTab(value)} className={`rounded-full px-4 py-2 text-xs font-extrabold uppercase tracking-wide transition sm:px-6 ${activeTab === value ? "bg-[#102d34] text-white" : "text-[#53656a] hover:bg-[#e8e3d7]"}`}>{label}</button>
+          ))}
+        </div>
+      </nav>
 
-            <h1
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-6 sm:mb-8 bg-gradient-to-r from-[#FF6B47] via-[#FFD966] to-[#FF6B47] bg-clip-text text-transparent animate-gradient"
-              style={{ textShadow: "0 4px 20px rgba(255,107,71,0.5)" }}
-            >
-              Arena
-              <br />
-              Coligados
-            </h1>
-
-            <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-              <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FF6B47] to-transparent"></div>
-              <div className="h-2 w-2 rounded-full bg-[#FFD966] animate-pulse-glow"></div>
-              <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#FFD966] to-transparent"></div>
-            </div>
-
-            {/* Sport badges - já correto com 3 modalidades */}
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4">
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
-                <div className="relative bg-gradient-to-r from-[#FF6B47] to-[#FF8C47] text-white px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
-                  <Waves className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
-                  Beach Tennis
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
-                <div className="relative bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
-                  <Trophy className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
-                  Vôlei
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
-                <div className="relative bg-gradient-to-r from-[#FFD966] to-[#FFC233] text-gray-900 px-6 py-3 rounded-full font-black uppercase tracking-wider text-sm sm:text-base shadow-lg transform hover:scale-110 transition-all duration-300 border-2 border-white/20">
-                  <Waves className="inline-block h-4 w-4 sm:h-5 sm:w-5 mr-2 -mt-1" aria-hidden="true" />
-                  Futevôlei
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-16 sm:mb-20 px-4">
-              <Button
-                onClick={() => window.open("https://links.nextfit.bio/eFiVtHg", "_blank")}
-                className="btn-primary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-                aria-label="Agendar aula experimental"
-              >
-                Aula Experimental
-              </Button>
-
-              <Link href="/escolher-unidade">
-                <Button
-                  className="btn-secondary w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-                  aria-label="Reserve agora no WhatsApp"
-                >
-                  Reserve Agora no WhatsApp
-                </Button>
-              </Link>
-            </div>
-
-            <Link
-              href="/sobre-nos"
-              className="inline-flex items-center gap-2 text-[#FF6B47] hover:text-[#FF5533] transition-colors font-bold text-xs sm:text-sm uppercase tracking-widest hover:gap-3"
-            >
-              <span>Conheça Nossa História</span>
-              <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
-            </Link>
+      <section className="mx-auto max-w-5xl px-6 py-16 sm:py-24">
+        {activeTab === "start" && <div className="space-y-12">
+          <div className="text-center"><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#c47755]">Everything you need</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">Start promoting in 3 easy steps</h2></div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {[["01", "Your free DigiStore24 account", "If you don’t have a DigiStore24 account, visit this link to create one for free."], ["02", "Your affiliate link", "For email traffic, we highly recommend sending in the morning. For even better results, send again the next day with a different creative."], ["03", "Get your creatives", "Download the creatives and whitelisted images below, then start promoting while following the affiliate terms."]].map(([number, title, text]) => <article key={number} className="rounded-3xl border border-[#d8d3c5] bg-white p-7 shadow-sm"><span className="text-4xl font-black text-[#d9b75c]">{number}</span><h3 className="mt-5 text-xl font-black">{title}</h3><p className="mt-3 leading-7 text-[#53656a]">{text}</p>{number === "02" && <a href={affiliateLink} target="_blank" rel="noreferrer" className="mt-6 inline-flex font-extrabold text-[#c47755] hover:underline">GET YOUR LINK <ExternalLink className="ml-2 h-4 w-4" /></a>}</article>)}
           </div>
-        </section>
+          <div className="rounded-3xl bg-[#e8e3d7] p-8"><h3 className="flex items-center gap-3 text-xl font-black"><ShieldCheck className="text-[#c47755]" aria-hidden="true" />Traffic guidelines</h3><p className="mt-4 leading-8 text-[#53656a]">You can promote Joseph&apos;s Well on social and search channels, with one restriction: brand bidding is not allowed. Do not bid on “Joseph&apos;s Well”, “Joseph&apos;s Well review” or similar terms. Email traffic must be opt-in.</p></div>
+        </div>}
 
-        {/* Instagram Section */}
-        <section
-          className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden"
-          aria-labelledby="instagram-heading"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/sports/multi-sports.jpg"
-              alt=""
-              fill
-              className="object-cover opacity-20"
-              quality={20}
-              loading="lazy"
-              fetchPriority="low"
-            />
-          </div>
+        {activeTab === "creatives" && <div><div className="mb-12 text-center"><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#c47755]">Proven creatives</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">Email swipes</h2><p className="mx-auto mt-4 max-w-2xl text-[#53656a]">Use these ideas as a starting point for your campaigns and adapt them to your audience.</p></div><div className="space-y-6">{emails.map((email) => <article key={email.title} className="rounded-3xl border border-[#d8d3c5] bg-white p-7 shadow-sm sm:p-9"><div className="flex items-center gap-3 text-[#c47755]"><Mail className="h-5 w-5" aria-hidden="true" /><p className="text-sm font-extrabold uppercase tracking-widest">{email.title}</p></div><h3 className="mt-5 text-xl font-black">Subject: {email.subject}</h3><pre className="mt-6 whitespace-pre-wrap font-sans text-[15px] leading-8 text-[#53656a]">{email.body}</pre></article>)}</div><div className="mt-8 rounded-3xl bg-[#102d34] p-8 text-center text-white"><Video className="mx-auto text-[#d9b75c]" aria-hidden="true" /><p className="mt-4 font-bold">Click to download banners and approved images</p><a href={affiliateLink} target="_blank" rel="noreferrer" className="mt-5 inline-flex rounded-full bg-[#d9b75c] px-6 py-3 text-sm font-black text-[#102d34]">ACCESS MATERIALS</a></div></div>}
 
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-            <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2
-                id="instagram-heading"
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-4 sm:mb-6 bg-gradient-to-r from-white via-yellow-100 to-white bg-clip-text text-transparent"
-              >
-                Viva a Experiência
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/90 font-medium">Momentos que viram memórias</p>
-            </div>
+        {activeTab === "terms" && <div className="mx-auto max-w-3xl"><div className="mb-12 text-center"><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#c47755]">Affiliate terms</p><h2 className="mt-3 text-3xl font-black sm:text-5xl">Keep it clean and compliant</h2></div><div className="space-y-8 rounded-3xl border border-[#d8d3c5] bg-white p-7 leading-8 text-[#53656a] sm:p-10"><p className="font-bold text-[#18252b]">By promoting our products, you agree to follow these guidelines.</p><div><h3 className="font-black text-[#18252b]">The basics</h3><p>No misleading claims, impersonation, spam, or unauthorized use of our website and videos. Affiliates must comply with the FTC Act, CAN-SPAM Act, and applicable consumer protection laws.</p></div><div><h3 className="font-black text-[#18252b]">What is not allowed</h3><p>Do not bid on brand keywords, copy content from our site, sell products on retail or auction sites, create unauthorized freebies, issue press releases, or represent yourself as the product owner.</p></div><div><h3 className="font-black text-[#18252b]">Disclaimer</h3><p>Results may vary. Joseph&apos;s Well provides educational information and DIY plans and does not guarantee specific income or health outcomes. Always follow local regulations and consult qualified professionals when needed.</p></div></div></div>}
+      </section>
 
-            <Suspense fallback={<InstagramLoadingSkeleton />}>
-              <InstagramFeed />
-            </Suspense>
-          </div>
-        </section>
+      <footer className="border-t border-[#d8d3c5] bg-[#102d34] px-6 py-12 text-center text-white/70"><p className="font-black text-white">Joseph&apos;s Well</p><p className="mt-3 text-sm">© 2023 Digistore24 Inc. and/or its licensors.</p><div className="mt-5 flex justify-center gap-5 text-xs font-bold uppercase tracking-wide"><a href={affiliateLink} target="_blank" rel="noreferrer" className="hover:text-white">Terms</a><a href={affiliateLink} target="_blank" rel="noreferrer" className="hover:text-white">Privacy</a><a href={affiliateLink} target="_blank" rel="noreferrer" className="hover:text-white">Affiliates</a></div></footer>
 
-        {/* Stats Section - já correto com 03 modalidades */}
-        <section
-          className="section-vibrant py-16 sm:py-20 md:py-24 relative overflow-hidden"
-          aria-labelledby="stats-heading"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/sports/volleyball-hands.jpg"
-              alt=""
-              fill
-              className="object-cover opacity-10"
-              quality={20}
-              loading="lazy"
-              fetchPriority="low"
-            />
-          </div>
-
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
-            <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2
-                id="stats-heading"
-                className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-gray-900"
-              >
-                Em Números
-              </h2>
-              <div className="divider-luxury"></div>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 md:gap-12" role="list">
-              <ScrollReveal delay={0.1}>
-                <div className="text-center" role="listitem">
-                  <MapPin
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
-                    aria-label="2 unidades"
-                  >
-                    02
-                  </div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Unidades</div>
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <div className="text-center" role="listitem">
-                  <Trophy
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
-                    aria-label="9 quadras"
-                  >
-                    09
-                  </div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Quadras</div>
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.3}>
-                <div className="text-center" role="listitem">
-                  <Trophy
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
-                    aria-label="3 modalidades"
-                  >
-                    03
-                  </div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">
-                    Modalidades
-                  </div>
-                </div>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.4}>
-                <div className="text-center" role="listitem">
-                  <Clock
-                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-[#FF6B47] mx-auto mb-4 sm:mb-6"
-                    aria-hidden="true"
-                  />
-                  <div
-                    className="text-5xl sm:text-6xl md:text-7xl font-light text-gray-900 mb-2 sm:mb-4"
-                    aria-label="14 horas"
-                  >
-                    14h
-                  </div>
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-gray-500 font-bold">Diárias</div>
-                </div>
-              </ScrollReveal>
-            </div>
-          </div>
-        </section>
-
-        {/* Pricing Section */}
-        <section
-          className="section-coral py-16 sm:py-20 md:py-24 relative overflow-hidden"
-          aria-labelledby="pricing-heading"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/sports/friends-celebrating.jpg"
-              alt=""
-              fill
-              className="object-cover opacity-15"
-              quality={20}
-              loading="lazy"
-              fetchPriority="low"
-            />
-          </div>
-
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
-            <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2
-                id="pricing-heading"
-                className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight mb-4 sm:mb-6 text-white"
-              >
-                Planos
-              </h2>
-              <p className="text-base sm:text-lg text-white/90 font-medium">Escolha sua unidade preferida</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 sm:gap-8" role="list">
-              <ScrollReveal delay={0.1}>
-                <article className="card-luxury text-center p-8 sm:p-10 md:p-12" role="listitem">
-                  <MapPin
-                    className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8"
-                    aria-hidden="true"
-                  />
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wider">
-                    Parque Amazônia
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">
-                    5 Quadras
-                  </p>
-                  <div className="mb-8 sm:mb-10">
-                    <span className="text-5xl sm:text-6xl md:text-7xl font-light text-[#FF6B47]">R$ 80</span>
-                    <span className="text-xl sm:text-2xl text-gray-500 font-light">/hora</span>
-                  </div>
-                  <Button
-                    onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                    className="btn-primary w-full text-base sm:text-lg py-5 sm:py-6"
-                  >
-                    Reservar
-                  </Button>
-                </article>
-              </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <article className="card-luxury text-center p-8 sm:p-10 md:p-12" role="listitem">
-                  <MapPin
-                    className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 text-[#FF6B47] mx-auto mb-6 sm:mb-8"
-                    aria-hidden="true"
-                  />
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wider">
-                    Vila Rosa
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 uppercase tracking-widest font-bold">
-                    4 Quadras
-                  </p>
-                  <div className="mb-8 sm:mb-10">
-                    <span className="text-5xl sm:text-6xl md:text-7xl font-light text-[#FF6B47]">R$ 70</span>
-                    <span className="text-xl sm:text-2xl text-gray-500 font-light">/hora</span>
-                  </div>
-                  <Button
-                    onClick={() => window.open("https://links.nextfit.bio/ZWfrQvD", "_blank")}
-                    className="btn-primary w-full text-base sm:text-lg py-5 sm:py-6"
-                  >
-                    Reservar
-                  </Button>
-                </article>
-              </ScrollReveal>
-            </div>
-          </div>
-        </section>
-      </main>
-    </>
-  )
-}
-
-function InstagramLoadingSkeleton() {
-  return (
-    <div className="max-w-4xl mx-auto animate-pulse" role="status" aria-label="Carregando feed do Instagram">
-      <div className="flex justify-center mb-8">
-        <div className="bg-white/20 rounded-3xl w-full max-w-md h-64"></div>
-      </div>
-      <div className="flex justify-center">
-        <div className="bg-white/20 rounded-3xl w-full max-w-md aspect-square"></div>
-      </div>
-      <div className="flex justify-center gap-2 mt-8">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-3 w-3 bg-white/30 rounded-full"></div>
-        ))}
-      </div>
-      <span className="sr-only">Carregando posts do Instagram...</span>
-    </div>
+      {showCookie && <div className="fixed bottom-5 left-5 right-5 z-30 flex items-center justify-between gap-4 rounded-2xl border border-[#d8d3c5] bg-white p-4 shadow-2xl sm:left-auto sm:max-w-md"><p className="text-sm leading-5 text-[#53656a]">We use cookies to improve your experience. <a href={affiliateLink} target="_blank" rel="noreferrer" className="font-bold text-[#c47755] underline">Learn more</a></p><button onClick={() => setShowCookie(false)} aria-label="Fechar aviso de cookies" className="rounded-full p-2 text-[#53656a] hover:bg-[#e8e3d7]"><X className="h-4 w-4" aria-hidden="true" /></button></div>}
+    </main>
   )
 }
